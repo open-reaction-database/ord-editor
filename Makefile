@@ -24,8 +24,8 @@ js : gen/js/proto/ord/dataset.js \
 	   gen/js/ord/dataset.js \
 	   gen/js/ord/reaction.js \
 
-py : ../build/lib/ord_schema/proto/dataset_pb2.py \
-	   ../build/lib/ord_schema/proto/reaction_pb2.py
+py : ../ord-schema/build/lib/ord_schema/proto/dataset_pb2.py \
+	   ../ord-schema/build/lib/ord_schema/proto/reaction_pb2.py
 
 gen/js/ord/dataset.js : js/dataset.js gen/js/proto/ord/dataset.js
 	$(closure)/closure/bin/build/closurebuilder.py \
@@ -49,14 +49,14 @@ gen/js/ord/reaction.js : js/*.js gen/js/proto/ord/reaction.js
 	  --output_file=gen/js/ord/reaction.js \
 	  || (rm -f gen/js/ord/reaction.js && false)
 
-gen/js/proto/ord/%.js : ../ord_schema/proto/%.proto
+gen/js/proto/ord/%.js : ../ord-schema/ord_schema/proto/%.proto
 	protoc \
 	  --experimental_allow_proto3_optional \
 	  --js_out=binary:gen/js/proto/ord \
-	  --proto_path=.. \
+	  --proto_path=../ord-schema \
 	  $<
 
-../build/lib/ord_schema/proto/%_pb2.py : ../ord_schema/proto/%.proto
+../ord-schema/build/lib/ord_schema/proto/%_pb2.py : ../ord-schema/ord_schema/proto/%.proto
 	$(error $< not found--run setup?)
 
 package : all
@@ -71,8 +71,7 @@ package : all
 	  serve.sh \
 	  package/ord
 
-	cp ../requirements.txt package/ord
-	cp -r ../build/lib/ord_schema package/ord/py
+	cp -r ../ord-schema/build/lib/ord_schema package/ord/py
 
 	mkdir package/ord/ketcher
 	cp -r ketcher/dist package/ord/ketcher
@@ -86,4 +85,3 @@ test : all
 
 clean :
 	rm -rf gen
-	rm -rf package

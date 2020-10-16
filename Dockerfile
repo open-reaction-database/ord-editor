@@ -41,9 +41,11 @@ RUN conda install -c rdkit \
 
 # Fetch and build editor dependencies.
 # NOTE(kearnes): Do this before COPYing the local state so it can be cached.
-WORKDIR /usr/src/app/ord-schema/editor
-RUN git clone https://github.com/Open-Reaction-Database/ketcher.git \
- && cd ketcher \
+WORKDIR /usr/src/app/ord-editor
+# Bust the cache to get the latest commits; see https://stackoverflow.com/a/39278224.
+ADD "https://api.github.com/repos/Open-Reaction-Database/ketcher/git/refs/heads/main" ketcher-version.json
+RUN git clone https://github.com/Open-Reaction-Database/ketcher.git
+RUN cd ketcher \
  && npm install \
  && npm run build \
  && rm -rf node_modules
@@ -54,22 +56,29 @@ RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.13.0/p
  && tar -xzf protobuf-js-3.13.0.tar.gz \
  && rm protobuf-js-3.13.0.tar.gz
 
-# COPY and install the local state of ord-schema.
-WORKDIR /usr/src/app/ord-schema
-COPY setup.py requirements.txt ./
-COPY ord_schema/ ord_schema/
-COPY editor/ editor/
+# Install ord-schema.
+WORKDIR ..
+# Bust the cache to get the latest commits; see https://stackoverflow.com/a/39278224.
+ADD "https://api.github.com/repos/Open-Reaction-Database/ord-schema/git/refs/heads/main" ord-schema-version.json
+RUN git clone https://github.com/Open-Reaction-Database/ord-schema.git
+WORKDIR ord-schema
 RUN pip install -r requirements.txt
 RUN python setup.py install
 
+# COPY the local state.
+WORKDIR ../ord-editor
+COPY Makefile schema.sql ./
+COPY css/ css/
+COPY db/ db/
+COPY html/ html/
+COPY js/ js/
+COPY py/ py/
+
 # Build and launch the editor.
-WORKDIR /usr/src/app/ord-schema/editor
 RUN make
 EXPOSE 5000
-# TODO(kearnes): Remove timeout after we fix editor review latency.
 CMD gunicorn py.serve:app \
     --bind 0.0.0.0:5000 \
     --workers 2 \
     --access-logfile - \
-    --access-logformat '%(t)s %({user-id}o)s %(U)s %(s)s %(L)s %(b)s %(f)s "%(r)s" "%(a)s"' \
-    --timeout 60
+    --access-logformat '%(t)s %({user-id}o)s %(U)s %(s)s %(L)s %(b)s %(f)s "%(r)s" "%(a)s"'

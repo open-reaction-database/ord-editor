@@ -61,10 +61,8 @@ class ServeTest(parameterized.TestCase, absltest.TestCase):
         self.client = serve.app.test_client()
         # GET requests automatically login as the test user.
         self.client.get('/authenticate')
-        # TODO(kearnes): Use a testdata directory next to this module.
         self.testdata = os.path.join(
-            os.path.dirname(__file__),
-            '../../examples/2_Nielsen_Deoxyfluorination_Screen')
+            os.path.dirname(os.path.realpath(__file__)), 'testdata')
         self._destroy_datasets()
         # Start with an initial empty dataset called 'dataset'.
         self._create('dataset')

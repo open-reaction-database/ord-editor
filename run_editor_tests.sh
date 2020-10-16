@@ -33,8 +33,8 @@ export ORD_EDITOR_MOUNT=/tmp/editor-postgres
 # Clear any leftover database state.
 rm -rf $ORD_EDITOR_MOUNT && mkdir $ORD_EDITOR_MOUNT
 
-docker build --file=editor/Dockerfile -t openreactiondatabase/ord-editor .
-docker-compose --file editor/docker-compose.yml up --detach
+docker build -t openreactiondatabase/ord-editor .
+docker-compose up --detach
 
 set +e
 
@@ -51,20 +51,18 @@ done
 
 # Initialize the database with schema and contents.
 set -e
-psql -p 5432 -h localhost -U postgres -f editor/schema.sql
-pushd editor
+psql -p 5432 -h localhost -U postgres -f schema.sql
 ./py/migrate.py
-popd
 set +e
 
 status=0
 
 # Run the JS tests.
-node editor/js/test.js
+node js/test.js
 [ $? -eq 0 ] || status=1
 
 # Python tests run Flask in the test environment, not a container.
-python editor/py/serve_test.py
+python py/serve_test.py
 [ $? -eq 0 ] || status=1
 
 # Report pass/fail.
@@ -75,7 +73,7 @@ neutral='\033[0m'
     printf "${green}PASS${neutral}\n" || printf "${red}FAIL${neutral}\n"
 
 # Shut down the containers.
-docker-compose -f editor/docker-compose.yml down
+docker-compose -f docker-compose.yml down
 
 # Relay the status for GitHub CI.
 test "${status}" -eq 0
