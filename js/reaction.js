@@ -18,6 +18,7 @@ goog.module('ord.reaction');
 goog.module.declareLegacyNamespace();
 exports = {
   init,
+  checkpoint,
   commit,
   downloadReaction,
   validateReaction,
@@ -355,6 +356,18 @@ function commit() {
 }
 
 /**
+ * Writes the current dataset to the revisions log. This is like commit()
+ * except it happens automatically and leaves out uncommitted binary upload
+ * attachments.
+ */
+function checkpoint() {
+  const reaction = unloadReaction();
+  const reactions = session.dataset.getReactionsList();
+  reactions[session.index] = reaction;
+  putRevision(session.fileName, session.dataset)
+}
+
+/**
  * Downloads the current reaction as a serialized Reaction proto.
  */
 function downloadReaction() {
@@ -404,6 +417,19 @@ function putDataset(fileName, dataset) {
   xhr.open('POST', '/dataset/proto/write/' + fileName);
   const binary = dataset.serializeBinary();
   xhr.onload = clean;
+  xhr.send(binary);
+}
+
+/**
+ * Like putDataset() but writing to the revisions log instead of the regular
+ * database.
+ * @param {string} fileName The name of the dataset being logged.
+ * @param {!proto.ord.Dataset} dataset
+ */
+function putRevision(fileName, dataset) {
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/checkpoint/' + fileName);
+  const binary = dataset.serializeBinary();
   xhr.send(binary);
 }
 
@@ -595,6 +621,8 @@ function addSlowly(template, root) {
  *  callback to hide().
  */
 function removeSlowly(button, pattern, callback) {
+  // Always checkpoint the Dataset before deleting anything.
+  checkpoint();
   const node = $(button).closest(pattern);
   // Must call necessary validators only after the node is removed,
   // but we can only figure out which validators these are before removal.
