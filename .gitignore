@@ -14,8 +14,10 @@ __pycache__
 # build output
 /build
 /dist
-# dependencies from manual builds
+# dependency artifacts from manual builds
 closure-library-*
 gen
 ketcher
 protobuf-*
+node_modules
+package-lock.json

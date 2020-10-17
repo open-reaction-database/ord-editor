@@ -71,7 +71,7 @@ const puppeteer = require('puppeteer');
   // Additional test to ensure that pretending to change field entries does
   // not lead to a change in the number of validation errors.
   const validationTests = [
-    'http://localhost:5000/dataset/ord-nielsen-example/reaction/0?user=test',
+    'http://localhost:5000/dataset/ord-nielsen-example/reaction/0',
   ];
 
   for (let i = 0; i < validationTests.length; i++) {
