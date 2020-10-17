@@ -14,3 +14,8 @@ __pycache__
 # build output
 /build
 /dist
+# dependencies from manual builds
+closure-library-*
+gen
+ketcher
+protobuf-*

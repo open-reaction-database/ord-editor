@@ -768,6 +768,10 @@ def init_user():
                                   port=int(POSTGRES_PORT))
     if flask.request.path in ('/login', '/authenticate'):
         return
+    if 'user' in flask.request.args:
+        # Respect legacy user ID's in URLs.
+        user_id = flask.request.args.get('user')
+        return issue_access_token(user_id);
     access_token = flask.request.cookies.get('Access-Token')
     if access_token is None:
         # Automatically login as a new user.
