@@ -771,7 +771,7 @@ def init_user():
     if 'user' in flask.request.args:
         # Respect legacy user ID's in URLs.
         user_id = flask.request.args.get('user')
-        return issue_access_token(user_id);
+        return issue_access_token(user_id)
     access_token = flask.request.cookies.get('Access-Token')
     if access_token is None:
         # Automatically login as a new user.
