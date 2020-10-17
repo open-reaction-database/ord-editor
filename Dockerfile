@@ -58,10 +58,11 @@ RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.13.0/p
 
 # Install ord-schema.
 WORKDIR ..
-# Bust the cache to get the latest commits; see https://stackoverflow.com/a/39278224.
-ADD "https://api.github.com/repos/Open-Reaction-Database/ord-schema/git/refs/heads/main" ord-schema-version.json
 RUN git clone https://github.com/Open-Reaction-Database/ord-schema.git
 WORKDIR ord-schema
+# NOTE(kearnes): ord-schema is versioned to avoid breaking ord-editor.
+ARG ORD_SCHEMA_SHA=79d330952a1d82c5061f37c2d3d5859213507487
+RUN git checkout ${ORD_SCHEMA_SHA}
 RUN pip install -r requirements.txt
 RUN python setup.py install
 
