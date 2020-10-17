@@ -5,15 +5,6 @@ Reaction Database.
 
 ## Getting Started
 
-Before using ord-editor, you must first clone
-[https://github.com/Open-Reaction-Database/ord-schema/](ord-schema) also.
-This repo assumes that both share a common parent directory:
-```
-  <parent>
-  \-ord-schema
-  \-ord-editor
-```
-Then in the root of this repo:
 ```
 $ export ORD_EDITOR_POSTGRES_PASSWORD=########
 $ export ORD_EDITOR_MOUNT=$HOME/ord-editor-postgres
@@ -78,6 +69,16 @@ This starts service at [http://localhost:5001/](http://localhost:5001/).
 There are several.
 
 #### ORD-Schema Environment
+
+You must clone
+[https://github.com/Open-Reaction-Database/ord-schema/](ord-schema) to provide
+the proto definitions. This repo assumes that both repos share a common parent
+directory:
+```
+  <parent>
+  \-ord-schema
+  \-ord-editor
+```
 
 Activate Conda and install the setup.py modules by following the top-level
 [instructions](https://github.com/Open-Reaction-Database/ord-schema/blob/main/README.md).
