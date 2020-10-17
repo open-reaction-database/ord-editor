@@ -364,7 +364,7 @@ function checkpoint() {
   const reaction = unloadReaction();
   const reactions = session.dataset.getReactionsList();
   reactions[session.index] = reaction;
-  putRevision(session.fileName, session.dataset)
+  putRevision(session.fileName, session.dataset);
 }
 
 /**
