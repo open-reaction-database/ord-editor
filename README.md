@@ -5,12 +5,20 @@ Reaction Database.
 
 ## Getting Started
 
-From the ord-schema project root, 
+Before using ord-editor, you must first clone
+[https://github.com/Open-Reaction-Database/ord-schema/](ord-schema) also.
+This repo assumes that both share a common parent directory:
+```
+  <parent>
+  \-ord-schema
+  \-ord-editor
+```
+Then in the root of this repo:
 ```
 $ export ORD_EDITOR_POSTGRES_PASSWORD=########
 $ export ORD_EDITOR_MOUNT=$HOME/ord-editor-postgres
-$ docker build -f editor/Dockerfile -t openreactiondatabase/ord-editor .
-$ docker-compose -f editor/docker-compose.yml up
+$ docker build -t openreactiondatabase/ord-editor .
+$ docker-compose up
 ```
 That builds the editor, launches it in a container, and points it at a second
 container running Postgres where the editor keeps its state. You can see the
