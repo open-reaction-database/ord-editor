@@ -768,6 +768,13 @@ def init_user():
                                   port=int(POSTGRES_PORT))
     if flask.request.path in ('/login', '/authenticate'):
         return
+    if 'ord-editor-user' in flask.request.cookies:
+        # Respect legacy user ID's in cookies.
+        user_id = flask.request.cookies.get('ord-editor-user')
+        response = issue_access_token(user_id)
+        # Delete the old cookie to avoid a redirect loop.
+        response.set_cookie('ord-editor-user', '', expires=0)
+        return response
     if 'user' in flask.request.args:
         # Respect legacy user ID's in URLs.
         user_id = flask.request.args.get('user')
