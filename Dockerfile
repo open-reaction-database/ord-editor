@@ -62,7 +62,7 @@ RUN git clone https://github.com/Open-Reaction-Database/ord-schema.git
 WORKDIR ord-schema
 # NOTE(kearnes): ord-schema is versioned to avoid breaking ord-editor.
 ARG ORD_SCHEMA_TAG=v0.1.0
-RUN git fetch --tags && git checkout ${ORD_SCHEMA_TAG}
+RUN git fetch --tags && git checkout "${ORD_SCHEMA_TAG}"
 RUN pip install -r requirements.txt
 RUN python setup.py install
 
