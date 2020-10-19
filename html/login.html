@@ -34,10 +34,9 @@ limitations under the License.
     }
   </style>
   <body>
-    <form action="/authenticate" method="POST">
-      <label>User ID</label>
-      <input type="text" name="user_id">
-      <input type="submit" value="Login">
+    <form action="https://github.com/login/oauth/authorize" method="GET">
+      <input type="hidden" name="client_id" value="{{ client_id }}">
+      <input type="submit" value="Sign in with GitHub">
     </form>
   </body>
 </html>

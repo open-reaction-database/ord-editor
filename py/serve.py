@@ -54,6 +54,9 @@ POSTGRES_HOST = os.getenv('POSTGRES_HOST', 'localhost')
 POSTGRES_PORT = os.getenv('POSTGRES_PORT', '5432')
 POSTGRES_USER = os.getenv('POSTGRES_USER', 'postgres')
 POSTGRES_PASS = os.getenv('POSTGRES_PASSWORD', '')
+# Information for GitHub OAuth authentication.
+GH_CLIENT_ID = os.getenv('GH_CLIENT_ID')
+GH_CLIENT_SECRET = os.getenv('GH_CLIENT_SECRET')
 
 # System user for immutable reactions imported from GitHub pull requests.
 REVIEWER = '8df09572f3c74dbcb6003e2eef8e48fc'
@@ -711,7 +714,28 @@ def exists_dataset(name):
 @app.route('/login')
 def show_login():
     """Presents a form to set a new access token from a given user ID."""
-    return flask.render_template('login.html')
+    return flask.render_template('login.html', client_id=GH_CLIENT_ID)
+
+
+@app.route('/github-callback')
+def github_callback():
+    code = flask.request.args.get('code')
+    data = {
+        'client_id': GH_CLIENT_ID,
+        'client_secret': GH_CLIENT_SECRET,
+        'code': code,
+    }
+    headers = {'Accept': 'application/json'}
+    response = requests.post('https://github.com/login/oauth/access_token',
+                             data=data,
+                             headers=headers)
+    access_token = response.json()['access_token']
+    headers = {
+        'Accept': 'application/json',
+        'Authorization': f'token {access_token}',
+    }
+    # GitHub username is user['login'].
+    user = requests.get('https://api.github.com/user', headers=headers)
 
 
 @app.route('/authenticate', methods=['GET', 'POST'])
