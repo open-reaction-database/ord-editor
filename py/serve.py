@@ -735,7 +735,7 @@ def github_callback():
         'Authorization': f'token {access_token}',
     }
     # GitHub username is user['login'].
-    user = requests.get('https://api.github.com/user', headers=headers)
+    user = requests.get('https://api.github.com/user', headers=headers).json()
 
 
 @app.route('/authenticate', methods=['GET', 'POST'])
