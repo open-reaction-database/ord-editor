@@ -738,7 +738,9 @@ def github_callback():
     response = requests.post('https://github.com/login/oauth/access_token',
                              data=data,
                              headers=headers)
-    access_token = response.json()['access_token']
+    access_token = response.json().get('access_token')
+    if access_token is None:
+        return flask.redirect('/login')
     headers = {
         'Accept': 'application/json',
         'Authorization': f'token {access_token}',
