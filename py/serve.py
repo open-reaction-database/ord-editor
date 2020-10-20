@@ -722,6 +722,12 @@ def show_login():
 
 @app.route('/github-callback')
 def github_callback():
+    """Grant an access token via GitHub OAuth.
+
+    This endpoint's URL must be registered and bound to a client ID and a
+    secret key at
+    https://github.com/organizations/Open-Reaction-Database/settings/applications/
+    """
     code = flask.request.args.get('code')
     data = {
         'client_id': GH_CLIENT_ID,
