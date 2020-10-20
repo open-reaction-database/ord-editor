@@ -47,16 +47,11 @@ CREATE TABLE datasets (
   PRIMARY KEY (user_id, dataset_name)
 );
 
-CREATE TABLE github (
-  user_id CHARACTER(32) REFERENCES users,
-  login TEXT PRIMARY KEY,
-  email TEXT,
-  avatar_url TEXT
-);
-
 -- System users:
 --   "review" owns read-only datasets imported from GitHub pull requests.
 --   "test" owns datasets imported from db/ and used only in tests.
 INSERT INTO users VALUES 
-   ('8df09572f3c74dbcb6003e2eef8e48fc', 'review', EXTRACT(EPOCH FROM NOW())),
-   ('680b0d9fe649417cb092d790907bd5a5', 'test', EXTRACT(EPOCH FROM NOW()));
+  -- review:
+  ('8df09572f3c74dbcb6003e2eef8e48fc', NULL, EXTRACT(EPOCH FROM NOW())),
+  -- test:
+  ('680b0d9fe649417cb092d790907bd5a5', NULL, EXTRACT(EPOCH FROM NOW()));

@@ -746,7 +746,14 @@ def github_callback():
         'Authorization': f'token {access_token}',
     }
     user = requests.get('https://api.github.com/user', headers=headers).json()
-    user_id = make_github(user['login'], user['email'], user['avatar_url'])
+    login = user['login']
+    with flask.g.db.cursor() as cursor:
+        query = psycopg2.sql.SQL('SELECT user_id FROM users WHERE name=%s')
+        cursor.execute(query, [login])
+        if cursor.rowcount > 0:
+            user_id = cursor.fetchone()[0]
+        else:
+            user_id = make_user(login)
     return issue_access_token(user_id)
 
 
@@ -777,7 +784,10 @@ def issue_access_token(user_id):
 
 
 def make_user(name=None):
-    """Writes a new user ID and returns it
+    """Writes a new user ID and returns it.
+
+    The "name" is reserved for GitHub login values which uniquely identify
+    GitHub users.
 
     Args:
         name: Hopefully a readable label for the user, not currently used in UI.
@@ -790,35 +800,6 @@ def make_user(name=None):
         user_id = uuid.uuid4().hex
         timestamp = int(time.time())
         cursor.execute(query, [user_id, name, timestamp])
-        flask.g.db.commit()
-    return user_id
-
-
-def make_github(login, email, avatar_url):
-    """Adds or updates a GitHub user entry.
-
-    Args:
-        login: A GitHub user name.
-        email: The user's public email from GitHub.
-        avatar_url: Their public user image location.
-
-    Returns:
-        The user_id bound to the given GitHub login.
-    """
-    user_id = None
-    with flask.g.db.cursor() as cursor:
-        query = psycopg2.sql.SQL('SELECT user_id FROM github WHERE login=%s')
-        cursor.execute(query, [login])
-        if cursor.rowcount > 0:
-            user_id = cursor.fetchone()[0]
-            query = psycopg2.sql.SQL(
-                'UPDATE github SET email=%s, avatar_url=%s WHERE user_id=%s')
-            cursor.execute(query, [email, avatar_url, user_id])
-        else:
-            user_id = make_user(login)  # Commits: end of transaction.
-            query = psycopg2.sql.SQL(
-                'INSERT INTO github VALUES (%s, %s, %s, %s)')
-            cursor.execute(query, [user_id, login, email, avatar_url])
         flask.g.db.commit()
     return user_id
 
@@ -851,31 +832,24 @@ def init_user():
         return issue_access_token(user_id)
     with flask.g.db.cursor() as cursor:
         query = psycopg2.sql.SQL(
-            "SELECT user_id FROM logins WHERE access_token=%s")
+            'SELECT user_id FROM logins WHERE access_token=%s')
         cursor.execute(query, [access_token])
         if cursor.rowcount == 0:
             # Automatically login as a new user.
             user_id = make_user()
             return issue_access_token(user_id)
         user_id = cursor.fetchone()[0]
-    init_user_globals(user_id)
-
-
-def init_user_globals(user_id):
-    """Assign useful things to flask.g and ensure the user's temp directory."""
-    flask.g.user_id = user_id
-    with flask.g.db.cursor() as cursor:
-        query = psycopg2.sql.SQL(
-            'SELECT login, avatar_url FROM github WHERE user_id=%s')
+        query = psycopg2.sql.SQL('SELECT name FROM users WHERE user_id=%s')
         cursor.execute(query, [user_id])
-        if cursor.rowcount > 0:
-            login, avatar_url = cursor.fetchone()
-            flask.g.user_name = login
-            flask.g.user_avatar = avatar_url
-        else:
-            flask.g.user_name = user_id
-            flask.g.user_avatar = \
-                'https://avatars2.githubusercontent.com/u/60754754?s=200&v=4'
+        name = cursor.fetchone()[0]
+    flask.g.user_id = user_id
+    if name is not None:
+        flask.g.user_name = name
+        flask.g.user_avatar = f'http://github.com/{name}.png'
+    else:
+        flask.g.user_name = user_id
+        flask.g.user_avatar = \
+            'https://avatars2.githubusercontent.com/u/60754754?s=200&v=4'
     temp = get_user_path()
     if not os.path.isdir(temp):
         os.mkdir(temp)
