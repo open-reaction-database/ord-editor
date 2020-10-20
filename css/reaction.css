@@ -97,6 +97,7 @@ body {
   position: absolute;
   z-index: 2;
   visibility: hidden;
+  max-width: 500px;
 }
 .validate_warning_status {
   color: yellow;

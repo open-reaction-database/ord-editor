@@ -259,12 +259,12 @@ function validate(message, messageTypeString, node, validateNode) {
       statusNode.addClass('fa fa-exclamation-triangle');
       statusNode.css('color', 'red');
       statusNode.text(' ' + errors.length);
-      messageNode.empty();
+      messageNode.html('<ul></ul>');
       for (let index = 0; index < errors.length; index++) {
         const error = errors[index];
-        const errorNode = $('<div></div>');
-        errorNode.text('\u2022 ' + error);
-        messageNode.append(errorNode);
+        const errorNode = $('<li></li>');
+        errorNode.text(error);
+        $('ul', messageNode).append(errorNode);
       }
       messageNode.css('backgroundColor', 'pink');
     } else {
@@ -280,12 +280,12 @@ function validate(message, messageTypeString, node, validateNode) {
       warningStatusNode.show();
       warningStatusNode.text(' ' + warnings.length);
       warningMessageNode.show();
-      warningMessageNode.empty();
+      warningMessageNode.html('<ul></ul>');
       for (let index = 0; index < warnings.length; index++) {
         const warning = warnings[index];
-        const warningNode = $('<div></div>');
-        warningNode.text('\u2022 ' + warning);
-        warningMessageNode.append(warningNode);
+        const warningNode = $('<li></li>');
+        warningNode.text(warning);
+        $('ul', warningMessageNode).append(warningNode);
       }
     } else {
       warningStatusNode.hide();
