@@ -807,7 +807,7 @@ def make_github(login, email, avatar_url):
                 'UPDATE github SET email=%s, avatar_url=%s WHERE user_id=%s')
             cursor.execute(query, [email, avatar_url, user_id])
         else:
-            user_id = make_user(login) # Commits: end of transaction.
+            user_id = make_user(login)  # Commits: end of transaction.
             query = psycopg2.sql.SQL(
                 'INSERT INTO github VALUES (%s, %s, %s, %s)')
             cursor.execute(query, [user_id, login, email, avatar_url])
