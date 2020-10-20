@@ -82,7 +82,8 @@ def show_datasets():
             names.append(row[0])
     return flask.render_template('datasets.html',
                                  names=sorted(names),
-                                 user_id=flask.g.user_id)
+                                 user_avatar=flask.g.user_avatar,
+                                 user_name=flask.g.user_name)
 
 
 @app.route('/dataset/<name>')
@@ -97,7 +98,8 @@ def show_dataset(name):
     return flask.render_template('dataset.html',
                                  name=name,
                                  freeze=freeze,
-                                 user_id=flask.g.user_id)
+                                 user_avatar=flask.g.user_avatar,
+                                 user_name=flask.g.user_name)
 
 
 @app.route('/dataset/<name>/download')
@@ -202,7 +204,8 @@ def show_reaction(name, index):
                                  name=name,
                                  index=index,
                                  freeze=freeze,
-                                 user_id=flask.g.user_id)
+                                 user_avatar=flask.g.user_avatar,
+                                 user_name=flask.g.user_name)
 
 
 @app.route('/reaction/download', methods=['POST'])
@@ -734,8 +737,9 @@ def github_callback():
         'Accept': 'application/json',
         'Authorization': f'token {access_token}',
     }
-    # GitHub username is user['login'].
     user = requests.get('https://api.github.com/user', headers=headers).json()
+    user_id = make_github(user['login'], user['email'], user['avatar_url'])
+    return issue_access_token(user_id)
 
 
 @app.route('/authenticate', methods=['GET', 'POST'])
@@ -764,7 +768,7 @@ def issue_access_token(user_id):
         return response
 
 
-def make_user(name='auto'):
+def make_user(name=None):
     """Writes a new user ID and returns it
 
     Args:
@@ -782,6 +786,35 @@ def make_user(name='auto'):
     return user_id
 
 
+def make_github(login, email, avatar_url):
+    """Adds or updates a GitHub user entry.
+
+    Args:
+        login: A GitHub user name.
+        email: The user's public email from GitHub.
+        avatar_url: Their public user image location.
+
+    Returns:
+        The user_id bound to the given GitHub login.
+    """
+    user_id = None
+    with flask.g.db.cursor() as cursor:
+        query = psycopg2.sql.SQL('SELECT user_id FROM github WHERE login=%s')
+        cursor.execute(query, [login])
+        if cursor.rowcount > 0:
+            user_id = cursor.fetchone()[0]
+            query = psycopg2.sql.SQL(
+                'UPDATE github SET email=%s, avatar_url=%s WHERE user_id=%s')
+            cursor.execute(query, [email, avatar_url, user_id])
+        else:
+            user_id = make_user(login) # Commits: end of transaction.
+            query = psycopg2.sql.SQL(
+                'INSERT INTO github VALUES (%s, %s, %s, %s)')
+            cursor.execute(query, [user_id, login, email, avatar_url])
+        flask.g.db.commit()
+    return user_id
+
+
 @app.before_request
 def init_user():
     """Connects to the DB and authenticates the user."""
@@ -790,7 +823,7 @@ def init_user():
                                   password=POSTGRES_PASS,
                                   host=POSTGRES_HOST,
                                   port=int(POSTGRES_PORT))
-    if flask.request.path in ('/login', '/authenticate'):
+    if flask.request.path in ('/login', '/authenticate', '/github-callback'):
         return
     if 'ord-editor-user' in flask.request.cookies:
         # Respect legacy user ID's in cookies.
@@ -817,7 +850,24 @@ def init_user():
             user_id = make_user()
             return issue_access_token(user_id)
         user_id = cursor.fetchone()[0]
+    init_user_globals(user_id)
+
+
+def init_user_globals(user_id):
+    """Assign useful things to flask.g and ensure the user's temp directory."""
     flask.g.user_id = user_id
+    with flask.g.db.cursor() as cursor:
+        query = psycopg2.sql.SQL(
+            'SELECT login, avatar_url FROM github WHERE user_id=%s')
+        cursor.execute(query, [user_id])
+        if cursor.rowcount > 0:
+            login, avatar_url = cursor.fetchone()
+            flask.g.user_name = login
+            flask.g.user_avatar = avatar_url
+        else:
+            flask.g.user_name = user_id
+            flask.g.user_avatar = \
+                'https://avatars2.githubusercontent.com/u/60754754?s=200&v=4'
     temp = get_user_path()
     if not os.path.isdir(temp):
         os.mkdir(temp)

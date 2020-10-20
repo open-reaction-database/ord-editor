@@ -64,6 +64,13 @@ limitations under the License.
       }
       #identity {
         float: right;
+        display: flex;
+        align-items: center;
+      }
+      #identity img {
+        width: 24px;
+        margin-right: 8px;
+        border-radius: 12px;
       }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -71,7 +78,7 @@ limitations under the License.
   </head>
   <body>
 
-    <div id="identity">{{ user_id }} <a href="/logout">logout</a></div>
+    <div id="identity"><img src="{{ user_avatar }}">{{ user_name }}&nbsp;<a href="/logout">logout</a></div>
 
     <center>
       <h1><a href="/">Dataset</a>: {{ name }}.pbtxt</h1>

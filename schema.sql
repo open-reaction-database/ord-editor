@@ -47,6 +47,13 @@ CREATE TABLE datasets (
   PRIMARY KEY (user_id, dataset_name)
 );
 
+CREATE TABLE github (
+  user_id CHARACTER(32) REFERENCES users,
+  login TEXT PRIMARY KEY,
+  email TEXT,
+  avatar_url TEXT
+);
+
 -- System users:
 --   "review" owns read-only datasets imported from GitHub pull requests.
 --   "test" owns datasets imported from db/ and used only in tests.
