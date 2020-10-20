@@ -54,6 +54,9 @@ POSTGRES_HOST = os.getenv('POSTGRES_HOST', 'localhost')
 POSTGRES_PORT = os.getenv('POSTGRES_PORT', '5432')
 POSTGRES_USER = os.getenv('POSTGRES_USER', 'postgres')
 POSTGRES_PASS = os.getenv('POSTGRES_PASSWORD', '')
+# Information for GitHub OAuth authentication.
+GH_CLIENT_ID = os.getenv('GH_CLIENT_ID')
+GH_CLIENT_SECRET = os.getenv('GH_CLIENT_SECRET')
 
 # System user for immutable reactions imported from GitHub pull requests.
 REVIEWER = '8df09572f3c74dbcb6003e2eef8e48fc'
@@ -79,7 +82,8 @@ def show_datasets():
             names.append(row[0])
     return flask.render_template('datasets.html',
                                  names=sorted(names),
-                                 user_id=flask.g.user_id)
+                                 user_avatar=flask.g.user_avatar,
+                                 user_name=flask.g.user_name)
 
 
 @app.route('/dataset/<name>')
@@ -94,7 +98,8 @@ def show_dataset(name):
     return flask.render_template('dataset.html',
                                  name=name,
                                  freeze=freeze,
-                                 user_id=flask.g.user_id)
+                                 user_avatar=flask.g.user_avatar,
+                                 user_name=flask.g.user_name)
 
 
 @app.route('/dataset/<name>/download')
@@ -199,7 +204,8 @@ def show_reaction(name, index):
                                  name=name,
                                  index=index,
                                  freeze=freeze,
-                                 user_id=flask.g.user_id)
+                                 user_avatar=flask.g.user_avatar,
+                                 user_name=flask.g.user_name)
 
 
 @app.route('/reaction/download', methods=['POST'])
@@ -711,7 +717,44 @@ def exists_dataset(name):
 @app.route('/login')
 def show_login():
     """Presents a form to set a new access token from a given user ID."""
-    return flask.render_template('login.html')
+    return flask.render_template('login.html', client_id=GH_CLIENT_ID)
+
+
+@app.route('/github-callback')
+def github_callback():
+    """Grant an access token via GitHub OAuth.
+
+    This endpoint's URL must be registered and bound to a client ID and a
+    secret key at
+    https://github.com/organizations/Open-Reaction-Database/settings/applications/
+    """
+    code = flask.request.args.get('code')
+    data = {
+        'client_id': GH_CLIENT_ID,
+        'client_secret': GH_CLIENT_SECRET,
+        'code': code,
+    }
+    headers = {'Accept': 'application/json'}
+    response = requests.post('https://github.com/login/oauth/access_token',
+                             data=data,
+                             headers=headers)
+    access_token = response.json().get('access_token')
+    if access_token is None:
+        return flask.redirect('/login')
+    headers = {
+        'Accept': 'application/json',
+        'Authorization': f'token {access_token}',
+    }
+    user = requests.get('https://api.github.com/user', headers=headers).json()
+    login = user['login']
+    with flask.g.db.cursor() as cursor:
+        query = psycopg2.sql.SQL('SELECT user_id FROM users WHERE name=%s')
+        cursor.execute(query, [login])
+        if cursor.rowcount > 0:
+            user_id = cursor.fetchone()[0]
+        else:
+            user_id = make_user(login)
+    return issue_access_token(user_id)
 
 
 @app.route('/authenticate', methods=['GET', 'POST'])
@@ -740,8 +783,11 @@ def issue_access_token(user_id):
         return response
 
 
-def make_user(name='auto'):
-    """Writes a new user ID and returns it
+def make_user(name=None):
+    """Writes a new user ID and returns it.
+
+    The "name" is reserved for GitHub login values which uniquely identify
+    GitHub users.
 
     Args:
         name: Hopefully a readable label for the user, not currently used in UI.
@@ -766,7 +812,7 @@ def init_user():
                                   password=POSTGRES_PASS,
                                   host=POSTGRES_HOST,
                                   port=int(POSTGRES_PORT))
-    if flask.request.path in ('/login', '/authenticate'):
+    if flask.request.path in ('/login', '/authenticate', '/github-callback'):
         return
     if 'ord-editor-user' in flask.request.cookies:
         # Respect legacy user ID's in cookies.
@@ -786,14 +832,24 @@ def init_user():
         return issue_access_token(user_id)
     with flask.g.db.cursor() as cursor:
         query = psycopg2.sql.SQL(
-            "SELECT user_id FROM logins WHERE access_token=%s")
+            'SELECT user_id FROM logins WHERE access_token=%s')
         cursor.execute(query, [access_token])
         if cursor.rowcount == 0:
             # Automatically login as a new user.
             user_id = make_user()
             return issue_access_token(user_id)
         user_id = cursor.fetchone()[0]
+        query = psycopg2.sql.SQL('SELECT name FROM users WHERE user_id=%s')
+        cursor.execute(query, [user_id])
+        name = cursor.fetchone()[0]
     flask.g.user_id = user_id
+    if name is not None:
+        flask.g.user_name = name
+        flask.g.user_avatar = f'http://github.com/{name}.png'
+    else:
+        flask.g.user_name = user_id
+        flask.g.user_avatar = \
+            'https://avatars2.githubusercontent.com/u/60754754?s=200&v=4'
     temp = get_user_path()
     if not os.path.isdir(temp):
         os.mkdir(temp)

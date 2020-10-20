@@ -217,4 +217,11 @@ fieldset {
 #identity {
   float: right;
   width: 400px;
+  display: flex;
+  align-items: center;
+}
+#identity img {
+  width: 24px;
+  margin-right: 8px;
+  border-radius: 12px;
 }

@@ -46,7 +46,7 @@ def migrate_all():
                 'INSERT INTO users VALUES (%s, %s, %s) ON CONFLICT DO NOTHING')
             with conn.cursor() as cursor:
                 timestamp = int(time.time())
-                cursor.execute(query, [user_id, user_id, timestamp])
+                cursor.execute(query, [user_id, None, timestamp])
             for name in os.listdir(f'db/{user_id}'):
                 if not name.endswith('.pbtxt'):
                     continue
