@@ -32,7 +32,23 @@ limitations under the License.
   <body>
 
     <div id="header">
-      <div id="identity"><img src="{{ user_avatar }}">{{ user_name }}&nbsp;<a href="/logout">logout</a></div>
+      <div id="identity">
+        <div style="display: flex;"><img src="{{ user_avatar }}">{{ user_name }}</div>
+        {% if client_id %}
+        <div style="display: flex;">
+          <div style="padding: 10px; font-size: 16pt"><a href="https://docs.open-reaction-database.org/en/latest/editor.html#guest-mode" target="_blank">Guest Mode</a></div>
+          <div id="login">
+            <img src="https://github.githubassets.com/images/modules/logos_page/Octocat.png">
+            <span>Sign in with GitHub</span>
+          </div>
+        </div>
+        <script>
+          $('#login').click(() => {
+            location.href = "https://github.com/login/oauth/authorize?client_id={{ client_id }}";
+          });
+        </script>
+        {% endif %}
+      </div>
       <div style="font-weight: bold;"><a href="/dataset/{{ name }}">{{ name }}</a>: {{ index }}</div>
       <div>Reaction ID <div id="reaction_id" class="edittext longtext"></div></div>
       <div>

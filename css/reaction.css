@@ -217,11 +217,22 @@ fieldset {
 #identity {
   float: right;
   width: 400px;
-  display: flex;
   align-items: center;
 }
 #identity img {
   width: 24px;
   margin-right: 8px;
   border-radius: 12px;
+}
+#login {
+  padding: 10px;
+  border-style: solid;
+  border-color: lightgray;
+  border-radius: 30px;
+  cursor: pointer;
+  width: fit-content;
+  display: flex;
+}
+#login:hover {
+  border-color: black;
 }

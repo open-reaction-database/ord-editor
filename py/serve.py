@@ -80,10 +80,15 @@ def show_datasets():
         cursor.execute(query, [flask.g.user_id])
         for row in cursor:
             names.append(row[0])
+    if len(flask.g.user_name) == 32:
+        client_id = GH_CLIENT_ID
+    else:
+        client_id = None
     return flask.render_template('datasets.html',
                                  names=sorted(names),
                                  user_avatar=flask.g.user_avatar,
-                                 user_name=flask.g.user_name)
+                                 user_name=flask.g.user_name,
+                                 client_id=client_id)
 
 
 @app.route('/dataset/<name>')
@@ -95,11 +100,16 @@ def show_dataset(name):
         reactions.append(reaction.identifiers)
     # Datasets belonging to the "review" user are immutable.
     freeze = flask.g.user_id == REVIEWER
+    if len(flask.g.user_name) == 32:
+        client_id = GH_CLIENT_ID
+    else:
+        client_id = None
     return flask.render_template('dataset.html',
                                  name=name,
                                  freeze=freeze,
                                  user_avatar=flask.g.user_avatar,
-                                 user_name=flask.g.user_name)
+                                 user_name=flask.g.user_name,
+                                 client_id=client_id)
 
 
 @app.route('/dataset/<name>/download')
@@ -200,12 +210,17 @@ def show_reaction(name, index):
         flask.abort(404)
     # Reactions belonging to the "review" user are immutable.
     freeze = flask.g.user_id == REVIEWER
+    if len(flask.g.user_name) == 32:
+        client_id = GH_CLIENT_ID
+    else:
+        client_id = None
     return flask.render_template('reaction.html',
                                  name=name,
                                  index=index,
                                  freeze=freeze,
                                  user_avatar=flask.g.user_avatar,
-                                 user_name=flask.g.user_name)
+                                 user_name=flask.g.user_name,
+                                 client_id=client_id)
 
 
 @app.route('/reaction/download', methods=['POST'])
