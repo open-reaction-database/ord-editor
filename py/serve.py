@@ -765,10 +765,19 @@ def github_callback():
     with flask.g.db.cursor() as cursor:
         query = psycopg2.sql.SQL('SELECT user_id FROM users WHERE name=%s')
         cursor.execute(query, [login])
+        access_token = flask.request.cookies.get('Access-Token')
         if cursor.rowcount > 0:
             user_id = cursor.fetchone()[0]
+        elif access_token is None:
+            user_id = make_user()
         else:
-            user_id = make_user(login)
+            # Migrate the current user ID.
+            with flask.g.db.cursor() as cursor:
+                query = psycopg2.sql.SQL(
+                    'SELECT user_id FROM logins WHERE access_token=%s')
+                cursor.execute(query, [access_token])
+                user_id = cursor.fetchone()[0]
+            migrate_user(login, user_id)
     return issue_access_token(user_id)
 
 
@@ -798,14 +807,8 @@ def issue_access_token(user_id):
         return response
 
 
-def make_user(name=None):
+def make_user():
     """Writes a new user ID and returns it.
-
-    The "name" is reserved for GitHub login values which uniquely identify
-    GitHub users.
-
-    Args:
-        name: Hopefully a readable label for the user, not currently used in UI.
 
     Returns:
         The 32-character generated UUID of the user, currently used in the UI.
@@ -814,9 +817,22 @@ def make_user(name=None):
         query = psycopg2.sql.SQL('INSERT INTO users VALUES (%s, %s, %s)')
         user_id = uuid.uuid4().hex
         timestamp = int(time.time())
-        cursor.execute(query, [user_id, name, timestamp])
+        cursor.execute(query, [user_id, None, timestamp])
         flask.g.db.commit()
     return user_id
+
+
+def migrate_user(name, user_id):
+    """Migrates a guest user to a named GitHub account.
+
+    Args:
+        name: String GitHub username.
+        user_id: String 32-character UUID.
+    """
+    with flask.g.db.cursor() as cursor:
+        query = psycopg2.sql.SQL('UPDATE users SET name=%s WHERE user_id=%s')
+        cursor.execute(query, [name, user_id])
+        flask.g.db.commit()
 
 
 @app.before_request
