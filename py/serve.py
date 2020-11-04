@@ -784,7 +784,10 @@ def github_callback():
                     'SELECT user_id FROM logins WHERE access_token=%s')
                 cursor.execute(query, [access_token])
                 user_id = cursor.fetchone()[0]
-            migrate_user(login, user_id)
+            try:
+                migrate_user(login, user_id)
+            except ValueError as error:
+                flask.abort(flask.make_response(str(error)), 409)
     return issue_access_token(user_id)
 
 
@@ -835,8 +838,16 @@ def migrate_user(name, user_id):
     Args:
         name: String GitHub username.
         user_id: String 32-character UUID.
+
+    Raises:
+        ValueError: This user_id is already associated with a GitHub account.
     """
     with flask.g.db.cursor() as cursor:
+        query = psycopg2.sql.SQL('SELECT name from users WHERE user_id=%s')
+        cursor.execute(query, [user_id])
+        if cursor.fetchone()[0] is not None:
+            raise ValueError(
+                f'user_id {user_id} is already associated with a name')
         query = psycopg2.sql.SQL('UPDATE users SET name=%s WHERE user_id=%s')
         cursor.execute(query, [name, user_id])
         flask.g.db.commit()
