@@ -767,11 +767,18 @@ def github_callback():
         cursor.execute(query, [login])
         access_token = flask.request.cookies.get('Access-Token')
         if cursor.rowcount > 0:
+            # This GitHub username is already associated with an account.
+            # NOTE(kearnes): This will overwrite any data that the user created
+            # in their guest account before logging in. In the case where they
+            # are logging in to GitHub for the first time, the last branch will
+            # be taken instead and their guest data will be migrated.
             user_id = cursor.fetchone()[0]
         elif access_token is None:
+            # NOTE(kearnes): This branch should never be taken, since all users
+            # receive a guest ID when they first navigate to the editor page.
             user_id = make_user()
         else:
-            # Migrate the current user ID.
+            # Migrate the current user ID (from a guest account).
             with flask.g.db.cursor() as cursor:
                 query = psycopg2.sql.SQL(
                     'SELECT user_id FROM logins WHERE access_token=%s')
