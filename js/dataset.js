@@ -84,7 +84,8 @@ function commit() {
     xhr.onload = function(event) {
       clean();
       resolve('saved');
-    } xhr.send(binary);
+    };
+    xhr.send(binary);
   });
 }
 
