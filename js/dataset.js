@@ -71,7 +71,7 @@ function clean() {
 
 /**
  * Writes the current dataset to disk.
- * @return {!Promise<!string>}
+ * @return {!Promise<string>}
  */
 function commit() {
   return new Promise(resolve => {
