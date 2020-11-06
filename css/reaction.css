@@ -236,3 +236,6 @@ fieldset {
 #login:hover {
   border-color: black;
 }
+#sections td:first-child {
+  text-align: right;
+}
