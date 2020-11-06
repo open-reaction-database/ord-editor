@@ -71,16 +71,22 @@ function clean() {
 
 /**
  * Writes the current dataset to disk.
+ * @return {!Promise<string>}
  */
 function commit() {
-  const dataset = unloadDataset();
-  $('#save').text('saving');
-  const xhr = new XMLHttpRequest();
-  xhr.open(
-      'POST', '/dataset/proto/write/' + session.fileName, true /* async */);
-  const binary = dataset.serializeBinary();
-  xhr.onload = clean;
-  xhr.send(binary);
+  return new Promise(resolve => {
+    const dataset = unloadDataset();
+    $('#save').text('saving');
+    const xhr = new XMLHttpRequest();
+    xhr.open(
+        'POST', '/dataset/proto/write/' + session.fileName, true /* async */);
+    const binary = dataset.serializeBinary();
+    xhr.onload = function(event) {
+      clean();
+      resolve('saved');
+    };
+    xhr.send(binary);
+  });
 }
 
 /**
@@ -236,17 +242,23 @@ function addReactionId() {
 }
 
 /**
- * Loads the Reaction editor immediately without waiting for 'save'.
+ * Loads the Reaction editor after triggering 'save'.
  */
-function newReaction() {
+async function newReaction() {
+  if ($('#save').css('visibility') === 'visible') {
+    await commit();
+  }
   window.location.href = '/dataset/' + session.fileName + '/new/reaction';
 }
 
 /**
- * Deletes a Reaction immediately without waiting for 'save'.
+ * Deletes a Reaction after triggering 'save'.
  * @param {!Node} button The node of the 'remove' button.
  */
-function deleteReaction(button) {
+async function deleteReaction(button) {
+  if ($('#save').css('visibility') === 'visible') {
+    await commit();
+  }
   const node = $(button).closest('.reaction');
   const index = parseInt($('a', node).text());
   window.location.href =
