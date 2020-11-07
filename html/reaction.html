@@ -26,7 +26,13 @@ limitations under the License.
     <script src="/js/reaction.js"></script>
     <link rel="stylesheet" href="/css/reaction.css">
     <link rel="stylesheet" href="/css/ketcher-bootstrap.css">
-    <title>{{ name }}:{{ index }}</title>
+    <title>
+    {% if reaction_id %}
+        {{ reaction_id }}
+    {% else %}
+        {{ name }}:{{ index }}
+    {% endif %}
+    </title>
   </head>
 
   <body>
@@ -1105,11 +1111,11 @@ limitations under the License.
     </div>
 
     <script>
-        document.body.onload = function () {
+        document.body.onload = async function () {
           {% if reaction_id %}
-          ord.reaction.initFromReactionId('{{ reaction_id }}');
+          await ord.reaction.initFromReactionId('{{ reaction_id }}');
           {% else %}
-          ord.reaction.initFromDataset('{{ name }}', {{ index }});
+          await ord.reaction.initFromDataset('{{ name }}', {{ index }});
           {% endif %}
           $('.navSection').click(event => {
             const section = $(event.target).attr('data-section');

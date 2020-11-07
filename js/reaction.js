@@ -144,7 +144,6 @@ function getReactionById(reactionId) {
     xhr.responseType = 'arraybuffer';
     xhr.onload = function() {
       const bytes = new Uint8Array(xhr.response);
-      console.log(bytes);
       const reaction = proto.ord.Reaction.deserializeBinary(bytes);
       resolve(reaction);
     };
@@ -422,7 +421,7 @@ function downloadReaction() {
  * @param {string} fileName The name of the dataset to fetch.
  * @return {!Promise<!Uint8Array>}
  */
-async function getDataset(fileName) {
+function getDataset(fileName) {
   return new Promise(resolve => {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', '/dataset/proto/read/' + fileName);
