@@ -144,6 +144,7 @@ function getReactionById(reactionId) {
     xhr.responseType = 'arraybuffer';
     xhr.onload = function() {
       const bytes = new Uint8Array(xhr.response);
+      console.log(bytes);
       const reaction = proto.ord.Reaction.deserializeBinary(bytes);
       resolve(reaction);
     };

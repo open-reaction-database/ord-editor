@@ -1105,11 +1105,11 @@ limitations under the License.
     </div>
 
     <script>
-        document.body.onload = async function () {
+        document.body.onload = function () {
           {% if reaction_id %}
-          await ord.reaction.initFromReactionId('{{ reaction_id }}');
+          ord.reaction.initFromReactionId('{{ reaction_id }}');
           {% else %}
-          await ord.reaction.initFromDataset('{{ name }}', {{ index }});
+          ord.reaction.initFromDataset('{{ name }}', {{ index }});
           {% endif %}
           $('.navSection').click(event => {
             const section = $(event.target).attr('data-section');
