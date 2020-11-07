@@ -17,7 +17,8 @@
 goog.module('ord.reaction');
 goog.module.declareLegacyNamespace();
 exports = {
-  init,
+  initFromDataset,
+  initFromReactionId,
   commit,
   downloadReaction,
   validateReaction,
@@ -54,6 +55,7 @@ goog.require('ord.provenance');
 goog.require('ord.setups');
 goog.require('ord.workups');
 goog.require('proto.ord.Dataset');
+goog.require('proto.ord.Reaction');
 
 // Remember the dataset and reaction we are editing.
 const session = {
@@ -71,12 +73,9 @@ const INTEGER_PATTERN = /^-?\d+$/;
 
 /**
  * Initializes the form.
- * @param {string} fileName Path to the current Dataset proto.
- * @param {number} index The index of this Reaction in the current Dataset.
+ * @param {!proto.ord.Reaction} reaction Reaction proto to load.
  */
-async function init(fileName, index) {
-  session.fileName = fileName;
-  session.index = index;
+function init(reaction) {
   // Initialize all the template popup menus.
   $('.selector').each((index, node) => initSelector($(node)));
   $('.optional_bool').each((index, node) => initOptionalBool($(node)));
@@ -97,16 +96,59 @@ async function init(fileName, index) {
   listen('body');
   // Load Ketcher content into an element with attribute role="application".
   document.getElementById('ketcher-iframe').contentWindow.ketcher.initKetcher();
-  // Fetch the Dataset containing the Reaction proto.
-  session.dataset = await getDataset(fileName);
   // Initialize the UI with the Reaction.
-  const reaction = session.dataset.getReactionsList()[index];
   loadReaction(reaction);
   clean();
   // Trigger reaction-level validation.
   validateReaction();
   // Signal to tests that the DOM is initialized.
   ready();
+}
+
+/**
+ * Initializes the form from a Dataset name and Reaction index.
+ * @param {string} fileName Path to a Dataset proto.
+ * @param {number} index The index of this Reaction in the Dataset.
+ */
+async function initFromDataset(fileName, index) {
+  session.fileName = fileName;
+  session.index = index;
+  // Fetch the Dataset containing the Reaction proto.
+  session.dataset = await getDataset(fileName);
+  const reaction = session.dataset.getReactionsList()[index];
+  init(reaction);
+}
+
+/**
+ * Initializes the form from a Reaction ID.
+ * @param {string} reactionId
+ */
+async function initFromReactionId(reactionId) {
+  const reaction = await getReactionById(reactionId);
+  // NOTE(kearnes): Without this next line, `reaction` will be
+  // partial/incomplete, and I have no idea why.
+  console.log(reaction.toObject());
+  init(reaction);
+  $('#dataset_context').hide();
+}
+
+/**
+ * Fetches a reaction as a serialized Reaction proto.
+ * @param {string} reactionId The ID of the Reaction to fetch.
+ * @return {!Promise<!Uint8Array>}
+ */
+function getReactionById(reactionId) {
+  return new Promise(resolve => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', '/reaction/id/' + reactionId + '/proto');
+    xhr.responseType = 'arraybuffer';
+    xhr.onload = function() {
+      const bytes = new Uint8Array(xhr.response);
+      const reaction = proto.ord.Reaction.deserializeBinary(bytes);
+      resolve(reaction);
+    };
+    xhr.send();
+  });
 }
 
 /**
@@ -958,6 +1000,8 @@ function stringToEnum(name, protoEnum) {
  * Switches the UI into a read-only mode. This is irreversible.
  */
 function freeze() {
+  $('#header_buttons').hide();
+  $('#identity').hide();
   $('select').attr('disabled', 'true');
   $('input:radio').prop('disabled', 'true');
   $('.validate').hide();
@@ -965,7 +1009,6 @@ function freeze() {
   $('.remove').hide();
   $('.text_upload').hide();
   $('#provenance_created button').hide();
-  $('#save').hide();
   $('.edittext').each((i, x) => {
     const node = $(x);
     node.attr('contenteditable', 'false');

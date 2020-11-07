@@ -34,6 +34,7 @@ from ord_schema import templating
 from ord_schema import message_helpers
 from ord_schema import resolvers
 from ord_schema import validations
+from ord_schema.interface import ord_client
 from ord_schema.proto import dataset_pb2
 from ord_schema.proto import reaction_pb2
 from ord_schema.visualization import generate_text
@@ -221,6 +222,27 @@ def show_reaction(name, index):
                                  user_avatar=flask.g.user_avatar,
                                  user_name=flask.g.user_name,
                                  client_id=client_id)
+
+
+@app.route('/reaction/id/<reaction_id>')
+def show_reaction_id(reaction_id):
+    """Displays the given reaction."""
+    return flask.render_template('reaction.html',
+                                 reaction_id=reaction_id,
+                                 freeze=True)
+
+
+@app.route('/reaction/id/<reaction_id>/proto')
+def fetch_reaction_id(reaction_id):
+    """Returns a serialized Reaction with the given ID."""
+    client = ord_client.OrdClient()
+    try:
+        reaction = client.fetch_reaction(reaction_id)
+        response = flask.make_response(reaction.SerializeToString())
+        response.headers.set('Content-Type', 'application/protobuf')
+        return response
+    except AssertionError as error:
+        flask.abort(flask.make_response(str(error), 404))
 
 
 @app.route('/reaction/download', methods=['POST'])
@@ -505,12 +527,14 @@ def ketcher(file):
     return flask.send_file(get_file(path), attachment_filename=file)
 
 
+@app.route('/reaction/id/deps.js')
+@app.route('/reaction/id/<value>/deps.js')
 @app.route('/dataset/deps.js')
-@app.route('/dataset/<file_name>/deps.js')
-@app.route('/dataset/<file_name>/reaction/deps.js')
-def deps(file_name=None):
+@app.route('/dataset/<value>/deps.js')
+@app.route('/dataset/<value>/reaction/deps.js')
+def deps(value=None):
     """Returns empty for deps table requests since this app doesn't use them."""
-    del file_name  # Unused.
+    del value  # Unused.
     return ''
 
 
@@ -861,7 +885,11 @@ def init_user():
                                   password=POSTGRES_PASS,
                                   host=POSTGRES_HOST,
                                   port=int(POSTGRES_PORT))
-    if flask.request.path in ('/login', '/authenticate', '/github-callback'):
+    if (flask.request.path in ('/login', '/authenticate', '/github-callback',
+                               '/render/reaction', '/render/compound') or
+            flask.request.path.startswith(
+                ('/reaction/id/', '/css/', '/js/', '/ketcher/',
+                 '/dataset/proto/validate/'))):
         return
     if 'ord-editor-user' in flask.request.cookies:
         # Respect legacy user ID's in cookies.

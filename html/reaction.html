@@ -49,9 +49,9 @@ limitations under the License.
         </script>
         {% endif %}
       </div>
-      <div style="font-weight: bold;"><a href="/dataset/{{ name }}">{{ name }}</a>: {{ index }}</div>
+      <div id="dataset_context" style="font-weight: bold;"><a href="/dataset/{{ name }}">{{ name }}</a>: {{ index }}</div>
       <div>Reaction ID <div id="reaction_id" class="edittext longtext"></div></div>
-      <div>
+      <div id="header_buttons">
         <div id="download" onclick="ord.reaction.commit(); ord.reaction.downloadReaction();">download</div>
         <div class="add" onclick="location.href='/dataset/{{ name }}/clone/{{ index }}';">+ clone</div>
         <div id="delete" class="remove" style="float: none;" onclick="location.href='/dataset/{{ name }}/delete/reaction/{{ index }}';">delete</div>
@@ -1106,13 +1106,16 @@ limitations under the License.
 
     <script>
         document.body.onload = async function () {
-          await ord.reaction.init('{{ name }}', {{ index }});
+          {% if reaction_id %}
+          await ord.reaction.initFromReactionId('{{ reaction_id }}');
+          {% else %}
+          await ord.reaction.initFromDataset('{{ name }}', {{ index }});
+          {% endif %}
           $('.navSection').click(event => {
             const section = $(event.target).attr('data-section');
             $('#section_' + section)[0].scrollIntoView({behavior: 'smooth'});
           });
           ord.reaction.setupObserver();
-          const urlParams = new URLSearchParams(window.location.search);
           {% if freeze %}
             ord.reaction.freeze();
           {% endif %}
