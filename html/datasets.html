@@ -18,6 +18,7 @@ limitations under the License.
   <style>
     body {
       padding: 48px;
+      padding-top: 16px;
       font-family: Roboto;
     }
     .dataset {
@@ -124,8 +125,9 @@ limitations under the License.
       </script>
       {% endif %}
     </div>
-    <div style="text-align: center;">
-      <h1>Available datasets</h1>
+    <div style="width: 50%; margin: auto; text-align: center;">
+        <img src="https://raw.githubusercontent.com/Open-Reaction-Database/ord-schema/main/logos/logo.svg" height="50px">
+        <h1 style="margin-block-start: 0;">Interactive Editor</h1>
     </div>
     <div id="tabs">
         <ul>
@@ -135,6 +137,8 @@ limitations under the License.
             <li><a href="#tabs-4">Enumerate</a></li>
         </ul>
         <div id="tabs-1">
+            <b><u>Available Datasets</u></b>
+            <br><br>
             {% for name in names %}
             <div class="dataset">
                 <a href="/dataset/{{ name }}">{{ name }}</a>
@@ -154,6 +158,10 @@ limitations under the License.
             <input type="submit" id="upload_submit" value="Upload">
         </div>
         <div id="tabs-4">
+            You can use a Reaction template to enumerate a Dataset based on a spreadsheet
+            of values. For more information, see the
+            <a href="https://docs.open-reaction-database.org/">documentation</a>.
+            <br><br>
             <label for="template">Template filename:</label>
             <input type="file" id="template" accept=".pbtxt">
             <br><br>
@@ -161,7 +169,24 @@ limitations under the License.
             <input type="file" id="spreadsheet" accept=".csv,.xls,.xlsx">
             <br><br>
             <input type="submit" id="enumerate_submit" value="Enumerate">
+            <br><br>
+            <b>NOTE:</b> Large dataset enumerations (thousands of reactions) may result in a
+            browser timeout. If this happens, please send an email to <a href="mailto:help@open-reaction-database.org">help@open-reaction-database.org</a>
+            and attach your template and spreadsheet files. Alternatively, you may use the
+            <a href="https://github.com/Open-Reaction-Database/ord-schema/blob/main/ord_schema/scripts/enumerate_dataset.py">programmatic interface</a>
+            to enumerate the dataset locally.
         </div>
+    </div>
+    <div id="help">
+        <h2>Getting started</h2>
+        <p>Check out the <a href="https://www.youtube.com/playlist?list=PLyoEVAlMb276aRRa4xLNRAzbMPRlNb7VI">tutorial videos</a>:</p>
+        <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/videoseries?list=PLyoEVAlMb276aRRa4xLNRAzbMPRlNb7VI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <h2>Questions?</h2>
+        <p>
+            Please send questions, comments, or issues to
+            <a href="mailto:help@open-reaction-database.org">help@open-reaction-database.org</a>
+            or create a new issue on the <a href="https://github.com/Open-Reaction-Database/ord-editor/issues">ord-editor GitHub repository</a>.
+        </p>
     </div>
     
     <script>
@@ -228,7 +253,7 @@ limitations under the License.
         });
       });
     </script>
-  <footer>
+  <footer style="background: white">
       <p>&copy; Copyright 2020 Open Reaction Database Project Authors</p>
   </footer>
   </body>
