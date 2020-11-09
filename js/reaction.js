@@ -389,6 +389,10 @@ function validateReaction() {
  * Writes the current reaction to disk.
  */
 function commit() {
+  if (!session.dataset) {
+    // Do nothing when there is no Dataset; e.g. when viewing reactions by ID.
+    return;
+  }
   const reaction = unloadReaction();
   const reactions = session.dataset.getReactionsList();
   reactions[session.index] = reaction;
@@ -1000,7 +1004,10 @@ function stringToEnum(name, protoEnum) {
  * Switches the UI into a read-only mode. This is irreversible.
  */
 function freeze() {
-  $('#header_buttons').hide();
+  // Hide the header buttons...
+  $('#header_buttons').children().hide();
+  // ...except for "download".
+  $('#download').show();
   $('#identity').hide();
   $('select').attr('disabled', 'true');
   $('input:radio').prop('disabled', 'true');
