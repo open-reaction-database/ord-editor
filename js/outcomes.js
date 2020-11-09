@@ -279,7 +279,8 @@ function unloadProcessedData(node, processedDataMap) {
 function unloadRawData(node, rawDataMap) {
   const name = $('.outcome_raw_data_name', node).text();
   const rawData = ord.data.unloadData(node);
-  if (!ord.reaction.isEmptyMessage(name) || !ord.reaction.isEmptyMessage(raw)) {
+  if (!ord.reaction.isEmptyMessage(name) ||
+      !ord.reaction.isEmptyMessage(rawData)) {
     rawDataMap.set(name, rawData);
   }
 }

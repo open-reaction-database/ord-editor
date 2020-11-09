@@ -78,9 +78,6 @@ body {
 .remove, #delete {
   background-color: pink;
 }
-.remove {
-  float: right;
-}
 .validate, .validate_status-message {
   display: inline-block;
 }
