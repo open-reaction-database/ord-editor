@@ -87,10 +87,10 @@ limitations under the License.
         <div id="reaction_render" style="margin-top: 20px; margin-bottom: 20px; display: inline-block"></div>
       </div>
 
-      <fieldset id="section_identifiers" class="section">
+      <fieldset id="section_identifiers" class="section s2">
         <legend>
           <span class="collapse"></span>
-          Identifiers
+          <span class="h2">Identifiers</span>
           <span data-toggle="tooltip" data-placement="right" title="Reaction identifiers define descriptions of the overall reaction.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
           </span>
@@ -108,10 +108,10 @@ limitations under the License.
         <div onclick="ord.identifiers.add();" class="add">+ add identifier</div>
       </fieldset>
 
-      <fieldset id="section_inputs" class="section">
+      <fieldset id="section_inputs" class="section s2">
         <legend>
           <span class="collapse"></span>
-          Inputs
+          <span class="h2">Inputs</span>
           <span data-toggle="tooltip" data-placement="right" title="Reaction inputs include every chemical added to the reaction vessel.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
           </span>
@@ -119,15 +119,17 @@ limitations under the License.
           <div id="inputs">
 
             <div id="input_template" class="section input" style="display: none;">
-              <fieldset>
+              <fieldset class="s3">
                 <legend>
                   <span class="collapse"></span>
-                  Input
-                  <span class="input_name_label">name: </span><div class="input_name edittext"></div>
+                  <span class="h3">Input</span>
                   <span class="validate" onclick="ord.inputs.validateInput($(this).closest('.input'))"></span>
                </legend>
                 
                 <div onclick="ord.inputs.remove(this);" class="remove">remove</div>
+                <div>
+                  <span class="input_name_label">name </span><span class="input_name edittext"></span>
+                </div>
                 <div>
                   <div class="components"></div>
                   <div onclick="ord.compounds.add($(this).closest('.input'));" class="add">+ add component</div>
@@ -136,10 +138,10 @@ limitations under the License.
                   <div class="crudes"></div>
                   <div onclick="ord.crudes.add($(this).closest('.input'));" class="add">+ add crude component</div>
                 </div>
-                <fieldset>
+                <fieldset class="s4">
                   <legend>
                     <span class="collapse"></span>
-                    Addition information
+                    <span class="h4">Addition information</span>
                   </legend>
                   <table>
                     <tr><td>addition order
@@ -171,10 +173,10 @@ limitations under the License.
                     +/- <div class="input_addition_temperature_precision edittext shorttext floattext"></div></td></tr>
                   </table>
                 </fieldset>
-                <fieldset>
+                <fieldset class="s4">
                   <legend>
                     <span class="collapse starts_collapsed"></span>
-                    Flow rate
+                    <span class="h4">Flow rate</span>
                     <span data-toggle="tooltip" data-placement="right" title="Infusion rate when running reactions in continuous flow.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
                     </span>
@@ -189,10 +191,10 @@ limitations under the License.
             </div>
 
             <div id="component_template" class="component" style="display: none;">
-              <fieldset>
+              <fieldset class="s4">
                 <legend>
                   <span class="collapse"></span>
-                  Component
+                  <span class="h4">Component</span>
                   <span class="validate" onclick="ord.compounds.validateCompound($(this).closest('.component'))"></span>
                 </legend>
                 <div onclick="ord.reaction.removeSlowly(this, '.component');" class="remove">remove</div>
@@ -200,10 +202,10 @@ limitations under the License.
                   <tr><td>reaction role</td><td><div class="component_reaction_role selector" data-proto="Compound_ReactionRole_ReactionRoleType"></div></td></tr>
                   <tr class="limiting_reactant"><td>limiting reactant?</td><td><div class="component_limiting optional_bool"></div></td></tr>
                 </table>
-                <fieldset>
+                <fieldset class="s5">
                   <legend>
                     <span class="collapse"></span>
-                    Identifiers
+                    <span class="h5">Identifiers</span>
                     <span data-toggle="tooltip" data-placement="right" title="Compound identifiers should be structural (e.g., SMILES) whenever possible.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
                     </span>
@@ -217,10 +219,10 @@ limitations under the License.
                   <!-- End shortcuts -->
                   <div onclick="ord.compounds.addIdentifier($(this).closest('.component'));" class="add">+ add identifier</div>
                 </fieldset>
-                <fieldset class="amount">
+                <fieldset class="amount s5">
                   <legend>
                     <span class="collapse"></span>
-                    Amount
+                    <span class="h5">Amount</span>
                   </legend>
                   <input type="radio" class="component_amount_mass" value="mass" checked> mass
                   <input type="radio" class="component_amount_moles" value="moles"> moles
@@ -233,18 +235,18 @@ limitations under the License.
                   <div class="component_amount_units_volume selector" data-proto="Volume_VolumeUnit" style="display: none;"></div>
 
                 </fieldset>
-                <fieldset class="preparations_fieldset">
+                <fieldset class="preparations_fieldset s5">
                   <legend>
                     <span class="collapse"></span>
-                    Preparations
+                    <span class="h5">Preparations</span>
                   </legend>
                   <div class="preparations"></div>
                   <div onclick="ord.compounds.addPreparation($(this).closest('.component'));" class="add">+ add preparation</div>
                 </fieldset>
-                <fieldset class="vendor">
+                <fieldset class="vendor s5">
                   <legend>
                     <span class="collapse starts_collapsed"></span>
-                    Vendor
+                    <span class="h5">Vendor</span>
                   </legend>
                   <div>
                     source <div class="component_vendor_source edittext"></div>
@@ -252,10 +254,10 @@ limitations under the License.
                     lot number <div class="component_vendor_lot edittext"></div>
                   </div>
                 </fieldset>
-                <fieldset>
+                <fieldset class="s5">
                   <legend>
                     <span class="collapse"></span>
-                    Features
+                    <span class="h5">Features</span>
                     <span data-toggle="tooltip" data-placement="right" title="Additional chemical features (e.g., calculated descriptors) that are important to associate with this compound.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
                     </span>
@@ -290,10 +292,10 @@ limitations under the License.
             </div>
 
             <div id="crude_template" class="crude" style="display: none;">
-              <fieldset>
+              <fieldset class="s4">
                 <legend>
                   <span class="collapse"></span>
-                  Crude Component
+                  <span class="h4">Crude Component</span>
                   <span data-toggle="tooltip" data-placement="right" title="Crude components use non-isolated material from another reaction as input. The reaction ID must correspond to another reaction in this same dataset.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
                     </span>
@@ -303,10 +305,10 @@ limitations under the License.
                   <tr><td>includes workup?</td><td><div class="crude_includes_workup optional_bool"></div></td></tr>
                   <tr><td>has derived amount?</td><td><div class="crude_has_derived optional_bool"></div></td></tr>
                 </table>
-                <fieldset class="amount">
+                <fieldset class="amount s5">
                   <legend>
                     <span class="collapse"></span>
-                    Amount
+                    <span class="h5">Amount</span>
                   </legend>
                   <div>
                     <input type="radio" class="crude_amount_mass" value="mass" checked> mass
@@ -327,11 +329,11 @@ limitations under the License.
           <div onclick="ord.inputs.addInputByString('#inputs');" class="add"><span class="fa fa-search" aria-hidden="true"></span> resolve text</div>
       </fieldset>
 
-      <fieldset id="section_setup" class="section">
+      <fieldset id="section_setup" class="section s2">
 
         <legend>
           <span class="collapse"></span>
-          Setup
+          <span class="h2">Setup</span>
           <span class="validate" onclick="ord.setups.validateSetup($(this).closest('#section_setup'))"></span>
         </legend>
         <table>
@@ -347,10 +349,10 @@ limitations under the License.
           <tr><td>environment</td><td><div id="setup_environment_type" class="selector" data-proto="ReactionSetup_ReactionEnvironment_ReactionEnvironmentType"></div>
                                                     details <div id="setup_environment_details" class="edittext"></div></td></tr>
         </table>
-        <fieldset>
+        <fieldset class="s3">
           <legend>
             <span class="collapse"></span>
-            Vessel Preparation
+            <span class="h3">Vessel Preparation</span>
           </legend>
           <div id="setup_vessel_preparations">
             <div id="setup_vessel_preparation_template" class="setup_vessel_preparation" style="display: none;">
@@ -361,10 +363,10 @@ limitations under the License.
           </div>
           <div onclick="ord.setups.addVesselPreparation();" class="add">+ add preparation</div>
         </fieldset>
-        <fieldset>
+        <fieldset class="s3">
           <legend>
             <span class="collapse"></span>
-            Vessel Attachments
+            <span class="h3">Vessel Attachments</span>
           </legend>
           <div id="setup_vessel_attachments">
             <div id="setup_vessel_attachment_template" class="setup_vessel_attachment" style="display: none;">
@@ -377,10 +379,10 @@ limitations under the License.
         </fieldset>
         <div id="setup_codes">
           <div id="setup_code_template" class="setup_code" style="display: none;">
-            <fieldset>
+            <fieldset class="s3">
               <legend>
                 <span class="collapse"></span>
-                Automation code
+                <span class="h3">Automation code</span>
                 <span data-toggle="tooltip" data-placement="right" title="Details of the exact automation procedure required to perform the reaction.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
                 </span>
@@ -395,16 +397,16 @@ limitations under the License.
         <div onclick="ord.codes.addCode();" class="add">+ add automation code</div>
       </fieldset>
 
-      <fieldset id="section_conditions" class="section">
+      <fieldset id="section_conditions" class="section s2">
         <legend>
           <span class="collapse"></span>
-          Conditions
+          <span class="h2">Conditions</span>
           <span class="validate" onclick="ord.conditions.validateConditions($('#section_conditions'))"></span>
         </legend>
-        <fieldset id="section_conditions_temperature">
+        <fieldset id="section_conditions_temperature s3">
           <legend>
             <span class="collapse"></span>
-            Temperature
+            <span class="h3">Temperature</span>
             <span class="validate" onclick="ord.temperature.validateTemperature($(this).closest('#section_conditions_temperature'))"></span>
           </legend>
           <table>
@@ -416,10 +418,10 @@ limitations under the License.
           </table>
           <div id="temperature_measurements">
             <div id="temperature_measurement_template" class="temperature_measurement" style="display: none;">
-              <fieldset>
+              <fieldset class="s4">
                 <legend>
                   <span class="collapse"></span>
-                  Measurement
+                  <span class="h4">Measurement</span>
                 </legend>
                 <div onclick="ord.reaction.removeSlowly(this, '.temperature_measurement');" class="remove">remove</div>
                 <table>
@@ -437,10 +439,10 @@ limitations under the License.
           </div>
           <div onclick="ord.temperature.addMeasurement();" class="add">+ add measurement</div>
         </fieldset>
-        <fieldset id="section_conditions_pressure">
+        <fieldset id="section_conditions_pressure" class="s3">
           <legend>
             <span class="collapse"></span>
-            Pressure
+            <span class="h3">Pressure</span>
             <span class="validate" onclick="ord.pressure.validatePressure($(this).closest('#section_conditions_pressure'))"></span>
           </legend>
             <table>
@@ -454,10 +456,10 @@ limitations under the License.
             </table>
           <div id="pressure_measurements">
             <div id="pressure_measurement_template" class="pressure_measurement" style="display: none;">
-              <fieldset>
+              <fieldset class="s4">
                 <legend>
                   <span class="collapse"></span>
-                  Measurement
+                  <span class="h4">Measurement</span>
                 </legend>
                 <div onclick="ord.reaction.removeSlowly(this, '.pressure_measurement');" class="remove">remove</div>
                 <table>
@@ -475,10 +477,10 @@ limitations under the License.
           </div>
           <div onclick="ord.pressure.addMeasurement();" class="add">+ add measurement</div>
         </fieldset>
-        <fieldset id="section_conditions_stirring">
+        <fieldset id="section_conditions_stirring" class="s3">
           <legend>
             <span class="collapse"></span>
-            Stirring
+            <span class="h3">Stirring</span>
             <span class="validate" onclick="ord.stirring.validateStirring($(this).closest('#section_conditions_stirring'))"></span>
           </legend>
           <table>
@@ -489,10 +491,10 @@ limitations under the License.
             <tr><td>rpm</td><td><div id="stirring_rpm" class="edittext shorttext integertext"></div></td></tr>
           </table>
         </fieldset>
-        <fieldset id="section_conditions_illumination">
+        <fieldset id="section_conditions_illumination" class="s3">
           <legend>
             <span class="collapse starts_collapsed"></span>
-            Illumination
+            <span class="h3">Illumination</span>
             <span class="validate" onclick="ord.illumination.validateIllumination($(this).closest('#section_conditions_illumination'))"></span>
           </legend>
           <table>
@@ -507,10 +509,10 @@ limitations under the License.
             <tr><td>color</td><td><div id="illumination_color" class="edittext"></div></td></tr>
           </table>
         </fieldset>
-        <fieldset id="section_conditions_electro">
+        <fieldset id="section_conditions_electro" class="s3">
           <legend>
             <span class="collapse starts_collapsed"></span>
-            Electrochemistry
+            <span class="h3">Electrochemistry</span>
             <span class="validate" onclick="ord.electro.validateElectro($(this).closest('#section_conditions_electro'))"></span>
           </legend>
           <table>
@@ -532,10 +534,10 @@ limitations under the License.
           </table>
           <div id="electro_measurements">
             <div id="electro_measurement_template" class="electro_measurement" style="display: none;">
-              <fieldset>
+              <fieldset class="s4">
                 <legend>
                   <span class="collapse"></span>
-                  Measurement
+                  <span class="h4">Measurement</span>
                 </legend>
                 <div onclick="ord.reaction.removeSlowly(this, '.electro_measurement');" class="remove">remove</div>
                 <input type="radio" class="electro_measurement_current" value="current" checked> current
@@ -558,10 +560,10 @@ limitations under the License.
           </div>
           <div onclick="ord.electro.addMeasurement();" class="add">+ add measurement</div>
         </fieldset>
-        <fieldset id="section_conditions_flow">
+        <fieldset id="section_conditions_flow" class="s3">
           <legend>
             <span class="collapse starts_collapsed"></span>
-            Flow
+            <span class="h3">Flow</span>
             <span class="validate" onclick="ord.flows.validateFlow($(this).closest('#section_conditions_flow'))"></span>
           </legend>
           <table>
@@ -591,10 +593,10 @@ limitations under the License.
         </table>
       </fieldset>
 
-      <fieldset id="section_notes" class="section">
+      <fieldset id="section_notes" class="section s2">
         <legend>
           <span class="collapse"></span>
-          Notes
+          <span class="h2">Notes</span>
           <span class="validate" onclick="ord.notes.validateNotes($('#section_notes'))"></span>
         </legend>
         <table>
@@ -610,20 +612,20 @@ limitations under the License.
         </table>
       </fieldset>
 
-      <fieldset id="section_observations" class="section">
+      <fieldset id="section_observations" class="section s2">
         <legend>
           <span class="collapse"></span>
-          Observations
+          <span class="h2">Observations</span>
           <span data-toggle="tooltip" data-placement="right" title="Observations are time-stamped comments, images, etc. that are recorded during the reaction.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
           </span>
         </legend>
         <div id="observations">
           <div id="observation_template" class="observation" style="display: none;">
-            <fieldset>
+            <fieldset class="s3">
               <legend>
                 <span class="collapse"></span>
-                Observation
+                <span class="h3">Observation</span>
                 <span class="validate" onclick="ord.observations.validateObservation($(this).closest('.observation'))"></span>
               </legend>
               <div onclick="ord.reaction.removeSlowly(this, '.observation');" class="remove">remove</div>
@@ -639,20 +641,20 @@ limitations under the License.
         <div onclick="ord.observations.add();" class="add">+ add observation</div>
       </fieldset>
 
-      <fieldset id="section_workups" class="section">
+      <fieldset id="section_workups" class="section s2">
         <legend>
           <span class="collapse"></span>
-          Workups
+          <span class="h2">Workups</span>
           <span data-toggle="tooltip" data-placement="right" title="Workup steps refer to any additions, purifications, or other operations after the 'reaction' stage prior to analysis.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
           </span>
         </legend>
         <div id="workups">
           <div id="workup_template" class="workup" style="display: none;">
-          <fieldset>
+          <fieldset class="s3">
             <legend>
               <span class="collapse"></span>
-              Workup
+              <span class="h3">Workup</span>
               <span class="validate" onclick="ord.workups.validateWorkup($(this).closest('.workup'))"></span>
             </legend>
             <div onclick="ord.reaction.removeSlowly(this, '.workup');" class="remove">remove</div>
@@ -669,10 +671,10 @@ limitations under the License.
             <div class="workup_input">
               <!-- Shares ".input_template" with "#inputs" above. -->
             </div>
-            <fieldset class="amount">
+            <fieldset class="amount s4">
               <legend>
                 <span class="workup_amount collapse"></span>
-                Aliquot amount
+                <span class="h4">Aliquot amount</span>
               </legend>
               <div>
                 <input type="radio" class="workup_amount_mass" value="mass"> mass
@@ -683,10 +685,10 @@ limitations under the License.
                 <div class="workup_amount_units_volume selector" data-proto="Volume_VolumeUnit"></div>
               </div>
             </fieldset>
-            <fieldset>
+            <fieldset class="s4">
               <legend>
                 <span class="workup_temperature collapse"></span>
-                Temperature conditions
+                <span class="h4">Temperature conditions</span>
               </legend>
               <table>
                 <tr><td>control</td><td><div class="workup_temperature_control_type selector" data-proto="TemperatureConditions_TemperatureControl_TemperatureControlType"></div></td></tr>
@@ -696,19 +698,19 @@ limitations under the License.
                 <tr><td>details</td><td><div class="workup_temperature_details edittext"></div></td></tr>
               </table>
             </fieldset>
-            <fieldset>
+            <fieldset class="s4">
               <legend>
                 <span class="workup_temperature_measurements_wrap collapse"></span>
-                Temperature measurements
+                <span class="h4">Temperature measurements</span>
               </legend>
               <div class="workup_temperature_measurements">
               </div>
               <div onclick="ord.workups.addMeasurement($(this).closest('.workup'));" class="add">+ add measurement</div>
             </fieldset>
-            <fieldset>
+            <fieldset class="s4">
               <legend>
                 <span class="workup_stirring collapse"></span>
-                Stirring
+                <span class="h4">Stirring</span>
               </legend>
               <table>
                 <tr><td>method</td><td><div class="workup_stirring_method_type selector" data-proto="StirringConditions_StirringMethod_StirringMethodType"></div>
@@ -722,10 +724,10 @@ limitations under the License.
           </div>
 
           <div id="workup_temperature_measurement_template" class="workup_temperature_measurement" style="display: none;">
-            <fieldset>
+            <fieldset class="s5">
               <legend>
                 <span class="collapse"></span>
-                Temperature measurement
+                <span class="h5">Temperature measurement</span>
               </legend>
               <div onclick="ord.reaction.removeSlowly(this, '.workup_temperature_measurement');" class="remove">remove</div>
               <table>
@@ -745,10 +747,10 @@ limitations under the License.
         <div onclick="ord.workups.add();" class="add">+ add workup</div>
       </fieldset>
 
-      <fieldset id="section_outcomes" class="section">
+      <fieldset id="section_outcomes" class="section s2">
         <legend>
           <span class="collapse"></span>
-          Outcomes
+          <span class="h2">Outcomes</span>
           <span data-toggle="tooltip" data-placement="right" title="Outcomes record time-stamped analyses and, optionally, product characterization.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
           </span>
@@ -757,10 +759,10 @@ limitations under the License.
         <div id="outcomes">
 
           <div id="outcome_template" class="outcome" style="display: none;">
-            <fieldset>
+            <fieldset class="s3">
             <legend>
               <span class="collapse"></span>
-              Outcome
+              <span class="h3">Outcome</span>
               <span class="validate" onclick="ord.outcomes.validateOutcome($(this).closest('.outcome'))"></span>
             </legend>
             <div onclick="ord.reaction.removeSlowly(this, '.outcome');" class="remove">remove</div>
@@ -791,10 +793,10 @@ limitations under the License.
           </div>
 
           <div id="outcome_product_template" class="outcome_product" style="display: none;">
-            <fieldset>
+            <fieldset class="s4">
               <legend>
                 <span class="collapse"></span>
-                Product
+                <span class="h4">Product</span>
                 <span class="validate" onclick="ord.products.validateProduct($(this).closest('.outcome_product'))"></span>
               </legend>
             <div onclick="ord.reaction.removeSlowly(this, '.outcome_product');" class="remove">remove</div>
@@ -814,10 +816,10 @@ limitations under the License.
                                                         +/- <div class="outcome_product_selectivity_precision edittext shorttext floattext"></div>
                                                         details</td><td><div class="outcome_product_selectivity_details edittext"></div></td></tr>
             </table>
-            <fieldset>
+            <fieldset class="s5">
               <legend>
                 <span class="collapse"></span>
-                Isolated product characteristics
+                <span class="h5">Isolated product characteristics</span>
               </legend>
               <div class="outcome_product_isolated_characteristics">
                 <table>
@@ -828,10 +830,10 @@ limitations under the License.
               </div>
             </fieldset>
 
-            <fieldset>
+            <fieldset class="s5">
               <legend>
                 <span class="collapse"></span>
-                Identity analyses
+                <span class="h5">Identity analyses</span>
                 <span data-toggle="tooltip" data-placement="right" title="Which analyses were used to confirm this product's identity.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
                 </span>
@@ -841,10 +843,10 @@ limitations under the License.
               <div onclick="ord.products.addIdentity($(this).closest('.outcome_product'));" class="add">+ add identity analysis</div>
             </fieldset>
 
-            <fieldset>
+            <fieldset class="s5">
               <legend>
                 <span class="collapse"></span>
-                Yield analyses
+                <span class="h5">Yield analyses</span>
                 <span data-toggle="tooltip" data-placement="right" title="Which analyses were used to quantify this product's yield.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
                 </span>
@@ -854,10 +856,10 @@ limitations under the License.
               <div onclick="ord.products.addYield($(this).closest('.outcome_product'));" class="add">+ add yield analysis</div>
             </fieldset>
 
-            <fieldset>
+            <fieldset class="s5">
               <legend>
                 <span class="collapse"></span>
-                Purity analyses
+                <span class="h5">Purity analyses</span>
                 <span data-toggle="tooltip" data-placement="right" title="Which analyses were used to quantify this product's purity.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
                 </span>
@@ -867,10 +869,10 @@ limitations under the License.
               <div onclick="ord.products.addPurity($(this).closest('.outcome_product'));" class="add">+ add purity analysis</div>
             </fieldset>
 
-            <fieldset>
+            <fieldset class="s5">
               <legend>
                 <span class="collapse"></span>
-                Selectivity analyses
+                <span class="h5">Selectivity analyses</span>
                 <span data-toggle="tooltip" data-placement="right" title="Which analyses were used to quantify selectivity toward this product.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
                 </span>
@@ -908,15 +910,15 @@ limitations under the License.
           </div>
 
           <div id="outcome_analysis_template" class="outcome_analysis" style="display: none;">
-            <fieldset>
+            <fieldset class="s4">
               <legend>
                 <span class="collapse"></span>
-                Analysis
-                <span class="analysis_name_label">label: </span><div class="outcome_analysis_name edittext"></div>
+                <span class="h4">Analysis</span>
                 <span class="validate" onclick="ord.outcomes.validateAnalysis($(this).closest('.outcome_analysis'))" ></span>
               </legend>
               <div onclick="ord.reaction.removeSlowly(this, '.outcome_analysis');" class="remove">remove</div>
               <table>
+                <tr><td>name</td><td><div class="analysis_name_label edittext"></div></td></tr>
                 <tr><td>type</td><td><div class="outcome_analysis_type selector" data-proto="ReactionAnalysis_AnalysisType"></div></td></tr>
                 <tr><td>details</td><td><div class="outcome_analysis_details edittext"></div></td></tr>
                 <tr><td>chmo_id</td><td><div class="outcome_analysis_chmo_id edittext"></div></td></tr>
@@ -950,10 +952,10 @@ limitations under the License.
           </div>
 
           <div id="outcome_processed_data_template" class="outcome_processed_data" style="display: none;">
-            <fieldset>
+            <fieldset class="s5">
               <legend>
                 <span class="collapse"></span>
-                Processed analytical data
+                <span class="h5">Processed analytical data</span>
               </legend>
               <div onclick="ord.reaction.removeSlowly(this, '.outcome_processed_data');" class="remove">remove</div>
               <table>
@@ -963,10 +965,10 @@ limitations under the License.
           </div>
 
           <div id="outcome_raw_data_template" class="outcome_raw_data" style="display: none;">
-            <fieldset>
+            <fieldset class="s5">
               <legend>
                 <span class="collapse"></span>
-                Raw analytical data
+                <span class="h5">Raw analytical data</span>
               </legend>
               <div onclick="ord.reaction.removeSlowly(this, '.outcome_raw_data');" class="remove">remove</div>
               <table>
@@ -979,10 +981,10 @@ limitations under the License.
         <div onclick="ord.outcomes.add();" class="add">+ add outcome</div>
       </fieldset>
 
-      <fieldset id="section_provenance" class="section">
+      <fieldset id="section_provenance" class="section s2">
         <legend>
           <span class="collapse"></span>
-          Provenance
+          <span class="h2">Provenance</span>
           <span data-toggle="tooltip" data-placement="right" title="Additional metadata about how this reaction was performed and originally reported.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
           </span>
@@ -1003,10 +1005,10 @@ limitations under the License.
           </table>
         </div>
         <div id="provenance_created">
-          <fieldset>
+          <fieldset class="s3">
             <legend>
               <span class="collapse"></span>
-              Record creation
+              <span class="h3">Record creation</span>
               <span data-toggle="tooltip" data-placement="right" title="Details about the original creation of this reaction record.">
                 <span class="fa fa-question-circle" aria-hidden="true"></span>
               </span>
@@ -1027,10 +1029,10 @@ limitations under the License.
         </div>
         <div id="provenance_modifieds">
           <div id="provenance_modified_template" class="provenance_modified" style="display: none;">
-            <fieldset>
+            <fieldset class="s3">
               <legend>
                 <span class="collapse"></span>
-                Record modification
+                <span class="h3">Record modification</span>
                 <span data-toggle="tooltip" data-placement="right" title="Details about subsequent modifications to this reaction record.">
                 <span class="fa fa-question-circle" aria-hidden="true"></span>
               </span>
