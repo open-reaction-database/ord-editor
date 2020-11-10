@@ -59,7 +59,7 @@ status=0
 
 # Run the JS tests.
 node js/test.js
-[ $? -eq 0 ] || status=1 && docker-compose logs
+[ $? -eq 0 ] || { status=1 && docker-compose logs; }
 
 # Python tests run Flask in the test environment, not a container.
 python py/serve_test.py
