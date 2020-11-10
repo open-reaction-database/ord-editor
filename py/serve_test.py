@@ -348,9 +348,10 @@ class ServeTest(parameterized.TestCase, absltest.TestCase):
                                     data=dataset.SerializeToString(),
                                     follow_redirects=True)
         self.assertEqual(response.status_code, 200)
+        dataset.reactions[0].reaction_id = 'not the original'
         response = self.client.post(
             f'/dataset/proto/compare/{name}',
-            data=dataset_pb2.Dataset().SerializeToString(),
+            data=dataset.SerializeToString(),
             follow_redirects=True)
         self.assertEqual(response.status_code, 409)
 
