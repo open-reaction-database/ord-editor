@@ -349,10 +349,9 @@ class ServeTest(parameterized.TestCase, absltest.TestCase):
                                     follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         dataset.reactions[0].reaction_id = 'not the original'
-        response = self.client.post(
-            f'/dataset/proto/compare/{name}',
-            data=dataset.SerializeToString(),
-            follow_redirects=True)
+        response = self.client.post(f'/dataset/proto/compare/{name}',
+                                    data=dataset.SerializeToString(),
+                                    follow_redirects=True)
         self.assertEqual(response.status_code, 409)
 
     def test_js(self):
