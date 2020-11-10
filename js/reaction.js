@@ -108,7 +108,7 @@ function init(reaction) {
     if (saveButton.css('visibility') == 'visible') {
       saveButton.trigger('click');
     }
-  }, 1000 * 10);  // Run every 10 seconds
+  }, 1000 * 60);  // Run every minute
   // Signal to tests that the DOM is initialized.
   ready();
 }
