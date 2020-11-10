@@ -101,6 +101,14 @@ function init(reaction) {
   $('.collapse').each((index, node) => initCollapse($(node)));
   // Trigger reaction-level validation.
   validateReaction();
+  // Initialize autosave.
+  setInterval(() => {
+    // Only save if modifications have been made, hence if save button visible.
+    const saveButton = $('#save');
+    if (saveButton.css('visibility') == 'visible') {
+      saveButton.trigger('click');
+    }
+  }, 1000 * 10);  // Run every 10 seconds
   // Signal to tests that the DOM is initialized.
   ready();
 }
@@ -389,6 +397,7 @@ function validateReaction() {
  * Writes the current reaction to disk.
  */
 function commit() {
+  console.log('committing...');
   if (!session.dataset) {
     // Do nothing when there is no Dataset; e.g. when viewing reactions by ID.
     return;
