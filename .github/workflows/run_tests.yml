@@ -21,16 +21,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-      with:
-        path: ord-editor
     - uses: actions/setup-node@v1.4.2
-    - uses: s-weigand/setup-conda@v1
-      with:
-        python-version: 3.7
     - name: Build and test editor
       timeout-minutes: 10
       run: |
-        cd "${GITHUB_WORKSPACE}/ord-editor"
+        cd "${GITHUB_WORKSPACE}"
         npm install puppeteer
         export ORD_EDITOR_POSTGRES_PASSWORD=test
         ./run_editor_tests.sh
