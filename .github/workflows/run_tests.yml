@@ -21,27 +21,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
       with:
-        path: ord-editor
-    - uses: actions/checkout@v2
-      with:
-        repository: "Open-Reaction-Database/ord-schema"
-        path: ord-schema
+        python-version: '3.x'
     - uses: actions/setup-node@v1.4.2
-    - uses: s-weigand/setup-conda@v1
-      with:
-        python-version: 3.7
-    - name: Install ord-schema
-      run: |
-        cd "${GITHUB_WORKSPACE}/ord-schema"
-        pip install -r requirements.txt
-        conda install -c rdkit rdkit
-        python setup.py install
     - name: Build and test editor
       timeout-minutes: 10
       run: |
-        cd "${GITHUB_WORKSPACE}/ord-editor"
-        pip install -r requirements.txt
+        cd "${GITHUB_WORKSPACE}"
+        pip install psycopg2-binary
         npm install puppeteer
         export ORD_EDITOR_POSTGRES_PASSWORD=test
         ./run_editor_tests.sh

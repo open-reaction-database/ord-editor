@@ -78,9 +78,6 @@ body {
 .remove, #delete {
   background-color: pink;
 }
-.remove {
-  float: right;
-}
 .validate, .validate_status-message {
   display: inline-block;
 }
@@ -239,4 +236,31 @@ fieldset {
 }
 #sections td:first-child {
   text-align: right;
+}
+.h2 {
+  font-size: 1.9em;
+}
+.h3 {
+  font-size: 1.6em;
+}
+.h4 {
+  font-size: 1.3em;
+}
+.h5 {
+  font-size: 1.1em;
+}
+.s2 {
+  border: none;
+}
+.s3 {
+  border-style: none none none solid;
+  border-color: lightgray;
+}
+.s4 {
+  border-style: none none none solid;
+  border-color: gray;
+}
+.s5 {
+  border-style: solid none none solid;
+  border-color: black;
 }
