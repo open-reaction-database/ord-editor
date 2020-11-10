@@ -59,7 +59,7 @@ status=0
 
 # Run the JS tests.
 node js/test.js
-[ $? -eq 0 ] || status=1
+[ $? -eq 0 ] || { status=1 && docker-compose logs; }
 
 # Python tests run Flask in the test environment, not a container.
 python py/serve_test.py
@@ -73,7 +73,7 @@ neutral='\033[0m'
     printf "${green}PASS${neutral}\n" || printf "${red}FAIL${neutral}\n"
 
 # Shut down the containers.
-docker-compose -f docker-compose.yml down
+docker-compose down
 
 # Relay the status for GitHub CI.
 test "${status}" -eq 0
