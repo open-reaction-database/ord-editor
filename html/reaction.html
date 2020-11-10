@@ -141,7 +141,7 @@ limitations under the License.
                     <span class="collapse"></span>
                     <span class="h4">Addition information</span>
                   </legend>
-                  <table>
+                  <table class="message">
                     <tr><td>addition order
                     <span data-toggle="tooltip" data-placement="right" title="Addition order should be an integer value, starting at 1.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
@@ -299,7 +299,7 @@ limitations under the License.
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
                     </span>
                 </legend>
-                <table>
+                <table class="message">
                   <tr><td>reaction ID</td><td><div class="crude_reaction edittext"></div></td></tr>
                   <tr><td>includes workup?</td><td><div class="crude_includes_workup optional_bool"></div></td></tr>
                   <tr><td>has derived amount?</td><td><div class="crude_has_derived optional_bool"></div></td></tr>
@@ -334,7 +334,7 @@ limitations under the License.
           <span class="h2">Setup</span>
           <span class="validate" onclick="ord.setups.validateSetup($(this).closest('#section_setup'))"></span>
         </legend>
-        <table>
+        <table class="message">
           <tr><td>vessel</td><td><div id="setup_vessel_type" class="selector" data-proto="VesselType_VesselTypeEnum"></div>
                                                details <div id="setup_vessel_details" class="edittext"></td></tr>
           <tr><td>material</td><td><div id="setup_vessel_material" class="selector" data-proto="VesselMaterial_VesselMaterialType"></div>
@@ -386,7 +386,7 @@ limitations under the License.
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
                 </span>
               </legend>
-              <table>
+              <table class="message">
                 <tr><td>name</td><td><div class="setup_code_name edittext"></div></td></tr>
               </table>
             </fieldset>
@@ -407,7 +407,7 @@ limitations under the License.
             <span class="h3">Temperature</span>
             <span class="validate" onclick="ord.temperature.validateTemperature($(this).closest('#section_conditions_temperature'))"></span>
           </legend>
-          <table>
+          <table class="message">
             <tr><td>control</td><td><div id="temperature_control" class="selector" data-proto="TemperatureConditions_TemperatureControl_TemperatureControlType"></div>
                                                   details <div id="temperature_control_details" class="edittext"></div></td></tr>
             <tr><td>setpoint</td><td><div id="temperature_setpoint_value" class="edittext shorttext floattext"></div>
@@ -422,7 +422,7 @@ limitations under the License.
                   <span class="h4">Measurement</span>
                   <div onclick="ord.reaction.removeSlowly(this, '.temperature_measurement');" class="remove">remove</div>
                 </legend>
-                <table>
+                <table class="message">
                   <tr><td>type</td><td><div class="temperature_measurement_type selector" data-proto="TemperatureConditions_Measurement_MeasurementType"></div></td></tr>
                   <tr><td>temperature</td><td><div class="temperature_measurement_temperature_value edittext shorttext floattext"></div>
                                                             <div class="temperature_measurement_temperature_units selector" data-proto="Temperature_TemperatureUnit"></div>
@@ -443,7 +443,7 @@ limitations under the License.
             <span class="h3">Pressure</span>
             <span class="validate" onclick="ord.pressure.validatePressure($(this).closest('#section_conditions_pressure'))"></span>
           </legend>
-            <table>
+            <table class="message">
               <tr><td>control</td><td><div id="pressure_control_type" class="selector" data-proto="PressureConditions_PressureControl_PressureControlType"></div>
                                                     details <div id="pressure_control_details" class="edittext"></div></td></tr>
               <tr><td>setpoint</td><td><div id="pressure_setpoint_value" class="edittext shorttext floattext"></div>
@@ -460,7 +460,7 @@ limitations under the License.
                   <span class="h4">Measurement</span>
                   <div onclick="ord.reaction.removeSlowly(this, '.pressure_measurement');" class="remove">remove</div>
                 </legend>
-                <table>
+                <table class="message">
                   <tr><td>type</td><td><div class="pressure_measurement_type selector" data-proto="PressureConditions_Measurement_MeasurementType"></div></td></tr>
                   <tr><td>pressure</td><td><div class="pressure_measurement_pressure_value edittext shorttext floattext"></div>
                                                          <div class="pressure_measurement_pressure_units selector" data-proto="Pressure_PressureUnit"></div>
@@ -481,7 +481,7 @@ limitations under the License.
             <span class="h3">Stirring</span>
             <span class="validate" onclick="ord.stirring.validateStirring($(this).closest('#section_conditions_stirring'))"></span>
           </legend>
-          <table>
+          <table class="message">
             <tr><td>method</td><td><div id="stirring_method_type" class="selector" data-proto="StirringConditions_StirringMethod_StirringMethodType"></div>
                                                  details <div id="stirring_method_details" class="edittext"></div></td></tr>
             <tr><td>rate</td><td><div id="stirring_rate_type" class="selector" data-proto="StirringConditions_StirringRate_StirringRateType"></div>
@@ -495,7 +495,7 @@ limitations under the License.
             <span class="h3">Illumination</span>
             <span class="validate" onclick="ord.illumination.validateIllumination($(this).closest('#section_conditions_illumination'))"></span>
           </legend>
-          <table>
+          <table class="message">
             <tr><td>type</td><td><div id="illumination_type" class="selector" data-proto="IlluminationConditions_IlluminationType_IlluminationTypeEnum"></div>
                                                 details<div id="illumination_details" class="edittext"></div></td></tr>
             <tr><td>wavelength</td><td><div id="illumination_wavelength_value" class="edittext shorttext floattext"></div>
@@ -513,7 +513,7 @@ limitations under the License.
             <span class="h3">Electrochemistry</span>
             <span class="validate" onclick="ord.electro.validateElectro($(this).closest('#section_conditions_electro'))"></span>
           </legend>
-          <table>
+          <table class="message">
             <tr><td>type</td><td><div id="electro_type" class="selector" data-proto="ElectrochemistryConditions_ElectrochemistryType_ElectrochemistryTypeEnum"></div>
                                                details <div id="electro_details" class="edittext"></div></td></tr>
             <tr><td>current</td><td><div id="electro_current_value" class="edittext shorttext floattext"></div>
@@ -540,7 +540,7 @@ limitations under the License.
                 </legend>
                 <input type="radio" class="electro_measurement_current" value="current" checked> current
                 <input type="radio" class="electro_measurement_voltage" value="voltage"> voltage
-                <table>
+                <table class="message">
                   <tr><td>time</td><td><div class="electro_measurement_time_value edittext shorttext floattext"></div>
                                                      <div class="electro_measurement_time_units selector" data-proto="Time_TimeUnit"></div>
                                                      +/- <div class="electro_measurement_time_precision edittext shorttext"></div></td></tr>
@@ -564,7 +564,7 @@ limitations under the License.
             <span class="h3">Flow</span>
             <span class="validate" onclick="ord.flows.validateFlow($(this).closest('#section_conditions_flow'))"></span>
           </legend>
-          <table>
+          <table class="message">
             <tr><td>type</td><td><div id="flow_type" class="selector" data-proto="FlowConditions_FlowType_FlowTypeEnum"></div>
                                                details <div id="flow_details" class="edittext"></div></td></tr>
             <tr><td>pump</td><td><div id="flow_pump" class="edittext"></div></td></tr>
@@ -575,7 +575,7 @@ limitations under the License.
                                                 +/- <div id="flow_tubing_precision" class="edittext shorttext floattext"></div></td></tr>
           </table>
         </fieldset>
-        <table>
+        <table class="message">
           <tr><td>reflux</td><td><div id="condition_reflux" class="optional_bool"></div></td></tr>
           <tr><td>pH</td><td><div id="condition_ph" class="edittext veryshorttext floattext"></div></td></tr>
           <tr><td>dynamic conditions
@@ -597,7 +597,7 @@ limitations under the License.
           <span class="h2">Notes</span>
           <span class="validate" onclick="ord.notes.validateNotes($('#section_notes'))"></span>
         </legend>
-        <table>
+        <table class="message">
           <tr><td>is heterogeneous</td><td><div id="notes_heterogeneous" class="optional_bool"></div></td></tr>
           <tr><td>forms precipitate</td><td><div id="notes_precipitate" class="optional_bool"></div></td></tr>
           <tr><td>is exothermic</td><td><div id="notes_exothermic" class="optional_bool"></div></td></tr>
@@ -627,7 +627,7 @@ limitations under the License.
                 <div onclick="ord.reaction.removeSlowly(this, '.observation');" class="remove">remove</div>
                 <span class="validate" onclick="ord.observations.validateObservation($(this).closest('.observation'))"></span>
               </legend>
-              <table>
+              <table class="message">
                 <tr><td>time</td><td><div class="observation_time_value edittext shorttext floattext"></div>
                                                    <div class="observation_time_units selector" data-proto="Time_TimeUnit"></div>
                                                    +/- <div class="observation_time_precision edittext shorttext floattext"></div></td></tr>
@@ -656,7 +656,7 @@ limitations under the License.
               <div onclick="ord.reaction.removeSlowly(this, '.workup');" class="remove">remove</div>
               <span class="validate" onclick="ord.workups.validateWorkup($(this).closest('.workup'))"></span>
             </legend>
-            <table>
+            <table class="message">
               <tr><td>type</td><td><div class="workup_type selector" data-proto="ReactionWorkup_WorkupType"></div></td></tr>
               <tr><td>keep phase</td><td><div class="workup_keep_phase edittext"></div></td></tr>
               <tr><td>target ph</td><td><div class="workup_target_ph edittext veryshorttext floattext"></div></td></tr>
@@ -688,7 +688,7 @@ limitations under the License.
                 <span class="workup_temperature collapse"></span>
                 <span class="h4">Temperature conditions</span>
               </legend>
-              <table>
+              <table class="message">
                 <tr><td>control</td><td><div class="workup_temperature_control_type selector" data-proto="TemperatureConditions_TemperatureControl_TemperatureControlType"></div></td></tr>
                 <tr><td>setpoint</td><td><div class="workup_temperature_setpoint_value edittext shorttext floattext"></div>
                                                        <div class="workup_temperature_setpoint_units selector" data-proto="Temperature_TemperatureUnit"></div>
@@ -710,7 +710,7 @@ limitations under the License.
                 <span class="workup_stirring collapse"></span>
                 <span class="h4">Stirring</span>
               </legend>
-              <table>
+              <table class="message">
                 <tr><td>method</td><td><div class="workup_stirring_method_type selector" data-proto="StirringConditions_StirringMethod_StirringMethodType"></div>
                                                      details <div class="workup_stirring_method_details edittext"></div></td></tr>
                 <tr><td>rate</td><td><div class="workup_stirring_rate_type selector" data-proto="StirringConditions_StirringRate_StirringRateType"></div>
@@ -728,7 +728,7 @@ limitations under the License.
                 <span class="h5">Temperature measurement</span>
                 <div onclick="ord.reaction.removeSlowly(this, '.workup_temperature_measurement');" class="remove">remove</div>
               </legend>
-              <table>
+              <table class="message">
                 <tr><td>type</td><td><div class="workup_temperature_measurement_type selector" data-proto="TemperatureConditions_Measurement_MeasurementType"></div></td></tr>
                 <tr><td>time</td><td><div class="workup_temperature_measurement_time_value edittext shorttext floattext"></div>
                                            <div class="workup_temperature_measurement_time_units selector" data-proto="Time_TimeUnit"></div>
@@ -764,7 +764,7 @@ limitations under the License.
               <div onclick="ord.reaction.removeSlowly(this, '.outcome');" class="remove">remove</div>
               <span class="validate" onclick="ord.outcomes.validateOutcome($(this).closest('.outcome'))"></span>
             </legend>
-            <table>
+            <table class="message">
               <tr><td>time
                 <span data-toggle="tooltip" data-placement="right" title="The reaction time at which this analysis/characterization was performed.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
@@ -803,7 +803,7 @@ limitations under the License.
             <!-- Shares "#component_template" with ".components" in the input section. -->
 
             <div class="spacer"></div>
-            <table>
+            <table class="message">
               <tr><td>desired</td><td><div class="outcome_product_desired optional_bool"></div></td>
               <tr><td>yield</td><td><div class="outcome_product_yield_value edittext shorttext floattext"></div>
                                                   +/- <div class="outcome_product_yield_precision edittext shorttext floattext"></div></td></tr>
@@ -820,7 +820,7 @@ limitations under the License.
                 <span class="h5">Isolated product characteristics</span>
               </legend>
               <div class="outcome_product_isolated_characteristics">
-                <table>
+                <table class="message">
                   <tr><td>color</td><td><div class="outcome_product_color edittext"></div></td></tr>
                   <tr><td>texture</td><td><div class="outcome_product_texture_type selector" data-proto="ReactionProduct_Texture_TextureType"></div></td></tr>
                   <tr><td>details</td><td><div class="outcome_product_texture_details edittext"></div></td></tr>
@@ -915,7 +915,7 @@ limitations under the License.
                 <div onclick="ord.reaction.removeSlowly(this, '.outcome_analysis');" class="remove">remove</div>
                 <span class="validate" onclick="ord.outcomes.validateAnalysis($(this).closest('.outcome_analysis'))" ></span>
               </legend>
-              <table>
+              <table class="message">
                 <tr><td>name</td><td><div class="outcome_analysis_name edittext"></div></td></tr>
                 <tr><td>type</td><td><div class="outcome_analysis_type selector" data-proto="ReactionAnalysis_AnalysisType"></div></td></tr>
                 <tr><td>details</td><td><div class="outcome_analysis_details edittext"></div></td></tr>
@@ -956,7 +956,7 @@ limitations under the License.
                 <span class="h5">Processed analytical data</span>
                 <div onclick="ord.reaction.removeSlowly(this, '.outcome_processed_data');" class="remove">remove</div>
               </legend>
-              <table>
+              <table class="message">
                 <tr><td>name</td><td><div class="outcome_processed_data_name edittext"></div></td></tr>
               </table>
             </fieldset>
@@ -969,7 +969,7 @@ limitations under the License.
                 <span class="h5">Raw analytical data</span>
                 <div onclick="ord.reaction.removeSlowly(this, '.outcome_raw_data');" class="remove">remove</div>
               </legend>
-              <table>
+              <table class="message">
                 <tr><td>name</td><td><div class="outcome_raw_data_name edittext"></div></td></tr>
               </table>
             </fieldset>
@@ -989,7 +989,7 @@ limitations under the License.
           <span class="validate" onclick="ord.provenance.validateProvenance($('#section_provenance'))"></span>
         </legend>
         <div id="provenance_experimenter">
-          <table>
+          <table class="message">
             <tr><td>experimenter name</td><td><div class="provenance_name edittext"></div></td></tr>
             <tr><td>email</td><td><div class="provenance_email edittext"></div></td></tr>
             <tr><td>username</td><td><div class="provenance_username edittext"></div></td></tr>
@@ -1011,7 +1011,7 @@ limitations under the License.
                 <span class="fa fa-question-circle" aria-hidden="true"></span>
               </span>
             </legend>
-            <table>
+            <table class="message">
               <tr><td>time</td><td>
                 <div class="provenance_time edittext"></div>
                 <button type="button" onclick="$(this).prev().text(new Date().toLocaleString())">now</button>
@@ -1036,7 +1036,7 @@ limitations under the License.
                 <span class="fa fa-question-circle" aria-hidden="true"></span>
               </span>
               </legend>
-              <table>
+              <table class="message">
                 <tr><td>time</td><td>
                   <div class="provenance_time edittext"></div>
                   <button type="button" onclick="$(this).prev().text(new Date().toLocaleString())">now</button>
@@ -1083,7 +1083,7 @@ limitations under the License.
     </span>
 
     <div id="data_template" class="data" style="display: none;">
-      <table>
+      <table class="message">
       <tr>
         <td>data</td>
         <td>
