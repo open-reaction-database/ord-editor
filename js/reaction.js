@@ -101,14 +101,6 @@ function init(reaction) {
   $('.collapse').each((index, node) => initCollapse($(node)));
   // Trigger reaction-level validation.
   validateReaction();
-  // Initialize autosave.
-  setInterval(() => {
-    // Only save if modifications have been made, hence if save button visible.
-    const saveButton = $('#save');
-    if (saveButton.css('visibility') == 'visible') {
-      saveButton.trigger('click');
-    }
-  }, 1000 * 60);  // Run every minute
   // Signal to tests that the DOM is initialized.
   ready();
 }
@@ -183,6 +175,14 @@ function listen(node) {
  */
 function dirty() {
   $('#save').css('visibility', 'visible');
+  // Start a timer for autosave.
+  setTimeout(() => {
+    // Only save if modifications have been made, hence if save button visible.
+    const saveButton = $('#save');
+    if (saveButton.css('visibility') == 'visible') {
+      saveButton.trigger('click');
+    }
+  }, 1000 * 60);  // Save after a minute
 }
 
 /**
