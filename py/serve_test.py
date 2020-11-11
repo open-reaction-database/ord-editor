@@ -13,6 +13,7 @@
 # limitations under the License.
 """Tests for editor.py.serve."""
 
+import base64
 import json
 import os
 import urllib
@@ -152,10 +153,12 @@ class ServeTest(parameterized.TestCase, absltest.TestCase):
             dataset = self._download_dataset(file_name)
             self.assertEmpty(dataset.reactions)
 
-    def test_enumerate_dataset(self):
+    @parameterized.parameters([b'', b'data:foo/bar;base64,'])
+    def test_enumerate_dataset(self, prefix):
         data = {'spreadsheet_name': 'test.csv'}
-        with open(os.path.join(self.testdata, 'nielsen_fig1.csv')) as f:
-            data['spreadsheet_data'] = f.read()
+        with open(os.path.join(self.testdata, 'nielsen_fig1.csv'), 'rb') as f:
+            data['spreadsheet_data'] = (prefix +
+                                        base64.b64encode(f.read())).decode()
         with open(os.path.join(self.testdata, 'reaction.pbtxt')) as f:
             data['template_string'] = f.read()
         response = self.client.post('/dataset/enumerate',

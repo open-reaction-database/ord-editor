@@ -176,7 +176,8 @@ def enumerate_dataset():
 
     Three pieces of information are expected to be POSTed in a json object:
         spreadsheet_name: the original filename of the uploaded spreadsheet.
-        spreadsheet_data: a string containing the contents of the spreadsheet.
+        spreadsheet_data: a base64-encoded string containing the contents of the
+            spreadsheet.
         template_string: a string containing a text-formatted Reaction proto,
             i.e., the contents of a pbtxt file.
     A new dataset is created from the template and spreadsheet using
@@ -185,10 +186,14 @@ def enumerate_dataset():
     # pylint: disable=broad-except
     data = flask.request.get_json(force=True)
     basename, suffix = os.path.splitext(data['spreadsheet_name'])
-    # Remove the data URL prefix; see
-    # https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL.
-    match = re.fullmatch('data:.*?;base64,(.*)', data['spreadsheet_data'])
-    spreadsheet_data = io.BytesIO(base64.b64decode(match.group(1)))
+    if data['spreadsheet_data'].startswith('data:'):
+        # Remove the data URL prefix; see
+        # https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL.
+        match = re.fullmatch('data:.*?;base64,(.*)', data['spreadsheet_data'])
+        spreadsheet_data = match.group(1)
+    else:
+        spreadsheet_data = data['spreadsheet_data']
+    spreadsheet_data = io.BytesIO(base64.b64decode(spreadsheet_data))
     dataframe = templating.read_spreadsheet(spreadsheet_data, suffix=suffix)
     dataset = None
     try:
