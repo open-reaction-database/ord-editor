@@ -13,6 +13,7 @@
 # limitations under the License.
 """A web editor for Open Reaction Database structures."""
 
+import base64
 import collections
 import contextlib
 import difflib
@@ -184,7 +185,10 @@ def enumerate_dataset():
     # pylint: disable=broad-except
     data = flask.request.get_json(force=True)
     basename, suffix = os.path.splitext(data['spreadsheet_name'])
-    spreadsheet_data = io.StringIO(data['spreadsheet_data'].lstrip('ï»¿'))
+    # Remove the data URL prefix; see
+    # https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL.
+    match = re.fullmatch('data:.*?;base64,(.*)', data['spreadsheet_data'])
+    spreadsheet_data = io.BytesIO(base64.b64decode(match.group(1)))
     dataframe = templating.read_spreadsheet(spreadsheet_data, suffix=suffix)
     dataset = None
     try:
