@@ -43,6 +43,7 @@ function load(inputs) {
     const input = inputs.get(name);
     loadInput('#inputs', name, input);
   });
+  updateSidebar();
 }
 
 /**
