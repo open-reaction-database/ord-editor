@@ -936,7 +936,7 @@ def init_user():
     flask.g.user_id = user_id
     if name is not None:
         flask.g.user_name = name
-        flask.g.user_avatar = f'http://github.com/{name}.png'
+        flask.g.user_avatar = f'https://github.com/{name}.png'
     else:
         flask.g.user_name = user_id
         flask.g.user_avatar = \
