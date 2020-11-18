@@ -81,8 +81,6 @@ function init(reaction) {
   $('.optional_bool').each((index, node) => initOptionalBool($(node)));
   // Enable all the editable text fields.
   $('.edittext').attr('contentEditable', 'true');
-  // TODO respond to start_collapsed
-  $('.collapse').each((index, node) => initCollapse($(node)));
   // Initialize all the validators.
   $('.validate').each((index, node) => initValidateNode($(node)));
   // Initialize validation handlers that don't go in "add" methods.
@@ -99,6 +97,8 @@ function init(reaction) {
   // Initialize the UI with the Reaction.
   loadReaction(reaction);
   clean();
+  // Initialize the collaped/uncollapsed state of the fieldset groups.
+  $('.collapse').each((index, node) => initCollapse($(node)));
   // Trigger reaction-level validation.
   validateReaction();
   // Signal to tests that the DOM is initialized.
