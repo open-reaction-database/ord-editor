@@ -238,6 +238,11 @@ limitations under the License.
                 errorNode.show();
               }
           }
+          // NOTE(kearnes): Attempt to catch timeouts.
+          xhr.onerror = () => {
+              errorNode.text('Error: request failed (possibly due to timeout)');
+              errorNode.show();
+          }
           xhr.send(payload);
         };
       });
