@@ -133,15 +133,18 @@ def upload_dataset(name):
     if exists_dataset(name):
         response = flask.make_response(f'dataset already exists: {name}', 409)
         flask.abort(response)
-    with flask.g.db.cursor() as cursor:
-        query = psycopg2.sql.SQL('INSERT INTO datasets VALUES (%s, %s, %s)')
-        pbtxt = flask.request.get_data().decode('utf-8')
-        dataset = dataset_pb2.Dataset()
-        text_format.Parse(pbtxt, dataset)  # Validate.
-        user_id = flask.g.user_id
-        cursor.execute(query, [user_id, name, pbtxt])
-        flask.g.db.commit()
-    return 'ok'
+    try:
+        with flask.g.db.cursor() as cursor:
+            query = psycopg2.sql.SQL('INSERT INTO datasets VALUES (%s, %s, %s)')
+            pbtxt = flask.request.get_data().decode('utf-8')
+            dataset = dataset_pb2.Dataset()
+            text_format.Parse(pbtxt, dataset)  # Validate.
+            user_id = flask.g.user_id
+            cursor.execute(query, [user_id, name, pbtxt])
+            flask.g.db.commit()
+        return 'ok'
+    except Exception as error:  # pylint: disable=broad-except
+        flask.abort(flask.make_response(str(error), 406))
 
 
 @app.route('/dataset/<name>/new', methods=['POST'])
@@ -183,31 +186,26 @@ def enumerate_dataset():
     A new dataset is created from the template and spreadsheet using
     ord_schema.templating.generate_dataset.
     """
-    # pylint: disable=broad-except
-    data = flask.request.get_json(force=True)
-    basename, suffix = os.path.splitext(data['spreadsheet_name'])
-    if data['spreadsheet_data'].startswith('data:'):
-        # Remove the data URL prefix; see
-        # https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL.
-        match = re.fullmatch('data:.*?;base64,(.*)', data['spreadsheet_data'])
-        spreadsheet_data = match.group(1)
-    else:
-        spreadsheet_data = data['spreadsheet_data']
-    spreadsheet_data = io.BytesIO(base64.b64decode(spreadsheet_data))
-    dataframe = templating.read_spreadsheet(spreadsheet_data, suffix=suffix)
-    dataset = None
     try:
+        data = flask.request.get_json(force=True)
+        basename, suffix = os.path.splitext(data['spreadsheet_name'])
+        if data['spreadsheet_data'].startswith('data:'):
+            # Remove the data URL prefix; see
+            # https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL.
+            match = re.fullmatch('data:.*?;base64,(.*)',
+                                 data['spreadsheet_data'])
+            spreadsheet_data = match.group(1)
+        else:
+            spreadsheet_data = data['spreadsheet_data']
+        spreadsheet_data = io.BytesIO(base64.b64decode(spreadsheet_data))
+        dataframe = templating.read_spreadsheet(spreadsheet_data, suffix=suffix)
         dataset = templating.generate_dataset(data['template_string'],
                                               dataframe,
                                               validate=False)
-    except ValueError as error:
-        flask.abort(flask.make_response(str(error), 400))
-    except Exception as error:
-        flask.abort(
-            flask.make_response(
-                f'Unexpected {error.__class__.__name__}: {error}', 400))
-    put_dataset(f'{basename}_dataset', dataset)
-    return 'ok'
+        put_dataset(f'{basename}_dataset', dataset)
+        return 'ok'
+    except Exception as error:  # pylint: disable=broad-except
+        flask.abort(flask.make_response(str(error), 406))
 
 
 @app.route('/dataset/<name>/reaction/<index>')

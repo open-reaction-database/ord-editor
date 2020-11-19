@@ -79,10 +79,15 @@ limitations under the License.
       border-color: black;
     }
     footer {
-        position: fixed;
-        bottom: 0;
-        text-align: center;
-        width: 100%;
+      position: fixed;
+      bottom: 0;
+      text-align: center;
+      width: 100%;
+    }
+    .error {
+      color: red;
+      font-style: italic;
+      padding-top: 10px;
     }
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -153,29 +158,38 @@ limitations under the License.
             <input type="submit" id="create_submit" value="Create">
         </div>
         <div id="tabs-3">
-            <label for="upload">Dataset filename:</label>
-            <input type="file" id="upload" accept=".pbtxt,.pb">
-            <br><br>
-            <input type="submit" id="upload_submit" value="Upload">
+            <div style="padding-bottom: 10px">
+              <label for="upload">Dataset filename:</label>
+              <input type="file" id="upload" accept=".pbtxt,.pb">
+            </div>
+            <div><input type="submit" id="upload_submit" value="Upload"></div>
+            <div id="upload_error" class="error" style="display: none"></div>
         </div>
         <div id="tabs-4">
-            You can use a Reaction template to enumerate a Dataset based on a spreadsheet
-            of values. For more information, see the
-            <a href="https://docs.open-reaction-database.org/">documentation</a>.
-            <br><br>
-            <label for="template">Template filename:</label>
-            <input type="file" id="template" accept=".pbtxt">
-            <br><br>
-            <label for="spreadsheet">Spreadsheet filename:</label>
-            <input type="file" id="spreadsheet" accept=".csv,.xls,.xlsx">
-            <br><br>
-            <input type="submit" id="enumerate_submit" value="Enumerate">
-            <br><br>
-            <b>NOTE:</b> Large dataset enumerations (thousands of reactions) may result in a
-            browser timeout. If this happens, please send an email to <a href="mailto:help@open-reaction-database.org">help@open-reaction-database.org</a>
-            and attach your template and spreadsheet files. Alternatively, you may use the
-            <a href="https://github.com/Open-Reaction-Database/ord-schema/blob/main/ord_schema/scripts/enumerate_dataset.py">programmatic interface</a>
-            to enumerate the dataset locally.
+            <div style="padding-bottom: 10px">
+              You can use a Reaction template to enumerate a Dataset based on a spreadsheet
+              of values. For more information, see the
+              <a href="https://docs.open-reaction-database.org/">documentation</a>.
+            </div>
+            <div style="padding-bottom: 10px"><table>
+              <tr>
+                <td style="text-align: right"><label for="template">Template filename:</label></td>
+                <td><input type="file" id="template" accept=".pbtxt"></td>
+              </tr>
+              <tr>
+                <td style="text-align: right"><label for="spreadsheet">Spreadsheet filename:</label></td>
+                <td><input type="file" id="spreadsheet" accept=".csv,.xls,.xlsx"></td>
+              </tr>
+            </table></div>
+            <div><input type="submit" id="enumerate_submit" value="Enumerate"></div>
+            <div id="enumerate_error" class="error" style="display: none"></div>
+            <div style="padding-top: 10px">
+              <b>NOTE:</b> Large dataset enumerations (thousands of reactions) may result in a
+              browser timeout. If this happens, please send an email to <a href="mailto:help@open-reaction-database.org">help@open-reaction-database.org</a>
+              and attach your template and spreadsheet files. Alternatively, you may use the
+              <a href="https://github.com/Open-Reaction-Database/ord-schema/blob/main/ord_schema/scripts/enumerate_dataset.py">programmatic interface</a>
+              to enumerate the dataset locally.
+            </div>
         </div>
     </div>
     <div id="help">
@@ -207,6 +221,8 @@ limitations under the License.
             }
         });
       $('#upload_submit').on('click', event => {
+        const errorNode = $('#upload_error');
+        errorNode.hide();
         const file = $('#upload')[0].files[0];
         const reader = new FileReader();
         reader.readAsArrayBuffer(file);
@@ -214,11 +230,20 @@ limitations under the License.
           const xhr = new XMLHttpRequest();
           xhr.open('POST', '/dataset/' + file.name + '/upload');
           const payload = event.target.result;
-          xhr.onload = () => location.reload();
+          xhr.onload = () => {
+              if (xhr.status === 200) {
+                location.reload();
+              } else {
+                errorNode.text('Error: ' + xhr.response);
+                errorNode.show();
+              }
+          }
           xhr.send(payload);
         };
       });
       $('#enumerate_submit').on('click', event => {
+        const errorNode = $('#enumerate_error');
+        errorNode.hide();
         const templateString = $.Deferred();
         const spreadsheetData = $.Deferred();
         const spreadsheetName = $.Deferred();
@@ -242,10 +267,11 @@ limitations under the License.
           const xhr = new XMLHttpRequest();
           xhr.open('POST', '/dataset/enumerate');
           xhr.onload = function() {
-            if (xhr.status !== 200) {
-              alert('Could not create new dataset: ' + xhr.response);
-            } else {
+            if (xhr.status === 200) {
               location.reload();
+            } else {
+              errorNode.text('Error: ' + xhr.response);
+              errorNode.show();
             }
           }
           xhr.send(JSON.stringify({'template_string': v1,
