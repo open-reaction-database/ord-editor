@@ -152,10 +152,12 @@ limitations under the License.
             {% endfor %}
         </div>
         <div id="tabs-2">
-            <label for="create">Dataset name:</label>
-            <input type="text" id="create">
-            <br><br>
-            <input type="submit" id="create_submit" value="Create">
+            <div style="padding-bottom: 10px">
+              <label for="create">Dataset name:</label>
+              <input type="text" id="create">
+            </div>
+            <div><input type="submit" id="create_submit" value="Create"></div>
+            <div id="create_error" class="error" style="display: none"></div>
         </div>
         <div id="tabs-3">
             <div style="padding-bottom: 10px">
@@ -206,13 +208,16 @@ limitations under the License.
     
     <script>
         $('#create_submit').on('click', event => {
+            const errorNode = $('#create_error');
+            errorNode.hide();
             const datasetName = $('#create').val();
             if (datasetName) {
                 const xhr = new XMLHttpRequest();
                 xhr.open('POST', '/dataset/' + datasetName + '/new');
                 xhr.onload = function() {
                     if (xhr.status === 409) {
-                        alert('Dataset "' + datasetName + '" already exists');
+                        errorNode.text('Error: Dataset "' + datasetName + '" already exists');
+                        errorNode.show();
                     } else {
                         location.reload();
                     }
