@@ -177,9 +177,10 @@ function dirty() {
   $('#save').css('visibility', 'visible');
   // Start a timer for autosave.
   setTimeout(() => {
-    // Only save if there are unsaved changes still to be saved, hence if save button visible.
+    // Only save if there are unsaved changes still to be saved -- hence save button visible --
+    // and if ready for a save (not in the process of saving already).
     const saveButton = $('#save');
-    if (saveButton.css('visibility') == 'visible') {
+    if (saveButton.css('visibility') == 'visible' && saveButton.text() == 'save') {
       saveButton.trigger('click');
     }
   }, 1000 * 60);  // Save after a minute
