@@ -207,7 +207,7 @@ function unloadProduct(node) {
 }
 
 /**
- * Fetches the set of ReactionAnalysis keys.
+ * Fetches the set of Analysis keys.
  * @param {!Node} node The parent ReactionOutcome div.
  * @param {string} tag Analysis target, e.g. "identities", "yields", etc.
  * @return {!Array<string>}

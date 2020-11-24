@@ -74,7 +74,7 @@ function loadOutcome(outcome) {
  * Adds and populates a reaction analysis section in the form.
  * @param {!Node} outcomeNode Parent reaction outcome node.
  * @param {string} name The name of this analysis.
- * @param {!proto.ord.ReactionAnalysis} analysis
+ * @param {!proto.ord.Analysis} analysis
  */
 function loadAnalysis(outcomeNode, name, analysis) {
   const node = addAnalysis(outcomeNode);
@@ -199,10 +199,10 @@ function unloadOutcome(node) {
 /**
  * Fetches a reaction analysis defined in the form.
  * @param {!Node} analysisNode Root node for the reaction analysis.
- * @return {!proto.ord.ReactionAnalysis}
+ * @return {!proto.ord.Analysis}
  */
 function unloadAnalysisSingle(analysisNode) {
-  const analysis = new proto.ord.ReactionAnalysis();
+  const analysis = new proto.ord.Analysis();
   analysis.setType(
       ord.reaction.getSelector($('.outcome_analysis_type', analysisNode)));
   const chmoId = $('.outcome_analysis_chmo_id', analysisNode).text();
@@ -244,7 +244,7 @@ function unloadAnalysisSingle(analysisNode) {
 /**
  * Fetches a reaction analysis defined in the form and adds it to `analyses`.
  * @param {!Node} analysisNode Root node for the reaction analysis.
- * @param {!jspb.Map<string, !proto.ord.ReactionAnalysis>} analyses
+ * @param {!jspb.Map<string, !proto.ord.Analysis>} analyses
  */
 function unloadAnalysis(analysisNode, analyses) {
   const analysis = unloadAnalysisSingle(analysisNode);
@@ -385,5 +385,5 @@ function validateOutcome(node, validateNode) {
  */
 function validateAnalysis(node, validateNode) {
   const analysis = unloadAnalysisSingle(node);
-  ord.reaction.validate(analysis, 'ReactionAnalysis', node, validateNode);
+  ord.reaction.validate(analysis, 'Analysis', node, validateNode);
 }
