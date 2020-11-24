@@ -64,7 +64,7 @@ const session = {
   index: null,      // Ordinal position of the Reaction in its Dataset.
   observer: null,   // IntersectionObserver used for the sidebar.
   navSelectors: {},  // Dictionary from navigation to section.
-  timers: [null, null] // Two timers used by autosave.
+  timers: {'short': null, 'long': null} // Two timers used by autosave.
 };
 // Export session, because it's used by test.js.
 exports.session = session;
@@ -176,15 +176,17 @@ function listen(node) {
  */
 function dirty() {
   $('#save').css('visibility', 'visible');
-  // Start a timer for autosave.
-  setTimeout(() => {
+  // Handle timers for autosave.
+  // Short timer restarts on modification, in order to wait until a sufficiently long duration of no change.
+  if (session.timers['short']) {clearTimeout(session.timers['short'])};
+  session.timers['short'] = setTimeout(() => {
     // Only save if there are unsaved changes still to be saved -- hence save button visible --
     // and if ready for a save (not in the process of saving already).
     const saveButton = $('#save');
     if (saveButton.css('visibility') == 'visible' && saveButton.text() == 'save') {
       saveButton.trigger('click');
     }
-  }, 1000 * 60);  // Save after a minute
+  }, 1000 * 5);  // Save after five seconds
 }
 
 /**
