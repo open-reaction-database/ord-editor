@@ -75,18 +75,11 @@ function loadIntoCompound(node, compound) {
   const isLimiting = compound.hasIsLimiting() ? compound.getIsLimiting() : null;
   ord.reaction.setOptionalBool($('.component_limiting', node), isLimiting);
 
-  const solutes = compound.hasVolumeIncludesSolutes() ?
-      compound.getVolumeIncludesSolutes() :
-      null;
-  ord.reaction.setOptionalBool($('.component_includes_solutes', node), solutes);
-
   const identifiers = compound.getIdentifiersList();
   identifiers.forEach(identifier => loadIdentifier(node, identifier));
 
-  const mass = compound.getMass();
-  const moles = compound.getMoles();
-  const volume = compound.getVolume();
-  ord.amounts.load(node, mass, moles, volume);
+  const amount = compound.getAmount();
+  ord.amounts.load(node, amount);
 
   const preparations = compound.getPreparationsList();
   preparations.forEach(preparation => {
@@ -195,19 +188,15 @@ function unloadCompound(node) {
     compound.setIsLimiting(isLimiting);
   }
 
-  // Only call setVolumeIncludesSolutes if the amount is defined as a volume.
-  if (ord.amounts.unloadVolume(node)) {
-    const solutes =
-        ord.reaction.getOptionalBool($('.component_includes_solutes', node));
-    compound.setVolumeIncludesSolutes(solutes);
-  }
-
   const identifiers = unloadIdentifiers(node);
   if (!ord.reaction.isEmptyMessage(identifiers)) {
     compound.setIdentifiersList(identifiers);
   }
 
-  ord.amounts.unload(node, compound);
+  const amount = ord.amounts.unload(node);
+  if (!ord.reaction.isEmptyMessage(amount)) {
+    compound.setAmount(amount);
+  }
 
   const preparations = [];
   $('.component_preparation', node).each(function(index, preparationNode) {
@@ -331,16 +320,16 @@ function add(root) {
   amountButtons.attr('name', 'compounds_' + radioGroupCounter++);
   amountButtons.change(function() {
     $('.amount .selector', node).hide();
-    if (this.value == 'mass') {
-      $('.component_amount_units_mass', node).show();
+    if (this.value === 'mass') {
+      $('.amount_units_mass', node).show();
       $('.includes_solutes', node).hide();
     }
-    if (this.value == 'moles') {
-      $('.component_amount_units_moles', node).show();
+    if (this.value === 'moles') {
+      $('.amount_units_moles', node).show();
       $('.includes_solutes', node).hide();
     }
-    if (this.value == 'volume') {
-      $('.component_amount_units_volume', node).show();
+    if (this.value === 'volume') {
+      $('.amount_units_volume', node).show();
       $('.includes_solutes', node).show().css('display', 'inline-block');
     }
   });

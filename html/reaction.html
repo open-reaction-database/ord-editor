@@ -215,15 +215,15 @@ limitations under the License.
                     <span class="h5">Amount</span>
                   </legend>
                   <div>
-                    <input type="radio" class="component_amount_mass" value="mass" checked> mass
-                    <input type="radio" class="component_amount_moles" value="moles"> moles
-                    <input type="radio" class="component_amount_volume" value="volume"> volume
-                    <span class="includes_solutes">includes solutes?</span> <div class="component_includes_solutes includes_solutes optional_bool"></div>
-                    <span style="padding-left:25px">value</span> <div class="component_amount_value edittext shorttext floattext"></div>
-                    ± <div class="component_amount_precision edittext shorttext floattext"></div>
-                    <div class="component_amount_units_mass selector" data-proto="Mass_MassUnit"></div>
-                    <div class="component_amount_units_moles selector" data-proto="Moles_MolesUnit" style="display: none;"></div>
-                    <div class="component_amount_units_volume selector" data-proto="Volume_VolumeUnit" style="display: none;"></div>
+                    <input type="radio" class="amount_mass" value="mass" checked> mass
+                    <input type="radio" class="amount_moles" value="moles"> moles
+                    <input type="radio" class="amount_volume" value="volume"> volume
+                    <span class="includes_solutes">includes solutes?</span> <div class="includes_solutes optional_bool"></div>
+                    <span style="padding-left:25px">value</span> <div class="amount_value edittext shorttext floattext"></div>
+                    ± <div class="amount_precision edittext shorttext floattext"></div>
+                    <div class="amount_units_mass selector" data-proto="Mass_MassUnit"></div>
+                    <div class="amount_units_moles selector" data-proto="Moles_MolesUnit" style="display: none;"></div>
+                    <div class="amount_units_volume selector" data-proto="Volume_VolumeUnit" style="display: none;"></div>
                   </div>
                 </fieldset>
                 <fieldset class="preparations_fieldset s5">
@@ -331,12 +331,12 @@ limitations under the License.
                     <span class="h5">Amount</span>
                   </legend>
                   <div>
-                    <input type="radio" class="crude_amount_mass" value="mass" checked> mass
-                    <input type="radio" class="crude_amount_volume" value="volume"> volume
-                    <span style="padding-left:25px">value</span> <div class="crude_amount_value edittext shorttext floattext"></div>
-                    ± <div class="crude_amount_precision edittext shorttext floattext"></div>
-                    <div class="crude_amount_units_mass selector" data-proto="Mass_MassUnit"></div>
-                    <div class="crude_amount_units_volume selector" data-proto="Volume_VolumeUnit" style="display: none;"></div>
+                    <input type="radio" class="amount_mass" value="mass" checked> mass
+                    <input type="radio" class="amount_volume" value="volume"> volume
+                    <span style="padding-left:25px">value</span> <div class="amount_value edittext shorttext floattext"></div>
+                    ± <div class="amount_precision edittext shorttext floattext"></div>
+                    <div class="amount_units_mass selector" data-proto="Mass_MassUnit"></div>
+                    <div class="amount_units_volume selector" data-proto="Volume_VolumeUnit" style="display: none;"></div>
                   </div>
                 </fieldset>
               </fieldset>
@@ -692,16 +692,16 @@ limitations under the License.
             </div>
             <fieldset class="amount s4">
               <legend>
-                <span class="workup_amount collapse"></span>
+                <span class="amount collapse"></span>
                 <span class="h4">Aliquot amount</span>
               </legend>
               <div>
-                <input type="radio" class="workup_amount_mass" value="mass"> mass
-                <input type="radio" class="workup_amount_volume" value="volume" checked> volume
-                <span style="padding-left:25px">value</span> <div class="workup_amount_value edittext shorttext floattext"></div>
-                ± <div class="workup_amount_precision edittext shorttext floattext"></div>
-                <div class="workup_amount_units_mass selector" data-proto="Mass_MassUnit" style="display: none;"></div>
-                <div class="workup_amount_units_volume selector" data-proto="Volume_VolumeUnit"></div>
+                <input type="radio" class="amount_mass" value="mass"> mass
+                <input type="radio" class="amount_volume" value="volume" checked> volume
+                <span style="padding-left:25px">value</span> <div class="amount_value edittext shorttext floattext"></div>
+                ± <div class="amount_precision edittext shorttext floattext"></div>
+                <div class="amount_units_mass selector" data-proto="Mass_MassUnit" style="display: none;"></div>
+                <div class="amount_units_volume selector" data-proto="Volume_VolumeUnit"></div>
               </div>
             </fieldset>
             <fieldset class="s4">

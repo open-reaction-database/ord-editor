@@ -22,6 +22,7 @@ exports = {
   unloadVolume
 };
 
+goog.require('proto.ord.Amount');
 goog.require('proto.ord.Mass');
 goog.require('proto.ord.Moles');
 goog.require('proto.ord.Volume');
@@ -30,78 +31,80 @@ goog.require('proto.ord.Volume');
  * Adds and populates the form's fields describing the amount of a compound.
  * @param {!Node} node The div corresponding to the compound whose amount fields
  *     on the form should be updated.
- * @param {?proto.ord.Mass} mass
- * @param {?proto.ord.Moles} moles
- * @param {?proto.ord.Volume} volume
+ * @param {?proto.ord.Amount} amount
  */
-function load(node, mass, moles, volume) {
-  const amount = $('.amount', node);
-  $('.component_amount_units_mass', node).hide();
-  $('.component_amount_units_moles', node).hide();
-  $('.component_amount_units_volume', node).hide();
+function load(node, amount) {
+  const amountNode = $('.amount', node);
+  $('.amount_units_mass', node).hide();
+  $('.amount_units_moles', node).hide();
+  $('.amount_units_volume', node).hide();
   $('.includes_solutes', node).hide();
-  if (mass) {
-    $('input[value=\'mass\']', amount).prop('checked', true);
-    if (mass.hasValue()) {
-      $('.component_amount_value', node).text(mass.getValue());
+  if (amount.mass) {
+    $('input[value=\'mass\']', amountNode).prop('checked', true);
+    if (amount.mass.hasValue()) {
+      $('.amount_value', node).text(amount.mass.getValue());
     }
-    if (mass.hasPrecision()) {
-      $('.component_amount_precision', node).text(mass.getPrecision());
+    if (amount.mass.hasPrecision()) {
+      $('.amount_precision', node).text(amount.mass.getPrecision());
     }
-    $('.component_amount_units_mass', node).show();
+    $('.amount_units_mass', node).show();
     ord.reaction.setSelector(
-        $('.component_amount_units_mass', amount), mass.getUnits());
-  }
-  if (moles) {
-    $('input[value=\'moles\']', amount).prop('checked', true);
-    if (moles.hasValue()) {
-      $('.component_amount_value', node).text(moles.getValue());
+        $('.amount_units_mass', amountNode), amount.mass.getUnits());
+  } else if (amount.moles) {
+    $('input[value=\'moles\']', amountNode).prop('checked', true);
+    if (amount.moles.hasValue()) {
+      $('.amount_value', node).text(amount.moles.getValue());
     }
-    if (moles.hasPrecision()) {
-      $('.component_amount_precision', node).text(moles.getPrecision());
+    if (amount.moles.hasPrecision()) {
+      $('.amount_precision', node).text(amount.moles.getPrecision());
     }
-    $('.component_amount_units_moles', node).show();
+    $('.amount_units_moles', node).show();
     ord.reaction.setSelector(
-        $('.component_amount_units_moles', amount), moles.getUnits());
-  }
-  if (volume) {
-    $('input[value=\'volume\']', amount).prop('checked', true);
-    if (volume.hasValue()) {
-      $('.component_amount_value', node).text(volume.getValue());
+        $('.amount_units_moles', amountNode), amount.moles.getUnits());
+  } else if (amount.volume) {
+    $('input[value=\'volume\']', amountNode).prop('checked', true);
+    if (amount.volume.hasValue()) {
+      $('.amount_value', node).text(amount.volume.getValue());
     }
-    if (volume.hasPrecision()) {
-      $('.component_amount_precision', node).text(volume.getPrecision());
+    if (amount.volume.hasPrecision()) {
+      $('.amount_precision', node).text(amount.volume.getPrecision());
     }
-    $('.component_amount_units_volume', node).show();
+    $('.amount_units_volume', node).show();
     $('.includes_solutes', node).show().css('display', 'inline-block');
+    const solutes = amount.hasVolumeIncludesSolutes() ?
+        amount.getVolumeIncludesSolutes() :
+        null;
+    ord.reaction.setOptionalBool(
+        $('.includes_solutes .optional_bool', node), solutes);
     ord.reaction.setSelector(
-        $('.component_amount_units_volume', amount), volume.getUnits());
+        $('.amount_units_volume', amountNode), amount.volume.getUnits());
   }
 }
 
 /**
- * Sets the amount fields of a compound message according to the form.
- * @param {!Node} node The div corresponding to the compound whose amount fields
- *     should be read from the form.
- * @param {!proto.ord.Compound} compound
+ * Creates an Amount message according to the form.
+ * @param {!Node} node The parent node for the amount fields.
+ * @return {!proto.ord.Amount}
  */
-function unload(node, compound) {
+function unload(node) {
+  const amount = new proto.ord.Amount();
   const mass = unloadMass(node);
   const moles = unloadMoles(node);
   const volume = unloadVolume(node);
   if (mass) {
     if (!ord.reaction.isEmptyMessage(mass)) {
-      compound.setMass(mass);
+      amount.setMass(mass);
     }
-  }
-  if (moles) {
+  } else if (moles) {
     if (!ord.reaction.isEmptyMessage(moles)) {
-      compound.setMoles(moles);
+      amount.setMoles(moles);
     }
-  }
-  if (volume) {
+  } else if (volume) {
     if (!ord.reaction.isEmptyMessage(volume)) {
-      compound.setVolume(volume);
+      amount.setVolume(volume);
+      const solutes = ord.reaction.getOptionalBool(
+          $('.includes_solutes .optional_bool', node));
+      amount.setVolumeIncludesSolutes(solutes);
     }
   }
 }
@@ -113,18 +116,17 @@ function unload(node, compound) {
  * @return {?proto.ord.Mass}
  */
 function unloadMass(node) {
-  if (!$('.component_amount_mass', node).is(':checked')) {
+  if (!$('.amount_mass', node).is(':checked')) {
     return null;
   }
   const mass = new proto.ord.Mass();
-  const value = parseFloat($('.component_amount_value', node).text());
+  const value = parseFloat($('.amount_value', node).text());
   if (!isNaN(value)) {
     mass.setValue(value);
   }
-  const units =
-      ord.reaction.getSelector($('.component_amount_units_mass', node));
+  const units = ord.reaction.getSelector($('.amount_units_mass', node));
   mass.setUnits(units);
-  const precision = parseFloat($('.component_amount_precision', node).text());
+  const precision = parseFloat($('.amount_precision', node).text());
   if (!isNaN(precision)) {
     mass.setPrecision(precision);
   }
@@ -138,18 +140,17 @@ function unloadMass(node) {
  * @return {?proto.ord.Moles}
  */
 function unloadMoles(node) {
-  if (!$('.component_amount_moles', node).is(':checked')) {
+  if (!$('.amount_moles', node).is(':checked')) {
     return null;
   }
   const moles = new proto.ord.Moles();
-  const value = parseFloat($('.component_amount_value', node).text());
+  const value = parseFloat($('.amount_value', node).text());
   if (!isNaN(value)) {
     moles.setValue(value);
   }
-  const units =
-      ord.reaction.getSelector($('.component_amount_units_moles', node));
+  const units = ord.reaction.getSelector($('.amount_units_moles', node));
   moles.setUnits(units);
-  const precision = parseFloat($('.component_amount_precision', node).text());
+  const precision = parseFloat($('.amount_precision', node).text());
   if (!isNaN(precision)) {
     moles.setPrecision(precision);
   }
@@ -163,18 +164,17 @@ function unloadMoles(node) {
  * @return {?proto.ord.Volume}
  */
 function unloadVolume(node) {
-  if (!$('.component_amount_volume', node).is(':checked')) {
+  if (!$('.amount_volume', node).is(':checked')) {
     return null;
   }
   const volume = new proto.ord.Volume();
-  const value = parseFloat($('.component_amount_value', node).text());
+  const value = parseFloat($('.amount_value', node).text());
   if (!isNaN(value)) {
     volume.setValue(value);
   }
-  const units =
-      ord.reaction.getSelector($('.component_amount_units_volume', node));
+  const units = ord.reaction.getSelector($('.amount_units_volume', node));
   volume.setUnits(units);
-  const precision = parseFloat($('.component_amount_precision', node).text());
+  const precision = parseFloat($('.amount_precision', node).text());
   if (!isNaN(precision)) {
     volume.setPrecision(precision);
   }

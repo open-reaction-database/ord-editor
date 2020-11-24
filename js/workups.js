@@ -26,7 +26,7 @@ exports = {
 
 goog.require('ord.inputs');
 goog.require('proto.ord.ReactionWorkup');
-goog.require('ord.amountsWorkups');
+goog.require('ord.amounts');
 
 // Freely create radio button groups by generating new input names.
 let radioGroupCounter = 0;
@@ -57,9 +57,8 @@ function loadWorkup(workup) {
     ord.inputs.loadInputUnnamed($('.workup_input', node), input);
   }
 
-  const mass = workup.getMass();
-  const volume = workup.getVolume();
-  ord.amountsWorkups.load(node, mass, volume);
+  const amount = workup.getAmount();
+  ord.amounts.load(node, amount);
 
   const temperature = workup.getTemperature();
   if (temperature) {
@@ -172,7 +171,10 @@ function unloadWorkup(node) {
     workup.setInput(input);
   }
 
-  ord.amountsWorkups.unload(node, workup);
+  const amount = ord.amounts.unload(node);
+  if (!ord.reaction.isEmptyMessage(amount)) {
+    workup.setAmount(amount);
+  }
 
   const control = new proto.ord.TemperatureConditions.TemperatureControl();
   control.setType(
@@ -294,14 +296,14 @@ function add() {
   amountButtons.attr('name', 'aliquots_' + radioGroupCounter++);
   amountButtons.change(function() {
     $('.amount .selector', workupNode).hide();
-    if (this.value == 'mass') {
-      $('.workup_amount_units_mass', workupNode).show();
+    if (this.value === 'mass') {
+      $('.amount_units_mass', workupNode).show();
     }
-    if (this.value == 'volume') {
-      $('.workup_amount_units_volume', workupNode).show();
+    if (this.value === 'volume') {
+      $('.amount_units_volume', workupNode).show();
     }
   });
-  workupNode.find('.workup_amount').trigger('click');
+  workupNode.find('.amount').trigger('click');
 
   // Add live validation handling.
   ord.reaction.addChangeHandler(workupNode, () => {
