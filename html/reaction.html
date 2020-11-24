@@ -944,55 +944,32 @@ limitations under the License.
                 <tr><td>chmo_id</td><td><div class="outcome_analysis_chmo_id edittext"></div></td></tr>
                 <tr><td>instrument manufacturer</td><td><div class="outcome_analysis_manufacturer edittext"></div></td></tr>
                 <tr><td>instrument calibration date</td><td><div class="outcome_analysis_calibrated edittext"></div></td></tr>
-                <tr><td>used internal standard
-                  <span data-toggle="tooltip" data-placement="right" title="Whether a non-reactive internal standard was included to provide more accurate quantification using a previously-validated calibration curve.">
+                <tr><td>is of isolated species?
+                  <span data-toggle="tooltip" data-placement="right" title="Whether this analysis is intended to be of an isolated species. If false or unspecified, the assumption is that it is of a crude product mixture (or a partially worked-up product mixture).">
                     <span class="fa fa-question-circle" aria-hidden="true"></span>
                   </span>
-                </td><td><div class="outcome_analysis_internal_standard optional_bool"></div></td></tr>
-                <tr><td>used authentic standard
-                  <span data-toggle="tooltip" data-placement="right" title="Whether a pure/commercial standard of this product was analyzed by the same technique, e.g., to 'confirm' identity by retention time and mass using an LCMS.">
-                    <span class="fa fa-question-circle" aria-hidden="true"></span>
-                  </span>
-                </td><td><div class="outcome_analysis_authentic_standard optional_bool"></div></td></tr>
+                </td><td><div class="outcome_analysis_is_of_isolated_species optional_bool"></div></td></tr>
               </table>
 
               <div>
-                <div class="outcome_processed_data_repeated">
+                <div class="outcome_data_repeated">
                 </div>
-                <div onclick="ord.outcomes.addProcessedData($(this).closest('.outcome_analysis'));" class="add">+ add processed data</div>
+                <div onclick="ord.outcomes.addData($(this).closest('.outcome_analysis'));" class="add">+ add data</div>
               </div>
 
-              <div>
-                <div class="outcome_raw_data_repeated">
-                </div>
-                <div onclick="ord.outcomes.addRawData($(this).closest('.outcome_analysis'));" class="add">+ add raw data</div>
-              </div>
             </fieldset>
 
           </div>
 
-          <div id="outcome_processed_data_template" class="outcome_processed_data" style="display: none;">
+          <div id="outcome_data_template" class="outcome_data" style="display: none;">
             <fieldset class="s5">
               <legend>
                 <span class="collapse"></span>
-                <span class="h5">Processed analytical data</span>
-                <div onclick="ord.reaction.removeSlowly(this, '.outcome_processed_data');" class="remove">remove</div>
+                <span class="h5">Analytical data</span>
+                <div onclick="ord.reaction.removeSlowly(this, '.outcome_data');" class="remove">remove</div>
               </legend>
               <table class="message">
-                <tr><td>name</td><td><div class="outcome_processed_data_name edittext"></div></td></tr>
-              </table>
-            </fieldset>
-          </div>
-
-          <div id="outcome_raw_data_template" class="outcome_raw_data" style="display: none;">
-            <fieldset class="s5">
-              <legend>
-                <span class="collapse"></span>
-                <span class="h5">Raw analytical data</span>
-                <div onclick="ord.reaction.removeSlowly(this, '.outcome_raw_data');" class="remove">remove</div>
-              </legend>
-              <table class="message">
-                <tr><td>name</td><td><div class="outcome_raw_data_name edittext"></div></td></tr>
+                <tr><td>name</td><td><div class="outcome_data_name edittext"></div></td></tr>
               </table>
             </fieldset>
           </div>
