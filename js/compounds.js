@@ -24,13 +24,14 @@ exports = {
   add,
   validateCompound,
   drawIdentifier,
+  addFeature,
   addNameIdentifier,
   addIdentifier,
   addPreparation
 };
 
 goog.require('ord.amounts');
-goog.require('ord.features');
+goog.require('ord.data');
 goog.require('proto.ord.Compound');
 goog.require('proto.ord.CompoundIdentifier');
 
@@ -97,8 +98,13 @@ function loadIntoCompound(node, compound) {
   const vendorId = compound.getVendorId();
   loadVendor(node, vendorSource, vendorLot, vendorId);
 
-  const features = compound.getFeaturesList();
-  ord.features.load(node, features);
+  const features = compound.getFeaturesMap();
+  const featureNames = features.stringKeys_();
+  featureNames.forEach(function(name) {
+    const feature = features.get(name);
+    const featureNode = addFeature(node);
+    loadFeature(featureNode, name, feature);
+  });
 }
 
 /**
@@ -214,8 +220,13 @@ function unloadCompound(node) {
 
   unloadVendor(node, compound);
 
-  const features = ord.features.unload(node);
-  compound.setFeaturesList(features);
+  const featuresMap = compound.getFeaturesMap();
+  $('.feature', node).each(function(index, featureNode) {
+    featureNode = $(featureNode);
+    if (!featureNode.attr('id')) {
+      unloadFeature(featureNode, featuresMap);
+    }
+  });
 
   return compound;
 }
@@ -569,4 +580,41 @@ function validateCompound(node, validateNode) {
   // validation so the same trigger is used and we only have to unload the
   // compound once per update.
   renderCompound(node, compound);
+}
+
+/**
+ * Adds a new feature section to the form.
+ * @param {!Node} node Parent component node.
+ * @return {!Node} The newly added parent node for the Data record.
+ */
+function addFeature(node) {
+  const featureNode =
+      ord.reaction.addSlowly('#feature_template', $('.features', node));
+  ord.data.addData(featureNode);
+  return featureNode;
+}
+
+/**
+ * Adds and populates a feature section in a Compound.
+ * @param {!Node} node Parent component node.
+ * @param {string} name The name of this Data record.
+ * @param {!proto.ord.Data} feature
+ */
+function loadFeature(node, name, feature) {
+  $('.feature_name', node).text(name);
+  ord.data.loadData(node, feature);
+}
+
+/**
+ * Fetches a feature record defined in the form and adds it to `featuresMap`.
+ * @param {!Node} node Root node for the Data record.
+ * @param {!jspb.Map<string, !proto.ord.Data>} featuresMap
+ */
+function unloadFeature(node, featuresMap) {
+  const name = $('.feature_name', node).text();
+  const data = ord.data.unloadData(node);
+  if (!ord.reaction.isEmptyMessage(name) ||
+      !ord.reaction.isEmptyMessage(data)) {
+    featuresMap.set(name, data);
+  }
 }

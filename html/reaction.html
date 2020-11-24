@@ -254,8 +254,21 @@ limitations under the License.
                     </span>
                   </legend>
                   <div class="features"></div>
-                  <div onclick="ord.features.add($(this).closest('.component'));" class="add">+ add feature</div>
+                  <div onclick="ord.compounds.addFeature($(this).closest('.component'));" class="add">+ add feature</div>
                 </fieldset>
+              </fieldset>
+            </div>
+
+            <div id="feature_template" class="feature" style="display: none;">
+              <fieldset class="s5">
+                <legend>
+                  <span class="collapse"></span>
+                  <span class="h5">Feature</span>
+                  <div onclick="ord.reaction.removeSlowly(this, '.feature_data');" class="remove">remove</div>
+                </legend>
+                <table class="message">
+                  <tr><td>name</td><td><div class="feature_name edittext"></div></td></tr>
+                </table>
               </fieldset>
             </div>
 
