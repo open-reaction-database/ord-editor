@@ -505,7 +505,7 @@ function loadReaction(reaction) {
   const observations = reaction.getObservationsList();
   ord.observations.load(observations);
 
-  const workups = reaction.getWorkupList();
+  const workups = reaction.getWorkupsList();
   ord.workups.load(workups);
 
   const outcomes = reaction.getOutcomesList();
@@ -563,7 +563,7 @@ function unloadReaction() {
   reaction.setObservationsList(observations);
 
   const workups = ord.workups.unload();
-  reaction.setWorkupList(workups);
+  reaction.setWorkupsList(workups);
 
   const outcomes = ord.outcomes.unload();
   reaction.setOutcomesList(outcomes);
