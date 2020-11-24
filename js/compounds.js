@@ -86,10 +86,8 @@ function loadIntoCompound(node, compound) {
     const preparationNode = addPreparation(node);
     loadPreparation(preparationNode, preparation);
   });
-  const vendorSource = compound.getVendorSource();
-  const vendorLot = compound.getVendorLot();
-  const vendorId = compound.getVendorId();
-  loadVendor(node, vendorSource, vendorLot, vendorId);
+  const source = compound.getSource();
+  loadSource(node, source);
 
   const features = compound.getFeaturesMap();
   const featureNames = features.stringKeys_();
@@ -134,16 +132,14 @@ function loadPreparation(node, preparation) {
 /**
  * Adds and populates the form's fields describing a compound's source.
  * @param {!Node} compoundNode The div corresponding to the compound whose
- *     vendor information should be updated on the form.
- * @param {string} vendorSource
- * @param {string} vendorLot
- * @param {string} vendorId
+ *     source information should be updated on the form.
+ * @param {!proto.ord.Compound.Source} source
  */
-function loadVendor(compoundNode, vendorSource, vendorLot, vendorId) {
-  const node = $('fieldset.vendor', compoundNode);
-  $('.component_vendor_source', node).text(vendorSource);
-  $('.component_vendor_lot', node).text(vendorLot);
-  $('.component_vendor_id', node).text(vendorId);
+function loadSource(compoundNode, source) {
+  const node = $('fieldset.source', compoundNode);
+  $('.component_source_vendor', node).text(source.getVendor());
+  $('.component_source_id', node).text(source.getId());
+  $('.component_source_lot', node).text(source.getLot());
 }
 
 /**
@@ -207,7 +203,7 @@ function unloadCompound(node) {
   });
   compound.setPreparationsList(preparations);
 
-  unloadVendor(node, compound);
+  unloadSource(node, compound);
 
   const featuresMap = compound.getFeaturesMap();
   $('.feature', node).each(function(index, featureNode) {
@@ -281,18 +277,18 @@ function unloadPreparation(node) {
 }
 
 /**
- * Sets the vendor information fields of a compound according to the form.
- * @param {!Node} node The div corresponding to the compound whose vendor
+ * Sets the source information fields of a compound according to the form.
+ * @param {!Node} node The div corresponding to the compound whose source
  *     information should be read from the form.
  * @param {!proto.ord.Compound} compound
  */
-function unloadVendor(node, compound) {
-  const vendorSource = $('.component_vendor_source', node).text();
-  compound.setVendorSource(vendorSource);
-  const vendorLot = $('.component_vendor_lot', node).text();
-  compound.setVendorLot(vendorLot);
-  const vendorId = $('.component_vendor_id', node).text();
-  compound.setVendorId(vendorId);
+function unloadSource(node, compound) {
+  const vendor = $('.component_source_vendor', node).text();
+  compound.source.setVendor(vendor);
+  const lot = $('.component_source_lot', node).text();
+  compound.source.setLot(lot);
+  const id = $('.component_source_id', node).text();
+  compound.source.setId(id);
 }
 
 /**
