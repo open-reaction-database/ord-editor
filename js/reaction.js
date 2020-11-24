@@ -180,6 +180,7 @@ function dirty() {
   // Short timer restarts on modification, in order to wait until a sufficiently long duration of no change.
   if (session.timers['short']) {clearTimeout(session.timers['short'])};
   session.timers['short'] = setTimeout(() => {
+    // TODO this button-clicking is probably better off as its own method
     // Only save if there are unsaved changes still to be saved -- hence save button visible --
     // and if ready for a save (not in the process of saving already).
     const saveButton = $('#save');
@@ -187,6 +188,20 @@ function dirty() {
       saveButton.trigger('click');
     }
   }, 1000 * 5);  // Save after five seconds
+  // Long timer saves a while after each modification, but not too frequently.
+  // This is done by only starting the timer if it's not already active.
+  if (!session.timers['long']) {
+    session.timers['long'] = setTimeout(() => {
+      // Only save if there are unsaved changes still to be saved -- hence save button visible --
+      // and if ready for a save (not in the process of saving already).
+      const saveButton = $('#save');
+      if (saveButton.css('visibility') == 'visible' && saveButton.text() == 'save') {
+        saveButton.trigger('click');
+      }
+      // So we can properly later detect whether the timer is active. 
+      session.timers['long'] = null;
+    }, 1000 * 60);  // Save after a minute
+  }
 }
 
 /**
