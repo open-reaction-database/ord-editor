@@ -699,14 +699,11 @@ def resolve_tokens(proto):
     matched = False
     if 'ListFields' in dir(proto):
         for descriptor, message in proto.ListFields():
-            print(descriptor.name)
             if descriptor.name == 'bytes_value':
-                print(descriptor.name, message[:40])
                 try:
                     token = message[:20].decode('utf8')
                 except UnicodeDecodeError:
                     # The bytes_value message is actual bytes (likely already saved before), not an upload token.
-                    print('bytes_value message is actual bytes, skipping...')
                     pass
                 else:
                     if token.startswith('upload_'):
