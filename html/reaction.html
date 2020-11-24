@@ -804,8 +804,7 @@ limitations under the License.
               <div class="outcome_analyses"></div>
               <div onclick="ord.outcomes.addAnalysis($(this).closest('.outcome'));" class="add">+ add analysis</div>
 
-              <div class="outcome_products">
-              </div>
+              <div class="outcome_products"></div>
               <div onclick="ord.products.add($(this).closest('.outcome'));" class="add">+ add product</div>
 
           </fieldset>
@@ -820,21 +819,90 @@ limitations under the License.
                 <span class="validate" onclick="ord.products.validateProduct($(this).closest('.outcome_product'))"></span>
               </legend>
 
-            <div class="outcome_product_compound components"></div>
-            <!-- Shares "#component_template" with ".components" in the input section. -->
+            <fieldset class="s5">
+              <legend>
+                <span class="collapse"></span>
+                <span class="h5">Identifiers</span>
+                <span data-toggle="tooltip" data-placement="right" title="Compound identifiers should be structural (e.g., SMILES) whenever possible.">
+                  <span class="fa fa-question-circle" aria-hidden="true"></span>
+                </span>
+              </legend>
+              <!-- Compound rendering -->
+              <div class="component_rendering" style="text-align: center;"></div>
+              <div class="identifiers"></div>
+              <!-- Shortcuts for name resolving & drawing -->
+              <div onclick="ord.compounds.drawIdentifier($(this).closest('.component'));" class="add"><span class="far fa-edit" aria-hidden="true"></span> draw compound</div>
+              <div onclick="ord.compounds.addNameIdentifier($(this).closest('.component'));" class="add"><span class="fa fa-search" aria-hidden="true"></span> look up name</div>
+              <!-- End shortcuts -->
+              <div onclick="ord.compounds.addIdentifier($(this).closest('.component'));" class="add">+ add identifier</div>
+            </fieldset>
 
-            <div class="spacer"></div>
-            <table class="message">
-              <tr><td>desired</td><td><div class="outcome_product_desired optional_bool"></div></td>
-              <tr><td>yield</td><td><div class="outcome_product_yield_value edittext shorttext floattext"></div>
-                                                  ± <div class="outcome_product_yield_precision edittext shorttext floattext"></div></td></tr>
-              <tr><td>purity</td><td><div class="outcome_product_purity_value edittext shorttext floattext"></div>
-                                                   ± <div class="outcome_product_purity_precision edittext shorttext floattext"></div></td></tr>
-              <tr><td>selectivity type</td><td><div class="outcome_product_selectivity_type selector" data-proto="Selectivity_SelectivityType"></div></td></tr>
-              <tr><td>selectivity</td><td><div class="outcome_product_selectivity_value edittext shorttext floattext"></div>
-                                                        ± <div class="outcome_product_selectivity_precision edittext shorttext floattext"></div>
-                                                        details</td><td><div class="outcome_product_selectivity_details edittext"></div></td></tr>
-            </table>
+            <fieldset class="amount s5">
+              <legend>
+                <span class="collapse"></span>
+                <span class="h5">Amount</span>
+              </legend>
+              <div>
+                <input type="radio" class="amount_mass" value="mass" checked> mass
+                <input type="radio" class="amount_moles" value="moles"> moles
+                <input type="radio" class="amount_volume" value="volume"> volume
+                <span class="includes_solutes">includes solutes?</span> <div class="includes_solutes optional_bool"></div>
+                <span style="padding-left:25px">value</span> <div class="amount_value edittext shorttext floattext"></div>
+                ± <div class="amount_precision edittext shorttext floattext"></div>
+                <div class="amount_units_mass selector" data-proto="Mass_MassUnit"></div>
+                <div class="amount_units_moles selector" data-proto="Moles_MolesUnit" style="display: none;"></div>
+                <div class="amount_units_volume selector" data-proto="Volume_VolumeUnit" style="display: none;"></div>
+              </div>
+            </fieldset>
+
+            <div id="product_measurement_template" class="product_measurement" style="display: none;">
+              <fieldset class="s6">
+                <legend>
+                  <span class="collapse"></span>
+                  <span class="h6">Product Measurement</span>
+                  <div onclick="ord.reaction.removeSlowly(this, '.product_measurement');" class="remove">remove</div>
+                </legend>
+                <table class="message">
+                  <tr>
+                    <td>based on</td>
+                    <td>
+                      <div class="outcome_product_analysis">
+                        <select class="analysis_key_selector">
+                          <option disabled selected value="">-- select an analysis label --</option>
+                        </select>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr><td>type</td><td><div class="product_measurement_type selector" data-proto="ProductMeasurement_MeasurementType" style="display: none;"></div></td></tr>
+                  <tr><td>details</td><td><div class="product_measurement_details edittext"></td></tr>
+                  <tr><td>uses internal standard?</td><td><div class="uses_internal_standard optional_bool"></div></td></tr>
+                  <tr><td>is normalized?</td><td><div class="is_normalized optional_bool"></div></td></tr>
+                  <tr><td>uses authentic standard?</td><td><div class="uses_authentic_standard optional_bool"></div></td></tr>
+                </table>
+                <!-- Shares "#component_template" with ".components" in the input section. -->
+                <div class="product_measurement_authentic_standard"></div>
+                <!-- Need radio buttons here for the oneof -->
+                <table class="message">
+                  <tr><td>retention time</td></tr>
+                </table>
+              </fieldset>
+            </div>
+
+            <div>
+              <span>desired</span> <div class="outcome_product_desired optional_bool"></div>
+            </div>
+
+            <fieldset class="s5">
+              <legend>
+                <span class="collapse"></span>
+                <span class="h5">Measurements</span>
+              </legend>
+              <div>
+                <div class="product_measurement_repeated"></div>
+                <div onclick="ord.products.addMeasurement($(this).closest('.outcome_product'));" class="add">+ add measurement</div>
+              </div>
+            </fieldset>
+
             <fieldset class="s5">
               <legend>
                 <span class="collapse"></span>
@@ -852,81 +920,14 @@ limitations under the License.
             <fieldset class="s5">
               <legend>
                 <span class="collapse"></span>
-                <span class="h5">Identity analyses</span>
-                <span data-toggle="tooltip" data-placement="right" title="Which analyses were used to confirm this product's identity.">
+                <span class="h5">Features</span>
+                <span data-toggle="tooltip" data-placement="right" title="Additional chemical features (e.g., calculated descriptors) that are important to associate with this compound.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
                 </span>
               </legend>
-              <div class="outcome_product_analysis_identities">
-              </div>
-              <div onclick="ord.products.addIdentity($(this).closest('.outcome_product'));" class="add">+ add identity analysis</div>
+              <div class="features"></div>
+              <div onclick="ord.compounds.addFeature($(this).closest('.component'));" class="add">+ add feature</div>
             </fieldset>
-
-            <fieldset class="s5">
-              <legend>
-                <span class="collapse"></span>
-                <span class="h5">Yield analyses</span>
-                <span data-toggle="tooltip" data-placement="right" title="Which analyses were used to quantify this product's yield.">
-                  <span class="fa fa-question-circle" aria-hidden="true"></span>
-                </span>
-              </legend>
-              <div class="outcome_product_analysis_yields">
-              </div>
-              <div onclick="ord.products.addYield($(this).closest('.outcome_product'));" class="add">+ add yield analysis</div>
-            </fieldset>
-
-            <fieldset class="s5">
-              <legend>
-                <span class="collapse"></span>
-                <span class="h5">Purity analyses</span>
-                <span data-toggle="tooltip" data-placement="right" title="Which analyses were used to quantify this product's purity.">
-                  <span class="fa fa-question-circle" aria-hidden="true"></span>
-                </span>
-              </legend>
-              <div class="outcome_product_analysis_purities">
-              </div>
-              <div onclick="ord.products.addPurity($(this).closest('.outcome_product'));" class="add">+ add purity analysis</div>
-            </fieldset>
-
-            <fieldset class="s5">
-              <legend>
-                <span class="collapse"></span>
-                <span class="h5">Selectivity analyses</span>
-                <span data-toggle="tooltip" data-placement="right" title="Which analyses were used to quantify selectivity toward this product.">
-                  <span class="fa fa-question-circle" aria-hidden="true"></span>
-                </span>
-              </legend>
-              <div class="outcome_product_analysis_selectivities">
-              </div>
-              <div onclick="ord.products.addSelectivity($(this).closest('.outcome_product'));" class="add">+ add selectivity analysis</div>
-            </fieldset>
-            </fieldset>
-          </div>
-
-          <div id="outcome_product_analysis_identity_template" class="outcome_product_analysis_identity" style="display: none;">
-            <select class="analysis_key_selector">
-              <option disabled selected value="">-- select an analysis label --</option>
-            </select>
-            <div onclick="ord.reaction.removeSlowly(this, '.outcome_product_analysis_identity');" class="remove">remove</div>
-          </div>
-          <div id="outcome_product_analysis_yield_template" class="outcome_product_analysis_yield" style="display: none;">
-            <select class="analysis_key_selector">
-              <option disabled selected value="">-- select an analysis label --</option>
-            </select>
-            <div onclick="ord.reaction.removeSlowly(this, '.outcome_product_analysis_yield');" class="remove">remove</div>
-          </div>
-          <div id="outcome_product_analysis_purity_template" class="outcome_product_analysis_purity" style="display: none;">
-            <select class="analysis_key_selector">
-              <option disabled selected value="">-- select an analysis label --</option>
-            </select>
-            <div onclick="ord.reaction.removeSlowly(this, '.outcome_product_analysis_purity');" class="remove">remove</div>
-          </div>
-          <div id="outcome_product_analysis_selectivity_template" class="outcome_product_analysis_selectivity" style="display: none;">
-            <select class="analysis_key_selector">
-              <option disabled selected value="">-- select an analysis label --</option>
-            </select>
-            <div onclick="ord.reaction.removeSlowly(this, '.outcome_product_analysis_selectivity');" class="remove">remove</div>
-          </div>
 
           <div id="outcome_analysis_template" class="outcome_analysis" style="display: none;">
             <fieldset class="s4">
