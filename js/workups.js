@@ -57,7 +57,7 @@ function loadWorkup(workup) {
     ord.inputs.loadInputUnnamed($('.workup_input', node), input);
   }
 
-  const amount = workup.getAmount();
+  const amount = workup.getAliquotAmount();
   ord.amounts.load(node, amount);
 
   const temperature = workup.getTemperature();
