@@ -686,8 +686,8 @@ def resolve_tokens(proto):
     """Fills in bytes_value fields using client-generated placeholder tokens.
 
     This is part of the upload mechanism. It acts by recursion on the tree
-    structure of the proto, hunting for fields named "bytes_value" and
-    comparing the fields' values against uploaded files in the root directory.
+    structure of the proto, hunting for fields named "bytes_value" whose values are these tokens, and 
+    comparing these tokens against uploaded files in the root directory.
     See write_dataset() and write_upload().
 
     Args:
@@ -703,7 +703,10 @@ def resolve_tokens(proto):
                 try:
                     token = message[:20].decode('utf8')
                 except UnicodeDecodeError:
-                    # The bytes_value message is actual bytes (likely already saved before), not an upload token.
+                    # Client generated tokens are utf-8 decodable. (see js/uploads.js)
+                    # So if the value is not utf-8 decodable, it's not an upload token,
+                    # and we should proceed to the next bytes_value field.
+                    # (Likely, the value is actual binary data from an upload that's already been processed.)
                     pass
                 else:
                     if token.startswith('upload_'):
