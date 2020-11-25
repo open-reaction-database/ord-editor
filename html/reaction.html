@@ -875,9 +875,9 @@ limitations under the License.
                   </tr>
                   <tr><td>type</td><td><div class="product_measurement_type selector" data-proto="ProductMeasurement_MeasurementType" style="display: none;"></div></td></tr>
                   <tr><td>details</td><td><div class="product_measurement_details edittext"></td></tr>
-                  <tr><td>uses internal standard?</td><td><div class="uses_internal_standard optional_bool"></div></td></tr>
-                  <tr><td>is normalized?</td><td><div class="is_normalized optional_bool"></div></td></tr>
-                  <tr><td>uses authentic standard?</td><td><div class="uses_authentic_standard optional_bool"></div></td></tr>
+                  <tr><td>uses internal standard?</td><td><div class="product_measurement_uses_internal_standard optional_bool"></div></td></tr>
+                  <tr><td>is normalized?</td><td><div class="product_measurement_is_normalized optional_bool"></div></td></tr>
+                  <tr><td>uses authentic standard?</td><td><div class="product_measurement_uses_authentic_standard optional_bool"></div></td></tr>
                 </table>
                 <!-- Shares "#component_template" with ".components" in the input section. -->
                 <div class="product_measurement_authentic_standard"></div>
@@ -885,18 +885,16 @@ limitations under the License.
                 <input type="radio" class="product_measurement_percentage" value="percentage" checked> percentage
                 <input type="radio" class="product_measurement_float" value="float"> number
                 <input type="radio" class="product_measurement_string" value="string"> string
-                <!-- TODO: Add/remove floattext class when appropriate. -->
                 <span style="padding-left:25px">value</span> <div class="product_measurement_value edittext shorttext"></div>
-                <!-- TODO: Show/hide when appropriate. -->
                 ± <div class="product_measurement_precision edittext shorttext floattext"></div>
 
                 <table class="message">
                   <tr>
                     <td>retention time</td>
                     <td>
-                      <div class="product_measurement_time_value edittext shorttext floattext"></div>
-                      ± <div class="product_measurement_time_precision edittext shorttext floattext"></div>
-                      <div class="product_measurement_time_units selector" data-proto="Time_TimeUnit"></div>
+                      <div class="product_measurement_retention_time_value edittext shorttext floattext"></div>
+                      ± <div class="product_measurement_retention_time_precision edittext shorttext floattext"></div>
+                      <div class="product_measurement_retention_time_units selector" data-proto="Time_TimeUnit"></div>
                     </td>
                   </tr>
                 </table>

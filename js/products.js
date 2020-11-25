@@ -20,14 +20,13 @@ exports = {
   load,
   unload,
   add,
-  addIdentity,
-  addYield,
-  addPurity,
-  addSelectivity,
+  addMeasurement,
   validateProduct
 };
 
+goog.require('ord.amounts');
 goog.require('ord.compounds');
+goog.require('proto.ord.ProductMeasurement')
 goog.require('proto.ord.ReactionProduct');
 
 /**
@@ -46,70 +45,31 @@ function load(node, products) {
  */
 function loadProduct(outcomeNode, product) {
   const node = add(outcomeNode);
-
-  const compound = product.getCompound();
-  if (compound) {
-    ord.compounds.loadIntoCompound(node, compound);
-  }
-
+  const identifiers = product.getIdentifiersList();
+  identifiers.forEach(identifier => {
+    const identifierNode = ord.compounds.addIdentifier(node);
+    ord.compounds.loadIdentifier(identifierNode, identifier);
+  })
   ord.reaction.setOptionalBool(
       $('.outcome_product_desired', node),
       product.hasIsDesiredProduct() ? product.getIsDesiredProduct() : null);
-
-  const compoundYield = product.getCompoundYield();
-  if (compoundYield) {
-    ord.reaction.writeMetric('.outcome_product_yield', compoundYield, node);
-  }
-
-  const purity = product.getPurity();
-  if (purity) {
-    ord.reaction.writeMetric('.outcome_product_purity', purity, node);
-  }
-
-  const selectivity = product.getSelectivity();
-  if (selectivity) {
-    ord.reaction.setSelector(
-        $('.outcome_product_selectivity_type', node), selectivity.getType());
-    $('.outcome_product_selectivity_details', node)
-        .text(selectivity.getDetails());
-    if (selectivity.hasValue()) {
-      $('.outcome_product_selectivity_value', node)
-          .text(selectivity.getValue());
-    }
-    if (selectivity.hasPrecision()) {
-      $('.outcome_product_selectivity_precision', node)
-          .text(selectivity.getPrecision());
-    }
-  }
-
-  const identities = product.getAnalysisIdentityList();
-  identities.forEach(identity => {
-    const analysisNode = addIdentity(node);
-    $('.analysis_key_selector', analysisNode).val(identity);
-  });
-  const yields = product.getAnalysisYieldList();
-  yields.forEach(yeild => {
-    const analysisNode = addYield(node);
-    $('.analysis_key_selector', analysisNode).val(yeild);
-  });
-  const purities = product.getAnalysisPurityList();
-  purities.forEach(purity => {
-    const analysisNode = addPurity(node);
-    $('.analysis_key_selector', analysisNode).val(purity);
-  });
-  const selectivities = product.getAnalysisSelectivityList();
-  selectivities.forEach(selectivity => {
-    const analysisNode = addSelectivity(node);
-    $('.analysis_key_selector', analysisNode).val(selectivity);
-  });
+  ord.amounts.load(node, product.getAmount());
+  product.getMeasurementsList().forEach(
+      measurement => loadMeasurement(node, measurement));
   $('.outcome_product_color', node).text(product.getIsolatedColor());
-
   const texture = product.getTexture();
   if (texture) {
     ord.reaction.setSelector(
         $('.outcome_product_texture_type', node), texture.getType());
     $('.outcome_product_texture_details', node).text(texture.getDetails());
   }
+  const features = product.getFeaturesMap();
+  const featureNames = features.stringKeys_();
+  featureNames.forEach(function(name) {
+    const feature = features.get(name);
+    const featureNode = ord.compounds.addFeature(node);
+    ord.compounds.loadFeature(featureNode, name, feature);
+  });
 }
 
 /**
@@ -139,62 +99,24 @@ function unload(node) {
  */
 function unloadProduct(node) {
   const product = new proto.ord.ReactionProduct();
-
-  const compoundNode = $('.outcome_product_compound', node);
-  const compound = ord.compounds.unloadCompound(compoundNode);
-  if (!ord.reaction.isEmptyMessage(compound)) {
-    product.setCompound(compound);
-  }
-
   product.setIsDesiredProduct(
       ord.reaction.getOptionalBool($('.outcome_product_desired', node)));
-
-  const yeild = ord.reaction.readMetric(
-      '.outcome_product_yield', new proto.ord.Percentage(), node);
-  if (!ord.reaction.isEmptyMessage(yeild)) {
-    product.setCompoundYield(yeild);
+  const amount = ord.amounts.unload(node);
+  if (!ord.reaction.isEmptyMessage(amount)) {
+    product.setAmount(amount);
   }
-
-  const purity = ord.reaction.readMetric(
-      '.outcome_product_purity', new proto.ord.Percentage(), node);
-  if (!ord.reaction.isEmptyMessage(purity)) {
-    product.setPurity(purity);
-  }
-
-  const selectivity = new proto.ord.Selectivity();
-  selectivity.setType(
-      ord.reaction.getSelector($('.outcome_product_selectivity_type', node)));
-  selectivity.setDetails(
-      $('.outcome_product_selectivity_details', node).text());
-  const selectivityValue =
-      parseFloat($('.outcome_product_selectivity_value', node).text());
-  if (!isNaN(selectivityValue)) {
-    selectivity.setValue(selectivityValue);
-  }
-  const selectivityPrecision =
-      parseFloat($('.outcome_product_selectivity_precision', node).text());
-  if (!isNaN(selectivityPrecision)) {
-    selectivity.setPrecision(selectivityPrecision);
-  }
-  if (!ord.reaction.isEmptyMessage(selectivity)) {
-    product.setSelectivity(selectivity);
-  }
-
-  const identities = unloadAnalysisKeys(node, 'identity');
-  product.setAnalysisIdentityList(identities);
-
-  const yields = unloadAnalysisKeys(node, 'yield');
-  product.setAnalysisYieldList(yields);
-
-  const purities = unloadAnalysisKeys(node, 'purity');
-  product.setAnalysisPurityList(purities);
-
-  const selectivities = unloadAnalysisKeys(node, 'selectivity');
-  product.setAnalysisSelectivityList(selectivities);
-
+  $('.product_measurement', node).each(function(index, measurementNode) {
+    measurementNode = $(measurementNode);
+    if (!measurementNode.attr('id')) {
+      // Not a template.
+      const measurement = unloadMeasurement(measurementNode);
+      if (!ord.reaction.isEmptyMessage(measurement)) {
+        product.measurements.push(product);
+      }
+    }
+  });
   const color = $('.outcome_product_color', node).text();
   product.setIsolatedColor(color);
-
   const texture = new proto.ord.ReactionProduct.Texture();
   texture.setType(
       ord.reaction.getSelector($('.outcome_product_texture_type', node)));
@@ -202,7 +124,6 @@ function unloadProduct(node) {
   if (!ord.reaction.isEmptyMessage(texture)) {
     product.setTexture(texture);
   }
-
   return product;
 }
 
@@ -236,19 +157,6 @@ function add(node) {
   const productNode = ord.reaction.addSlowly(
       '#outcome_product_template', $('.outcome_products', node));
 
-  // Add an empty compound node.
-  ord.compounds.add(productNode);
-  // The "compound" field is not repeated in ReactionProduct and so
-  // ReactionComponents should not be added or removed.
-  $('.component fieldset .remove', productNode).hide();
-  // Product components implicitly have role Product.
-  $('.component .component_role_limiting', productNode).hide();
-  // Volume measurements of product components do not include solutes.
-  $('.component .includes_solutes', productNode).remove();
-  // Product components do not have Preparations nor Vendor information.
-  $('.component .preparations_fieldset', productNode).hide();
-  $('.component .vendor', productNode).hide();
-
   // Add live validation handling.
   ord.reaction.addChangeHandler(productNode, () => {
     validateProduct(productNode);
@@ -273,55 +181,208 @@ function populateAnalysisSelector(node, analysisSelectorNode) {
 }
 
 /**
- * Adds a new identity analysis to the form.
- * @param {!Node} node Parent ReactionProduct node.
+ * Adds a ProductMeasurement section to the form.
+ * @param {!Node} node Parent node for the ReactionProduct.
  * @return {!Node} The newly created node.
  */
-function addIdentity(node) {
-  const analysisSelectorNode = ord.reaction.addSlowly(
-      '#outcome_product_analysis_identity_template',
-      $('.outcome_product_analysis_identities', node));
-  populateAnalysisSelector(node, analysisSelectorNode);
-  return analysisSelectorNode;
+function addMeasurement(node) {
+  const measurementNode = ord.reaction.addSlowly(
+      '#product_measurement_template',
+      $('.product_measurement_repeated', node));
+  populateAnalysisSelector(node, $(node, '.analysis_key_selector'));
+  // Add live validation handling.
+  ord.reaction.addChangeHandler(measurementNode, () => {
+    validateMeasurement(measurementNode);
+  });
+  return measurementNode;
 }
 
 /**
- * Adds a new yield analysis to the form.
- * @param {!Node} node Parent ReactionProduct node.
- * @return {!Node} The newly created node.
+ * Adds and populates a ProductMeasurement section in the form.
+ * @param {!Node} productNode The parent ReactionProduct node.
+ * @param {!proto.ord.ProductMeasurement} measurement
  */
-function addYield(node) {
-  const analysisSelectorNode = ord.reaction.addSlowly(
-      '#outcome_product_analysis_yield_template',
-      $('.outcome_product_analysis_yields', node));
-  populateAnalysisSelector(node, analysisSelectorNode);
-  return analysisSelectorNode;
+function loadMeasurement(productNode, measurement) {
+  const node = addMeasurement(productNode);
+  $('.analysis_key_selector', node).val(measurement.getAnalysisKey());
+  ord.reaction.setSelector(
+      $('.product_measurement_type', node), measurement.getType());
+  $('.product_measurement_details', node).text(measurement.getDetails());
+  ord.reaction.setOptionalBool(
+      $('.product_measurement_uses_internal_standard', node),
+      measurement.hasUsesInternalStandard() ?
+          measurement.getUsesInternalStandard() :
+          null);
+  ord.reaction.setOptionalBool(
+      $('.product_measurement_is_normalized', node),
+      measurement.hasIsNormalized() ? measurement.getIsNormalized() : null);
+  ord.reaction.setOptionalBool(
+      $('.product_measurement_uses_authentic_standard', node),
+      measurement.hasUsesAuthenticStandard() ?
+          measurement.getUsesAuthenticStandard() :
+          null);
+
+  const authenticStandard = measurement.getAuthenticStandard();
+  if (authenticStandard) {
+    ord.compounds.loadIntoCompound(node, authenticStandard);
+  }
+
+  if (measurement.percentage) {
+    $('input[value=\'percentage\']', node).prop('checked', true);
+    $('.product_measurement_value', node).addClass('floattext');
+    if (measurement.percentage.hasValue()) {
+      $('.product_measurement_value', node)
+          .text(measurement.percentage.getValue());
+    }
+    $('.product_measurement_precision', node).show();
+    if (measurement.percentage.hasPrecision()) {
+      $('.product_measurement_precision', node)
+          .text(measurement.percentage.getPrecision());
+    }
+  } else if (measurement.floatValue) {
+    $('input[value=\'float\']', node).prop('checked', true);
+    $('.product_measurement_value', node).addClass('floattext');
+    if (measurement.floatValue.hasValue()) {
+      $('.product_measurement_value', node)
+          .text(measurement.floatValue.getValue());
+    }
+    $('.product_measurement_precision', node).show();
+    if (measurement.floatValue.hasPrecision()) {
+      $('.product_measurement_precision', node)
+          .text(measurement.floatValue.getPrecision());
+    }
+  } else if (measurement.stringValue) {
+    $('input[value=\'string\']', node).prop('checked', true);
+    $('.product_measurement_value', node).removeClass('floattext');
+    if (measurement.getStringValue()) {
+      $('.product_measurement_value', node).text(measurement.getStringValue());
+    }
+    $('.product_measurement_precision', node).hide();
+  }
+
+  const retentionTime = measurement.getRetentionTime();
+  if (retentionTime) {
+    ord.reaction.writeMetric(
+        '.product_measurement_retention_time', retentionTime, node);
+  }
+
+  const massSpec = measurement.getMassSpecDetails();
+  if (massSpec) {
+    ord.reaction.setSelector(
+        $('.product_measurement_mass_spec_type', node), massSpec.getType());
+    $('.product_measurement_mass_spec_details', node)
+        .text(massSpec.getDetails());
+    ord.reaction.setOptionalBool(
+        $('.product_measurement_mass_spec_tic_minimum_mz', node),
+        massSpec.hasTicMinimumMz() ? measurement.getTicMinimumMz() : null);
+    ord.reaction.setOptionalBool(
+        $('.product_measurement_mass_spec_tic_maximum_mz', node),
+        massSpec.hasTicMaximumMz() ? measurement.getTicMaximumMz() : null);
+    // TODO: Add support for eic_masses.
+  }
+
+  const selectivity = measurement.getSelectivity();
+  if (selectivity) {
+    ord.reaction.setSelector(
+        $('.product_measurement_selectivity_type', node),
+        selectivity.getType());
+    $('.product_measurement_selectivity_details', node)
+        .text(selectivity.getDetails());
+  }
+
+  const wavelength = measurement.getWavelength();
+  if (wavelength) {
+    ord.reaction.writeMetric(
+        '.product_measurement_wavelength', wavelength, node);
+  }
 }
 
 /**
- * Adds a new purity analysis to the form.
- * @param {!Node} node Parent ReactionProduct node.
- * @return {!Node} The newly created node.
+ * Fetches a ProductMeasurement defined in the form.
+ * @param {!Node} node An element containing a ProductMeasurement.
+ * @return {!proto.ord.ProductMeasurement}
  */
-function addPurity(node) {
-  const analysisSelectorNode = ord.reaction.addSlowly(
-      '#outcome_product_analysis_purity_template',
-      $('.outcome_product_analysis_purities', node));
-  populateAnalysisSelector(node, analysisSelectorNode);
-  return analysisSelectorNode;
+function unloadMeasurement(node) {
+  const measurement = new proto.ord.ProductMeasurement();
+  measurement.setAnalysisKey(
+      ord.reaction.getSelector($('.analysis_key_selector', node)));
+  measurement.setType(
+      ord.reaction.getSelector($('.product_measurement_type', node)));
+  measurement.setDetails($('.product_measurement_details', node).text());
+  measurement.setUsesInternalStandard(ord.reaction.getOptionalBool(
+      $('.product_measurement_uses_internal_standard', node)));
+  measurement.setIsNormalized(ord.reaction.getOptionalBool(
+      $('.product_measurement_is_normalized', node)));
+  measurement.setUsesAuthenticStandard(ord.reaction.getOptionalBool(
+      $('.product_measurement_uses_authentic_standard', node)));
+
+  const authenticStandardNode =
+      $('.product_measurement_authentic_standard', node);
+  const compound = ord.compounds.unloadCompound(authenticStandardNode);
+  if (!ord.reaction.isEmptyMessage(compound)) {
+    measurement.setAuthenticStandard(compound);
+  }
+
+  if ($('.product_measurement_percentage', node).is(':checked')) {
+    const value = parseFloat($('.product_measurement_value', node).text());
+    if (!isNan(value)) {
+      measurement.percentage.setValue(value);
+    }
+    const precision =
+        parseFloat($('.product_measurement_precision', node).text());
+    if (!isNan(precision)) {
+      measurement.percentage.setPrecision(precision);
+    }
+  } else if ($('.product_measurement_float', node).is(':checked')) {
+    const value = parseFloat($('.product_measurement_value', node).text());
+    if (!isNan(value)) {
+      measurement.floatValue.setValue(value);
+    }
+    const precision =
+        parseFloat($('.product_measurement_precision', node).text());
+    if (!isNan(precision)) {
+      measurement.floatValue.setPrecision(precision);
+    }
+  } else if ($('.product_measurement_string', node).text()) {
+    measurement.setStringValue($('.product_measurement_string', node).text());
+  }
+
+  const retentionTime = ord.reaction.readMetric(
+      '.product_measurement_retention_time', new proto.ord.Time(), node);
+  if (!ord.reaction.isEmptyMessage(retentionTime)) {
+    measurement.setRetentionTime(retentionTime);
+  }
+
+  const massSpec = measurement.getMassSpecDetails();
+  massSpec.setType(
+      ord.reaction.getSelector($('.product_measurement_mass_spec_type', node)));
+  massSpec.setDetails($('.product_measurement_mass_spec_details', node).text());
+  massSpec.setTicMinimumMz(ord.reaction.getOptionalBool(
+      $('.product_measurement_mass_spec_tic_minimum_mz', node)));
+  massSpec.setTicMaximumMz(ord.reaction.getOptionalBool(
+      $('.product_measurement_mass_spec_tic_maximum_mz', node)));
+  // TODO: Add support for eic_masses.
+
+  measurement.selectivity.setType(ord.reaction.getSelector(
+      $('.product_measurement_selectivity_type', node)));
+  measurement.selectivity.setDetails(
+      $('.product_measurement_selectivity_details', node).text());
+
+  const wavelength = ord.reaction.readMetric(
+      '.product_measurement_wavelength', new proto.ord.Wavelength(), node);
+  if (!ord.reaction.isEmptyMessage(wavelength)) {
+    measurement.setWavelength(wavelength);
+  }
 }
 
 /**
- * Adds a new selectivity analysis to the form.
- * @param {!Node} node Parent ReactionProduct node.
- * @return {!Node} The newly created node.
+ * Validates a ProductMeasurement defined in the form.
+ * @param {!Node} node A node containing a ProductMeasurement.
+ * @param {?Node} validateNode The target div for validation results.
  */
-function addSelectivity(node) {
-  const analysisSelectorNode = ord.reaction.addSlowly(
-      '#outcome_product_analysis_selectivity_template',
-      $('.outcome_product_analysis_selectivities', node));
-  populateAnalysisSelector(node, analysisSelectorNode);
-  return analysisSelectorNode;
+function validateMeasurement(node, validateNode) {
+  const measurement = unloadMeasurement(node);
+  ord.reaction.validate(measurement, 'ProductMeasurement', node, validateNode);
 }
 
 /**
