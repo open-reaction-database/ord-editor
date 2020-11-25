@@ -36,6 +36,7 @@ goog.require('ord.amounts');
 goog.require('ord.data');
 goog.require('proto.ord.Compound');
 goog.require('proto.ord.CompoundIdentifier');
+goog.require('proto.ord.Compound.Source');
 
 // Freely create radio button groups by generating new input names.
 let radioGroupCounter = 0;
@@ -285,12 +286,14 @@ function unloadPreparation(node) {
  * @param {!proto.ord.Compound} compound
  */
 function unloadSource(node, compound) {
+  const source = new proto.ord.Compound.Source();
   const vendor = $('.component_source_vendor', node).text();
-  compound.source.setVendor(vendor);
+  source.setVendor(vendor);
   const lot = $('.component_source_lot', node).text();
-  compound.source.setLot(lot);
+  source.setLot(lot);
   const id = $('.component_source_id', node).text();
-  compound.source.setId(id);
+  source.setId(id);
+  compound.setSource(source);
 }
 
 /**

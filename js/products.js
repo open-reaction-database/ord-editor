@@ -21,13 +21,17 @@ exports = {
   unload,
   add,
   addMeasurement,
-  validateProduct
+  validateProduct,
+  validateMeasurement
 };
 
 goog.require('ord.amounts');
 goog.require('ord.compounds');
 goog.require('proto.ord.ProductMeasurement')
 goog.require('proto.ord.ReactionProduct');
+
+// Freely create radio button groups by generating new input names.
+let radioGroupCounter = 0;
 
 /**
  * Adds and populates the products section of the form.
@@ -105,16 +109,18 @@ function unloadProduct(node) {
   if (!ord.reaction.isEmptyMessage(amount)) {
     product.setAmount(amount);
   }
+  const measurements = [];
   $('.product_measurement', node).each(function(index, measurementNode) {
     measurementNode = $(measurementNode);
     if (!measurementNode.attr('id')) {
       // Not a template.
       const measurement = unloadMeasurement(measurementNode);
       if (!ord.reaction.isEmptyMessage(measurement)) {
-        product.measurements.push(product);
+        measurements.push(product);
       }
     }
   });
+  product.setMeasurementsList(measurements);
   const color = $('.outcome_product_color', node).text();
   product.setIsolatedColor(color);
   const texture = new proto.ord.ReactionProduct.Texture();
@@ -190,6 +196,25 @@ function addMeasurement(node) {
       '#product_measurement_template',
       $('.product_measurement_repeated', node));
   populateAnalysisSelector(node, $(node, '.analysis_key_selector'));
+
+  // Set up the radio buttons for the value type.
+  const buttons = $('.product_measurement_value_type input', node);
+  buttons.attr('name', 'product_measurements_' + radioGroupCounter++);
+  buttons.change(function() {
+    if (this.value === 'percentage' || this.value === 'float') {
+      $('.product_measurement_pm', node).show();
+      $('.product_measurement_precision', node).show();
+    } else {
+      $('.product_measurement_pm', node).hide();
+      $('.product_measurement_precision', node).hide();
+    }
+  });
+
+  // Add an empty compound node for the authentic standard.
+  const authenticStandard = ord.compounds.add(measurementNode);
+  const title = $('.h4', authenticStandard);
+  title.text('Authentic Standard');
+
   // Add live validation handling.
   ord.reaction.addChangeHandler(measurementNode, () => {
     validateMeasurement(measurementNode);
@@ -325,22 +350,22 @@ function unloadMeasurement(node) {
 
   if ($('.product_measurement_percentage', node).is(':checked')) {
     const value = parseFloat($('.product_measurement_value', node).text());
-    if (!isNan(value)) {
+    if (!isNaN(value)) {
       measurement.percentage.setValue(value);
     }
     const precision =
         parseFloat($('.product_measurement_precision', node).text());
-    if (!isNan(precision)) {
+    if (!isNaN(precision)) {
       measurement.percentage.setPrecision(precision);
     }
   } else if ($('.product_measurement_float', node).is(':checked')) {
     const value = parseFloat($('.product_measurement_value', node).text());
-    if (!isNan(value)) {
+    if (!isNaN(value)) {
       measurement.floatValue.setValue(value);
     }
     const precision =
         parseFloat($('.product_measurement_precision', node).text());
-    if (!isNan(precision)) {
+    if (!isNaN(precision)) {
       measurement.floatValue.setPrecision(precision);
     }
   } else if ($('.product_measurement_string', node).text()) {
@@ -353,26 +378,32 @@ function unloadMeasurement(node) {
     measurement.setRetentionTime(retentionTime);
   }
 
-  const massSpec = measurement.getMassSpecDetails();
-  massSpec.setType(
+  const massSpecDetails =
+      new proto.ord.ProductMeasurement.MassSpecMeasurementDetails();
+  massSpecDetails.setType(
       ord.reaction.getSelector($('.product_measurement_mass_spec_type', node)));
-  massSpec.setDetails($('.product_measurement_mass_spec_details', node).text());
-  massSpec.setTicMinimumMz(ord.reaction.getOptionalBool(
+  massSpecDetails.setDetails(
+      $('.product_measurement_mass_spec_details', node).text());
+  massSpecDetails.setTicMinimumMz(ord.reaction.getOptionalBool(
       $('.product_measurement_mass_spec_tic_minimum_mz', node)));
-  massSpec.setTicMaximumMz(ord.reaction.getOptionalBool(
+  massSpecDetails.setTicMaximumMz(ord.reaction.getOptionalBool(
       $('.product_measurement_mass_spec_tic_maximum_mz', node)));
   // TODO: Add support for eic_masses.
+  measurement.setMassSpecDetails(massSpecDetails);
 
-  measurement.selectivity.setType(ord.reaction.getSelector(
+  const selectivity = new proto.ord.ProductMeasurement.Selectivity();
+  selectivity.setType(ord.reaction.getSelector(
       $('.product_measurement_selectivity_type', node)));
-  measurement.selectivity.setDetails(
+  selectivity.setDetails(
       $('.product_measurement_selectivity_details', node).text());
+  measurement.setSelectivity(selectivity);
 
   const wavelength = ord.reaction.readMetric(
       '.product_measurement_wavelength', new proto.ord.Wavelength(), node);
   if (!ord.reaction.isEmptyMessage(wavelength)) {
     measurement.setWavelength(wavelength);
   }
+  return measurement;
 }
 
 /**

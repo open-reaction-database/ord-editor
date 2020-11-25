@@ -239,10 +239,10 @@ limitations under the License.
                     <span class="collapse starts_collapsed"></span>
                     <span class="h5">Source</span>
                   </legend>
-                  <div>
-                    vendor <div class="component_source_vendor edittext"></div>
-                    id <div class="component_source_id edittext"></div>
-                    lot number <div class="component_source_lot edittext"></div>
+                  <table class="message">
+                    <tr><td>vendor</td><td><div class="component_source_vendor edittext"></div></td></tr>
+                    <tr><td>id</td><td><div class="component_source_id edittext"></div></td></tr>
+                    <tr><td>lot number</td><td><div class="component_source_lot edittext"></div></td></tr>
                   </div>
                 </fieldset>
                 <fieldset class="s5">
@@ -861,6 +861,7 @@ limitations under the License.
                   <span class="collapse"></span>
                   <span class="h6">Product Measurement</span>
                   <div onclick="ord.reaction.removeSlowly(this, '.product_measurement');" class="remove">remove</div>
+                  <span class="validate" onclick="ord.products.validateMeasurement($(this).closest('.product_measurement'))"></span>
                 </legend>
                 <table class="message">
                   <tr>
@@ -873,22 +874,22 @@ limitations under the License.
                       </div>
                     </td>
                   </tr>
-                  <tr><td>type</td><td><div class="product_measurement_type selector" data-proto="ProductMeasurement_MeasurementType" style="display: none;"></div></td></tr>
+                  <tr><td>type</td><td><div class="product_measurement_type selector" data-proto="ProductMeasurement_MeasurementType"></div></td></tr>
                   <tr><td>details</td><td><div class="product_measurement_details edittext"></td></tr>
+                </table>
+                <div class="product_measurement_value_type">
+                  <input type="radio" class="product_measurement_percentage" value="percentage" checked> percentage
+                  <input type="radio" class="product_measurement_float" value="float"> number
+                  <input type="radio" class="product_measurement_string" value="string"> string
+                  <span style="padding-left:25px">value</span>
+                  <div class="product_measurement_value edittext shorttext"></div>
+                  <div class="product_measurement_pm" style="display: inline-block;">±</div>
+                  <div class="product_measurement_precision edittext shorttext floattext"></div>
+                </div>
+                <table class="message">
                   <tr><td>uses internal standard?</td><td><div class="product_measurement_uses_internal_standard optional_bool"></div></td></tr>
                   <tr><td>is normalized?</td><td><div class="product_measurement_is_normalized optional_bool"></div></td></tr>
                   <tr><td>uses authentic standard?</td><td><div class="product_measurement_uses_authentic_standard optional_bool"></div></td></tr>
-                </table>
-                <!-- Shares "#component_template" with ".components" in the input section. -->
-                <div class="product_measurement_authentic_standard"></div>
-
-                <input type="radio" class="product_measurement_percentage" value="percentage" checked> percentage
-                <input type="radio" class="product_measurement_float" value="float"> number
-                <input type="radio" class="product_measurement_string" value="string"> string
-                <span style="padding-left:25px">value</span> <div class="product_measurement_value edittext shorttext"></div>
-                ± <div class="product_measurement_precision edittext shorttext floattext"></div>
-
-                <table class="message">
                   <tr>
                     <td>retention time</td>
                     <td>
@@ -897,9 +898,6 @@ limitations under the License.
                       <div class="product_measurement_retention_time_units selector" data-proto="Time_TimeUnit"></div>
                     </td>
                   </tr>
-                </table>
-
-                <table class="message">
                   <tr>
                     <td>wavelength</td>
                     <td>
@@ -908,21 +906,17 @@ limitations under the License.
                       <div class="product_measurement_wavelength_units selector" data-proto="Wavelength_WavelengthUnit"></div>
                     </td>
                   </tr>
-                </table>
-
-                <table class="message">
                   <tr><td>mass spec type</td><td><div class="product_measurement_mass_spec_type selector" data-proto="ProductMeasurement_MassSpecMeasurementDetails_MassSpecMeasurementType"></div></td></tr>
-                  <tr><td>details</td><td><div class="product_measurement_mass_spec_details edittext"></div></td></tr>
+                  <tr><td>mass spec details</td><td><div class="product_measurement_mass_spec_details edittext"></div></td></tr>
                   <tr><td>TIC minimum m/z</td><td><div class="product_measurement_mass_spec_tic_minimum_mz edittext shorttext floattext"></div></td></tr>
                   <tr><td>TIC maximum m/z</td><td><div class="product_measurement_mass_spec_tic_maximum_mz edittext shorttext floattext"></div></td></tr>
                   <!-- TODO: Make this a repeated value with add/remove buttons? -->
                   <tr><td>EIC masses</td><td><div class="product_measurement_mass_spec_eic_masses edittext shorttext"></div></td></tr>
-                </table>
-
-                <table class="message">
                   <tr><td>selectivity type</td><td><div class="product_measurement_selectivity_type selector" data-proto="ProductMeasurement_Selectivity_SelectivityType"></div></td></tr>
-                  <tr><td>details</td><td><div class="product_measurement_selectivity_details edittext"></div></td></tr>
+                  <tr><td>selectivity details</td><td><div class="product_measurement_selectivity_details edittext"></div></td></tr>
                 </table>
+                <!-- Shares "#component_template" with ".components" in the input section. -->
+                <div class="product_measurement_authentic_standard components"></div>
 
               </fieldset>
             </div>
