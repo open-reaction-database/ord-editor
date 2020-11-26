@@ -116,7 +116,7 @@ function unloadProduct(node) {
       // Not a template.
       const measurement = unloadMeasurement(measurementNode);
       if (!ord.reaction.isEmptyMessage(measurement)) {
-        measurements.push(product);
+        measurements.push(measurement);
       }
     }
   });
@@ -130,6 +130,15 @@ function unloadProduct(node) {
   if (!ord.reaction.isEmptyMessage(texture)) {
     product.setTexture(texture);
   }
+
+  const featuresMap = product.getFeaturesMap();
+  $('.feature', node).each(function(index, featureNode) {
+    featureNode = $(featureNode);
+    if (!featureNode.attr('id')) {
+      ord.compounds.unloadFeature(featureNode, featuresMap);
+    }
+  });
+
   return product;
 }
 

@@ -29,7 +29,8 @@ exports = {
   addIdentifier,
   addPreparation,
   loadIdentifier,
-  loadFeature
+  loadFeature,
+  unloadFeature,
 };
 
 goog.require('ord.amounts');
