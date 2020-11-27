@@ -25,9 +25,6 @@ exports = {
 goog.require('ord.amounts');
 goog.require('proto.ord.CrudeComponent');
 
-// Freely create radio button groups by generating new input names.
-let radioGroupCounter = 0;
-
 /**
  * Adds and populates the crude components of a reaction input.
  * @param {!Node} node Root node for the parent reaction input.
@@ -112,21 +109,6 @@ function unloadCrude(node) {
  */
 function add(root) {
   const node = ord.reaction.addSlowly('#crude_template', $('.crudes', root));
-
-  // Create an "amount" radio button group and connect it to the unit selectors.
-  const amountButtons = $('.amount input', node);
-  amountButtons.attr('name', 'crudes_' + radioGroupCounter++);
-  amountButtons.change(function() {
-    $('.amount .selector', node).hide();
-    if (this.value === 'mass') {
-      $('.amount_units_mass', node).show();
-    }
-    if (this.value === 'moles') {
-      $('.amount_units_moles', node).show();
-    }
-    if (this.value === 'volume') {
-      $('.amount_units_volume', node).show();
-    }
-  });
+  ord.amounts.init(node);
   return node;
 }

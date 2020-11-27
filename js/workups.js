@@ -28,9 +28,6 @@ goog.require('ord.inputs');
 goog.require('proto.ord.ReactionWorkup');
 goog.require('ord.amounts');
 
-// Freely create radio button groups by generating new input names.
-let radioGroupCounter = 0;
-
 /**
  * Adds and populates the reaction workup sections in the form.
  * @param {!Array<!proto.ord.ReactionWorkup>} workups
@@ -291,19 +288,7 @@ function add() {
   // Unlike Reaction.inputs, this ReactionInput is not repeated.
   $('.remove', inputNode).hide();
 
-  // Create "amount" radio button group and connect it to the unit selectors.
-  const amountButtons = $('.amount input', workupNode);
-  amountButtons.attr('name', 'aliquots_' + radioGroupCounter++);
-  amountButtons.change(function() {
-    $('.amount .selector', workupNode).hide();
-    if (this.value === 'mass') {
-      $('.amount_units_mass', workupNode).show();
-    }
-    if (this.value === 'volume') {
-      $('.amount_units_volume', workupNode).show();
-    }
-  });
-  workupNode.find('.amount').trigger('click');
+  ord.amounts.init(workupNode);
 
   // Add live validation handling.
   ord.reaction.addChangeHandler(workupNode, () => {

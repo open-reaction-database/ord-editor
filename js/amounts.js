@@ -17,6 +17,7 @@
 goog.module('ord.amounts');
 goog.module.declareLegacyNamespace();
 exports = {
+  init,
   load,
   unload,
 };
@@ -25,6 +26,33 @@ goog.require('proto.ord.Amount');
 goog.require('proto.ord.Mass');
 goog.require('proto.ord.Moles');
 goog.require('proto.ord.Volume');
+
+// Freely create radio button groups by generating new input names.
+let radioGroupCounter = 0;
+
+/**
+ * Initializes the radio buttons and selectors for an Amount section.
+ * @param {!Node} node The parent div containing the Amount section.
+ */
+function init(node) {
+  const amountButtons = $('.amount input', node);
+  amountButtons.attr('name', 'amount_' + radioGroupCounter++);
+  amountButtons.change(function() {
+    $('.amount .selector', node).hide();
+    if (this.value === 'mass') {
+      $('.amount_units_mass', node).show();
+      $('.includes_solutes', node).hide();
+    }
+    if (this.value === 'moles') {
+      $('.amount_units_moles', node).show();
+      $('.includes_solutes', node).hide();
+    }
+    if (this.value === 'volume') {
+      $('.amount_units_volume', node).show();
+      $('.includes_solutes', node).show().css('display', 'inline-block');
+    }
+  });
+}
 
 /**
  * Adds and populates the form's fields describing the amount of a compound.

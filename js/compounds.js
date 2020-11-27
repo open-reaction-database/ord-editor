@@ -40,9 +40,6 @@ goog.require('proto.ord.Compound');
 goog.require('proto.ord.CompoundIdentifier');
 goog.require('proto.ord.Compound.Source');
 
-// Freely create radio button groups by generating new input names.
-let radioGroupCounter = 0;
-
 /**
  * Adds and populates the form's fields describing multiple compounds for a
  * single reaction input.
@@ -318,24 +315,7 @@ function add(root) {
     }
   });
 
-  // Create an "amount" radio button group and connect it to the unit selectors.
-  const amountButtons = $('.amount input', node);
-  amountButtons.attr('name', 'compounds_' + radioGroupCounter++);
-  amountButtons.change(function() {
-    $('.amount .selector', node).hide();
-    if (this.value === 'mass') {
-      $('.amount_units_mass', node).show();
-      $('.includes_solutes', node).hide();
-    }
-    if (this.value === 'moles') {
-      $('.amount_units_moles', node).show();
-      $('.includes_solutes', node).hide();
-    }
-    if (this.value === 'volume') {
-      $('.amount_units_volume', node).show();
-      $('.includes_solutes', node).show().css('display', 'inline-block');
-    }
-  });
+  ord.amounts.init(node);
 
   // Add live validation handling.
   ord.reaction.addChangeHandler(node, () => {

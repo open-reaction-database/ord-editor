@@ -112,10 +112,12 @@ function unloadProduct(node) {
 
   product.setIsDesiredProduct(
       ord.reaction.getOptionalBool($('.outcome_product_desired', node)));
+
   const amount = ord.amounts.unload(node);
   if (!ord.reaction.isEmptyMessage(amount)) {
     product.setAmount(amount);
   }
+
   const measurements = [];
   $('.product_measurement', node).each(function(index, measurementNode) {
     measurementNode = $(measurementNode);
@@ -128,8 +130,10 @@ function unloadProduct(node) {
     }
   });
   product.setMeasurementsList(measurements);
+
   const color = $('.outcome_product_color', node).text();
   product.setIsolatedColor(color);
+
   const texture = new proto.ord.ReactionProduct.Texture();
   texture.setType(
       ord.reaction.getSelector($('.outcome_product_texture_type', node)));
@@ -178,6 +182,7 @@ function unloadAnalysisKeys(node, tag) {
 function add(node) {
   const productNode = ord.reaction.addSlowly(
       '#outcome_product_template', $('.outcome_products', node));
+  ord.amounts.init(node);
 
   // Add live validation handling.
   ord.reaction.addChangeHandler(productNode, () => {
