@@ -49,11 +49,12 @@ function load(node, products) {
  */
 function loadProduct(outcomeNode, product) {
   const node = add(outcomeNode);
+
   const identifiers = product.getIdentifiersList();
   identifiers.forEach(identifier => {
-    const identifierNode = ord.compounds.addIdentifier(node);
-    ord.compounds.loadIdentifier(identifierNode, identifier);
+    ord.compounds.loadIdentifier(node, identifier);
   })
+
   ord.reaction.setOptionalBool(
       $('.outcome_product_desired', node),
       product.hasIsDesiredProduct() ? product.getIsDesiredProduct() : null);
@@ -103,6 +104,12 @@ function unload(node) {
  */
 function unloadProduct(node) {
   const product = new proto.ord.ReactionProduct();
+
+  const identifiers = ord.compounds.unloadIdentifiers(node);
+  if (!ord.reaction.isEmptyMessage(identifiers)) {
+    product.setIdentifiersList(identifiers);
+  }
+
   product.setIsDesiredProduct(
       ord.reaction.getOptionalBool($('.outcome_product_desired', node)));
   const amount = ord.amounts.unload(node);

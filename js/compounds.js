@@ -31,6 +31,7 @@ exports = {
   loadIdentifier,
   loadFeature,
   unloadFeature,
+  unloadIdentifiers,
 };
 
 goog.require('ord.amounts');
