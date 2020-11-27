@@ -69,8 +69,8 @@ function load(node, amount) {
   $('.amount_units_moles', node).hide();
   $('.amount_units_volume', node).hide();
   $('.includes_solutes', node).hide();
-  if (amount.getMass()) {
-    $('input[value=\'mass\']', amountNode).prop('checked', true);
+  if (amount.hasMass()) {
+    $('input[value=\'mass\']', amountNode).click();
     if (amount.getMass().hasValue()) {
       $('.amount_value', node).text(amount.getMass().getValue());
     }
@@ -80,8 +80,8 @@ function load(node, amount) {
     $('.amount_units_mass', node).show();
     ord.reaction.setSelector(
         $('.amount_units_mass', amountNode), amount.getMass().getUnits());
-  } else if (amount.getMoles()) {
-    $('input[value=\'moles\']', amountNode).prop('checked', true);
+  } else if (amount.hasMoles()) {
+    $('input[value=\'moles\']', amountNode).click();
     if (amount.getMoles().hasValue()) {
       $('.amount_value', node).text(amount.getMoles().getValue());
     }
@@ -91,8 +91,8 @@ function load(node, amount) {
     $('.amount_units_moles', node).show();
     ord.reaction.setSelector(
         $('.amount_units_moles', amountNode), amount.getMoles().getUnits());
-  } else if (amount.getVolume()) {
-    $('input[value=\'volume\']', amountNode).prop('checked', true);
+  } else if (amount.hasVolume()) {
+    $('input[value=\'volume\']', amountNode).click();
     if (amount.getVolume().hasValue()) {
       $('.amount_value', node).text(amount.getVolume().getValue());
     }
@@ -118,6 +118,9 @@ function load(node, amount) {
  */
 function unload(node) {
   const amount = new proto.ord.Amount();
+  // NOTE(kearnes): Take the closest amount section; there may be others
+  // nested deeper (e.g. in ProductMeasurement fields under a ReactionProduct).
+  node = $('.amount', node).first();
   const mass = unloadMass(node);
   const moles = unloadMoles(node);
   const volume = unloadVolume(node);
