@@ -414,14 +414,18 @@ function unloadMeasurement(node) {
   massSpecDetails.setTicMaximumMz(ord.reaction.getOptionalBool(
       $('.product_measurement_mass_spec_tic_maximum_mz', node)));
   // TODO: Add support for eic_masses.
-  measurement.setMassSpecDetails(massSpecDetails);
+  if (!ord.reaction.isEmptyMessage(massSpecDetails)) {
+    measurement.setMassSpecDetails(massSpecDetails);
+  }
 
   const selectivity = new proto.ord.ProductMeasurement.Selectivity();
   selectivity.setType(ord.reaction.getSelector(
       $('.product_measurement_selectivity_type', node)));
   selectivity.setDetails(
       $('.product_measurement_selectivity_details', node).text());
-  measurement.setSelectivity(selectivity);
+  if (!ord.reaction.isEmptyMessage(selectivity)) {
+    measurement.setSelectivity(selectivity);
+  }
 
   const wavelength = ord.reaction.readMetric(
       '.product_measurement_wavelength', new proto.ord.Wavelength(), node);
