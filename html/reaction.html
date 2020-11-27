@@ -243,7 +243,7 @@ limitations under the License.
                     <tr><td>vendor</td><td><div class="component_source_vendor edittext"></div></td></tr>
                     <tr><td>id</td><td><div class="component_source_id edittext"></div></td></tr>
                     <tr><td>lot number</td><td><div class="component_source_lot edittext"></div></td></tr>
-                  </div>
+                  </table>
                 </fieldset>
                 <fieldset class="s5">
                   <legend>
@@ -301,13 +301,6 @@ limitations under the License.
               <span class="component_compound_preparation_reaction_id">reaction ID</span>
               <div class="component_compound_preparation_reaction component_compound_preparation_reaction_id edittext"></div>
               <div onclick="ord.reaction.removeSlowly(this, '.component_preparation');" class="remove">remove</div>
-            </div>
-
-            <div id="component_feature_template" class="component_feature" style="display: none;">
-              name <div class="component_feature_name edittext"></div>
-              value <div class="component_feature_value edittext"></div>
-              how computed <div class="component_feature_how edittext"></div>
-              <div onclick="ord.reaction.removeSlowly(this, '.component_feature');" class="remove">remove</div>
             </div>
 
             <div id="crude_template" class="crude" style="display: none;">
@@ -961,6 +954,8 @@ limitations under the License.
               <div class="features"></div>
               <div onclick="ord.compounds.addFeature($(this).closest('.component'));" class="add">+ add feature</div>
             </fieldset>
+            </fieldset>
+          </div>
 
           <div id="outcome_analysis_template" class="outcome_analysis" style="display: none;">
             <fieldset class="s4">
