@@ -218,7 +218,8 @@ function addMeasurement(node) {
   const measurementNode = ord.reaction.addSlowly(
       '#product_measurement_template',
       $('.product_measurement_repeated', node));
-  populateAnalysisSelector(node, $(measurementNode, '.analysis_key_selector'));
+  populateAnalysisSelector(
+      node, $('.product_measurement_analysis_key', measurementNode));
 
   // Set up the radio buttons for the value type.
   const buttons = $('.product_measurement_value_type input', measurementNode);
@@ -349,8 +350,8 @@ function loadMeasurement(productNode, measurement) {
  */
 function unloadMeasurement(node) {
   const measurement = new proto.ord.ProductMeasurement();
-  measurement.setAnalysisKey(
-      ord.reaction.getSelector($('.analysis_key_selector', node)));
+  measurement.setAnalysisKey(ord.reaction.getSelectorText(
+      $('.product_measurement_analysis_key', node)[0]));
   measurement.setType(
       ord.reaction.getSelector($('.product_measurement_type', node)));
   measurement.setDetails($('.product_measurement_details', node).text());
