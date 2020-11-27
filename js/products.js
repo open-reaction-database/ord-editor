@@ -27,7 +27,9 @@ exports = {
 
 goog.require('ord.amounts');
 goog.require('ord.compounds');
-goog.require('proto.ord.ProductMeasurement')
+goog.require('proto.ord.FloatValue');
+goog.require('proto.ord.Percentage');
+goog.require('proto.ord.ProductMeasurement');
 goog.require('proto.ord.ReactionProduct');
 
 // Freely create radio button groups by generating new input names.
@@ -216,18 +218,18 @@ function addMeasurement(node) {
   const measurementNode = ord.reaction.addSlowly(
       '#product_measurement_template',
       $('.product_measurement_repeated', node));
-  populateAnalysisSelector(node, $(node, '.analysis_key_selector'));
+  populateAnalysisSelector(node, $(measurementNode, '.analysis_key_selector'));
 
   // Set up the radio buttons for the value type.
-  const buttons = $('.product_measurement_value_type input', node);
+  const buttons = $('.product_measurement_value_type input', measurementNode);
   buttons.attr('name', 'product_measurements_' + radioGroupCounter++);
   buttons.change(function() {
-    if (this.value === 'percentage' || this.value === 'float') {
-      $('.product_measurement_pm', node).show();
-      $('.product_measurement_precision', node).show();
+    if (this.value === 'string') {
+      $('.product_measurement_pm', measurementNode).hide();
+      $('.product_measurement_precision', measurementNode).hide();
     } else {
-      $('.product_measurement_pm', node).hide();
-      $('.product_measurement_precision', node).hide();
+      $('.product_measurement_pm', measurementNode).show();
+      $('.product_measurement_precision', measurementNode).show();
     }
   });
 
@@ -273,37 +275,34 @@ function loadMeasurement(productNode, measurement) {
     ord.compounds.loadIntoCompound(node, authenticStandard);
   }
 
-  if (measurement.percentage) {
-    $('input[value=\'percentage\']', node).prop('checked', true);
+  if (measurement.hasPercentage()) {
+    $('input[value=\'percentage\']', node).click();
     $('.product_measurement_value', node).addClass('floattext');
-    if (measurement.percentage.hasValue()) {
+    if (measurement.getPercentage().hasValue()) {
       $('.product_measurement_value', node)
-          .text(measurement.percentage.getValue());
+          .text(measurement.getPercentage().getValue());
     }
-    $('.product_measurement_precision', node).show();
-    if (measurement.percentage.hasPrecision()) {
+    if (measurement.getPercentage().hasPrecision()) {
       $('.product_measurement_precision', node)
-          .text(measurement.percentage.getPrecision());
+          .text(measurement.getPercentage().getPrecision());
     }
-  } else if (measurement.floatValue) {
-    $('input[value=\'float\']', node).prop('checked', true);
+  } else if (measurement.hasFloatValue()) {
+    $('input[value=\'float\']', node).click();
     $('.product_measurement_value', node).addClass('floattext');
-    if (measurement.floatValue.hasValue()) {
+    if (measurement.getFloatValue().hasValue()) {
       $('.product_measurement_value', node)
-          .text(measurement.floatValue.getValue());
+          .text(measurement.getFloatValue().getValue());
     }
-    $('.product_measurement_precision', node).show();
-    if (measurement.floatValue.hasPrecision()) {
+    if (measurement.getFloatValue().hasPrecision()) {
       $('.product_measurement_precision', node)
-          .text(measurement.floatValue.getPrecision());
+          .text(measurement.getFloatValue().getPrecision());
     }
-  } else if (measurement.stringValue) {
-    $('input[value=\'string\']', node).prop('checked', true);
+  } else if (measurement.getStringValue()) {
+    $('input[value=\'string\']', node).click();
     $('.product_measurement_value', node).removeClass('floattext');
     if (measurement.getStringValue()) {
       $('.product_measurement_value', node).text(measurement.getStringValue());
     }
-    $('.product_measurement_precision', node).hide();
   }
 
   const retentionTime = measurement.getRetentionTime();
@@ -370,25 +369,29 @@ function unloadMeasurement(node) {
   }
 
   if ($('.product_measurement_percentage', node).is(':checked')) {
+    const percentage = new proto.ord.Percentage();
     const value = parseFloat($('.product_measurement_value', node).text());
     if (!isNaN(value)) {
-      measurement.percentage.setValue(value);
+      percentage.setValue(value);
     }
     const precision =
         parseFloat($('.product_measurement_precision', node).text());
     if (!isNaN(precision)) {
-      measurement.percentage.setPrecision(precision);
+      percentage.setPrecision(precision);
     }
+    measurement.setPercentage(percentage);
   } else if ($('.product_measurement_float', node).is(':checked')) {
+    const floatValue = new proto.ord.FloatValue();
     const value = parseFloat($('.product_measurement_value', node).text());
     if (!isNaN(value)) {
-      measurement.floatValue.setValue(value);
+      floatValue.setValue(value);
     }
     const precision =
         parseFloat($('.product_measurement_precision', node).text());
     if (!isNaN(precision)) {
-      measurement.floatValue.setPrecision(precision);
+      floatValue.setPrecision(precision);
     }
+    measurement.setFloatValue(floatValue);
   } else if ($('.product_measurement_string', node).text()) {
     measurement.setStringValue($('.product_measurement_string', node).text());
   }
