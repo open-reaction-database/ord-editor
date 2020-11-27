@@ -171,9 +171,9 @@ function unloadWorkup(node) {
     workup.setInput(input);
   }
 
-  const amount = ord.amounts.unload(node);
-  if (!ord.reaction.isEmptyMessage(amount)) {
-    workup.setAmount(amount);
+  const aliquotAmount = ord.amounts.unload(node);
+  if (!ord.reaction.isEmptyMessage(aliquotAmount)) {
+    workup.setAliquotAmount(aliquotAmount);
   }
 
   const control = new proto.ord.TemperatureConditions.TemperatureControl();

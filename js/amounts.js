@@ -19,7 +19,6 @@ goog.module.declareLegacyNamespace();
 exports = {
   load,
   unload,
-  unloadVolume
 };
 
 goog.require('proto.ord.Amount');
@@ -34,40 +33,43 @@ goog.require('proto.ord.Volume');
  * @param {?proto.ord.Amount} amount
  */
 function load(node, amount) {
+  if (!amount) {
+    return;
+  }
   const amountNode = $('.amount', node);
   $('.amount_units_mass', node).hide();
   $('.amount_units_moles', node).hide();
   $('.amount_units_volume', node).hide();
   $('.includes_solutes', node).hide();
-  if (amount.mass) {
+  if (amount.getMass()) {
     $('input[value=\'mass\']', amountNode).prop('checked', true);
-    if (amount.mass.hasValue()) {
-      $('.amount_value', node).text(amount.mass.getValue());
+    if (amount.getMass().hasValue()) {
+      $('.amount_value', node).text(amount.getMass().getValue());
     }
-    if (amount.mass.hasPrecision()) {
-      $('.amount_precision', node).text(amount.mass.getPrecision());
+    if (amount.getMass().hasPrecision()) {
+      $('.amount_precision', node).text(amount.getMass().getPrecision());
     }
     $('.amount_units_mass', node).show();
     ord.reaction.setSelector(
-        $('.amount_units_mass', amountNode), amount.mass.getUnits());
-  } else if (amount.moles) {
+        $('.amount_units_mass', amountNode), amount.getMass().getUnits());
+  } else if (amount.getMoles()) {
     $('input[value=\'moles\']', amountNode).prop('checked', true);
-    if (amount.moles.hasValue()) {
-      $('.amount_value', node).text(amount.moles.getValue());
+    if (amount.getMoles().hasValue()) {
+      $('.amount_value', node).text(amount.getMoles().getValue());
     }
-    if (amount.moles.hasPrecision()) {
-      $('.amount_precision', node).text(amount.moles.getPrecision());
+    if (amount.getMoles().hasPrecision()) {
+      $('.amount_precision', node).text(amount.getMoles().getPrecision());
     }
     $('.amount_units_moles', node).show();
     ord.reaction.setSelector(
-        $('.amount_units_moles', amountNode), amount.moles.getUnits());
-  } else if (amount.volume) {
+        $('.amount_units_moles', amountNode), amount.getMoles().getUnits());
+  } else if (amount.getVolume()) {
     $('input[value=\'volume\']', amountNode).prop('checked', true);
-    if (amount.volume.hasValue()) {
-      $('.amount_value', node).text(amount.volume.getValue());
+    if (amount.getVolume().hasValue()) {
+      $('.amount_value', node).text(amount.getVolume().getValue());
     }
-    if (amount.volume.hasPrecision()) {
-      $('.amount_precision', node).text(amount.volume.getPrecision());
+    if (amount.getVolume().hasPrecision()) {
+      $('.amount_precision', node).text(amount.getVolume().getPrecision());
     }
     $('.amount_units_volume', node).show();
     $('.includes_solutes', node).show().css('display', 'inline-block');
@@ -75,9 +77,9 @@ function load(node, amount) {
         amount.getVolumeIncludesSolutes() :
         null;
     ord.reaction.setOptionalBool(
-        $('.includes_solutes .optional_bool', node), solutes);
+        $('.includes_solutes.optional_bool', node), solutes);
     ord.reaction.setSelector(
-        $('.amount_units_volume', amountNode), amount.volume.getUnits());
+        $('.amount_units_volume', amountNode), amount.getVolume().getUnits());
   }
 }
 
@@ -91,22 +93,17 @@ function unload(node) {
   const mass = unloadMass(node);
   const moles = unloadMoles(node);
   const volume = unloadVolume(node);
-  if (mass) {
-    if (!ord.reaction.isEmptyMessage(mass)) {
-      amount.setMass(mass);
-    }
-  } else if (moles) {
-    if (!ord.reaction.isEmptyMessage(moles)) {
-      amount.setMoles(moles);
-    }
-  } else if (volume) {
-    if (!ord.reaction.isEmptyMessage(volume)) {
-      amount.setVolume(volume);
-      const solutes = ord.reaction.getOptionalBool(
-          $('.includes_solutes .optional_bool', node));
-      amount.setVolumeIncludesSolutes(solutes);
-    }
+  if (!ord.reaction.isEmptyMessage(mass)) {
+    amount.setMass(mass);
+  } else if (!ord.reaction.isEmptyMessage(moles)) {
+    amount.setMoles(moles);
+  } else if (!ord.reaction.isEmptyMessage(volume)) {
+    amount.setVolume(volume);
+    const solutes = ord.reaction.getOptionalBool(
+        $('.includes_solutes.optional_bool', node));
+    amount.setVolumeIncludesSolutes(solutes);
   }
+  return amount;
 }
 
 /**
