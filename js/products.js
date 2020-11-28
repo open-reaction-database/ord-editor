@@ -55,7 +55,7 @@ function loadProduct(outcomeNode, product) {
   const identifiers = product.getIdentifiersList();
   identifiers.forEach(identifier => {
     ord.compounds.loadIdentifier(node, identifier);
-  })
+  });
 
   ord.reaction.setOptionalBool(
       $('.outcome_product_desired', node),
