@@ -707,7 +707,8 @@ def resolve_tokens(proto):
                     # (see js/uploads.js) So if the value is not utf-8
                     # decodable, it's not an upload token, and we should proceed
                     # to the next bytes_value field. (Likely, the value is
-                    # actual binary data from an upload that's already been processed.)
+                    # actual binary data from an upload that's already been
+                    # processed.)
                     break
                 if token.startswith('upload_'):
                     path = get_path(token)
