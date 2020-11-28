@@ -1,3 +1,4 @@
+#!/bin/bash
 # Copyright 2020 Open Reaction Database Project Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
