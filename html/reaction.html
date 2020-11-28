@@ -95,15 +95,7 @@ limitations under the License.
             <span class="fa fa-question-circle" aria-hidden="true"></span>
           </span>
         </legend>
-        <div id="identifiers">
-          <div id="reaction_identifier_template" class="reaction_identifier" style="display: none;">
-            type <div class="reaction_identifier_type selector" data-proto="ReactionIdentifier_IdentifierType"></div>
-            value <div class="reaction_identifier_value edittext longtext"></div>
-            <span class="fa fa-upload text_upload" aria-hidden="true" style="cursor:pointer;" onclick="ord.reaction.setTextFromFile($(this).closest('.reaction_identifier'), 'reaction_identifier_value');"></span>
-            <br>details <div class="reaction_identifier_details edittext"></div>
-            <div class="remove" onclick="ord.reaction.removeSlowly(this, '.reaction_identifier');">remove</div>
-          </div>
-        </div>
+        <div id="identifiers"></div>
         <div onclick="ord.identifiers.add();" class="add">+ add identifier</div>
       </fieldset>
 
@@ -268,11 +260,26 @@ limitations under the License.
             </div>
 
             <div id="component_identifier_template" class="component_identifier" style="display: none; padding-bottom:10px">
-              type <div class="component_identifier_type selector" data-proto="CompoundIdentifier_IdentifierType"></div>
-              value <div class="component_identifier_value edittext longtext"></div>
-              <span class="fa fa-upload text_upload" aria-hidden="true" style="cursor:pointer;" onclick="ord.reaction.setTextFromFile($(this).closest('.component_identifier'), 'component_identifier_value');"></span>
-              <br>details <div class="component_identifier_details edittext longtext"></div>
-              <div onclick="ord.reaction.removeSlowly(this, '.component_identifier');" class="remove">remove</div>
+              <table class="message">
+                <tr>
+                  <td>value</td>
+                  <td>
+                    <div class="component_identifier_value edittext longtext"></div>
+                    <span class="fa fa-upload text_upload" aria-hidden="true" style="cursor:pointer;" onclick="ord.reaction.setTextFromFile($(this).closest('.component_identifier'), 'component_identifier_value');"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>type</td>
+                  <td><div class="component_identifier_type selector" data-proto="CompoundIdentifier_IdentifierType"></div></td>
+                </tr>
+                <tr>
+                  <td>details</td>
+                  <td>
+                    <div class="component_identifier_details edittext longtext"></div>
+                    <div onclick="ord.reaction.removeSlowly(this, '.component_identifier');" class="remove">remove</div>
+                  </td>
+                </tr>
+              </table>
             </div>
 
             <div id="component_preparation_template" class="component_preparation" style="display: none;">
@@ -1082,6 +1089,29 @@ limitations under the License.
         <span class="validate_warning_message"></span>
       </span>
     </span>
+
+    <div id="reaction_identifier_template" class="reaction_identifier" style="display: none;">
+      <table class="message">
+        <tr>
+          <td>value</td>
+          <td>
+            <div class="reaction_identifier_value edittext longtext"></div>
+            <span class="fa fa-upload text_upload" aria-hidden="true" style="cursor:pointer;" onclick="ord.reaction.setTextFromFile($(this).closest('.reaction_identifier'), 'reaction_identifier_value');"></span>
+          </td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td><div class="reaction_identifier_type selector" data-proto="ReactionIdentifier_IdentifierType"></div></td>
+        </tr>
+        <tr>
+          <td>details</td>
+          <td>
+            <div class="reaction_identifier_details edittext"></div>
+            <div class="remove" onclick="ord.reaction.removeSlowly(this, '.reaction_identifier');">remove</div>
+          </td>
+        </tr>
+      </table>
+    </div>
 
     <div id="data_template" class="data" style="display: none;">
       <table class="message">
