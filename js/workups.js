@@ -168,7 +168,7 @@ function unloadWorkup(node) {
     workup.setInput(input);
   }
 
-  const aliquotAmount = ord.amounts.unload(node);
+  const aliquotAmount = ord.amounts.unload($('.aliquot_amount', node));
   if (!ord.reaction.isEmptyMessage(aliquotAmount)) {
     workup.setAliquotAmount(aliquotAmount);
   }

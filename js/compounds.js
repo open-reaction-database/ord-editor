@@ -88,8 +88,10 @@ function loadIntoCompound(node, compound) {
     const preparationNode = addPreparation(node);
     loadPreparation(preparationNode, preparation);
   });
-  const source = compound.getSource();
-  loadSource(node, source);
+  if (compound.hasSource()) {
+    const source = compound.getSource();
+    loadSource(node, source);
+  }
 
   const features = compound.getFeaturesMap();
   const featureNames = features.stringKeys_();
@@ -292,7 +294,9 @@ function unloadSource(node, compound) {
   source.setLot(lot);
   const id = $('.component_source_id', node).text();
   source.setId(id);
-  compound.setSource(source);
+  if (!ord.reaction.isEmptyMessage(source)) {
+    compound.setSource(source);
+  }
 }
 
 /**

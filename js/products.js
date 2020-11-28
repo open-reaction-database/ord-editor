@@ -380,7 +380,9 @@ function unloadMeasurement(node) {
     if (!isNaN(precision)) {
       percentage.setPrecision(precision);
     }
-    measurement.setPercentage(percentage);
+    if (!ord.reaction.isEmptyMessage(percentage)) {
+      measurement.setPercentage(percentage);
+    }
   } else if ($('.product_measurement_float', node).is(':checked')) {
     const floatValue = new proto.ord.FloatValue();
     const value = parseFloat($('.product_measurement_value', node).text());
@@ -392,7 +394,9 @@ function unloadMeasurement(node) {
     if (!isNaN(precision)) {
       floatValue.setPrecision(precision);
     }
-    measurement.setFloatValue(floatValue);
+    if (!ord.reaction.isEmptyMessage(percentage)) {
+      measurement.setFloatValue(floatValue);
+    }
   } else if ($('.product_measurement_string', node).text()) {
     measurement.setStringValue($('.product_measurement_string', node).text());
   }
