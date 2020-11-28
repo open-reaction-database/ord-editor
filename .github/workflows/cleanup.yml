@@ -16,6 +16,10 @@ name: Lint
 
 on: [pull_request, push]
 
+env:
+  # ord-schema is versioned to avoid breaking ord-editor.
+  ORD_SCHEMA_TAG: v0.1.1
+
 jobs:
   check_licenses:
     runs-on: ubuntu-latest
@@ -39,6 +43,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: "Open-Reaction-Database/ord-schema"
+          ref: ${{ env.ORD_SCHEMA_TAG }}
           path: ord-schema
       - uses: s-weigand/setup-conda@v1
         with:
@@ -71,6 +76,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: "Open-Reaction-Database/ord-schema"
+          ref: ${{ env.ORD_SCHEMA_TAG }}
           path: ord-schema
       - uses: actions/setup-java@v1
         with:
