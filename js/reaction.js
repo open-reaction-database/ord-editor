@@ -191,19 +191,21 @@ function clickSave() {
 function dirty() {
   $('#save').css('visibility', 'visible');
   // Handle timers for autosave.
-  // Short timer restarts on modification, in order to wait until a sufficiently
-  // long duration of no change.
+  // On modification, we clear the existing short timer and start a new one,
+  // so that the timer can only finish (and thus trigger a save) after
+  // a sufficient duration of no change.
   if (session.timers['short']) {
     clearTimeout(session.timers['short']);
   }
   session.timers['short'] =
       setTimeout(clickSave, 1000 * 15);  // Save after 15 seconds
-  // Long timer saves a while after each modification, but not too frequently.
-  // This is done by only starting the timer if it's not already active.
+  // Long timer starts on every modiification, only if it's
+  // not counting down already. Thus even if modifications keep coming, we can
+  // force a save, and ensure that these saves aren't too frequent.
   if (!session.timers['long']) {
     session.timers['long'] = setTimeout(() => {
       clickSave();
-      // So we can properly later detect whether the timer is active.
+      // So we can properly later detect that there's no timer counting down.
       session.timers['long'] = null;
     }, 1000 * 60);  // Save after a minute
   }
