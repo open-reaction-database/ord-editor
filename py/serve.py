@@ -706,10 +706,10 @@ def resolve_tokens(proto):
                     # Client generated tokens are utf-8 decodable.
                     # (see js/uploads.js) So if the value is not utf-8
                     # decodable, it's not an upload token, and we should proceed
-                    # to the next bytes_value field. (Likely, the value is
+                    # to the next proto field. (Likely, the value is
                     # actual binary data from an upload that's already been
                     # processed.)
-                    break
+                    pass
                 if token.startswith('upload_'):
                     path = get_path(token)
                     if os.path.isfile(path):
