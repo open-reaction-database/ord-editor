@@ -197,7 +197,7 @@ function dirty() {
     clearTimeout(session.timers['short']);
   }
   session.timers['short'] =
-      setTimeout(clickSave, 1000 * 5);  // Save after five seconds
+      setTimeout(clickSave, 1000 * 15);  // Save after 15 seconds
   // Long timer saves a while after each modification, but not too frequently.
   // This is done by only starting the timer if it's not already active.
   if (!session.timers['long']) {
