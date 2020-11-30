@@ -181,7 +181,7 @@ function clickSave() {
   const saveButton = $('#save');
   if (saveButton.css('visibility') == 'visible' &&
       saveButton.text() == 'save') {
-    saveButton.trigger('click');
+    saveButton.click();
   }
 }
 
