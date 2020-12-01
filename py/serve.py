@@ -709,7 +709,7 @@ def resolve_tokens(proto):
                     # to the next proto field. (Likely, the value is
                     # actual binary data from an upload that's already been
                     # processed.)
-                    pass
+                    continue
                 if token.startswith('upload_'):
                     path = get_path(token)
                     if os.path.isfile(path):
