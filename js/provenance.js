@@ -121,8 +121,7 @@ function unload() {
   $('.provenance_modified', '#provenance_modifieds')
       .each(function(index, node) {
         node = $(node);
-        if (!node.attr('id')) {
-          // Not a template.
+        if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
           const modified = unloadRecordEvent(node);
           if (!ord.reaction.isEmptyMessage(modified)) {
             modifieds.push(modified);

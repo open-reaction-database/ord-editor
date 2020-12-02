@@ -231,8 +231,7 @@ function unloadIdentifiers(node) {
   const identifiers = [];
   $('.component_identifier', node).each(function(index, node) {
     node = $(node);
-    if (!node.attr('id')) {
-      // Not a template.
+    if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
       const identifier = unloadIdentifier(node);
       if (!ord.reaction.isEmptyMessage(identifier)) {
         identifiers.push(identifier);
@@ -467,8 +466,7 @@ function drawIdentifier(node) {
     // Check if an existing SMILES/MolBlock identifier exists. If yes, remove.
     $('.component_identifier', node).each(function(index, node) {
       node = $(node);
-      if (!node.attr('id')) {
-        // Not a template.
+      if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
         const identifier = unloadIdentifier(node);
         if ((identifier.getType() ===
              proto.ord.CompoundIdentifier.IdentifierType.SMILES) ||

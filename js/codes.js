@@ -58,7 +58,7 @@ function loadCode(name, code) {
 function unload(codes) {
   $('.setup_code').each(function(index, node) {
     node = $(node);
-    if (!node.attr('id')) {
+    if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
       unloadCode(codes, node);
     }
   });

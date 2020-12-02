@@ -151,8 +151,7 @@ function unload() {
   const outcomes = [];
   $('.outcome').each(function(index, node) {
     node = $(node);
-    if (!node.attr('id')) {
-      // Not a template.
+    if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
       const outcome = unloadOutcome(node);
       if (!ord.reaction.isEmptyMessage(outcome)) {
         outcomes.push(outcome);
@@ -188,8 +187,7 @@ function unloadOutcome(node) {
   const analyses = outcome.getAnalysesMap();
   $('.outcome_analysis', node).each(function(index, node) {
     node = $(node);
-    if (!node.attr('id')) {
-      // Not a template.
+    if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
       unloadAnalysis(node, analyses);
     }
   });

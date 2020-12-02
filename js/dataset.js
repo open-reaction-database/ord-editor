@@ -198,7 +198,7 @@ function unloadDataset() {
   const reactionIds = [];
   $('.other_reaction_id').each(function(index, node) {
     node = $(node);
-    if (!node.attr('id')) {
+    if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
       reactionIds.push($('.other_reaction_id_text', node).text());
     }
   });

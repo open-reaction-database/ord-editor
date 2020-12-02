@@ -24,7 +24,7 @@ exports = {
   add,
   validateInput,
   addInputByString,
-  remove,
+  updateSidebar
 };
 
 goog.require('ord.compounds');
@@ -149,8 +149,7 @@ function loadInputUnnamed(node, input) {
 function unload(inputs) {
   $('#inputs > div.input').each(function(index, node) {
     node = $(node);
-    if (!node.attr('id')) {
-      // Not a template.
+    if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
       unloadInput(inputs, node);
     }
   });
@@ -255,14 +254,6 @@ function add(root, classes) {
   const nameNode = node.find('.input_name').first();
   nameNode.blur(updateSidebar);
   return node;
-}
-
-/**
- * Removes a reaction input section from the form.
- * @param {!Node} root Parent node for the input section to be removed.
- */
-function remove(root) {
-  ord.reaction.removeSlowly(root, '.input', updateSidebar);
 }
 
 /**
