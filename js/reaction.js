@@ -667,7 +667,7 @@ function undoSlowly() {
   $('.undoable').removeClass('undoable').show('slow');
   $('.undo').not('#undo_template').hide('slow', function() {
     $(this).remove();
-    ord.inputs.updateSidebar()
+    ord.inputs.updateSidebar();
   });
   dirty();
 }
@@ -692,6 +692,7 @@ function makeUndoable(node) {
  * Supports unload() operations by filtering spurious selector matches due
  * either to DOM templates or elements the user has removed undoably.
  * @param {!Node node} node The DOM node to test for spuriousness.
+ * @return {boolean} True means ignore this node.
  */
 function isTemplateOrUndoBuffer(node) {
   return node.attr('id') || node.hasClass('undoable');
