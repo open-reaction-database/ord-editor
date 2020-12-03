@@ -37,6 +37,7 @@ RUN conda install -c rdkit \
     flask \
     gunicorn \
     nodejs \
+    python=3.7 \
     rdkit \
  && conda clean -afy
 
