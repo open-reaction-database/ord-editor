@@ -17,8 +17,7 @@ name: Lint
 on: [pull_request, push]
 
 env:
-  # ord-schema is versioned to avoid breaking ord-editor.
-  ORD_SCHEMA_TAG: v0.2.1
+  ORD_SCHEMA_TAG: v0.2.2
 
 jobs:
   check_licenses:
