@@ -56,8 +56,7 @@ function unload() {
   const identifiers = [];
   $('.reaction_identifier').each(function(index, node) {
     node = $(node);
-    if (!node.attr('id')) {
-      // Not a template.
+    if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
       const identifier = unloadIdentifier(node);
       if (!ord.reaction.isEmptyMessage(identifier)) {
         identifiers.push(identifier);

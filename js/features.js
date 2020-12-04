@@ -63,7 +63,7 @@ function unload(compoundNode) {
   const features = [];
   $('.component_feature', compoundNode).each(function(index, node) {
     node = $(node);
-    if (!node.attr('id')) {
+    if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
       const feature = unloadFeature(node);
       if (!ord.reaction.isEmptyMessage(feature)) {
         features.push(feature);

@@ -156,7 +156,7 @@ function unloadVessel() {
   const preparations = [];
   $('.setup_vessel_preparation').each(function(index, node) {
     node = $(node);
-    if (node.attr('id')) {
+    if (ord.reaction.isTemplateOrUndoBuffer(node)) {
       // The template.
       return;
     }
@@ -173,8 +173,7 @@ function unloadVessel() {
   const attachments = [];
   $('.setup_vessel_attachment').each(function(index, node) {
     node = $(node);
-    if (node.attr('id')) {
-      // The template.
+    if (ord.reaction.isTemplateOrUndoBuffer(node)) {
       return;
     }
     const attachment = new proto.ord.VesselAttachment();
