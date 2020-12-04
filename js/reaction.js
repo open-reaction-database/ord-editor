@@ -683,7 +683,6 @@ function makeUndoable(node) {
   $('.undo').not('#undo_template').remove();
   const button = $('#undo_template').clone();
   button.removeAttr('id');
-  button.hide();
   node.after(button);
   button.show('slow');
 }
