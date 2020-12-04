@@ -97,11 +97,11 @@ v20200517](https://github.com/google/closure-library/releases/).
 
 Unpack the archive in the editor directory so the Closure compiler can find it.
 ```
-$ url=https://github.com/protocolbuffers/protobuf/releases/download/v3.13.0/protobuf-js-3.13.0.tar.gz
+$ url=https://github.com/protocolbuffers/protobuf/releases/download/v3.14.0/protobuf-js-3.14.0.tar.gz
 $ wget $url -O - | tar zxf -
 ```
 At the time of writing, [version
-3.13.0](https://github.com/protocolbuffers/protobuf/releases/tag/v3.13.0)
+3.14.0](https://github.com/protocolbuffers/protobuf/releases/tag/v3.14.0)
 matches the protoc compiler in pip's protoc-wheel-0 distribution referenced
 from ../requirements.txt.
 
