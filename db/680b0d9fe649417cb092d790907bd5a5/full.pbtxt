@@ -403,13 +403,6 @@ reactions {
         details: "116.2"
         value: "116.1"
       }
-      amount {
-        volume {
-          value: 116.25
-          precision: 116.375
-          units: MICROLITER
-        }
-      }
       features {
         key: "116.5"
         value: {
@@ -438,6 +431,17 @@ reactions {
         percentage {
           value: 119.0
           precision: 120.0
+        }
+      }
+      measurements {
+        analysis_key: "analysis1"
+        type: AMOUNT
+        amount {
+          mass {
+            value: 116.25
+            precision: 116.375
+            units: GRAM
+          }
         }
       }
       isolated_color: "124"

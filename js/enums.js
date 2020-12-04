@@ -18,7 +18,7 @@ goog.module('ord.enums');
 goog.module.declareLegacyNamespace();
 
 // Proto enums are referenced by reflection from "data-proto" HTML attributes.
-goog.require('proto.ord.Compound.ReactionRole.ReactionRoleType');
+goog.require('proto.ord.ReactionRole.ReactionRoleType');
 goog.require('proto.ord.CompoundIdentifier.IdentifierType');
 goog.require('proto.ord.CompoundPreparation.PreparationType');
 goog.require('proto.ord.ElectrochemistryConditions.ElectrochemistryType.ElectrochemistryTypeEnum');

@@ -189,7 +189,7 @@ limitations under the License.
                   <span class="validate" onclick="ord.compounds.validateCompound($(this).closest('.component'))"></span>
                 </legend>
                 <table class="component_role_limiting">
-                  <tr><td>reaction role</td><td><div class="component_reaction_role selector" data-proto="Compound_ReactionRole_ReactionRoleType"></div></td></tr>
+                  <tr><td>reaction role</td><td><div class="component_reaction_role selector" data-proto="ReactionRole_ReactionRoleType"></div></td></tr>
                   <tr class="limiting_reactant"><td>limiting reactant?</td><td><div class="component_limiting optional_bool"></div></td></tr>
                 </table>
                 <fieldset class="s5">
@@ -830,24 +830,6 @@ limitations under the License.
               <div onclick="ord.compounds.addIdentifier($(this).closest('.component'));" class="add">+ add identifier</div>
             </fieldset>
 
-            <fieldset class="amount s5">
-              <legend>
-                <span class="collapse"></span>
-                <span class="h5">Amount</span>
-              </legend>
-              <div>
-                <input type="radio" class="amount_mass" value="mass" checked> mass
-                <input type="radio" class="amount_moles" value="moles"> moles
-                <input type="radio" class="amount_volume" value="volume"> volume
-                <span class="includes_solutes">includes solutes?</span> <div class="includes_solutes optional_bool"></div>
-                <span style="padding-left:25px">value</span> <div class="amount_value edittext shorttext floattext"></div>
-                ± <div class="amount_precision edittext shorttext floattext"></div>
-                <div class="amount_units_mass selector" data-proto="Mass_MassUnit"></div>
-                <div class="amount_units_moles selector" data-proto="Moles_MolesUnit" style="display: none;"></div>
-                <div class="amount_units_volume selector" data-proto="Volume_VolumeUnit" style="display: none;"></div>
-              </div>
-            </fieldset>
-
             <div id="product_measurement_template" class="product_measurement" style="display: none;">
               <fieldset class="s6">
                 <legend>
@@ -871,13 +853,17 @@ limitations under the License.
                   <tr><td>details</td><td><div class="product_measurement_details edittext"></td></tr>
                 </table>
                 <div class="product_measurement_value_type">
+                  <div class="amount">
                   <input type="radio" class="product_measurement_percentage" value="percentage" checked> percentage
                   <input type="radio" class="product_measurement_float" value="float"> number
                   <input type="radio" class="product_measurement_string" value="string"> string
+                  <input type="radio" class="product_measurement_mass amount_mass" value="mass"> mass
                   <span style="padding-left:25px">value</span>
-                  <div class="product_measurement_value edittext shorttext"></div>
+                  <div class="product_measurement_value amount_value edittext shorttext"></div>
                   <div class="product_measurement_pm" style="display: inline-block;">±</div>
-                  <div class="product_measurement_precision edittext shorttext floattext"></div>
+                  <div class="product_measurement_precision amount_precision edittext shorttext floattext"></div>
+                  <div class="amount_units_mass selector" data-proto="Mass_MassUnit" style="display: none;"></div>
+                  </div>
                 </div>
                 <table class="message">
                   <tr><td>uses internal standard?</td><td><div class="product_measurement_uses_internal_standard optional_bool"></div></td></tr>
@@ -937,7 +923,7 @@ limitations under the License.
               <div class="outcome_product_isolated_characteristics">
                 <table class="message">
                   <tr><td>color</td><td><div class="outcome_product_color edittext"></div></td></tr>
-                  <tr><td>texture</td><td><div class="outcome_product_texture_type selector" data-proto="ReactionProduct_Texture_TextureType"></div></td></tr>
+                  <tr><td>texture</td><td><div class="outcome_product_texture_type selector" data-proto="ProductCompound_Texture_TextureType"></div></td></tr>
                   <tr><td>details</td><td><div class="outcome_product_texture_details edittext"></div></td></tr>
                 </table>
               </div>

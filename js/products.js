@@ -30,7 +30,7 @@ goog.require('ord.compounds');
 goog.require('proto.ord.FloatValue');
 goog.require('proto.ord.Percentage');
 goog.require('proto.ord.ProductMeasurement');
-goog.require('proto.ord.ReactionProduct');
+goog.require('proto.ord.ProductCompound');
 
 // Freely create radio button groups by generating new input names.
 let radioGroupCounter = 0;
@@ -38,7 +38,7 @@ let radioGroupCounter = 0;
 /**
  * Adds and populates the products section of the form.
  * @param {!Node} node The target node for the product divs.
- * @param {!Array<!proto.ord.ReactionProduct>} products
+ * @param {!Array<!proto.ord.ProductCompound>} products
  */
 function load(node, products) {
   products.forEach(product => loadProduct(node, product));
@@ -47,7 +47,7 @@ function load(node, products) {
 /**
  * Adds and populates a product section in the form.
  * @param {!Node} outcomeNode The parent ReactionOutcome node.
- * @param {!proto.ord.ReactionProduct} product
+ * @param {!proto.ord.ProductCompound} product
  */
 function loadProduct(outcomeNode, product) {
   const node = add(outcomeNode);
@@ -60,7 +60,6 @@ function loadProduct(outcomeNode, product) {
   ord.reaction.setOptionalBool(
       $('.outcome_product_desired', node),
       product.hasIsDesiredProduct() ? product.getIsDesiredProduct() : null);
-  ord.amounts.load(node, product.getAmount());
   product.getMeasurementsList().forEach(
       measurement => loadMeasurement(node, measurement));
   $('.outcome_product_color', node).text(product.getIsolatedColor());
@@ -82,7 +81,7 @@ function loadProduct(outcomeNode, product) {
 /**
  * Fetches the products defined in the form.
  * @param {!Node} node The parent ReactionOutcome node.
- * @return {!Array<!proto.ord.ReactionProduct>}
+ * @return {!Array<!proto.ord.ProductCompound>}
  */
 function unload(node) {
   const products = [];
@@ -102,10 +101,10 @@ function unload(node) {
 /**
  * Fetches a product defined in the form.
  * @param {!Node} node An element containing a product.
- * @return {!proto.ord.ReactionProduct}
+ * @return {!proto.ord.ProductCompound}
  */
 function unloadProduct(node) {
-  const product = new proto.ord.ReactionProduct();
+  const product = new proto.ord.ProductCompound();
 
   const identifiers = ord.compounds.unloadIdentifiers(node);
   if (!ord.reaction.isEmptyMessage(identifiers)) {
@@ -114,11 +113,6 @@ function unloadProduct(node) {
 
   product.setIsDesiredProduct(
       ord.reaction.getOptionalBool($('.outcome_product_desired', node)));
-
-  const amount = ord.amounts.unload(node);
-  if (!ord.reaction.isEmptyMessage(amount)) {
-    product.setAmount(amount);
-  }
 
   const measurements = [];
   $('.product_measurement', node).each(function(index, measurementNode) {
@@ -136,7 +130,7 @@ function unloadProduct(node) {
   const color = $('.outcome_product_color', node).text();
   product.setIsolatedColor(color);
 
-  const texture = new proto.ord.ReactionProduct.Texture();
+  const texture = new proto.ord.ProductCompound.Texture();
   texture.setType(
       ord.reaction.getSelector($('.outcome_product_texture_type', node)));
   texture.setDetails($('.outcome_product_texture_details', node).text());
@@ -211,7 +205,7 @@ function populateAnalysisSelector(node, analysisSelectorNode) {
 
 /**
  * Adds a ProductMeasurement section to the form.
- * @param {!Node} node Parent node for the ReactionProduct.
+ * @param {!Node} node Parent node for the ProductCompound.
  * @return {!Node} The newly created node.
  */
 function addMeasurement(node) {
@@ -232,6 +226,11 @@ function addMeasurement(node) {
       $('.product_measurement_pm', measurementNode).show();
       $('.product_measurement_precision', measurementNode).show();
     }
+    if (this.value === 'mass') {
+      $('.amount_units_mass', measurementNode).show();
+    } else {
+      $('.amount_units_mass', measurementNode).hide();
+    }
   });
 
   // Add an empty compound node for the authentic standard.
@@ -248,7 +247,7 @@ function addMeasurement(node) {
 
 /**
  * Adds and populates a ProductMeasurement section in the form.
- * @param {!Node} productNode The parent ReactionProduct node.
+ * @param {!Node} productNode The parent ProductCompound node.
  * @param {!proto.ord.ProductMeasurement} measurement
  */
 function loadMeasurement(productNode, measurement) {
@@ -304,6 +303,10 @@ function loadMeasurement(productNode, measurement) {
     if (measurement.getStringValue()) {
       $('.product_measurement_value', node).text(measurement.getStringValue());
     }
+  } else if (measurement.hasAmount()) {
+    const valueNode = $('.product_measurement_value_type', node);
+    $('input[value=\'mass\']', valueNode).click();
+    ord.amounts.load(valueNode, measurement.getAmount());
   }
 
   const retentionTime = measurement.getRetentionTime();
@@ -397,8 +400,14 @@ function unloadMeasurement(node) {
     if (!ord.reaction.isEmptyMessage(percentage)) {
       measurement.setFloatValue(floatValue);
     }
-  } else if ($('.product_measurement_string', node).text()) {
+  } else if ($('.product_measurement_string', node).is(':checked')) {
     measurement.setStringValue($('.product_measurement_string', node).text());
+  } else if ($('.product_measurement_mass', node).is(':checked')) {
+    const amount =
+        ord.amounts.unload($('.product_measurement_value_type', node));
+    if (!ord.reaction.isEmptyMessage(amount)) {
+      measurement.setAmount(amount);
+    }
   }
 
   const retentionTime = ord.reaction.readMetric(
@@ -456,5 +465,5 @@ function validateMeasurement(node, validateNode) {
  */
 function validateProduct(node, validateNode) {
   const product = unloadProduct(node);
-  ord.reaction.validate(product, 'ReactionProduct', node, validateNode);
+  ord.reaction.validate(product, 'ProductCompound', node, validateNode);
 }
