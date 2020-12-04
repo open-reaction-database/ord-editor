@@ -420,6 +420,12 @@ reactions {
           value: 117.0
           precision: 118.0
         }
+        mass_spec_details {
+          type: EIC
+          eic_masses: 1.2
+          eic_masses: 3.4
+          eic_masses: 5.6
+        }
         selectivity {
           type: ZE
           details: "123"

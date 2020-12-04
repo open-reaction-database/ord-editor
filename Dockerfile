@@ -54,9 +54,9 @@ RUN cd ketcher \
 RUN wget https://github.com/google/closure-library/archive/v20200517.tar.gz \
  && tar -xzf v20200517.tar.gz \
  && rm v20200517.tar.gz
-RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.13.0/protobuf-js-3.13.0.tar.gz \
- && tar -xzf protobuf-js-3.13.0.tar.gz \
- && rm protobuf-js-3.13.0.tar.gz
+RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.14.0/protobuf-js-3.14.0.tar.gz \
+ && tar -xzf protobuf-js-3.14.0.tar.gz \
+ && rm protobuf-js-3.14.0.tar.gz
 
 # Dependencies for testing.
 RUN npm install google-closure-compiler

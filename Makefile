@@ -2,7 +2,7 @@
 closure = closure-library-20200517
 
 # https://github.com/protocolbuffers/protobuf/releases
-protobuf = protobuf-3.13.0
+protobuf = protobuf-3.14.0
 
 # Check that the present ketcher code is compatible.
 ketcher-req = v0.1.0+ord

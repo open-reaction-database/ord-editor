@@ -327,7 +327,8 @@ function loadMeasurement(productNode, measurement) {
     ord.reaction.setOptionalBool(
         $('.product_measurement_mass_spec_tic_maximum_mz', node),
         massSpec.hasTicMaximumMz() ? measurement.getTicMaximumMz() : null);
-    // TODO: Add support for eic_masses.
+    const eicMasses = massSpec.getEicMassesList().join(',');
+    $('.product_measurement_mass_spec_eic_masses', node).text(eicMasses);
   }
 
   const selectivity = measurement.getSelectivity();
@@ -426,7 +427,13 @@ function unloadMeasurement(node) {
       $('.product_measurement_mass_spec_tic_minimum_mz', node)));
   massSpecDetails.setTicMaximumMz(ord.reaction.getOptionalBool(
       $('.product_measurement_mass_spec_tic_maximum_mz', node)));
-  // TODO: Add support for eic_masses.
+  if ($('.product_measurement_mass_spec_eic_masses', node).text()) {
+    const eicMasses = $('.product_measurement_mass_spec_eic_masses', node)
+                          .text()
+                          .split(',')
+                          .map(parseFloat);
+    massSpecDetails.setEicMassesList(eicMasses);
+  }
   if (!ord.reaction.isEmptyMessage(massSpecDetails)) {
     measurement.setMassSpecDetails(massSpecDetails);
   }

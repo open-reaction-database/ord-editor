@@ -889,8 +889,14 @@ limitations under the License.
                   <tr><td>mass spec details</td><td><div class="product_measurement_mass_spec_details edittext"></div></td></tr>
                   <tr><td>TIC minimum m/z</td><td><div class="product_measurement_mass_spec_tic_minimum_mz edittext shorttext floattext"></div></td></tr>
                   <tr><td>TIC maximum m/z</td><td><div class="product_measurement_mass_spec_tic_maximum_mz edittext shorttext floattext"></div></td></tr>
-                  <!-- TODO: Make this a repeated value with add/remove buttons? -->
-                  <tr><td>EIC masses</td><td><div class="product_measurement_mass_spec_eic_masses edittext shorttext"></div></td></tr>
+                  <tr>
+                    <td>
+                      EIC masses
+                      <span data-toggle="tooltip" data-placement="right" title="Comma-separated list of m/z ratios that were used to calculate the peak area or intensity.">
+                        <span class="fa fa-question-circle" aria-hidden="true"></span>
+                      </span>
+                    </td>
+                    <td><div class="product_measurement_mass_spec_eic_masses edittext shorttext"></div></td></tr>
                   <tr><td>selectivity type</td><td><div class="product_measurement_selectivity_type selector" data-proto="ProductMeasurement_Selectivity_SelectivityType"></div></td></tr>
                   <tr><td>selectivity details</td><td><div class="product_measurement_selectivity_details edittext"></div></td></tr>
                 </table>
