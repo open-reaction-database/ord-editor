@@ -41,7 +41,9 @@ exports = {
   getOptionalBool,
   freeze,
   setupObserver,
-  updateObserver
+  updateObserver,
+  undoSlowly,
+  isTemplateOrUndoBuffer
 };
 
 goog.require('ord.conditions');
@@ -637,10 +639,8 @@ function addSlowly(template, root) {
  * Removes from the DOM the nearest ancestor element matching the pattern.
  * @param {string} button The element from which to start the search.
  * @param {string} pattern The pattern for the element to remove.
- * @param {?function(): undefined} callback Function to execute in the
- *  callback to hide().
  */
-function removeSlowly(button, pattern, callback) {
+function removeSlowly(button, pattern) {
   const node = $(button).closest(pattern);
   // Must call necessary validators only after the node is removed,
   // but we can only figure out which validators these are before removal.
@@ -651,14 +651,50 @@ function removeSlowly(button, pattern, callback) {
     buttonsToClick =
         buttonsToClick.add($(this).children('legend').find('.validate_button'));
   });
+  makeUndoable(node);
   node.hide('slow', function() {
-    node.remove();
     buttonsToClick.trigger('click');
-    if (callback !== undefined) {
-      callback();
-    }
+    ord.inputs.updateSidebar();
   });
   dirty();
+}
+
+/**
+ * Reverses the hide() in the most recent invocation of removeSlowly().
+ * Removes the node's "undo" button. Does not trigger validation.
+ */
+function undoSlowly() {
+  $('.undoable').removeClass('undoable').show('slow');
+  $('.undo').not('#undo_template').hide('slow', function() {
+    $(this).remove();
+    ord.inputs.updateSidebar();
+  });
+  dirty();
+}
+
+/**
+ * Marks the given node for possible future undo. Adds an "undo" button to do
+ * it. Deletes any preexisting undoable nodes and undo buttons.
+ * @param {!Node} node The DOM fragment to hide and re-show.
+ */
+function makeUndoable(node) {
+  $('.undoable').remove();
+  node.addClass('undoable');
+  $('.undo').not('#undo_template').remove();
+  const button = $('#undo_template').clone();
+  button.removeAttr('id');
+  node.after(button);
+  button.show('slow');
+}
+
+/**
+ * Supports unload() operations by filtering spurious selector matches due
+ * either to DOM templates or elements the user has removed undoably.
+ * @param {!Node node} node The DOM node to test for spuriousness.
+ * @return {boolean} True means ignore this node.
+ */
+function isTemplateOrUndoBuffer(node) {
+  return node.attr('id') || node.hasClass('undoable');
 }
 
 /**

@@ -135,7 +135,7 @@ function unload() {
   const workups = [];
   $('.workup').each(function(index, node) {
     node = $(node);
-    if (!node.attr('id')) {
+    if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
       const workup = unloadWorkup(node);
       if (!ord.reaction.isEmptyMessage(workup)) {
         workups.push(workup);

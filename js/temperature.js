@@ -89,7 +89,7 @@ function unload() {
   const measurements = [];
   $('.temperature_measurement').each(function(index, node) {
     node = $(node);
-    if (!node.attr('id')) {
+    if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
       const measurement = unloadMeasurement(node);
       if (!ord.reaction.isEmptyMessage(measurement)) {
         measurements.push(measurement);

@@ -53,8 +53,7 @@ function unload() {
   const observations = [];
   $('.observation').each(function(index, node) {
     node = $(node);
-    if (!node.attr('id')) {
-      // Not a template
+    if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
       const observation = unloadObservation(node);
       if (!ord.reaction.isEmptyMessage(observation)) {
         observations.push(observation);
