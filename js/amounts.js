@@ -64,7 +64,7 @@ function load(node, amount) {
   if (!amount) {
     return;
   }
-  const amountNode = $('.amount', node);
+  const amountNode = $('.amount', node).first();
   $('.amount_units_mass', node).hide();
   $('.amount_units_moles', node).hide();
   $('.amount_units_volume', node).hide();

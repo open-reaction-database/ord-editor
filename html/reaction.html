@@ -838,7 +838,7 @@ limitations under the License.
                   <div onclick="ord.reaction.removeSlowly(this, '.product_measurement');" class="remove">remove</div>
                   <span class="validate" onclick="ord.products.validateMeasurement($(this).closest('.product_measurement'))"></span>
                 </legend>
-                <table class="message">
+                <table class="message product_measurement_value_type">
                   <tr>
                     <td>based on</td>
                     <td>
@@ -851,21 +851,25 @@ limitations under the License.
                   </tr>
                   <tr><td>type</td><td><div class="product_measurement_type selector" data-proto="ProductMeasurement_MeasurementType"></div></td></tr>
                   <tr><td>details</td><td><div class="product_measurement_details edittext"></td></tr>
-                </table>
-                <div class="product_measurement_value_type">
-                  <div class="amount">
-                  <input type="radio" class="product_measurement_percentage" value="percentage" checked> percentage
-                  <input type="radio" class="product_measurement_float" value="float"> number
-                  <input type="radio" class="product_measurement_string" value="string"> string
-                  <input type="radio" class="product_measurement_mass amount_mass" value="mass"> mass
-                  <span style="padding-left:25px">value</span>
-                  <div class="product_measurement_value amount_value edittext shorttext"></div>
-                  <div class="product_measurement_pm" style="display: inline-block;">±</div>
-                  <div class="product_measurement_precision amount_precision edittext shorttext floattext"></div>
-                  <div class="amount_units_mass selector" data-proto="Mass_MassUnit" style="display: none;"></div>
-                  </div>
-                </div>
-                <table class="message">
+                  <tbody class="amount">
+                  <tr>
+                    <td>value</td>
+                    <td>
+                      <div class="product_measurement_value amount_value edittext shorttext"></div>
+                      <div class="product_measurement_pm" style="display: inline-block;">±</div>
+                      <div class="product_measurement_precision amount_precision edittext shorttext floattext"></div>
+                      <div class="amount_units_mass selector" data-proto="Mass_MassUnit" style="display: none;"></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      <input type="radio" class="product_measurement_percentage" value="percentage" checked> percentage
+                      <input type="radio" class="product_measurement_float" value="float"> number
+                      <input type="radio" class="product_measurement_string" value="string"> string
+                      <input type="radio" class="product_measurement_mass amount_mass" value="mass"> mass
+                    </td>
+                  </tr>
+                  </tbody>
                   <tr><td>uses internal standard?</td><td><div class="product_measurement_uses_internal_standard optional_bool"></div></td></tr>
                   <tr><td>is normalized?
                     <span data-toggle="tooltip" data-placement="right" title="Whether the reported measurement has already been normalized to the internal standard, if an internal standard was used.">
