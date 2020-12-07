@@ -403,7 +403,10 @@ function unloadMeasurement(node) {
       measurement.setFloatValue(floatValue);
     }
   } else if ($('.product_measurement_string', node).is(':checked')) {
-    measurement.setStringValue($('.product_measurement_string', node).text());
+    const stringValue = $('.product_measurement_string', node).text();
+    if (stringValue) {
+      measurement.setStringValue();
+    }
   } else if ($('.product_measurement_mass', node).is(':checked')) {
     const amount =
         ord.amounts.unload($('.product_measurement_value_type', node));
