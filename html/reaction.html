@@ -914,6 +914,9 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h5">Measurements</span>
+                <span data-toggle="tooltip" data-placement="right" title="Each ProductMeasurement describes a connection between this product and an Analysis. This includes information about how the identity of the product was confirmed. It also contains quantitative standardized performance metrics like quantitative yield as well as unstandardized (and unnormalized) metrics like an integrated UV peak area.">
+                  <span class="fa fa-question-circle" aria-hidden="true"></span>
+                </span>
               </legend>
               <div>
                 <div class="product_measurement_repeated"></div>
@@ -930,7 +933,7 @@ limitations under the License.
                 <table class="message">
                   <tr><td>color</td><td><div class="outcome_product_color edittext"></div></td></tr>
                   <tr><td>texture</td><td><div class="outcome_product_texture_type selector" data-proto="ProductCompound_Texture_TextureType"></div></td></tr>
-                  <tr><td>details</td><td><div class="outcome_product_texture_details edittext"></div></td></tr>
+                  <tr><td>texture details</td><td><div class="outcome_product_texture_details edittext"></div></td></tr>
                 </table>
               </div>
             </fieldset>
@@ -944,7 +947,7 @@ limitations under the License.
                 </span>
               </legend>
               <div class="features"></div>
-              <div onclick="ord.compounds.addFeature($(this).closest('.component'));" class="add">+ add feature</div>
+              <div onclick="ord.compounds.addFeature($(this).closest('.outcome_product'));" class="add">+ add feature</div>
             </fieldset>
             </fieldset>
           </div>
