@@ -818,8 +818,8 @@ function initSelector(node) {
  * @param {number} value
  */
 function setSelector(node, value) {
-  $('option', node).removeAttr('selected');
-  $('option[value=' + value + ']', node).attr('selected', 'selected');
+  $('option', node).first().removeAttr('selected');
+  $('option[value=' + value + ']', node).first().attr('selected', 'selected');
 }
 
 /**
@@ -828,7 +828,7 @@ function setSelector(node, value) {
  * @return {number}
  */
 function getSelector(node) {
-  return parseInt($('select', node).val());
+  return parseInt($('select', node).first().val());
 }
 
 /**

@@ -112,9 +112,11 @@ function loadIntoCompound(node, compound) {
 function loadIdentifier(compoundNode, identifier) {
   const node = addIdentifier(compoundNode);
   const value = identifier.getValue();
-  $('.component_identifier_value', node).text(value);
+  $('.component_identifier_value', node).first().text(value);
   ord.reaction.setSelector(node, identifier.getType());
-  $('.component_identifier_details', node).text(identifier.getDetails());
+  $('.component_identifier_details', node)
+      .first()
+      .text(identifier.getDetails());
 }
 
 /**
@@ -338,7 +340,7 @@ function add(root) {
  */
 function addIdentifier(node) {
   const identifierNode = ord.reaction.addSlowly(
-      '#component_identifier_template', $('.identifiers', node));
+      '#component_identifier_template', $('.identifiers', node).first());
 
   const uploadButton = $('.component_identifier_upload', identifierNode);
   uploadButton.change(function() {
@@ -409,7 +411,7 @@ function drawIdentifier(node) {
   // First, pack the current Compound into a message.
   const compound = new proto.ord.Compound();
   const identifiers = unloadIdentifiers(node);
-  if (!ord.reaction.isEmptyMessage(identifiers)) {
+  if (!identifiers.every(e => ord.reaction.isEmptyMessage(e))) {
     compound.setIdentifiersList(identifiers);
   }
   // Then, try to resolve compound into a MolBlock.
