@@ -238,6 +238,13 @@ function addMeasurement(node) {
   const authenticStandard = ord.compounds.add(measurementNode);
   const title = $('.h4', authenticStandard);
   title.text('Authentic Standard');
+  // Remove the "amount" section from the authentic standard.
+  $('.amount', authenticStandard).hide();
+  // Adjust the heading sizes.
+  $('.h4', authenticStandard).addClass('h7').removeClass('h4');
+  $('.h5', authenticStandard).addClass('h8').removeClass('h5');
+  // Start it collapsed.
+  ord.reaction.collapseToggle($('.collapse', authenticStandard).first());
 
   // Add live validation handling.
   ord.reaction.addChangeHandler(measurementNode, () => {
