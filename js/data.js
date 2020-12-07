@@ -46,6 +46,11 @@ function addData(parentNode) {
       $('.data_text', node).hide();
       $('.data_uploader', node).show();
     }
+    if (this.value === 'number') {
+      $('.data_text', node).addClass('floattext');
+    } else {
+      $('.data_text', node).removeClass('floattext');
+    }
   });
   ord.uploads.initialize(node);
   return node;
