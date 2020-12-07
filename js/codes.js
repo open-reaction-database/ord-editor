@@ -70,8 +70,7 @@ function unload(codes) {
 function unloadCode(codes, node) {
   const name = $('.setup_code_name', node).text();
   const code = ord.data.unloadData(node);
-  if (!ord.reaction.isEmptyMessage(name) ||
-      !ord.reaction.isEmptyMessage(code)) {
+  if (name || !ord.reaction.isEmptyMessage(code)) {
     codes.set(name, code);
   }
 }

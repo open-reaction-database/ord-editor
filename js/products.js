@@ -107,7 +107,8 @@ function unloadProduct(node) {
   const product = new proto.ord.ProductCompound();
 
   const identifiers = ord.compounds.unloadIdentifiers(node);
-  if (!ord.reaction.isEmptyMessage(identifiers)) {
+
+  if (!identifiers.every(e => ord.reaction.isEmptyMessage(e))) {
     product.setIdentifiersList(identifiers);
   }
 

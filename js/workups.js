@@ -54,7 +54,7 @@ function loadWorkup(workup) {
     ord.inputs.loadInputUnnamed($('.workup_input', node), input);
   }
 
-  const amount = workup.getAliquotAmount();
+  const amount = workup.getAmount();
   ord.amounts.load(node, amount);
 
   const temperature = workup.getTemperature();
@@ -168,9 +168,9 @@ function unloadWorkup(node) {
     workup.setInput(input);
   }
 
-  const aliquotAmount = ord.amounts.unload($('.aliquot_amount', node));
-  if (!ord.reaction.isEmptyMessage(aliquotAmount)) {
-    workup.setAliquotAmount(aliquotAmount);
+  const amount = ord.amounts.unload(node);
+  if (!ord.reaction.isEmptyMessage(amount)) {
+    workup.setAmount(amount);
   }
 
   const control = new proto.ord.TemperatureConditions.TemperatureControl();

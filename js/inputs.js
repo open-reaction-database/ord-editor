@@ -163,8 +163,7 @@ function unload(inputs) {
 function unloadInput(inputs, node) {
   const name = $('.input_name', node).text();
   const input = unloadInputUnnamed(node);
-  if (!ord.reaction.isEmptyMessage(input) ||
-      !ord.reaction.isEmptyMessage(name)) {
+  if (name || !ord.reaction.isEmptyMessage(input)) {
     inputs.set(name, input);
   }
 }
@@ -178,12 +177,12 @@ function unloadInputUnnamed(node) {
   const input = new proto.ord.ReactionInput();
 
   const compounds = ord.compounds.unload(node);
-  if (!ord.reaction.isEmptyMessage(compounds)) {
+  if (!compounds.every(e => ord.reaction.isEmptyMessage(e))) {
     input.setComponentsList(compounds);
   }
 
   const crudes = ord.crudes.unload(node);
-  if (!ord.reaction.isEmptyMessage(crudes)) {
+  if (!crudes.every(e => ord.reaction.isEmptyMessage(e))) {
     input.setCrudeComponentsList(crudes);
   }
 

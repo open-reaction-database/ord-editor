@@ -37,7 +37,6 @@ from ord_schema import templating
 from ord_schema import message_helpers
 from ord_schema import resolvers
 from ord_schema import validations
-from ord_schema.interface import ord_client
 from ord_schema.proto import dataset_pb2
 from ord_schema.proto import reaction_pb2
 from ord_schema.visualization import generate_text
@@ -241,17 +240,17 @@ def show_reaction_id(reaction_id):
                                  freeze=True)
 
 
-@app.route('/reaction/id/<reaction_id>/proto')
-def fetch_reaction_id(reaction_id):
-    """Returns a serialized Reaction with the given ID."""
-    client = ord_client.OrdClient()
-    try:
-        reaction = client.fetch_reaction(reaction_id)
-        response = flask.make_response(reaction.SerializeToString())
-        response.headers.set('Content-Type', 'application/protobuf')
-        return response
-    except AssertionError as error:
-        flask.abort(flask.make_response(str(error), 404))
+# @app.route('/reaction/id/<reaction_id>/proto')
+# def fetch_reaction_id(reaction_id):
+#     """Returns a serialized Reaction with the given ID."""
+#     client = ord_client.OrdClient()
+#     try:
+#         reaction = client.fetch_reaction(reaction_id)
+#         response = flask.make_response(reaction.SerializeToString())
+#         response.headers.set('Content-Type', 'application/protobuf')
+#         return response
+#     except AssertionError as error:
+#         flask.abort(flask.make_response(str(error), 404))
 
 
 @app.route('/reaction/download', methods=['POST'])

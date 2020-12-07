@@ -213,8 +213,7 @@ function unloadAnalysisSingle(analysisNode) {
 function unloadAnalysis(analysisNode, analyses) {
   const analysis = unloadAnalysisSingle(analysisNode);
   const name = $('.outcome_analysis_name', analysisNode).text();
-  if (!ord.reaction.isEmptyMessage(name) ||
-      !ord.reaction.isEmptyMessage(analysis)) {
+  if (name || !ord.reaction.isEmptyMessage(analysis)) {
     analyses.set(name, analysis);
   }
 }
@@ -227,8 +226,7 @@ function unloadAnalysis(analysisNode, analyses) {
 function unloadData(node, dataMap) {
   const name = $('.outcome_data_name', node).text();
   const data = ord.data.unloadData(node);
-  if (!ord.reaction.isEmptyMessage(name) ||
-      !ord.reaction.isEmptyMessage(data)) {
+  if (name || !ord.reaction.isEmptyMessage(data)) {
     dataMap.set(name, data);
   }
 }

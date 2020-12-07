@@ -189,7 +189,7 @@ function unloadCompound(node) {
   }
 
   const identifiers = unloadIdentifiers(node);
-  if (!ord.reaction.isEmptyMessage(identifiers)) {
+  if (!identifiers.every(e => ord.reaction.isEmptyMessage(e))) {
     compound.setIdentifiersList(identifiers);
   }
 
@@ -201,13 +201,16 @@ function unloadCompound(node) {
   const preparations = [];
   $('.component_preparation', node).each(function(index, preparationNode) {
     const preparation = unloadPreparation(preparationNode);
-    if (!ord.reaction.isEmptyMessage(preparation)) {
-      preparations.push(preparation);
-    }
+    preparations.push(preparation);
   });
-  compound.setPreparationsList(preparations);
+  if (!preparations.every(e => ord.reaction.isEmptyMessage(e))) {
+    compound.setPreparationsList(preparations);
+  }
 
-  unloadSource(node, compound);
+  const source = unloadSource(node);
+  if (!ord.reaction.isEmptyMessage(source)) {
+    compound.setSource(source);
+  }
 
   const featuresMap = compound.getFeaturesMap();
   $('.feature', node).each(function(index, featureNode) {
@@ -251,7 +254,7 @@ function unloadIdentifier(node) {
   const identifier = new proto.ord.CompoundIdentifier();
 
   const value = $('.component_identifier_value', node).text();
-  if (!ord.reaction.isEmptyMessage(value)) {
+  if (value) {
     identifier.setValue(value);
   }
   const type = ord.reaction.getSelector(node);
@@ -283,9 +286,9 @@ function unloadPreparation(node) {
  * Sets the source information fields of a compound according to the form.
  * @param {!Node} node The div corresponding to the compound whose source
  *     information should be read from the form.
- * @param {!proto.ord.Compound} compound
+ * @return {!proto.ord.Compound.Source}
  */
-function unloadSource(node, compound) {
+function unloadSource(node) {
   const source = new proto.ord.Compound.Source();
   const vendor = $('.component_source_vendor', node).text();
   source.setVendor(vendor);
@@ -293,9 +296,7 @@ function unloadSource(node, compound) {
   source.setLot(lot);
   const id = $('.component_source_id', node).text();
   source.setId(id);
-  if (!ord.reaction.isEmptyMessage(source)) {
-    compound.setSource(source);
-  }
+  return source;
 }
 
 /**
@@ -587,8 +588,7 @@ function loadFeature(node, name, feature) {
 function unloadFeature(node, featuresMap) {
   const name = $('.feature_name', node).text();
   const data = ord.data.unloadData(node);
-  if (!ord.reaction.isEmptyMessage(name) ||
-      !ord.reaction.isEmptyMessage(data)) {
+  if (name || !ord.reaction.isEmptyMessage(data)) {
     featuresMap.set(name, data);
   }
 }

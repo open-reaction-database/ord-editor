@@ -75,16 +75,16 @@ function unloadIdentifier(node) {
   const identifier = new proto.ord.ReactionIdentifier();
 
   const value = $('.reaction_identifier_value', node).text();
-  if (!ord.reaction.isEmptyMessage(value)) {
+  if (value) {
     identifier.setValue(value);
   }
 
   const type = ord.reaction.getSelector(node);
-  if (!ord.reaction.isEmptyMessage(type)) {
+  if (type) {
     identifier.setType(type);
   }
   const details = $('.reaction_identifier_details', node).text();
-  if (!ord.reaction.isEmptyMessage(details)) {
+  if (details) {
     identifier.setDetails(details);
   }
   return identifier;

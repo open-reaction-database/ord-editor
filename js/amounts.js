@@ -141,13 +141,13 @@ function unload(node) {
  * Reads and returns a mass amount of a compound as defined in the form.
  * @param {!Node} node The div corresponding to the compound whose mass fields
  *     should be read from the form.
- * @return {?proto.ord.Mass}
+ * @return {!proto.ord.Mass}
  */
 function unloadMass(node) {
-  if (!$('.amount_mass', node).is(':checked')) {
-    return null;
-  }
   const mass = new proto.ord.Mass();
+  if (!$('.amount_mass', node).is(':checked')) {
+    return mass;
+  }
   const value = parseFloat($('.amount_value', node).text());
   if (!isNaN(value)) {
     mass.setValue(value);
@@ -165,13 +165,13 @@ function unloadMass(node) {
  * Reads and returns a molar amount of a compound as defined in the form.
  * @param {!Node} node The div corresponding to the compound whose moles fields
  *     should be read from the form.
- * @return {?proto.ord.Moles}
+ * @return {!proto.ord.Moles}
  */
 function unloadMoles(node) {
-  if (!$('.amount_moles', node).is(':checked')) {
-    return null;
-  }
   const moles = new proto.ord.Moles();
+  if (!$('.amount_moles', node).is(':checked')) {
+    return moles;
+  }
   const value = parseFloat($('.amount_value', node).text());
   if (!isNaN(value)) {
     moles.setValue(value);
@@ -189,13 +189,13 @@ function unloadMoles(node) {
  * Reads and returns a volumetric amount of a compound as defined in the form.
  * @param {!Node} node The div corresponding to the compound whose volume fields
  *     should be read from the form.
- * @return {?proto.ord.Volume}
+ * @return {!proto.ord.Volume}
  */
 function unloadVolume(node) {
-  if (!$('.amount_volume', node).is(':checked')) {
-    return null;
-  }
   const volume = new proto.ord.Volume();
+  if (!$('.amount_volume', node).is(':checked')) {
+    return volume;
+  }
   const value = parseFloat($('.amount_value', node).text());
   if (!isNaN(value)) {
     volume.setValue(value);
