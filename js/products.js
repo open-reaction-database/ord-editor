@@ -399,7 +399,7 @@ function unloadMeasurement(node) {
     if (!isNaN(precision)) {
       floatValue.setPrecision(precision);
     }
-    if (!ord.reaction.isEmptyMessage(percentage)) {
+    if (!ord.reaction.isEmptyMessage(floatValue)) {
       measurement.setFloatValue(floatValue);
     }
   } else if ($('.product_measurement_string', node).is(':checked')) {
