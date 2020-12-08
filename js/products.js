@@ -243,13 +243,99 @@ function addMeasurement(node) {
   // Adjust the heading sizes.
   $('.h4', authenticStandard).addClass('h7').removeClass('h4');
   $('.h5', authenticStandard).addClass('h8').removeClass('h5');
-  // Start it collapsed.
-  ord.reaction.collapseToggle($('.collapse', authenticStandard).first());
+
+  // Show/hide the authentic standard based on the optional bool.
+  const usesAuthenticStandard = $('.product_measurement_uses_authentic_standard', measurementNode);
+  usesAuthenticStandard.change(function () {
+    if (ord.reaction.getOptionalBool(usesAuthenticStandard)) {
+      $('.product_measurement_authentic_standard', measurementNode).show();
+    } else {
+      $('.product_measurement_authentic_standard', measurementNode).hide();
+    }
+  });
+  usesAuthenticStandard.trigger('change');
 
   // Add live validation handling.
   ord.reaction.addChangeHandler(measurementNode, () => {
     validateMeasurement(measurementNode);
   });
+
+  // Show/hide fields based on the measurement type.
+  const measurementTypeSelector = $('.product_measurement_type select', measurementNode);
+  measurementTypeSelector.change(function() {
+    const element = measurementTypeSelector[0];
+    const measurementType = element.options[element.selectedIndex].text;
+    if (measurementType === 'UNSPECIFIED') {
+      $('.product_measurement_value_group', measurementNode).hide();
+      $('.retention_time', measurementNode).hide();
+      $('.wavelength', measurementNode).hide();
+      $('.mass_spec_details', measurementNode).hide();
+      $('.selectivity', measurementNode).hide();
+    } else if (measurementType === 'CUSTOM') {
+      $('.product_measurement_value_group', measurementNode).hide();
+      $('.retention_time', measurementNode).show();
+      $('.wavelength', measurementNode).show();
+      $('.mass_spec_details', measurementNode).show();
+      $('.selectivity', measurementNode).show();
+    } else if (measurementType === 'IDENTITY') {
+      $('.product_measurement_value_group', measurementNode).hide();
+      $('.retention_time', measurementNode).hide();
+      $('.wavelength', measurementNode).hide();
+      $('.mass_spec_details', measurementNode).hide();
+      $('.selectivity', measurementNode).hide();
+    } else if (measurementType === 'YIELD') {
+      $('.product_measurement_value_group', measurementNode).show();
+      $('.retention_time', measurementNode).hide();
+      $('.wavelength', measurementNode).hide();
+      $('.mass_spec_details', measurementNode).hide();
+      $('.selectivity', measurementNode).hide();
+      $('.product_measurement_percentage', measurementNode).click();
+    } else if (measurementType === 'SELECTIVITY') {
+      $('.product_measurement_value_group', measurementNode).show();
+      $('.retention_time', measurementNode).hide();
+      $('.wavelength', measurementNode).hide();
+      $('.mass_spec_details', measurementNode).hide();
+      $('.selectivity', measurementNode).show();
+      $('.product_measurement_string', measurementNode).click();
+    } else if (measurementType === 'PURITY') {
+      $('.product_measurement_value_group', measurementNode).show();
+      $('.retention_time', measurementNode).hide();
+      $('.wavelength', measurementNode).show();
+      $('.mass_spec_details', measurementNode).hide();
+      $('.selectivity', measurementNode).hide();
+      $('.product_measurement_percentage', measurementNode).click();
+    } else if (measurementType === 'AREA') {
+      $('.product_measurement_value_group', measurementNode).show();
+      $('.retention_time', measurementNode).show();
+      $('.wavelength', measurementNode).show();
+      $('.mass_spec_details', measurementNode).show();
+      $('.selectivity', measurementNode).hide();
+      $('.product_measurement_float', measurementNode).click();
+    } else if (measurementType === 'COUNTS') {
+      $('.product_measurement_value_group', measurementNode).show();
+      $('.retention_time', measurementNode).hide();
+      $('.wavelength', measurementNode).hide();
+      $('.mass_spec_details', measurementNode).show();
+      $('.selectivity', measurementNode).hide();
+      $('.product_measurement_float', measurementNode).click();
+    } else if (measurementType === 'INTENSITY') {
+      $('.product_measurement_value_group', measurementNode).show();
+      $('.retention_time', measurementNode).show();
+      $('.wavelength', measurementNode).show();
+      $('.mass_spec_details', measurementNode).show();
+      $('.selectivity', measurementNode).hide();
+      $('.product_measurement_float', measurementNode).click();
+    } else if (measurementType === 'AMOUNT') {
+      $('.product_measurement_value_group', measurementNode).show();
+      $('.retention_time', measurementNode).hide();
+      $('.wavelength', measurementNode).hide();
+      $('.mass_spec_details', measurementNode).hide();
+      $('.selectivity', measurementNode).hide();
+      $('.product_measurement_mass', measurementNode).click();
+    }
+  });
+  measurementTypeSelector.trigger('change');
+
   return measurementNode;
 }
 
@@ -353,6 +439,10 @@ function loadMeasurement(productNode, measurement) {
     ord.reaction.writeMetric(
         '.product_measurement_wavelength', wavelength, node);
   }
+
+  // Trigger show/hide of fields.
+  $('.product_measurement_uses_authentic_standard', node).trigger('change');
+  $('.product_measurement_type select', node).trigger('change');
 }
 
 /**
