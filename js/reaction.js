@@ -192,6 +192,7 @@ function clickSave() {
  * Toggles autosave being active.
  */
 function toggleAutosave() {
+  // We keep track of timers by holding references, only if they're active.
   if (!session.timers['short']) {
     // Enable a simple timer that saves periodically.
     session.timers['short'] = setInterval(clickSave, 1000 * 15);  // Save after 15 seconds
@@ -199,6 +200,7 @@ function toggleAutosave() {
     $('#toggle_autosave').css('backgroundColor', 'lightgreen');
   }
   else {
+    // Stop the interval timer itself, then remove reference in order to properly later detect that it's stopped.
     clearInterval(session.timers['short']);
     session.timers['short'] = null;
     $('#toggle_autosave').text('autosave: off');
