@@ -64,7 +64,7 @@ const session = {
   index: null,       // Ordinal position of the Reaction in its Dataset.
   observer: null,    // IntersectionObserver used for the sidebar.
   navSelectors: {},  // Dictionary from navigation to section.
-  timers: {'short': null, 'long': null}  // Two timers used by autosave.
+  timers: {'long': null}  // Two timers used by autosave.
 };
 // Export session, because it's used by test.js.
 exports.session = session;
@@ -191,7 +191,7 @@ function clickSave() {
 function dirty() {
   $('#save').css('visibility', 'visible');
   // Handle timers for autosave.
-  // On modification, we clear the existing short timer and start a new one,
+  // On modification, we clear the existing timer and start a new one,
   // so that the timer can only finish (and thus trigger a save) after
   // a sufficient duration of no change.
   if (session.timers['short']) {
@@ -199,16 +199,6 @@ function dirty() {
   }
   session.timers['short'] =
       setTimeout(clickSave, 1000 * 15);  // Save after 15 seconds
-  // Long timer starts on every modiification, only if it's
-  // not counting down already. Thus even if modifications keep coming, we can
-  // force a save, and ensure that these saves aren't too frequent.
-  if (!session.timers['long']) {
-    session.timers['long'] = setTimeout(() => {
-      clickSave();
-      // So we can properly later detect that there's no timer counting down.
-      session.timers['long'] = null;
-    }, 1000 * 60);  // Save after a minute
-  }
 }
 
 /**
