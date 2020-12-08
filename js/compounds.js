@@ -191,7 +191,7 @@ function unloadCompound(node) {
   }
 
   const identifiers = unloadIdentifiers(node);
-  if (!identifiers.every(e => ord.reaction.isEmptyMessage(e))) {
+  if (identifiers.some(e => !ord.reaction.isEmptyMessage(e))) {
     compound.setIdentifiersList(identifiers);
   }
 
@@ -205,7 +205,7 @@ function unloadCompound(node) {
     const preparation = unloadPreparation(preparationNode);
     preparations.push(preparation);
   });
-  if (!preparations.every(e => ord.reaction.isEmptyMessage(e))) {
+  if (preparations.some(e => !ord.reaction.isEmptyMessage(e))) {
     compound.setPreparationsList(preparations);
   }
 
@@ -411,7 +411,7 @@ function drawIdentifier(node) {
   // First, pack the current Compound into a message.
   const compound = new proto.ord.Compound();
   const identifiers = unloadIdentifiers(node);
-  if (!identifiers.every(e => ord.reaction.isEmptyMessage(e))) {
+  if (identifiers.some(e => !ord.reaction.isEmptyMessage(e))) {
     compound.setIdentifiersList(identifiers);
   }
   // Then, try to resolve compound into a MolBlock.

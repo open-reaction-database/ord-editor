@@ -177,12 +177,12 @@ function unloadInputUnnamed(node) {
   const input = new proto.ord.ReactionInput();
 
   const compounds = ord.compounds.unload(node);
-  if (!compounds.every(e => ord.reaction.isEmptyMessage(e))) {
+  if (compounds.some(e => !ord.reaction.isEmptyMessage(e))) {
     input.setComponentsList(compounds);
   }
 
   const crudes = ord.crudes.unload(node);
-  if (!crudes.every(e => ord.reaction.isEmptyMessage(e))) {
+  if (crudes.some(e => !ord.reaction.isEmptyMessage(e))) {
     input.setCrudeComponentsList(crudes);
   }
 

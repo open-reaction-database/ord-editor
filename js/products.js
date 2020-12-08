@@ -108,7 +108,7 @@ function unloadProduct(node) {
 
   const identifiers = ord.compounds.unloadIdentifiers(node);
 
-  if (!identifiers.every(e => ord.reaction.isEmptyMessage(e))) {
+  if (identifiers.some(e => !ord.reaction.isEmptyMessage(e))) {
     product.setIdentifiersList(identifiers);
   }
 
