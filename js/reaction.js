@@ -62,9 +62,9 @@ goog.require('proto.ord.Reaction');
 const session = {
   fileName: null,
   dataset: null,
-  index: null,       // Ordinal position of the Reaction in its Dataset.
-  observer: null,    // IntersectionObserver used for the sidebar.
-  navSelectors: {},  // Dictionary from navigation to section.
+  index: null,             // Ordinal position of the Reaction in its Dataset.
+  observer: null,          // IntersectionObserver used for the sidebar.
+  navSelectors: {},        // Dictionary from navigation to section.
   timers: {'short': null}  // A timer used by autosave.
 };
 // Export session, because it's used by test.js.
@@ -195,12 +195,13 @@ function toggleAutosave() {
   // We keep track of timers by holding references, only if they're active.
   if (!session.timers['short']) {
     // Enable a simple timer that saves periodically.
-    session.timers['short'] = setInterval(clickSave, 1000 * 15);  // Save after 15 seconds
+    session.timers['short'] =
+        setInterval(clickSave, 1000 * 15);  // Save after 15 seconds
     $('#toggle_autosave').text('autosave: on');
     $('#toggle_autosave').css('backgroundColor', 'lightgreen');
-  }
-  else {
-    // Stop the interval timer itself, then remove reference in order to properly later detect that it's stopped.
+  } else {
+    // Stop the interval timer itself, then remove reference in order to
+    // properly later detect that it's stopped.
     clearInterval(session.timers['short']);
     session.timers['short'] = null;
     $('#toggle_autosave').text('autosave: off');
