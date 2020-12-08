@@ -196,11 +196,13 @@ function toggleAutosave() {
     // Enable a simple timer that saves periodically.
     session.timers['short'] = setInterval(clickSave, 1000 * 15);  // Save after 15 seconds
     $('#toggle_autosave').text('autosave: on');
+    $('#toggle_autosave').css('backgroundColor', 'lightgreen');
   }
   else {
     clearInterval(session.timers['short']);
     session.timers['short'] = null;
     $('#toggle_autosave').text('autosave: off');
+    $('#toggle_autosave').css('backgroundColor', 'pink');
   }
 }
 
