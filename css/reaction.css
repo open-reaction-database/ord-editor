@@ -59,13 +59,13 @@ body {
 .invalid {
   border: 2px solid red;
 }
-.add, #save, #download, .remove, #delete, .collapse, .validate_button, .validate_status, .validate_message, .validate_warning_status, .validate_warning_message, #toggle_autosave, .tooltip > .tooltip-inner {
+.add, #save, #download, .remove, .undo, #delete, .collapse, .validate_button, .validate_status, .validate_message, .validate_warning_status, .validate_warning_message, #toggle_autosave, .tooltip > .tooltip-inner {
   padding: 2px 4px;
   margin: 2px;
   display: inline-block;
   border-radius: 8px;
 }
-.add, #save, #download, .remove, #delete, .collapse, .validate_button {
+.add, #save, #download, .remove, .undo, #delete, .collapse, .validate_button {
   cursor: pointer;
 }
 .add {
@@ -75,7 +75,7 @@ body {
 #save, #download {
   background-color: lightgray;
 }
-.remove, #delete {
+.remove, .undo, #delete {
   background-color: pink;
 }
 .validate, .validate_status-message {

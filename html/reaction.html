@@ -115,7 +115,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h3">Input</span>
-                  <div onclick="ord.inputs.remove(this);" class="remove">remove</div>
+                  <div onclick="ord.reaction.removeSlowly(this, '.input');" class="remove">remove</div>
                   <span class="validate" onclick="ord.inputs.validateInput($(this).closest('.input'))"></span>
                </legend>
                 <div>
@@ -1141,6 +1141,8 @@ limitations under the License.
       <tr><td>file format</td><td><div class="data_format edittext"></div></td></tr>
       </table>
     </div>
+
+    <div id="undo_template" class="undo" style="display: none;" onclick="ord.reaction.undoSlowly();">undo</div>
 
     <script>
         document.body.onload = async function () {
