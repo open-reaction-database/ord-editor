@@ -450,6 +450,13 @@ reactions {
           }
         }
       }
+      measurements {
+        type: PURITY
+        percentage {
+          value: 987.6
+          precision: 543.2
+        }
+      }
       isolated_color: "124"
       texture {
         type: POWDER

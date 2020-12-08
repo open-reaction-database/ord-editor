@@ -452,8 +452,10 @@ function loadMeasurement(productNode, measurement) {
  */
 function unloadMeasurement(node) {
   const measurement = new proto.ord.ProductMeasurement();
-  measurement.setAnalysisKey(ord.reaction.getSelectorText(
-      $('.product_measurement_analysis_key', node)[0]));
+  const analysisKey = $('.product_measurement_analysis_key select', node).val();
+  if (analysisKey) {
+    measurement.setAnalysisKey(analysisKey);
+  }
   measurement.setType(
       ord.reaction.getSelector($('.product_measurement_type', node)));
   measurement.setDetails($('.product_measurement_details', node).text());
