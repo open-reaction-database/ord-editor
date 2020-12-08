@@ -102,6 +102,8 @@ function init(reaction) {
   $('.collapse').each((index, node) => initCollapse($(node)));
   // Trigger reaction-level validation.
   validateReaction();
+  // Initialize autosave timer.
+  session.timers['short'] = setInterval(clickSave, 1000 * 15);  // Save after 15 seconds
   // Signal to tests that the DOM is initialized.
   ready();
 }
@@ -190,15 +192,6 @@ function clickSave() {
  */
 function dirty() {
   $('#save').css('visibility', 'visible');
-  // Handle timers for autosave.
-  // On modification, we clear the existing timer and start a new one,
-  // so that the timer can only finish (and thus trigger a save) after
-  // a sufficient duration of no change.
-  if (session.timers['short']) {
-    clearTimeout(session.timers['short']);
-  }
-  session.timers['short'] =
-      setTimeout(clickSave, 1000 * 15);  // Save after 15 seconds
 }
 
 /**
