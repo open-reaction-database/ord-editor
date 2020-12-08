@@ -245,8 +245,9 @@ function addMeasurement(node) {
   $('.h5', authenticStandard).addClass('h8').removeClass('h5');
 
   // Show/hide the authentic standard based on the optional bool.
-  const usesAuthenticStandard = $('.product_measurement_uses_authentic_standard', measurementNode);
-  usesAuthenticStandard.change(function () {
+  const usesAuthenticStandard =
+      $('.product_measurement_uses_authentic_standard', measurementNode);
+  usesAuthenticStandard.change(function() {
     if (ord.reaction.getOptionalBool(usesAuthenticStandard)) {
       $('.product_measurement_authentic_standard', measurementNode).show();
     } else {
@@ -261,7 +262,8 @@ function addMeasurement(node) {
   });
 
   // Show/hide fields based on the measurement type.
-  const measurementTypeSelector = $('.product_measurement_type select', measurementNode);
+  const measurementTypeSelector =
+      $('.product_measurement_type select', measurementNode);
   measurementTypeSelector.change(function() {
     const element = measurementTypeSelector[0];
     const measurementType = element.options[element.selectedIndex].text;
