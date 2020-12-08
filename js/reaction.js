@@ -64,7 +64,7 @@ const session = {
   index: null,       // Ordinal position of the Reaction in its Dataset.
   observer: null,    // IntersectionObserver used for the sidebar.
   navSelectors: {},  // Dictionary from navigation to section.
-  timers: {'long': null}  // Two timers used by autosave.
+  timers: {'short': null}  // Two timers used by autosave.
 };
 // Export session, because it's used by test.js.
 exports.session = session;
