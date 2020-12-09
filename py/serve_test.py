@@ -406,7 +406,7 @@ class ServeTest(parameterized.TestCase, absltest.TestCase):
         response = self.client.post('/ketcher/molfile',
                                     data=compound.SerializeToString(),
                                     follow_redirects=True)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 204)
 
 
 if __name__ == '__main__':
