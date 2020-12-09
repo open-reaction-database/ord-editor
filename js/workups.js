@@ -26,10 +26,7 @@ exports = {
 
 goog.require('ord.inputs');
 goog.require('proto.ord.ReactionWorkup');
-goog.require('ord.amountsWorkups');
-
-// Freely create radio button groups by generating new input names.
-let radioGroupCounter = 0;
+goog.require('ord.amounts');
 
 /**
  * Adds and populates the reaction workup sections in the form.
@@ -57,9 +54,8 @@ function loadWorkup(workup) {
     ord.inputs.loadInputUnnamed($('.workup_input', node), input);
   }
 
-  const mass = workup.getMass();
-  const volume = workup.getVolume();
-  ord.amountsWorkups.load(node, mass, volume);
+  const amount = workup.getAmount();
+  ord.amounts.load(node, amount);
 
   const temperature = workup.getTemperature();
   if (temperature) {
@@ -172,7 +168,10 @@ function unloadWorkup(node) {
     workup.setInput(input);
   }
 
-  ord.amountsWorkups.unload(node, workup);
+  const amount = ord.amounts.unload($('.workup_amount', node));
+  if (!ord.reaction.isEmptyMessage(amount)) {
+    workup.setAmount(amount);
+  }
 
   const control = new proto.ord.TemperatureConditions.TemperatureControl();
   control.setType(
@@ -277,6 +276,12 @@ function add() {
   const inputNode = $('.workup_input', workupNode);
   // The template for ReactionWorkup.input is taken from Reaction.inputs.
   const workupInputNode = ord.inputs.add(inputNode, ['workup_input']);
+  // Adjust heading sizes. Start with the smallest so we don't adjust more than
+  // once.
+  // TODO(kearnes): This does not affect input components added later.
+  $('.h5', workupInputNode).addClass('h6').removeClass('h5');
+  $('.h4', workupInputNode).addClass('h5').removeClass('h4');
+  $('.h3', workupInputNode).addClass('h4').removeClass('h3');
   // Workup inputs start collapsed by default.
   workupInputNode.find('.collapse').trigger('click');
   // Temperature conditions and stirring fields also start collapsed.
@@ -289,19 +294,7 @@ function add() {
   // Unlike Reaction.inputs, this ReactionInput is not repeated.
   $('.remove', inputNode).hide();
 
-  // Create "amount" radio button group and connect it to the unit selectors.
-  const amountButtons = $('.amount input', workupNode);
-  amountButtons.attr('name', 'aliquots_' + radioGroupCounter++);
-  amountButtons.change(function() {
-    $('.amount .selector', workupNode).hide();
-    if (this.value == 'mass') {
-      $('.workup_amount_units_mass', workupNode).show();
-    }
-    if (this.value == 'volume') {
-      $('.workup_amount_units_volume', workupNode).show();
-    }
-  });
-  workupNode.find('.workup_amount').trigger('click');
+  ord.amounts.init(workupNode);
 
   // Add live validation handling.
   ord.reaction.addChangeHandler(workupNode, () => {

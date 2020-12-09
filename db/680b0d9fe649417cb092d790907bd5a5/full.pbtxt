@@ -48,10 +48,13 @@ reactions {
           details: "6"
           value: "5"
         }
-        volume {
-          value: 7.0
-          precision: 8.0
-          units: LITER
+        amount {
+          volume {
+            value: 7.0
+            precision: 8.0
+            units: LITER
+          }
+          volume_includes_solutes: true
         }
         reaction_role: REACTANT
         is_limiting: true
@@ -60,24 +63,29 @@ reactions {
           details: "9"
           reaction_id: "9.5"
         }
-        vendor_source: "10"
-        vendor_id: "11"
-        vendor_lot: "12"
-        features {
-          name: "13"
-          float_value: 14.0
-          how_computed: "15"
+        source {
+          vendor: "10"
+          id: "11"
+          lot: "12"
         }
-        volume_includes_solutes: true
+        features {
+          key: "13"
+          value: {
+            float_value: 14.0
+            description: "15"
+          }
+        }
       }
       crude_components {
         reaction_id: "15.25"
         includes_workup: true
         has_derived_amount: false
-        volume {
-          value: 15.5
-          precision: 15.75
-          units: MICROLITER
+        amount {
+          volume {
+            value: 15.5
+            precision: 15.75
+            units: MICROLITER
+          }
         }
       }
       addition_order: 16
@@ -298,7 +306,7 @@ reactions {
       format: "86"
     }
   }
-  workup {
+  workups {
     type: FILTRATION
     details: "92"
     duration {
@@ -371,10 +379,12 @@ reactions {
     }
     target_ph: 89.0
     is_automated: true
-    volume {
-      value: 123.0
-      precision: 0.5
-      units: MILLILITER
+    amount {
+      volume {
+        value: 123.0
+        precision: 0.5
+        units: MILLILITER
+      }
     }
   }
   outcomes {
@@ -388,43 +398,66 @@ reactions {
       precision: 116.0
     }
     products {
-      compound {
-        identifiers {
-          type: IUPAC_NAME
-          details: "116.2"
-          value: "116.1"
-        }
-        volume {
-          value: 116.25
-          precision: 116.375
-          units: MICROLITER
-        }
-        features {
-          name: "116.5"
+      reaction_role: PRODUCT
+      identifiers {
+        type: IUPAC_NAME
+        details: "116.2"
+        value: "116.1"
+      }
+      features {
+        key: "116.5"
+        value: {
           float_value: 116.625
-          how_computed: "116.7"
+          description: "116.7"
         }
       }
       is_desired_product: true
-      compound_yield {
-        value: 117.0
-        precision: 118.0
+      measurements {
+        analysis_key: "analysis1"
+        type: YIELD
+        uses_internal_standard: true
+        uses_authentic_standard: false
+        percentage {
+          value: 117.0
+          precision: 118.0
+        }
+        mass_spec_details {
+          type: EIC
+          eic_masses: 1.2
+          eic_masses: 3.4
+          eic_masses: 5.6
+        }
+        selectivity {
+          type: ZE
+          details: "123"
+        }
       }
-      purity {
-        value: 119.0
-        precision: 120.0
+      measurements {
+        analysis_key: "analysis1"
+        type: PURITY
+        percentage {
+          value: 119.0
+          precision: 120.0
+        }
       }
-      selectivity {
-        type: ZE
-        details: "123"
-        value: 121.0
-        precision: 122.0
+      measurements {
+        analysis_key: "analysis1"
+        type: AMOUNT
+        amount {
+          mass {
+            value: 116.25
+            precision: 116.375
+            units: GRAM
+          }
+        }
       }
-      analysis_identity: "analysis1"
-      analysis_yield: "analysis2"
-      analysis_yield: "analysis1"
-      analysis_purity: "analysis2"
-      analysis_selectivity: "analysis1"
+      measurements {
+        type: PURITY
+        percentage {
+          value: 987.6
+          precision: 543.2
+        }
+      }
       isolated_color: "124"
       texture {
         type: POWDER
@@ -437,7 +470,7 @@ reactions {
         type: NMR_13C
         chmo_id: 131
         details: "132"
-        processed_data {
+        data {
           key: "135"
           value {
             url: "136"
@@ -445,7 +478,7 @@ reactions {
             format: "138"
           }
         }
-        raw_data {
+        data {
           key: "139"
           value {
             float_value: 140.0
@@ -453,7 +486,7 @@ reactions {
             format: "142"
           }
         }
-        raw_data {
+        data {
           key: "byte_data"
           value {
             bytes_value: "bytestring"
@@ -463,13 +496,6 @@ reactions {
         instrument_last_calibrated {
           value: "134"
         }
-        uses_internal_standard: true
-        uses_authentic_standard: false
-      }
-    }
-    analyses {
-      key: "analysis2"
-      value {
       }
     }
   }

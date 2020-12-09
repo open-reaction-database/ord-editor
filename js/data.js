@@ -46,6 +46,11 @@ function addData(parentNode) {
       $('.data_text', node).hide();
       $('.data_uploader', node).show();
     }
+    if (this.value === 'number') {
+      $('.data_text', node).addClass('floattext');
+    } else {
+      $('.data_text', node).removeClass('floattext');
+    }
   });
   ord.uploads.initialize(node);
   return node;
@@ -117,7 +122,7 @@ function unloadData(node) {
   data.setFormat(format);
   if ($('input[value=\'text\']', node).is(':checked')) {
     const stringValue = $('.data_text', node).text();
-    if (!ord.reaction.isEmptyMessage(stringValue)) {
+    if (stringValue) {
       data.setStringValue(stringValue);
     }
   } else if ($('input[value=\'number\']', node).is(':checked')) {
@@ -130,12 +135,12 @@ function unloadData(node) {
     }
   } else if ($('input[value=\'upload\']', node).is(':checked')) {
     const bytesValue = ord.uploads.unload(node);
-    if (!ord.reaction.isEmptyMessage(bytesValue)) {
+    if (bytesValue) {
       data.setBytesValue(bytesValue);
     }
   } else if ($('input[value=\'url\']', node).is(':checked')) {
     const url = $('.data_text', node).text();
-    if (!ord.reaction.isEmptyMessage(url)) {
+    if (url) {
       data.setUrl(url);
     }
   }

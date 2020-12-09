@@ -25,9 +25,6 @@ exports = {
 goog.require('ord.data');
 goog.require('proto.ord.Data');
 
-// Freely create radio button groups by generating new input names.
-let radioGroupCounter = 0;
-
 /**
  * Adds and populates the automation_code sections in the form.
  * @param {!jspb.Map<string, !proto.ord.Data>} codes
@@ -73,8 +70,7 @@ function unload(codes) {
 function unloadCode(codes, node) {
   const name = $('.setup_code_name', node).text();
   const code = ord.data.unloadData(node);
-  if (!ord.reaction.isEmptyMessage(name) ||
-      !ord.reaction.isEmptyMessage(code)) {
+  if (name || !ord.reaction.isEmptyMessage(code)) {
     codes.set(name, code);
   }
 }

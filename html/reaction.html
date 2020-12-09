@@ -190,7 +190,7 @@ limitations under the License.
                   <span class="validate" onclick="ord.compounds.validateCompound($(this).closest('.component'))"></span>
                 </legend>
                 <table class="component_role_limiting">
-                  <tr><td>reaction role</td><td><div class="component_reaction_role selector" data-proto="Compound_ReactionRole_ReactionRoleType"></div></td></tr>
+                  <tr><td>reaction role</td><td><div class="component_reaction_role selector" data-proto="ReactionRole_ReactionRoleType"></div></td></tr>
                   <tr class="limiting_reactant"><td>limiting reactant?</td><td><div class="component_limiting optional_bool"></div></td></tr>
                 </table>
                 <fieldset class="s5">
@@ -216,15 +216,15 @@ limitations under the License.
                     <span class="h5">Amount</span>
                   </legend>
                   <div>
-                    <input type="radio" class="component_amount_mass" value="mass" checked> mass
-                    <input type="radio" class="component_amount_moles" value="moles"> moles
-                    <input type="radio" class="component_amount_volume" value="volume"> volume
-                    <span class="includes_solutes">includes solutes?</span> <div class="component_includes_solutes includes_solutes optional_bool"></div>
-                    <span style="padding-left:25px">value</span> <div class="component_amount_value edittext shorttext floattext"></div>
-                    ± <div class="component_amount_precision edittext shorttext floattext"></div>
-                    <div class="component_amount_units_mass selector" data-proto="Mass_MassUnit"></div>
-                    <div class="component_amount_units_moles selector" data-proto="Moles_MolesUnit" style="display: none;"></div>
-                    <div class="component_amount_units_volume selector" data-proto="Volume_VolumeUnit" style="display: none;"></div>
+                    <input type="radio" class="amount_mass" value="mass" checked> mass
+                    <input type="radio" class="amount_moles" value="moles"> moles
+                    <input type="radio" class="amount_volume" value="volume"> volume
+                    <span class="includes_solutes">includes solutes?</span> <div class="includes_solutes optional_bool"></div>
+                    <span style="padding-left:25px">value</span> <div class="amount_value edittext shorttext floattext"></div>
+                    ± <div class="amount_precision edittext shorttext floattext"></div>
+                    <div class="amount_units_mass selector" data-proto="Mass_MassUnit"></div>
+                    <div class="amount_units_moles selector" data-proto="Moles_MolesUnit" style="display: none;"></div>
+                    <div class="amount_units_volume selector" data-proto="Volume_VolumeUnit" style="display: none;"></div>
                   </div>
                 </fieldset>
                 <fieldset class="preparations_fieldset s5">
@@ -235,16 +235,16 @@ limitations under the License.
                   <div class="preparations"></div>
                   <div onclick="ord.compounds.addPreparation($(this).closest('.component'));" class="add">+ add preparation</div>
                 </fieldset>
-                <fieldset class="vendor s5">
+                <fieldset class="source s5">
                   <legend>
                     <span class="collapse starts_collapsed"></span>
-                    <span class="h5">Vendor</span>
+                    <span class="h5">Source</span>
                   </legend>
-                  <div>
-                    source <div class="component_vendor_source edittext"></div>
-                    id <div class="component_vendor_id edittext"></div>
-                    lot number <div class="component_vendor_lot edittext"></div>
-                  </div>
+                  <table class="message">
+                    <tr><td>vendor</td><td><div class="component_source_vendor edittext"></div></td></tr>
+                    <tr><td>id</td><td><div class="component_source_id edittext"></div></td></tr>
+                    <tr><td>lot number</td><td><div class="component_source_lot edittext"></div></td></tr>
+                  </table>
                 </fieldset>
                 <fieldset class="s5">
                   <legend>
@@ -255,8 +255,21 @@ limitations under the License.
                     </span>
                   </legend>
                   <div class="features"></div>
-                  <div onclick="ord.features.add($(this).closest('.component'));" class="add">+ add feature</div>
+                  <div onclick="ord.compounds.addFeature($(this).closest('.component'));" class="add">+ add feature</div>
                 </fieldset>
+              </fieldset>
+            </div>
+
+            <div id="feature_template" class="feature" style="display: none;">
+              <fieldset class="s5">
+                <legend>
+                  <span class="collapse"></span>
+                  <span class="h5">Feature</span>
+                  <div onclick="ord.reaction.removeSlowly(this, '.feature');" class="remove">remove</div>
+                </legend>
+                <table class="message">
+                  <tr><td>name</td><td><div class="feature_name edittext"></div></td></tr>
+                </table>
               </fieldset>
             </div>
 
@@ -291,13 +304,6 @@ limitations under the License.
               <div onclick="ord.reaction.removeSlowly(this, '.component_preparation');" class="remove">remove</div>
             </div>
 
-            <div id="component_feature_template" class="component_feature" style="display: none;">
-              name <div class="component_feature_name edittext"></div>
-              value <div class="component_feature_value edittext"></div>
-              how computed <div class="component_feature_how edittext"></div>
-              <div onclick="ord.reaction.removeSlowly(this, '.component_feature');" class="remove">remove</div>
-            </div>
-
             <div id="crude_template" class="crude" style="display: none;">
               <fieldset class="s4">
                 <legend>
@@ -319,12 +325,12 @@ limitations under the License.
                     <span class="h5">Amount</span>
                   </legend>
                   <div>
-                    <input type="radio" class="crude_amount_mass" value="mass" checked> mass
-                    <input type="radio" class="crude_amount_volume" value="volume"> volume
-                    <span style="padding-left:25px">value</span> <div class="crude_amount_value edittext shorttext floattext"></div>
-                    ± <div class="crude_amount_precision edittext shorttext floattext"></div>
-                    <div class="crude_amount_units_mass selector" data-proto="Mass_MassUnit"></div>
-                    <div class="crude_amount_units_volume selector" data-proto="Volume_VolumeUnit" style="display: none;"></div>
+                    <input type="radio" class="amount_mass" value="mass" checked> mass
+                    <input type="radio" class="amount_volume" value="volume"> volume
+                    <span style="padding-left:25px">value</span> <div class="amount_value edittext shorttext floattext"></div>
+                    ± <div class="amount_precision edittext shorttext floattext"></div>
+                    <div class="amount_units_mass selector" data-proto="Mass_MassUnit"></div>
+                    <div class="amount_units_volume selector" data-proto="Volume_VolumeUnit" style="display: none;"></div>
                   </div>
                 </fieldset>
               </fieldset>
@@ -678,18 +684,18 @@ limitations under the License.
             <div class="workup_input">
               <!-- Shares ".input_template" with "#inputs" above. -->
             </div>
-            <fieldset class="amount s4">
+            <fieldset class="workup_amount s4">
               <legend>
-                <span class="workup_amount collapse"></span>
-                <span class="h4">Aliquot amount</span>
+                <span class="collapse"></span>
+                <span class="h4">Amount</span>
               </legend>
-              <div>
-                <input type="radio" class="workup_amount_mass" value="mass"> mass
-                <input type="radio" class="workup_amount_volume" value="volume" checked> volume
-                <span style="padding-left:25px">value</span> <div class="workup_amount_value edittext shorttext floattext"></div>
-                ± <div class="workup_amount_precision edittext shorttext floattext"></div>
-                <div class="workup_amount_units_mass selector" data-proto="Mass_MassUnit" style="display: none;"></div>
-                <div class="workup_amount_units_volume selector" data-proto="Volume_VolumeUnit"></div>
+              <div class="amount">
+                <input type="radio" class="amount_mass" value="mass"> mass
+                <input type="radio" class="amount_volume" value="volume" checked> volume
+                <span style="padding-left:25px">value</span> <div class="amount_value edittext shorttext floattext"></div>
+                ± <div class="amount_precision edittext shorttext floattext"></div>
+                <div class="amount_units_mass selector" data-proto="Mass_MassUnit" style="display: none;"></div>
+                <div class="amount_units_volume selector" data-proto="Volume_VolumeUnit"></div>
               </div>
             </fieldset>
             <fieldset class="s4">
@@ -792,8 +798,7 @@ limitations under the License.
               <div class="outcome_analyses"></div>
               <div onclick="ord.outcomes.addAnalysis($(this).closest('.outcome'));" class="add">+ add analysis</div>
 
-              <div class="outcome_products">
-              </div>
+              <div class="outcome_products"></div>
               <div onclick="ord.products.add($(this).closest('.outcome'));" class="add">+ add product</div>
 
           </fieldset>
@@ -807,22 +812,149 @@ limitations under the License.
                 <div onclick="ord.reaction.removeSlowly(this, '.outcome_product');" class="remove">remove</div>
                 <span class="validate" onclick="ord.products.validateProduct($(this).closest('.outcome_product'))"></span>
               </legend>
+              <table class="message">
+              <tr><td>reaction role</td><td><div class="component_reaction_role selector" data-proto="ReactionRole_ReactionRoleType"></div></td></tr>
+              <tr class="is_desired_product">
+                <td>desired product?
+                  <span data-toggle="tooltip" data-placement="right" title="Whether this is the desired product.">
+                    <span class="fa fa-question-circle" aria-hidden="true"></span>
+                  </span>
+                </td>
+                <td><div class="outcome_product_desired optional_bool"></div></td>
+              </tr>
+              </table>
 
-            <div class="outcome_product_compound components"></div>
-            <!-- Shares "#component_template" with ".components" in the input section. -->
+            <fieldset class="s5">
+              <legend>
+                <span class="collapse"></span>
+                <span class="h5">Identifiers</span>
+                <span data-toggle="tooltip" data-placement="right" title="Compound identifiers should be structural (e.g., SMILES) whenever possible.">
+                  <span class="fa fa-question-circle" aria-hidden="true"></span>
+                </span>
+              </legend>
+              <!-- Compound rendering -->
+              <div class="component_rendering" style="text-align: center;"></div>
+              <div class="identifiers"></div>
+              <!-- Shortcuts for name resolving & drawing -->
+              <div onclick="ord.compounds.drawIdentifier($(this).closest('.outcome_product'));" class="add"><span class="far fa-edit" aria-hidden="true"></span> draw compound</div>
+              <div onclick="ord.compounds.addNameIdentifier($(this).closest('.outcome_product'));" class="add"><span class="fa fa-search" aria-hidden="true"></span> look up name</div>
+              <!-- End shortcuts -->
+              <div onclick="ord.compounds.addIdentifier($(this).closest('.outcome_product'));" class="add">+ add identifier</div>
+            </fieldset>
 
-            <div class="spacer"></div>
-            <table class="message">
-              <tr><td>desired</td><td><div class="outcome_product_desired optional_bool"></div></td>
-              <tr><td>yield</td><td><div class="outcome_product_yield_value edittext shorttext floattext"></div>
-                                                  ± <div class="outcome_product_yield_precision edittext shorttext floattext"></div></td></tr>
-              <tr><td>purity</td><td><div class="outcome_product_purity_value edittext shorttext floattext"></div>
-                                                   ± <div class="outcome_product_purity_precision edittext shorttext floattext"></div></td></tr>
-              <tr><td>selectivity type</td><td><div class="outcome_product_selectivity_type selector" data-proto="Selectivity_SelectivityType"></div></td></tr>
-              <tr><td>selectivity</td><td><div class="outcome_product_selectivity_value edittext shorttext floattext"></div>
-                                                        ± <div class="outcome_product_selectivity_precision edittext shorttext floattext"></div>
-                                                        details</td><td><div class="outcome_product_selectivity_details edittext"></div></td></tr>
-            </table>
+            <div id="product_measurement_template" class="product_measurement" style="display: none;">
+              <fieldset class="s6">
+                <legend>
+                  <span class="collapse"></span>
+                  <span class="h6">Product Measurement</span>
+                  <div onclick="ord.reaction.removeSlowly(this, '.product_measurement');" class="remove">remove</div>
+                  <span class="validate" onclick="ord.products.validateMeasurement($(this).closest('.product_measurement'))"></span>
+                </legend>
+                <table class="message product_measurement_value_type">
+                  <tr>
+                    <td>based on</td>
+                    <td>
+                      <div class="product_measurement_analysis_key">
+                        <select class="analysis_key_selector">
+                          <option disabled selected value="">-- select an analysis label --</option>
+                        </select>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr><td>type</td><td><div class="product_measurement_type selector" data-proto="ProductMeasurement_MeasurementType"></div></td></tr>
+                  <tr><td>details</td><td><div class="product_measurement_details edittext"></td></tr>
+                  <tbody class="product_measurement_value_group amount">
+                  <tr>
+                    <td class="product_measurement_section">value</td>
+                    <td class="product_measurement_section">
+                      <div class="product_measurement_value amount_value edittext shorttext"></div>
+                      <div class="product_measurement_pm" style="display: inline-block;">±</div>
+                      <div class="product_measurement_precision amount_precision edittext shorttext floattext"></div>
+                      <div class="amount_units_mass selector" data-proto="Mass_MassUnit" style="display: none;"></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td>
+                      <input type="radio" class="product_measurement_percentage" value="percentage" checked> percentage
+                      <input type="radio" class="product_measurement_float" value="float"> number
+                      <input type="radio" class="product_measurement_string" value="string"> string
+                      <input type="radio" class="product_measurement_mass amount_mass" value="mass"> mass
+                    </td>
+                  </tr>
+                  </tbody>
+                  <tr>
+                    <td class="product_measurement_section">uses internal standard?</td>
+                    <td class="product_measurement_section"><div class="product_measurement_uses_internal_standard optional_bool"></div></td>
+                  </tr>
+                  <tr><td>is normalized?
+                    <span data-toggle="tooltip" data-placement="right" title="Whether the reported measurement has already been normalized to the internal standard, if an internal standard was used.">
+                      <span class="fa fa-question-circle" aria-hidden="true"></span>
+                    </span>
+                  </td><td><div class="product_measurement_is_normalized optional_bool"></div></td></tr>
+                  <tr><td>uses authentic standard?</td><td><div class="product_measurement_uses_authentic_standard optional_bool"></div></td></tr>
+                  <tr class="retention_time">
+                    <td class="product_measurement_section">retention time</td>
+                    <td class="product_measurement_section">
+                      <div class="product_measurement_retention_time_value edittext shorttext floattext"></div>
+                      ± <div class="product_measurement_retention_time_precision edittext shorttext floattext"></div>
+                      <div class="product_measurement_retention_time_units selector" data-proto="Time_TimeUnit"></div>
+                    </td>
+                  </tr>
+                  <tr class="wavelength">
+                    <td class="product_measurement_section">wavelength</td>
+                    <td class="product_measurement_section">
+                      <div class="product_measurement_wavelength_value edittext shorttext floattext"></div>
+                      ± <div class="product_measurement_wavelength_precision edittext shorttext floattext"></div>
+                      <div class="product_measurement_wavelength_units selector" data-proto="Wavelength_WavelengthUnit"></div>
+                    </td>
+                  </tr>
+                  <tbody class="mass_spec_details">
+                  <tr>
+                    <td class="product_measurement_section">mass spec type</td>
+                    <td class="product_measurement_section"><div class="product_measurement_mass_spec_type selector" data-proto="ProductMeasurement_MassSpecMeasurementDetails_MassSpecMeasurementType"></div></td>
+                  </tr>
+                  <tr><td>mass spec details</td><td><div class="product_measurement_mass_spec_details edittext"></div></td></tr>
+                  <tr><td>TIC minimum m/z</td><td><div class="product_measurement_mass_spec_tic_minimum_mz edittext shorttext floattext"></div></td></tr>
+                  <tr><td>TIC maximum m/z</td><td><div class="product_measurement_mass_spec_tic_maximum_mz edittext shorttext floattext"></div></td></tr>
+                  <tr>
+                    <td>
+                      EIC masses
+                      <span data-toggle="tooltip" data-placement="right" title="Comma-separated list of m/z ratios that were used to calculate the peak area or intensity.">
+                        <span class="fa fa-question-circle" aria-hidden="true"></span>
+                      </span>
+                    </td>
+                    <td><div class="product_measurement_mass_spec_eic_masses edittext shorttext"></div></td>
+                  </tr>
+                  </tbody>
+                  <tbody class="selectivity">
+                  <tr>
+                    <td class="product_measurement_section">selectivity type</td>
+                    <td class="product_measurement_section"><div class="product_measurement_selectivity_type selector" data-proto="ProductMeasurement_Selectivity_SelectivityType"></div></td>
+                  </tr>
+                  <tr><td>selectivity details</td><td><div class="product_measurement_selectivity_details edittext"></div></td></tr>
+                  </tbody>
+                </table>
+                <!-- Shares "#component_template" with ".components" in the input section. -->
+                <div class="product_measurement_authentic_standard components"></div>
+
+              </fieldset>
+            </div>
+
+            <fieldset class="s5">
+              <legend>
+                <span class="collapse"></span>
+                <span class="h5">Measurements</span>
+                <span data-toggle="tooltip" data-placement="right" title="Each ProductMeasurement describes a connection between this product and an Analysis. This includes information about how the identity of the product was confirmed. It also contains quantitative standardized performance metrics like quantitative yield as well as unstandardized (and unnormalized) metrics like an integrated UV peak area.">
+                  <span class="fa fa-question-circle" aria-hidden="true"></span>
+                </span>
+              </legend>
+              <div>
+                <div class="product_measurement_repeated"></div>
+                <div onclick="ord.products.addMeasurement($(this).closest('.outcome_product'));" class="add">+ add measurement</div>
+              </div>
+            </fieldset>
+
             <fieldset class="s5">
               <legend>
                 <span class="collapse"></span>
@@ -831,8 +963,8 @@ limitations under the License.
               <div class="outcome_product_isolated_characteristics">
                 <table class="message">
                   <tr><td>color</td><td><div class="outcome_product_color edittext"></div></td></tr>
-                  <tr><td>texture</td><td><div class="outcome_product_texture_type selector" data-proto="ReactionProduct_Texture_TextureType"></div></td></tr>
-                  <tr><td>details</td><td><div class="outcome_product_texture_details edittext"></div></td></tr>
+                  <tr><td>texture</td><td><div class="outcome_product_texture_type selector" data-proto="ProductCompound_Texture_TextureType"></div></td></tr>
+                  <tr><td>texture details</td><td><div class="outcome_product_texture_details edittext"></div></td></tr>
                 </table>
               </div>
             </fieldset>
@@ -840,80 +972,15 @@ limitations under the License.
             <fieldset class="s5">
               <legend>
                 <span class="collapse"></span>
-                <span class="h5">Identity analyses</span>
-                <span data-toggle="tooltip" data-placement="right" title="Which analyses were used to confirm this product's identity.">
+                <span class="h5">Features</span>
+                <span data-toggle="tooltip" data-placement="right" title="Additional chemical features (e.g., calculated descriptors) that are important to associate with this compound.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
                 </span>
               </legend>
-              <div class="outcome_product_analysis_identities">
-              </div>
-              <div onclick="ord.products.addIdentity($(this).closest('.outcome_product'));" class="add">+ add identity analysis</div>
-            </fieldset>
-
-            <fieldset class="s5">
-              <legend>
-                <span class="collapse"></span>
-                <span class="h5">Yield analyses</span>
-                <span data-toggle="tooltip" data-placement="right" title="Which analyses were used to quantify this product's yield.">
-                  <span class="fa fa-question-circle" aria-hidden="true"></span>
-                </span>
-              </legend>
-              <div class="outcome_product_analysis_yields">
-              </div>
-              <div onclick="ord.products.addYield($(this).closest('.outcome_product'));" class="add">+ add yield analysis</div>
-            </fieldset>
-
-            <fieldset class="s5">
-              <legend>
-                <span class="collapse"></span>
-                <span class="h5">Purity analyses</span>
-                <span data-toggle="tooltip" data-placement="right" title="Which analyses were used to quantify this product's purity.">
-                  <span class="fa fa-question-circle" aria-hidden="true"></span>
-                </span>
-              </legend>
-              <div class="outcome_product_analysis_purities">
-              </div>
-              <div onclick="ord.products.addPurity($(this).closest('.outcome_product'));" class="add">+ add purity analysis</div>
-            </fieldset>
-
-            <fieldset class="s5">
-              <legend>
-                <span class="collapse"></span>
-                <span class="h5">Selectivity analyses</span>
-                <span data-toggle="tooltip" data-placement="right" title="Which analyses were used to quantify selectivity toward this product.">
-                  <span class="fa fa-question-circle" aria-hidden="true"></span>
-                </span>
-              </legend>
-              <div class="outcome_product_analysis_selectivities">
-              </div>
-              <div onclick="ord.products.addSelectivity($(this).closest('.outcome_product'));" class="add">+ add selectivity analysis</div>
+              <div class="features"></div>
+              <div onclick="ord.compounds.addFeature($(this).closest('.outcome_product'));" class="add">+ add feature</div>
             </fieldset>
             </fieldset>
-          </div>
-
-          <div id="outcome_product_analysis_identity_template" class="outcome_product_analysis_identity" style="display: none;">
-            <select class="analysis_key_selector">
-              <option disabled selected value="">-- select an analysis label --</option>
-            </select>
-            <div onclick="ord.reaction.removeSlowly(this, '.outcome_product_analysis_identity');" class="remove">remove</div>
-          </div>
-          <div id="outcome_product_analysis_yield_template" class="outcome_product_analysis_yield" style="display: none;">
-            <select class="analysis_key_selector">
-              <option disabled selected value="">-- select an analysis label --</option>
-            </select>
-            <div onclick="ord.reaction.removeSlowly(this, '.outcome_product_analysis_yield');" class="remove">remove</div>
-          </div>
-          <div id="outcome_product_analysis_purity_template" class="outcome_product_analysis_purity" style="display: none;">
-            <select class="analysis_key_selector">
-              <option disabled selected value="">-- select an analysis label --</option>
-            </select>
-            <div onclick="ord.reaction.removeSlowly(this, '.outcome_product_analysis_purity');" class="remove">remove</div>
-          </div>
-          <div id="outcome_product_analysis_selectivity_template" class="outcome_product_analysis_selectivity" style="display: none;">
-            <select class="analysis_key_selector">
-              <option disabled selected value="">-- select an analysis label --</option>
-            </select>
-            <div onclick="ord.reaction.removeSlowly(this, '.outcome_product_analysis_selectivity');" class="remove">remove</div>
           </div>
 
           <div id="outcome_analysis_template" class="outcome_analysis" style="display: none;">
@@ -926,60 +993,37 @@ limitations under the License.
               </legend>
               <table class="message">
                 <tr><td>name</td><td><div class="outcome_analysis_name edittext"></div></td></tr>
-                <tr><td>type</td><td><div class="outcome_analysis_type selector" data-proto="ReactionAnalysis_AnalysisType"></div></td></tr>
+                <tr><td>type</td><td><div class="outcome_analysis_type selector" data-proto="Analysis_AnalysisType"></div></td></tr>
                 <tr><td>details</td><td><div class="outcome_analysis_details edittext"></div></td></tr>
                 <tr><td>chmo_id</td><td><div class="outcome_analysis_chmo_id edittext"></div></td></tr>
                 <tr><td>instrument manufacturer</td><td><div class="outcome_analysis_manufacturer edittext"></div></td></tr>
                 <tr><td>instrument calibration date</td><td><div class="outcome_analysis_calibrated edittext"></div></td></tr>
-                <tr><td>used internal standard
-                  <span data-toggle="tooltip" data-placement="right" title="Whether a non-reactive internal standard was included to provide more accurate quantification using a previously-validated calibration curve.">
+                <tr><td>is of isolated species?
+                  <span data-toggle="tooltip" data-placement="right" title="Whether this analysis is intended to be of an isolated species. If false or unspecified, the assumption is that it is of a crude product mixture (or a partially worked-up product mixture).">
                     <span class="fa fa-question-circle" aria-hidden="true"></span>
                   </span>
-                </td><td><div class="outcome_analysis_internal_standard optional_bool"></div></td></tr>
-                <tr><td>used authentic standard
-                  <span data-toggle="tooltip" data-placement="right" title="Whether a pure/commercial standard of this product was analyzed by the same technique, e.g., to 'confirm' identity by retention time and mass using an LCMS.">
-                    <span class="fa fa-question-circle" aria-hidden="true"></span>
-                  </span>
-                </td><td><div class="outcome_analysis_authentic_standard optional_bool"></div></td></tr>
+                </td><td><div class="outcome_analysis_is_of_isolated_species optional_bool"></div></td></tr>
               </table>
 
               <div>
-                <div class="outcome_processed_data_repeated">
+                <div class="outcome_data_repeated">
                 </div>
-                <div onclick="ord.outcomes.addProcessedData($(this).closest('.outcome_analysis'));" class="add">+ add processed data</div>
+                <div onclick="ord.outcomes.addData($(this).closest('.outcome_analysis'));" class="add">+ add data</div>
               </div>
 
-              <div>
-                <div class="outcome_raw_data_repeated">
-                </div>
-                <div onclick="ord.outcomes.addRawData($(this).closest('.outcome_analysis'));" class="add">+ add raw data</div>
-              </div>
             </fieldset>
 
           </div>
 
-          <div id="outcome_processed_data_template" class="outcome_processed_data" style="display: none;">
+          <div id="outcome_data_template" class="outcome_data" style="display: none;">
             <fieldset class="s5">
               <legend>
                 <span class="collapse"></span>
-                <span class="h5">Processed analytical data</span>
-                <div onclick="ord.reaction.removeSlowly(this, '.outcome_processed_data');" class="remove">remove</div>
+                <span class="h5">Analytical data</span>
+                <div onclick="ord.reaction.removeSlowly(this, '.outcome_data');" class="remove">remove</div>
               </legend>
               <table class="message">
-                <tr><td>name</td><td><div class="outcome_processed_data_name edittext"></div></td></tr>
-              </table>
-            </fieldset>
-          </div>
-
-          <div id="outcome_raw_data_template" class="outcome_raw_data" style="display: none;">
-            <fieldset class="s5">
-              <legend>
-                <span class="collapse"></span>
-                <span class="h5">Raw analytical data</span>
-                <div onclick="ord.reaction.removeSlowly(this, '.outcome_raw_data');" class="remove">remove</div>
-              </legend>
-              <table class="message">
-                <tr><td>name</td><td><div class="outcome_raw_data_name edittext"></div></td></tr>
+                <tr><td>name</td><td><div class="outcome_data_name edittext"></div></td></tr>
               </table>
             </fieldset>
           </div>

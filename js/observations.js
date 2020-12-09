@@ -26,9 +26,6 @@ exports = {
 goog.require('ord.data');
 goog.require('proto.ord.ReactionObservation');
 
-// Freely create radio button groups by generating new input names.
-let radioGroupCounter = 0;
-
 /**
  * Adds and populates the reaction observation sections in the form.
  * @param {!Array<!proto.ord.ReactionObservation>} observations

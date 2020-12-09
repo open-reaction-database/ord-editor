@@ -265,3 +265,6 @@ table.message td:first-child {
   border-style: solid none none solid;
   border-color: black;
 }
+.product_measurement_section {
+  padding-top: 20px;
+}

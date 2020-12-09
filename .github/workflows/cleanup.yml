@@ -17,8 +17,7 @@ name: Lint
 on: [pull_request, push]
 
 env:
-  # ord-schema is versioned to avoid breaking ord-editor.
-  ORD_SCHEMA_TAG: v0.1.1
+  ORD_SCHEMA_TAG: v0.2.3
 
 jobs:
   check_licenses:
@@ -51,6 +50,7 @@ jobs:
       - name: yapf
         run: |
           cd "${GITHUB_WORKSPACE}/ord-editor"
+          pip install -r requirements.txt
           pip install yapf
           yapf --parallel --recursive --exclude="*_pb2.py" --quiet .
       - name: Install ord-schema
@@ -102,8 +102,8 @@ jobs:
           cd "${GITHUB_WORKSPACE}/ord-editor"
           pip install flask pylint yapf
           npm install google-protobuf puppeteer
-          wget https://github.com/protocolbuffers/protobuf/releases/download/v3.13.0/protobuf-js-3.13.0.tar.gz
-          tar -xzf protobuf-js-3.13.0.tar.gz
+          wget https://github.com/protocolbuffers/protobuf/releases/download/v3.14.0/protobuf-js-3.14.0.tar.gz
+          tar -xzf protobuf-js-3.14.0.tar.gz
           wget https://github.com/google/closure-library/archive/v20200517.tar.gz
           tar -xzf v20200517.tar.gz
           git clone https://github.com/Open-Reaction-Database/ketcher.git

@@ -24,18 +24,21 @@ exports = {
   add,
   validateCompound,
   drawIdentifier,
+  addFeature,
   addNameIdentifier,
   addIdentifier,
-  addPreparation
+  addPreparation,
+  loadIdentifier,
+  loadFeature,
+  unloadFeature,
+  unloadIdentifiers,
 };
 
 goog.require('ord.amounts');
-goog.require('ord.features');
+goog.require('ord.data');
 goog.require('proto.ord.Compound');
 goog.require('proto.ord.CompoundIdentifier');
-
-// Freely create radio button groups by generating new input names.
-let radioGroupCounter = 0;
+goog.require('proto.ord.Compound.Source');
 
 /**
  * Adds and populates the form's fields describing multiple compounds for a
@@ -74,31 +77,29 @@ function loadIntoCompound(node, compound) {
   const isLimiting = compound.hasIsLimiting() ? compound.getIsLimiting() : null;
   ord.reaction.setOptionalBool($('.component_limiting', node), isLimiting);
 
-  const solutes = compound.hasVolumeIncludesSolutes() ?
-      compound.getVolumeIncludesSolutes() :
-      null;
-  ord.reaction.setOptionalBool($('.component_includes_solutes', node), solutes);
-
   const identifiers = compound.getIdentifiersList();
   identifiers.forEach(identifier => loadIdentifier(node, identifier));
 
-  const mass = compound.getMass();
-  const moles = compound.getMoles();
-  const volume = compound.getVolume();
-  ord.amounts.load(node, mass, moles, volume);
+  const amount = compound.getAmount();
+  ord.amounts.load(node, amount);
 
   const preparations = compound.getPreparationsList();
   preparations.forEach(preparation => {
     const preparationNode = addPreparation(node);
     loadPreparation(preparationNode, preparation);
   });
-  const vendorSource = compound.getVendorSource();
-  const vendorLot = compound.getVendorLot();
-  const vendorId = compound.getVendorId();
-  loadVendor(node, vendorSource, vendorLot, vendorId);
+  if (compound.hasSource()) {
+    const source = compound.getSource();
+    loadSource(node, source);
+  }
 
-  const features = compound.getFeaturesList();
-  ord.features.load(node, features);
+  const features = compound.getFeaturesMap();
+  const featureNames = features.stringKeys_();
+  featureNames.forEach(function(name) {
+    const feature = features.get(name);
+    const featureNode = addFeature(node);
+    loadFeature(featureNode, name, feature);
+  });
 }
 
 /**
@@ -111,9 +112,11 @@ function loadIntoCompound(node, compound) {
 function loadIdentifier(compoundNode, identifier) {
   const node = addIdentifier(compoundNode);
   const value = identifier.getValue();
-  $('.component_identifier_value', node).text(value);
+  $('.component_identifier_value', node).first().text(value);
   ord.reaction.setSelector(node, identifier.getType());
-  $('.component_identifier_details', node).text(identifier.getDetails());
+  $('.component_identifier_details', node)
+      .first()
+      .text(identifier.getDetails());
 }
 
 /**
@@ -135,16 +138,14 @@ function loadPreparation(node, preparation) {
 /**
  * Adds and populates the form's fields describing a compound's source.
  * @param {!Node} compoundNode The div corresponding to the compound whose
- *     vendor information should be updated on the form.
- * @param {string} vendorSource
- * @param {string} vendorLot
- * @param {string} vendorId
+ *     source information should be updated on the form.
+ * @param {!proto.ord.Compound.Source} source
  */
-function loadVendor(compoundNode, vendorSource, vendorLot, vendorId) {
-  const node = $('fieldset.vendor', compoundNode);
-  $('.component_vendor_source', node).text(vendorSource);
-  $('.component_vendor_lot', node).text(vendorLot);
-  $('.component_vendor_id', node).text(vendorId);
+function loadSource(compoundNode, source) {
+  const node = $('fieldset.source', compoundNode);
+  $('.component_source_vendor', node).text(source.getVendor());
+  $('.component_source_id', node).text(source.getId());
+  $('.component_source_lot', node).text(source.getLot());
 }
 
 /**
@@ -189,33 +190,37 @@ function unloadCompound(node) {
     compound.setIsLimiting(isLimiting);
   }
 
-  // Only call setVolumeIncludesSolutes if the amount is defined as a volume.
-  if (ord.amounts.unloadVolume(node)) {
-    const solutes =
-        ord.reaction.getOptionalBool($('.component_includes_solutes', node));
-    compound.setVolumeIncludesSolutes(solutes);
-  }
-
   const identifiers = unloadIdentifiers(node);
-  if (!ord.reaction.isEmptyMessage(identifiers)) {
+  if (identifiers.some(e => !ord.reaction.isEmptyMessage(e))) {
     compound.setIdentifiersList(identifiers);
   }
 
-  ord.amounts.unload(node, compound);
+  const amount = ord.amounts.unload(node);
+  if (!ord.reaction.isEmptyMessage(amount)) {
+    compound.setAmount(amount);
+  }
 
   const preparations = [];
   $('.component_preparation', node).each(function(index, preparationNode) {
     const preparation = unloadPreparation(preparationNode);
-    if (!ord.reaction.isEmptyMessage(preparation)) {
-      preparations.push(preparation);
+    preparations.push(preparation);
+  });
+  if (preparations.some(e => !ord.reaction.isEmptyMessage(e))) {
+    compound.setPreparationsList(preparations);
+  }
+
+  const source = unloadSource(node);
+  if (!ord.reaction.isEmptyMessage(source)) {
+    compound.setSource(source);
+  }
+
+  const featuresMap = compound.getFeaturesMap();
+  $('.feature', node).each(function(index, featureNode) {
+    featureNode = $(featureNode);
+    if (!featureNode.attr('id')) {
+      unloadFeature(featureNode, featuresMap);
     }
   });
-  compound.setPreparationsList(preparations);
-
-  unloadVendor(node, compound);
-
-  const features = ord.features.unload(node);
-  compound.setFeaturesList(features);
 
   return compound;
 }
@@ -251,7 +256,7 @@ function unloadIdentifier(node) {
   const identifier = new proto.ord.CompoundIdentifier();
 
   const value = $('.component_identifier_value', node).text();
-  if (!ord.reaction.isEmptyMessage(value)) {
+  if (value) {
     identifier.setValue(value);
   }
   const type = ord.reaction.getSelector(node);
@@ -280,18 +285,20 @@ function unloadPreparation(node) {
 }
 
 /**
- * Sets the vendor information fields of a compound according to the form.
- * @param {!Node} node The div corresponding to the compound whose vendor
+ * Sets the source information fields of a compound according to the form.
+ * @param {!Node} node The div corresponding to the compound whose source
  *     information should be read from the form.
- * @param {!proto.ord.Compound} compound
+ * @return {!proto.ord.Compound.Source}
  */
-function unloadVendor(node, compound) {
-  const vendorSource = $('.component_vendor_source', node).text();
-  compound.setVendorSource(vendorSource);
-  const vendorLot = $('.component_vendor_lot', node).text();
-  compound.setVendorLot(vendorLot);
-  const vendorId = $('.component_vendor_id', node).text();
-  compound.setVendorId(vendorId);
+function unloadSource(node) {
+  const source = new proto.ord.Compound.Source();
+  const vendor = $('.component_source_vendor', node).text();
+  source.setVendor(vendor);
+  const lot = $('.component_source_lot', node).text();
+  source.setLot(lot);
+  const id = $('.component_source_id', node).text();
+  source.setId(id);
+  return source;
 }
 
 /**
@@ -314,24 +321,7 @@ function add(root) {
     }
   });
 
-  // Create an "amount" radio button group and connect it to the unit selectors.
-  const amountButtons = $('.amount input', node);
-  amountButtons.attr('name', 'compounds_' + radioGroupCounter++);
-  amountButtons.change(function() {
-    $('.amount .selector', node).hide();
-    if (this.value == 'mass') {
-      $('.component_amount_units_mass', node).show();
-      $('.includes_solutes', node).hide();
-    }
-    if (this.value == 'moles') {
-      $('.component_amount_units_moles', node).show();
-      $('.includes_solutes', node).hide();
-    }
-    if (this.value == 'volume') {
-      $('.component_amount_units_volume', node).show();
-      $('.includes_solutes', node).show().css('display', 'inline-block');
-    }
-  });
+  ord.amounts.init(node);
 
   // Add live validation handling.
   ord.reaction.addChangeHandler(node, () => {
@@ -350,7 +340,7 @@ function add(root) {
  */
 function addIdentifier(node) {
   const identifierNode = ord.reaction.addSlowly(
-      '#component_identifier_template', $('.identifiers', node));
+      '#component_identifier_template', $('.identifiers', node).first());
 
   const uploadButton = $('.component_identifier_upload', identifierNode);
   uploadButton.change(function() {
@@ -421,7 +411,7 @@ function drawIdentifier(node) {
   // First, pack the current Compound into a message.
   const compound = new proto.ord.Compound();
   const identifiers = unloadIdentifiers(node);
-  if (!ord.reaction.isEmptyMessage(identifiers)) {
+  if (identifiers.some(e => !ord.reaction.isEmptyMessage(e))) {
     compound.setIdentifiersList(identifiers);
   }
   // Then, try to resolve compound into a MolBlock.
@@ -430,7 +420,7 @@ function drawIdentifier(node) {
   const binary = compound.serializeBinary();
   xhr.responseType = 'json';
   xhr.onload = function() {
-    if ((xhr.status == 200)) {
+    if (xhr.status === 200) {
       const molblock = xhr.response;
       // Set the molecule in ketcher.
       // Note: In case async / callback issues prove difficult,
@@ -567,4 +557,40 @@ function validateCompound(node, validateNode) {
   // validation so the same trigger is used and we only have to unload the
   // compound once per update.
   renderCompound(node, compound);
+}
+
+/**
+ * Adds a new feature section to the form.
+ * @param {!Node} node Parent component node.
+ * @return {!Node} The newly added parent node for the Data record.
+ */
+function addFeature(node) {
+  const featureNode =
+      ord.reaction.addSlowly('#feature_template', $('.features', node));
+  ord.data.addData(featureNode);
+  return featureNode;
+}
+
+/**
+ * Adds and populates a feature section in a Compound.
+ * @param {!Node} node Parent component node.
+ * @param {string} name The name of this Data record.
+ * @param {!proto.ord.Data} feature
+ */
+function loadFeature(node, name, feature) {
+  $('.feature_name', node).text(name);
+  ord.data.loadData(node, feature);
+}
+
+/**
+ * Fetches a feature record defined in the form and adds it to `featuresMap`.
+ * @param {!Node} node Root node for the Data record.
+ * @param {!jspb.Map<string, !proto.ord.Data>} featuresMap
+ */
+function unloadFeature(node, featuresMap) {
+  const name = $('.feature_name', node).text();
+  const data = ord.data.unloadData(node);
+  if (name || !ord.reaction.isEmptyMessage(data)) {
+    featuresMap.set(name, data);
+  }
 }

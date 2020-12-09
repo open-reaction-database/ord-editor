@@ -26,11 +26,12 @@
 
 FROM continuumio/miniconda3
 
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    procps \
-    unzip \
- && rm -rf /var/lib/apt/lists/*
+# default-jre is required for running the closure compiler linter.
+# https://github.com/geerlingguy/ansible-role-java/issues/64#issuecomment-597132394
+RUN mkdir /usr/share/man/man1/
+RUN apt-get update \
+ && apt-get install -y build-essential default-jre procps unzip \
+ && apt-get clean
 
 RUN conda install -c rdkit \
     flask \
@@ -53,23 +54,30 @@ RUN cd ketcher \
 RUN wget https://github.com/google/closure-library/archive/v20200517.tar.gz \
  && tar -xzf v20200517.tar.gz \
  && rm v20200517.tar.gz
-RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.13.0/protobuf-js-3.13.0.tar.gz \
- && tar -xzf protobuf-js-3.13.0.tar.gz \
- && rm protobuf-js-3.13.0.tar.gz
+RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.14.0/protobuf-js-3.14.0.tar.gz \
+ && tar -xzf protobuf-js-3.14.0.tar.gz \
+ && rm protobuf-js-3.14.0.tar.gz
+
+# Dependencies for testing.
+RUN npm install google-closure-compiler
 
 # Install ord-schema.
 WORKDIR ..
 RUN git clone https://github.com/Open-Reaction-Database/ord-schema.git
 WORKDIR ord-schema
-# NOTE(kearnes): ord-schema is versioned to avoid breaking ord-editor.
-ARG ORD_SCHEMA_TAG=v0.1.1
+ARG ORD_SCHEMA_TAG=v0.2.3
 RUN git fetch --tags && git checkout "${ORD_SCHEMA_TAG}"
 RUN pip install -r requirements.txt
 RUN python setup.py install
 
-# COPY the local state.
+# Install editor dependencies.
 WORKDIR ../ord-editor
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
+
+# COPY the local state.
 COPY Makefile schema.sql ./
+COPY actions/ actions/
 COPY css/ css/
 COPY db/ db/
 COPY html/ html/

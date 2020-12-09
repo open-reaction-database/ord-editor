@@ -546,7 +546,7 @@ function loadReaction(reaction) {
   const observations = reaction.getObservationsList();
   ord.observations.load(observations);
 
-  const workups = reaction.getWorkupList();
+  const workups = reaction.getWorkupsList();
   ord.workups.load(workups);
 
   const outcomes = reaction.getOutcomesList();
@@ -604,7 +604,7 @@ function unloadReaction() {
   reaction.setObservationsList(observations);
 
   const workups = ord.workups.unload();
-  reaction.setWorkupList(workups);
+  reaction.setWorkupsList(workups);
 
   const outcomes = ord.outcomes.unload();
   reaction.setOutcomesList(outcomes);
@@ -633,28 +633,12 @@ function unloadReaction() {
  * assume that the message is truly “empty” (that is, doesn’t have anything
  * meaningful that is set) and can be omitted when constructing the surrounding
  * message.
- * @param {?jspb.Message|?Array|?Uint8Array} obj The object to test.
+ * @param {!jspb.Message} obj The object to test.
  * @return {boolean} Whether the message is empty.
  */
 function isEmptyMessage(obj) {
-  if ([null, undefined, ''].includes(obj)) {
-    return true;
-  }
-  const array = obj.array;
-  if (array !== undefined) {
-    // message is a protobuf message, test underlying array
-    return isEmptyMessage(array);
-  }
-  if (Array.isArray(obj)) {
-    // message arg is an array, test as-is
-    return obj.every(e => isEmptyMessage(e));
-  }
-  if (obj.byteLength !== undefined) {
-    // message arg is a byteArray; has no meaning only if empty
-    // (it's possible that a byteArray filled with 0's may be meaningful)
-    return (obj.length == 0);
-  }
-  return false;
+  const empty = new obj.constructor();
+  return JSON.stringify(obj.toObject()) === JSON.stringify(empty.toObject());
 }
 
 /**
@@ -873,8 +857,8 @@ function initSelector(node) {
  * @param {number} value
  */
 function setSelector(node, value) {
-  $('option', node).removeAttr('selected');
-  $('option[value=' + value + ']', node).attr('selected', 'selected');
+  $('option', node).first().removeAttr('selected');
+  $('option[value=' + value + ']', node).first().attr('selected', 'selected');
 }
 
 /**
@@ -883,7 +867,7 @@ function setSelector(node, value) {
  * @return {number}
  */
 function getSelector(node) {
-  return parseInt($('select', node).val());
+  return parseInt($('select', node).first().val());
 }
 
 /**

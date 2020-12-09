@@ -22,11 +22,8 @@ exports = {
   add
 };
 
-goog.require('ord.amountsCrudes');
+goog.require('ord.amounts');
 goog.require('proto.ord.CrudeComponent');
-
-// Freely create radio button groups by generating new input names.
-let radioGroupCounter = 0;
 
 /**
  * Adds and populates the crude components of a reaction input.
@@ -55,9 +52,8 @@ function loadCrude(root, crude) {
       crude.hasHasDerivedAmount() ? crude.getHasDerivedAmount() : null;
   ord.reaction.setOptionalBool($('.crude_has_derived', node), derived);
 
-  const mass = crude.getMass();
-  const volume = crude.getVolume();
-  ord.amountsCrudes.load(node, mass, volume);
+  const amount = crude.getAmount();
+  ord.amounts.load(node, amount);
 }
 
 /**
@@ -98,7 +94,10 @@ function unloadCrude(node) {
   const derived = ord.reaction.getOptionalBool($('.crude_has_derived', node));
   crude.setHasDerivedAmount(derived);
 
-  ord.amountsCrudes.unload(node, crude);
+  const amount = ord.amounts.unload(node);
+  if (!ord.reaction.isEmptyMessage(amount)) {
+    crude.setAmount(amount);
+  }
 
   return crude;
 }
@@ -110,21 +109,6 @@ function unloadCrude(node) {
  */
 function add(root) {
   const node = ord.reaction.addSlowly('#crude_template', $('.crudes', root));
-
-  // Create an "amount" radio button group and connect it to the unit selectors.
-  const amountButtons = $('.amount input', node);
-  amountButtons.attr('name', 'crudes_' + radioGroupCounter++);
-  amountButtons.change(function() {
-    $('.amount .selector', node).hide();
-    if (this.value == 'mass') {
-      $('.crude_amount_units_mass', node).show();
-    }
-    if (this.value == 'moles') {
-      $('.crude_amount_units_moles', node).show();
-    }
-    if (this.value == 'volume') {
-      $('.crude_amount_units_volume', node).show();
-    }
-  });
+  ord.amounts.init(node);
   return node;
 }
