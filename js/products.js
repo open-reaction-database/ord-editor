@@ -188,6 +188,17 @@ function add(node) {
       '#outcome_product_template', $('.outcome_products', node));
   ord.amounts.init(node);
 
+  // Connect reaction role selection to is_desired_product.
+  const roleSelector = $('.component_reaction_role', node);
+  roleSelector.change(function() {
+    if (ord.reaction.getSelectorText(this) === 'PRODUCT') {
+      $('.is_desired_product', node).show();
+    } else {
+      $('.is_desired_product', node).hide();
+    }
+  });
+  roleSelector.trigger('change');
+
   // Add live validation handling.
   ord.reaction.addChangeHandler(productNode, () => {
     validateProduct(productNode);
@@ -288,7 +299,7 @@ function addMeasurement(node) {
       $('.selectivity', measurementNode).show();
     } else if (measurementType === 'IDENTITY') {
       $('.product_measurement_value_group', measurementNode).hide();
-      $('.retention_time', measurementNode).hide();
+      $('.retention_time', measurementNode).show();
       $('.wavelength', measurementNode).hide();
       $('.mass_spec_details', measurementNode).hide();
       $('.selectivity', measurementNode).hide();
@@ -322,7 +333,7 @@ function addMeasurement(node) {
       $('.product_measurement_float', measurementNode).click();
     } else if (measurementType === 'COUNTS') {
       $('.product_measurement_value_group', measurementNode).show();
-      $('.retention_time', measurementNode).hide();
+      $('.retention_time', measurementNode).show();
       $('.wavelength', measurementNode).hide();
       $('.mass_spec_details', measurementNode).show();
       $('.selectivity', measurementNode).hide();
