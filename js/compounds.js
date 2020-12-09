@@ -442,8 +442,6 @@ function drawIdentifier(node) {
           ketcher.setMolecule(molblock);
         });
       }
-    } else {
-      // Do nothing; no structural identifier(s) exist.
     }
     // Now that we're done with (trying to) loading the molecule, hide the
     // spinner.

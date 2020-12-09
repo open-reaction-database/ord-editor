@@ -558,7 +558,7 @@ def get_molfile():
         molblock = message_helpers.molblock_from_compound(compound)
         return flask.jsonify(molblock)
     except ValueError:
-        return 'no existing structural identifier', 404
+        return 'no existing structural identifier', 204
 
 
 @app.route('/review')
