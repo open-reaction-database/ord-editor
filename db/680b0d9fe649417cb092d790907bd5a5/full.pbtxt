@@ -398,6 +398,7 @@ reactions {
       precision: 116.0
     }
     products {
+      reaction_role: PRODUCT
       identifiers {
         type: IUPAC_NAME
         details: "116.2"

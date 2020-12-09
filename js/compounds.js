@@ -420,7 +420,7 @@ function drawIdentifier(node) {
   const binary = compound.serializeBinary();
   xhr.responseType = 'json';
   xhr.onload = function() {
-    if ((xhr.status == 200)) {
+    if (xhr.status === 200) {
       const molblock = xhr.response;
       // Set the molecule in ketcher.
       // Note: In case async / callback issues prove difficult,
@@ -442,6 +442,8 @@ function drawIdentifier(node) {
           ketcher.setMolecule(molblock);
         });
       }
+    } else {
+      // Do nothing; no structural identifier(s) exist.
     }
     // Now that we're done with (trying to) loading the molecule, hide the
     // spinner.

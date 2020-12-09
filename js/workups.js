@@ -276,6 +276,12 @@ function add() {
   const inputNode = $('.workup_input', workupNode);
   // The template for ReactionWorkup.input is taken from Reaction.inputs.
   const workupInputNode = ord.inputs.add(inputNode, ['workup_input']);
+  // Adjust heading sizes. Start with the smallest so we don't adjust more than
+  // once.
+  // TODO(kearnes): This does not affect input components added later.
+  $('.h5', workupInputNode).addClass('h6').removeClass('h5');
+  $('.h4', workupInputNode).addClass('h5').removeClass('h4');
+  $('.h3', workupInputNode).addClass('h4').removeClass('h3');
   // Workup inputs start collapsed by default.
   workupInputNode.find('.collapse').trigger('click');
   // Temperature conditions and stirring fields also start collapsed.

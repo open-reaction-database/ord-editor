@@ -52,6 +52,9 @@ function load(node, products) {
 function loadProduct(outcomeNode, product) {
   const node = add(outcomeNode);
 
+  const reactionRole = product.getReactionRole();
+  ord.reaction.setSelector($('.component_reaction_role', node), reactionRole);
+
   const identifiers = product.getIdentifiersList();
   identifiers.forEach(identifier => {
     ord.compounds.loadIdentifier(node, identifier);
@@ -105,6 +108,10 @@ function unload(node) {
  */
 function unloadProduct(node) {
   const product = new proto.ord.ProductCompound();
+
+  const reactionRole =
+      ord.reaction.getSelector($('.component_reaction_role', node));
+  product.setReactionRole(reactionRole);
 
   const identifiers = ord.compounds.unloadIdentifiers(node);
 
