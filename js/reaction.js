@@ -20,6 +20,7 @@ exports = {
   initFromDataset,
   initFromReactionId,
   commit,
+  toggleAutosave,
   downloadReaction,
   validateReaction,
   setTextFromFile,
@@ -63,9 +64,10 @@ goog.require('proto.ord.Reaction');
 const session = {
   fileName: null,
   dataset: null,
-  index: null,      // Ordinal position of the Reaction in its Dataset.
-  observer: null,   // IntersectionObserver used for the sidebar.
-  navSelectors: {}  // Dictionary from navigation to section.
+  index: null,             // Ordinal position of the Reaction in its Dataset.
+  observer: null,          // IntersectionObserver used for the sidebar.
+  navSelectors: {},        // Dictionary from navigation to section.
+  timers: {'short': null}  // A timer used by autosave.
 };
 // Export session, because it's used by test.js.
 exports.session = session;
@@ -103,6 +105,8 @@ function init(reaction) {
   $('.collapse').each((index, node) => initCollapse($(node)));
   // Trigger reaction-level validation.
   validateReaction();
+  // Initialize autosave being on.
+  toggleAutosave();
   // Signal to tests that the DOM is initialized.
   ready();
 }
@@ -170,6 +174,41 @@ function listen(node) {
   $('.edittext', node).on('focus', event => selectText(event.target));
   $('.floattext', node).on('blur', event => checkFloat(event.target));
   $('.integertext', node).on('blur', event => checkInteger(event.target));
+}
+
+/**
+ * Clicks the 'save' button if ready for a save.
+ */
+function clickSave() {
+  // Only save if there are unsaved changes still to be saved -- hence save
+  // button visible -- and if ready for a save (not in the process of saving
+  // already).
+  const saveButton = $('#save');
+  if (saveButton.css('visibility') == 'visible' &&
+      saveButton.text() == 'save') {
+    saveButton.click();
+  }
+}
+
+/**
+ * Toggles autosave being active.
+ */
+function toggleAutosave() {
+  // We keep track of timers by holding references, only if they're active.
+  if (!session.timers['short']) {
+    // Enable a simple timer that saves periodically.
+    session.timers['short'] =
+        setInterval(clickSave, 1000 * 15);  // Save after 15 seconds
+    $('#toggle_autosave').text('autosave: on');
+    $('#toggle_autosave').css('backgroundColor', 'lightgreen');
+  } else {
+    // Stop the interval timer itself, then remove reference in order to
+    // properly later detect that it's stopped.
+    clearInterval(session.timers['short']);
+    session.timers['short'] = null;
+    $('#toggle_autosave').text('autosave: off');
+    $('#toggle_autosave').css('backgroundColor', 'pink');
+  }
 }
 
 /**
