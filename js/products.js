@@ -292,7 +292,7 @@ function addMeasurement(node) {
       $('.mass_spec_details', measurementNode).hide();
       $('.selectivity', measurementNode).hide();
     } else if (measurementType === 'CUSTOM') {
-      $('.product_measurement_value_group', measurementNode).hide();
+      $('.product_measurement_value_group', measurementNode).show();
       $('.retention_time', measurementNode).show();
       $('.wavelength', measurementNode).show();
       $('.mass_spec_details', measurementNode).show();

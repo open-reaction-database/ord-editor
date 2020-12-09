@@ -864,8 +864,8 @@ limitations under the License.
                   <tr><td>details</td><td><div class="product_measurement_details edittext"></td></tr>
                   <tbody class="product_measurement_value_group amount">
                   <tr>
-                    <td>value</td>
-                    <td>
+                    <td class="product_measurement_section">value</td>
+                    <td class="product_measurement_section">
                       <div class="product_measurement_value amount_value edittext shorttext"></div>
                       <div class="product_measurement_pm" style="display: inline-block;">±</div>
                       <div class="product_measurement_precision amount_precision edittext shorttext floattext"></div>
@@ -882,7 +882,10 @@ limitations under the License.
                     </td>
                   </tr>
                   </tbody>
-                  <tr><td>uses internal standard?</td><td><div class="product_measurement_uses_internal_standard optional_bool"></div></td></tr>
+                  <tr>
+                    <td class="product_measurement_section">uses internal standard?</td>
+                    <td class="product_measurement_section"><div class="product_measurement_uses_internal_standard optional_bool"></div></td>
+                  </tr>
                   <tr><td>is normalized?
                     <span data-toggle="tooltip" data-placement="right" title="Whether the reported measurement has already been normalized to the internal standard, if an internal standard was used.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
@@ -890,23 +893,26 @@ limitations under the License.
                   </td><td><div class="product_measurement_is_normalized optional_bool"></div></td></tr>
                   <tr><td>uses authentic standard?</td><td><div class="product_measurement_uses_authentic_standard optional_bool"></div></td></tr>
                   <tr class="retention_time">
-                    <td>retention time</td>
-                    <td>
+                    <td class="product_measurement_section">retention time</td>
+                    <td class="product_measurement_section">
                       <div class="product_measurement_retention_time_value edittext shorttext floattext"></div>
                       ± <div class="product_measurement_retention_time_precision edittext shorttext floattext"></div>
                       <div class="product_measurement_retention_time_units selector" data-proto="Time_TimeUnit"></div>
                     </td>
                   </tr>
                   <tr class="wavelength">
-                    <td>wavelength</td>
-                    <td>
+                    <td class="product_measurement_section">wavelength</td>
+                    <td class="product_measurement_section">
                       <div class="product_measurement_wavelength_value edittext shorttext floattext"></div>
                       ± <div class="product_measurement_wavelength_precision edittext shorttext floattext"></div>
                       <div class="product_measurement_wavelength_units selector" data-proto="Wavelength_WavelengthUnit"></div>
                     </td>
                   </tr>
                   <tbody class="mass_spec_details">
-                  <tr><td>mass spec type</td><td><div class="product_measurement_mass_spec_type selector" data-proto="ProductMeasurement_MassSpecMeasurementDetails_MassSpecMeasurementType"></div></td></tr>
+                  <tr>
+                    <td class="product_measurement_section">mass spec type</td>
+                    <td class="product_measurement_section"><div class="product_measurement_mass_spec_type selector" data-proto="ProductMeasurement_MassSpecMeasurementDetails_MassSpecMeasurementType"></div></td>
+                  </tr>
                   <tr><td>mass spec details</td><td><div class="product_measurement_mass_spec_details edittext"></div></td></tr>
                   <tr><td>TIC minimum m/z</td><td><div class="product_measurement_mass_spec_tic_minimum_mz edittext shorttext floattext"></div></td></tr>
                   <tr><td>TIC maximum m/z</td><td><div class="product_measurement_mass_spec_tic_maximum_mz edittext shorttext floattext"></div></td></tr>
@@ -921,7 +927,10 @@ limitations under the License.
                   </tr>
                   </tbody>
                   <tbody class="selectivity">
-                  <tr><td>selectivity type</td><td><div class="product_measurement_selectivity_type selector" data-proto="ProductMeasurement_Selectivity_SelectivityType"></div></td></tr>
+                  <tr>
+                    <td class="product_measurement_section">selectivity type</td>
+                    <td class="product_measurement_section"><div class="product_measurement_selectivity_type selector" data-proto="ProductMeasurement_Selectivity_SelectivityType"></div></td>
+                  </tr>
                   <tr><td>selectivity details</td><td><div class="product_measurement_selectivity_details edittext"></div></td></tr>
                   </tbody>
                 </table>
