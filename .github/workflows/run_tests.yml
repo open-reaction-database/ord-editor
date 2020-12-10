@@ -29,6 +29,10 @@ jobs:
       with:
         python-version: '3.x'
     - uses: actions/setup-node@v1
+    - name: Setup docker cache
+      run: |
+        docker login docker.pkg.github.com -u "${GITHUB_ACTOR}" --password="${{ secrets.GITHUB_TOKEN }}"
+        docker pull "${CACHE_TARGET}"
     - name: Run editor tests
       timeout-minutes: 10
       run: |
@@ -39,7 +43,6 @@ jobs:
         ./run_tests.sh "--cache-from=${CACHE_TARGET}"
     - name: Update docker cache
       run: |
-        docker login docker.pkg.github.com -u "${GITHUB_ACTOR}" --password="${{ secrets.GITHUB_TOKEN }}"
         docker tag openreactiondatabase/ord-editor "${CACHE_TARGET}"
         docker push "${CACHE_TARGET}"
       # NOTE(kearnes): Actions in forks cannot update the cache.
