@@ -34,8 +34,9 @@ jobs:
         export ORD_EDITOR_POSTGRES_PASSWORD=test
         # Build the ord-editor image using a GPR cache.
         # See https://dev.to/dtinth/caching-docker-builds-in-github-actions-which-approach-is-the-fastest-a-research-18ei.
+        CACHE_TARGET="docker.pkg.github.com/${GITHUB_REPOSITORY}/ord-editor-cache"
         docker login docker.pkg.github.com -u "${GITHUB_ACTOR}" --password=${{ secrets.GITHUB_TOKEN }}
-        docker pull "docker.pkg.github.com/${GITHUB_REPOSITORY}/ord-editor-cache" || true
-        docker build -t ord-editor . --cache-from="docker.pkg.github.com/${GITHUB_REPOSITORY}/ord-editor-cache"
-        docker tag ord-editor "docker.pkg.github.com/${GITHUB_REPOSITORY}/ord-editor-cache" && docker push "docker.pkg.github.com/${GITHUB_REPOSITORY}/ord-editor-cache" || true
+        docker pull "${CACHE_TARGET}" || true
+        docker build -t ord-editor . --cache-from="${CACHE_TARGET}"
+        docker tag ord-editor "${CACHE_TARGET}" && docker push "${CACHE_TARGET}" || true
         ./run_tests.sh
