@@ -32,4 +32,10 @@ jobs:
         pip install psycopg2-binary
         npm install puppeteer
         export ORD_EDITOR_POSTGRES_PASSWORD=test
+        # Build the ord-editor image using a GPR cache.
+        # See https://dev.to/dtinth/caching-docker-builds-in-github-actions-which-approach-is-the-fastest-a-research-18ei.
+        docker login docker.pkg.github.com -u "${GITHUB_ACTOR}" --password=${{ secrets.GITHUB_TOKEN }}
+        docker pull "docker.pkg.github.com/${GITHUB_REPOSITORY}/ord-editor-cache" || true
+        docker build -t ord-editor . --cache-from="docker.pkg.github.com/${GITHUB_REPOSITORY}/ord-editor-cache"
+        docker tag ord-editor "docker.pkg.github.com/${GITHUB_REPOSITORY}/ord-editor-cache" && docker push "docker.pkg.github.com/${GITHUB_REPOSITORY}/ord-editor-cache" || true
         ./run_tests.sh
