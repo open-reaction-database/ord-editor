@@ -39,7 +39,7 @@ jobs:
       run: |
         cd "${GITHUB_WORKSPACE}"
         docker tag test "${CACHE_TARGET}" && docker push "${CACHE_TARGET}" || true
-      # NOTE(kearnes): Fork actions cannot update the cache.
+      # NOTE(kearnes): Actions in forks cannot update the cache.
       if: ${{ ! github.event.pull_request.head.repo.fork }}
     - name: Run editor tests
       timeout-minutes: 10
