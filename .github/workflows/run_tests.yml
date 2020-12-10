@@ -18,7 +18,7 @@ on: [pull_request, push]
 
 env:
   # See https://dev.to/dtinth/caching-docker-builds-in-github-actions-which-approach-is-the-fastest-a-research-18ei.
-  CACHE_TARGET: "docker.pkg.github.com/${GITHUB_REPOSITORY}/test-cache"
+  CACHE_TARGET: "docker.pkg.github.com/open-reaction-database/ord-editor/ord-editor-cache"
 
 jobs:
   test_editor:
@@ -32,7 +32,7 @@ jobs:
     - name: Build docker images
       run: |
         cd "${GITHUB_WORKSPACE}"
-        echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com -u "${GITHUB_ACTOR}" --password-stdin
+        docker login docker.pkg.github.com -u "${GITHUB_ACTOR}" --password="${{ secrets.GITHUB_TOKEN }}"
         docker pull "${CACHE_TARGET}" || true
         docker build -t test . --cache-from="${CACHE_TARGET}"
     - name: Update docker cache
