@@ -17,14 +17,8 @@
 
 set -e
 
-if [ $# -eq 0 ]; then
-  BUILD_ARGS=""
-else
-  BUILD_ARGS="--cache-from=${1}"
-fi
-
 set -x
-docker build -t openreactiondatabase/ord-editor . "${BUILD_ARGS}"
+docker build -t openreactiondatabase/ord-editor . "$@"
 set +x
 
 # The Postgres Docker container gets its password like this.
