@@ -17,6 +17,16 @@
 
 set -e
 
+if [ $# -eq 0 ]; then
+  BUILD_ARGS=""
+else
+  BUILD_ARGS="--cache-from=${1}"
+fi
+
+set -x
+docker build -t openreactiondatabase/ord-editor . "${BUILD_ARGS}"
+set +x
+
 # The Postgres Docker container gets its password like this.
 [ "$ORD_EDITOR_POSTGRES_PASSWORD" != "" ] || \
     ( echo "*** missing ORD_EDITOR_POSTGRES_PASSWORD ***" && false )
@@ -33,7 +43,6 @@ export ORD_EDITOR_MOUNT=/tmp/editor-postgres
 # Clear any leftover database state.
 rm -rf $ORD_EDITOR_MOUNT && mkdir $ORD_EDITOR_MOUNT
 
-docker build -t openreactiondatabase/ord-editor .
 docker-compose up --detach
 
 set +e

@@ -48,4 +48,4 @@ jobs:
         pip install psycopg2-binary
         npm install puppeteer
         export ORD_EDITOR_POSTGRES_PASSWORD=test
-        ./run_tests.sh
+        ./run_tests.sh "${CACHE_TARGET}"
