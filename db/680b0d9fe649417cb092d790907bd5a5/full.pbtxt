@@ -12,34 +12,6 @@ reactions {
     value: "123\n"
   }
   inputs {
-    value {
-      addition_order: 93
-      addition_time {
-        value: 96.0
-        precision: 97.0
-        units: MINUTE
-      }
-      addition_speed {
-        type: DROPWISE
-        details: "94"
-      }
-      addition_duration {
-        value: 98.0
-        precision: 99.0
-        units: SECOND
-      }
-      flow_rate {
-        value: 100.0
-        precision: 101.0
-        units: MICROLITER_PER_MINUTE
-      }
-      addition_device {
-        type: CANNULA
-        details: "95"
-      }
-    }
-  }
-  inputs {
     key: "4"
     value {
       components {
@@ -70,9 +42,10 @@ reactions {
         }
         features {
           key: "13"
-          value: {
+          value {
             float_value: 14.0
             description: "15"
+            format: "txt"
           }
         }
       }
@@ -111,6 +84,45 @@ reactions {
       addition_device {
         type: SYRINGE
         details: "18"
+      }
+      addition_temperature {
+        value: 23.0
+        precision: 24.0
+        units: FAHRENHEIT
+      }
+    }
+  }
+  inputs {
+    key: "5"
+    value {
+      addition_order: 93
+      addition_time {
+        value: 96.0
+        precision: 97.0
+        units: MINUTE
+      }
+      addition_speed {
+        type: DROPWISE
+        details: "94"
+      }
+      addition_duration {
+        value: 98.0
+        precision: 99.0
+        units: SECOND
+      }
+      flow_rate {
+        value: 100.0
+        precision: 101.0
+        units: MICROLITER_PER_MINUTE
+      }
+      addition_device {
+        type: CANNULA
+        details: "95"
+      }
+      addition_temperature {
+        value: 100.0
+        precision: 101.0
+        units: CELSIUS
       }
     }
   }
@@ -339,6 +351,18 @@ reactions {
         type: CANNULA
         details: "95"
       }
+      addition_temperature {
+        value: 100.0
+        precision: 101.0
+        units: KELVIN
+      }
+    }
+    amount {
+      volume {
+        value: 123.0
+        precision: 0.5
+        units: MILLILITER
+      }
     }
     temperature {
       control {
@@ -379,13 +403,6 @@ reactions {
     }
     target_ph: 89.0
     is_automated: true
-    amount {
-      volume {
-        value: 123.0
-        precision: 0.5
-        units: MILLILITER
-      }
-    }
   }
   outcomes {
     reaction_time {
@@ -398,24 +415,28 @@ reactions {
       precision: 116.0
     }
     products {
-      reaction_role: PRODUCT
       identifiers {
         type: IUPAC_NAME
         details: "116.2"
         value: "116.1"
       }
-      features {
-        key: "116.5"
-        value: {
-          float_value: 116.625
-          description: "116.7"
-        }
+      identifiers {
+        type: NAME
+        details: "Name of this compound"
+        value: "DMSO"
+      }
+      identifiers {
+        type: SMILES
+        details: "NAME resolved by the PubChem API"
+        value: "CS(C)=O"
       }
       is_desired_product: true
       measurements {
         analysis_key: "analysis1"
         type: YIELD
+        details: "analysis1_details"
         uses_internal_standard: true
+        is_normalized: true
         uses_authentic_standard: false
         percentage {
           value: 117.0
@@ -435,6 +456,23 @@ reactions {
       measurements {
         analysis_key: "analysis1"
         type: PURITY
+        details: "analysis details here"
+        uses_internal_standard: true
+        is_normalized: false
+        uses_authentic_standard: true
+        authentic_standard {
+          identifiers {
+            type: NAME
+            details: "Name of this compound"
+            value: "DBU"
+          }
+          identifiers {
+            type: SMILES
+            details: "NAME resolved by the PubChem API"
+            value: "C1CCC2=NCCCN2CC1"
+          }
+          reaction_role: AUTHENTIC_STANDARD
+        }
         percentage {
           value: 119.0
           precision: 120.0
@@ -443,6 +481,10 @@ reactions {
       measurements {
         analysis_key: "analysis1"
         type: AMOUNT
+        details: "more details here"
+        uses_internal_standard: false
+        is_normalized: true
+        uses_authentic_standard: false
         amount {
           mass {
             value: 116.25
@@ -453,9 +495,46 @@ reactions {
       }
       measurements {
         type: PURITY
+        details: "even more details"
         percentage {
           value: 987.6
           precision: 543.2
+        }
+        wavelength {
+          value: 24.0
+          precision: 34.0
+          units: NANOMETER
+        }
+      }
+      measurements {
+        analysis_key: "analysis1"
+        type: CUSTOM
+        details: "all the fields are present"
+        uses_internal_standard: false
+        is_normalized: false
+        uses_authentic_standard: false
+        retention_time {
+          value: 1.0
+          precision: 2.0
+          units: MINUTE
+        }
+        mass_spec_details {
+          type: TIC
+          details: "mass spec details"
+          eic_masses: 1.0
+          eic_masses: 3.0
+          eic_masses: 4.0
+          eic_masses: -34.0
+          eic_masses: 3.0
+        }
+        selectivity {
+          type: EE
+          details: "very selective"
+        }
+        wavelength {
+          value: 3.0
+          precision: 4.0
+          units: WAVENUMBER
         }
       }
       isolated_color: "124"
@@ -463,13 +542,22 @@ reactions {
         type: POWDER
         details: "125"
       }
+      features {
+        key: "116.5"
+        value {
+          float_value: 116.625
+          description: "116.7"
+        }
+      }
+      reaction_role: PRODUCT
     }
     analyses {
       key: "analysis1"
       value {
         type: NMR_13C
-        chmo_id: 131
         details: "132"
+        chmo_id: 131
+        is_of_isolated_species: true
         data {
           key: "135"
           value {
@@ -505,6 +593,7 @@ reactions {
       name: "143"
       orcid: "145"
       organization: "146"
+      email: "foo@example.com"
     }
     city: "147"
     experiment_start {
@@ -522,6 +611,7 @@ reactions {
         name: "154"
         orcid: "155"
         organization: "156"
+        email: "foo@example.com"
       }
       details: "157"
     }
