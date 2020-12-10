@@ -30,7 +30,9 @@ jobs:
         python-version: '3.x'
     - uses: actions/setup-node@v1
     - name: Setup docker cache
-      run: docker login docker.pkg.github.com -u "${GITHUB_ACTOR}" --password="${{ secrets.GITHUB_TOKEN }}"
+      run: |
+        docker login docker.pkg.github.com -u "${GITHUB_ACTOR}" --password="${{ secrets.GITHUB_TOKEN }}"
+        docker pull "${CACHE_TARGET}"
     - name: Run editor tests
       timeout-minutes: 10
       run: |
