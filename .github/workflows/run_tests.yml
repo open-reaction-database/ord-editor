@@ -32,7 +32,7 @@ jobs:
     - name: Build docker images
       run: |
         cd "${GITHUB_WORKSPACE}"
-        cat ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com -u "${GITHUB_ACTOR}" --password-stdin
+        echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com -u "${GITHUB_ACTOR}" --password-stdin
         docker pull "${CACHE_TARGET}" || true
         docker build -t test . --cache-from="${CACHE_TARGET}"
     - name: Update docker cache
