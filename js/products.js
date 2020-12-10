@@ -113,7 +113,8 @@ function unloadProduct(node) {
       ord.reaction.getSelector($('.component_reaction_role', node));
   product.setReactionRole(reactionRole);
 
-  const identifiers = ord.compounds.unloadIdentifiers(node);
+  const identifiers =
+      ord.compounds.unloadIdentifiers($('.product_compound_identifiers', node));
 
   if (identifiers.some(e => !ord.reaction.isEmptyMessage(e))) {
     product.setIdentifiersList(identifiers);
