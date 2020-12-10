@@ -29,18 +29,11 @@ jobs:
       with:
         python-version: '3.x'
     - uses: actions/setup-node@v1
-    - name: Build docker images
+    - name: Setup docker cache
       run: |
         cd "${GITHUB_WORKSPACE}"
         docker login docker.pkg.github.com -u "${GITHUB_ACTOR}" --password="${{ secrets.GITHUB_TOKEN }}"
         docker pull "${CACHE_TARGET}" || true
-        docker build -t test . --cache-from="${CACHE_TARGET}"
-    - name: Update docker cache
-      run: |
-        cd "${GITHUB_WORKSPACE}"
-        docker tag test "${CACHE_TARGET}" && docker push "${CACHE_TARGET}" || true
-      # NOTE(kearnes): Actions in forks cannot update the cache.
-      if: ${{ ! github.event.pull_request.head.repo.fork }}
     - name: Run editor tests
       timeout-minutes: 10
       run: |
@@ -49,3 +42,9 @@ jobs:
         npm install puppeteer
         export ORD_EDITOR_POSTGRES_PASSWORD=test
         ./run_tests.sh "${CACHE_TARGET}"
+    - name: Update docker cache
+      run: |
+        cd "${GITHUB_WORKSPACE}"
+        docker tag openreactiondatabase/ord-editor "${CACHE_TARGET}" && docker push "${CACHE_TARGET}" || true
+      # NOTE(kearnes): Actions in forks cannot update the cache.
+      if: ${{ ! github.event.pull_request.head.repo.fork }}
