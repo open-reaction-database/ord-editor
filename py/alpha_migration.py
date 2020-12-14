@@ -37,20 +37,27 @@ def main(argv):
                           host='localhost',
                           port=5432,
                           user='postgres') as conn:
+        count = 0
         for filename in glob.glob(FLAGS.input_pattern):
-            match = re.fullmatch(r'([0-9a-f]{32})_(.*?)\.pbtxt', filename)
+            match = re.search(r'([0-9a-f]{32})_(.*?)\.pbtxt$', filename)
             if not match:
+                logging.info('Skipping bad filename: %s', filename)
                 continue
             logging.info('Migrating %s', filename)
             user_id = match.group(1)
             name = match.group(2)
+            name = name.replace('?', '/')  # Reverse mangling.
+            logging.info('USER ID: %s, DATASET: %s', user_id, name)
+            count += 1
             with open(filename) as f:
                 pbtxt = f.read()
             query = psycopg2.sql.SQL('UPDATE datasets SET pbtxt = %s '
                                      'WHERE user_id = %s AND dataset_name = %s')
             with conn.cursor() as cursor:
                 cursor.execute(query, [pbtxt, user_id, name])
-        conn.commit()
+                conn.commit()
+    # conn.commit()
+    logging.info('Migrated %d datasets', count)
 
 
 if __name__ == '__main__':
