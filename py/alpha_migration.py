@@ -23,6 +23,7 @@ import re
 
 from absl import app
 from absl import flags
+from absl import logging
 import psycopg2
 import psycopg2.sql
 
@@ -40,6 +41,7 @@ def main(argv):
             match = re.fullmatch(r'([0-9a-f]{32})_(.*?)\.pbtxt', filename)
             if not match:
                 continue
+            logging.info('Migrating %s', filename)
             user_id = match.group(1)
             name = match.group(2)
             with open(filename) as f:
