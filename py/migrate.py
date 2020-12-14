@@ -12,7 +12,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Slurp local datasets into Postgres."""
+"""Slurp local datasets into Postgres.
+
+Usage:
+$ python migrate.py --input_pattern="datasets_new/*.pbtxt"
+"""
 
 import glob
 import re
