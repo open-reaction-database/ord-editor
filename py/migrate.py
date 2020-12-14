@@ -12,45 +12,46 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Slurp local datasets into Postgres.
+"""Slurp the local db/ directory contents into Postgres."""
 
-Usage:
-$ python migrate.py --input_pattern="datasets_new/*.pbtxt"
-"""
-
-import glob
+import os
 import re
+import sys
+import time
 
-from absl import app
-from absl import flags
 import psycopg2
 import psycopg2.sql
 
-FLAGS = flags.FLAGS
-flags.DEFINE_string('input_pattern', None, 'Input dataset glob.')
+
+def migrate_one(user_id, name, conn):
+    """Slurp one named dataset from the db/ directory into Postgres."""
+    pbtxt = open(f'db/{user_id}/{name}').read()
+    query = psycopg2.sql.SQL(
+        'INSERT INTO datasets VALUES (%s, %s, %s) '
+        'ON CONFLICT (user_id, dataset_name) DO UPDATE SET pbtxt=%s')
+    with conn.cursor() as cursor:
+        cursor.execute(query, [user_id, name[:-6], pbtxt, pbtxt])
 
 
-def main(argv):
-    del argv  # Only used by app.run().
+def migrate_all():
+    """Run as a script, copies the entire contents of the db/ directory."""
     with psycopg2.connect(dbname='editor',
                           host='localhost',
                           port=5432,
                           user='postgres') as conn:
-        for filename in glob.glob(FLAGS.input_pattern):
-            match = re.fullmatch(r'([0-9a-f]{32})_(.*?)\.pbtxt', filename)
-            if not match:
+        for user_id in os.listdir('db'):
+            if re.match('^[0-9a-fA-F]{32}$', user_id) is None:
                 continue
-            user_id = match.group(1)
-            name = match.group(2)
-            with open(filename) as f:
-                pbtxt = f.read()
-            query = psycopg2.sql.SQL('UPDATE datasets SET pbtxt = %s '
-                                     'WHERE user_id = %s AND dataset_name = %s')
+            query = psycopg2.sql.SQL(
+                'INSERT INTO users VALUES (%s, %s, %s) ON CONFLICT DO NOTHING')
             with conn.cursor() as cursor:
-                cursor.execute(query, [pbtxt, user_id, name])
-        conn.commit()
+                timestamp = int(time.time())
+                cursor.execute(query, [user_id, None, timestamp])
+            for name in os.listdir(f'db/{user_id}'):
+                if not name.endswith('.pbtxt'):
+                    continue
+                migrate_one(user_id, name, conn)
 
 
 if __name__ == '__main__':
-    flags.mark_flag_as_required('input')
-    app.run(main)
+    sys.exit(migrate_all())
