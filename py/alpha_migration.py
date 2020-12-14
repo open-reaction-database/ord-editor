@@ -15,7 +15,7 @@
 """Slurp local datasets into Postgres.
 
 Usage:
-$ python migrate.py --input_pattern="datasets_new/*.pbtxt"
+$ python alpha_migration.py --input_pattern="datasets_new/*.pbtxt"
 """
 
 import glob
