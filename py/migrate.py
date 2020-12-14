@@ -45,7 +45,7 @@ def main(argv):
             with open(filename) as f:
                 pbtxt = f.read()
             query = psycopg2.sql.SQL(
-                'UPDATE dataset SET pbtxt = %s '
+                'UPDATE datasets SET pbtxt = %s '
                 'WHERE user_id = %s AND dataset_name = %s')
             with conn.cursor() as cursor:
                 cursor.execute(query, [pbtxt, user_id, name])
