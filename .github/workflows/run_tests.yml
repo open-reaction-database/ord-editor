@@ -46,4 +46,4 @@ jobs:
         docker tag openreactiondatabase/ord-editor "${CACHE_TARGET}"
         docker push "${CACHE_TARGET}"
       # NOTE(kearnes): Actions in forks cannot update the cache.
-      if: ${{ github.repository_owner == "open-reaction-database" }}
+      if: ${{ github.repository_owner }} == "open-reaction-database"
