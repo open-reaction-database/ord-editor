@@ -46,4 +46,8 @@ jobs:
         docker tag openreactiondatabase/ord-editor "${CACHE_TARGET}"
         docker push "${CACHE_TARGET}"
       # NOTE(kearnes): Actions in forks cannot update the cache.
-      if: ${{ !(github.event.pull_request.head.repo.fork || github.event.push.repository.fork) }}
+      if: >-
+        (github.event_name == 'pull_request' &&
+         !github.event.pull_request.head.repo.fork) ||
+        (github_event_name == 'push' &&
+         !github.event.push.repository.fork)
