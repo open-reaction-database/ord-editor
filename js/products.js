@@ -597,4 +597,5 @@ function validateMeasurement(node, validateNode) {
 function validateProduct(node, validateNode) {
   const product = unloadProduct(node);
   ord.reaction.validate(product, 'ProductCompound', node, validateNode);
+  ord.compounds.renderCompound(node, product);
 }
