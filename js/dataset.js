@@ -28,6 +28,7 @@ exports = {
 };
 
 goog.require('proto.ord.Dataset');
+goog.require('ord.reaction');
 
 const session = {
   fileName: null,
