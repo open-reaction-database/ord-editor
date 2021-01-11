@@ -774,6 +774,12 @@ def exists_dataset(name):
         return cursor.rowcount > 0
 
 
+@app.route('/template')
+def template():
+    """Return a stateless web page for creating enumeration templates."""
+    return flask.render_template('template.html')
+
+
 @app.route('/login')
 def show_login():
     """Presents a form to set a new access token from a given user ID."""

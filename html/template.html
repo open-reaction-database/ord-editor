@@ -1,0 +1,179 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <input id="input" type="file"/>
+    <a id="output" download="reaction.pbtxt" style="display: none;"></a>
+    <button id="download" type="button">download</button>
+    <div>
+      <pre id="text"/>
+    </div>
+    <script>
+      /* Global data, the pbtxt content uploaded by the user. */
+      let text;
+
+      /* Return the line start and end bounding the given location. */
+      function getLineBounds(offset) {
+        let start = offset;
+        while ((start >= 0) && (text[start] != "\n")) {
+          start--;
+        }
+        start += 1;
+        let end = offset;
+        while ((end < text.length) && (text[end] != "\n")) {
+          end++;
+        }
+        return [start, end];
+      }
+
+      /* Return the line of text at the offset. */
+      function getLine(offset) {
+        const bounds = getLineBounds(offset);
+        return text.slice(bounds[0], bounds[1]);
+      }
+
+      /* Return the start and end of the value part of a line, or null. */
+      function getValueBounds(offset) {
+        const bounds = getLineBounds(offset);
+        const line = text.slice(bounds[0], bounds[1]);
+        const pattern = /: (.*)$/;
+        const colon = line.search(pattern);
+        if (colon < 0) {
+          return null;
+        }
+        return [bounds[0] + colon + 2, bounds[1]];
+      }
+
+      /* Return the indent level of a line. Assumes two spaces per indent. */
+      function getIndent(offset) {
+        const bounds = getLineBounds(offset);
+        let pointer = bounds[0];
+        while (text[pointer] == " ") {
+          pointer++;
+        }
+        return (pointer - bounds[0]) / 2;
+      }
+
+      /* Return the start and end of the preceding line, or null. */
+      function getPreviousLine(offset) {
+        let bounds = getLineBounds(offset);
+        if (bounds[0] == 0) {
+          return null;
+        }
+        return getLineBounds(bounds[0] - 2);
+      }
+
+      /* Return the bounds of the first preceding line of lesser indent. */
+      function getParent(offset) {
+        let bounds = getLineBounds(offset);
+        const indent = getIndent(bounds[0]);
+        if (indent == 0) {
+          return null;
+        }
+        bounds = getPreviousLine(bounds[0]);
+        let outdent = getIndent(bounds[0]);
+        while (outdent >= indent) {
+          bounds = getPreviousLine(bounds[0]);
+          outdent = getIndent(bounds[0]);
+        }
+        return bounds;
+      }
+
+      /* Return the field name on the given line, or null. */
+      function getTag(offset) {
+        const pattern = /^\s*(\w+)[ :].*/;
+        const line = getLine(offset);
+        const match = line.match(pattern);
+        if (match == null) {
+          return null;
+        }
+        return match[1];
+      }
+
+      /* Return the sequence of tags leading to the given line. */
+      function getPath(offset) {
+        const tags = [];
+        let bounds = getLineBounds(offset);
+        while (bounds != null) {
+          const tag = getTag(bounds[0]);
+          tags.push(tag);
+          bounds = getParent(bounds[0]);
+        }
+        return tags.reverse();
+      }
+
+      /* In the "text" global, replace the value on the line with a macro. */
+      function macrotize(offset) {
+        const bounds = getValueBounds(offset);
+        if (bounds == null) {
+          return;
+        }
+        const path = getPath(bounds[0]);
+        let macro = "$" + path.join("_") + "$";
+
+        const value = text.slice(bounds[0], bounds[1]);
+        if (value.search('"') >= 0) {
+          macro = '"' + macro + '"';
+        }
+        text = text.slice(0, bounds[0]) + macro + text.slice(bounds[1]);
+      }
+
+      /* Replace the text at the event with a template macro. */
+      function templatize(e) {
+        let textNode;
+        let offset;
+        if (document.caretPositionFromPoint) {
+          // Firefox, Safari
+          const range = document.caretPositionFromPoint(e.clientX, e.clientY);
+          textNode = range.offsetNode;
+          offset = range.offset;
+        } else if (document.caretRangeFromPoint) {
+          // Chrome, Edge, Opera, Safari
+          const range = document.caretRangeFromPoint(e.clientX, e.clientY);
+          textNode = range.startContainer;
+          offset = range.startOffset;
+        }
+        if (textNode && textNode.nodeType == 3) {
+          // Modifies the "text" global.
+          macrotize(offset);
+          textNode.textContent = text;
+        }
+      }
+
+      /* Receive and display a pbtxt from the user's file system. */
+      function upload() {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          text = event.target.result;
+          const pre = document.getElementById("text");
+          pre.textContent = text;
+        };
+        const file = input.files[0];
+        const output = document.getElementById("output");
+        output.setAttribute("download", file.name);
+        reader.readAsText(file);
+      }
+
+      /* Send back the current text as text/plain. */
+      function download() {
+        const pre = document.getElementById("text");
+        const text = pre.textContent;
+        const output = document.getElementById("output");
+        const blob = new Blob([text], {type: "text/plain"});
+        url = URL.createObjectURL(blob);
+        output.href = url;
+        output.click();
+        URL.revokeObjectURL(url);
+      }
+
+      const input = document.getElementById("input");
+      input.addEventListener("change", upload);
+
+      const button = document.getElementById("download");
+      button.addEventListener("click", download);
+
+      const pre = document.getElementById("text");
+      pre.addEventListener("click", templatize);
+    </script>
+  </body>
+</html>
