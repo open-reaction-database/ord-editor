@@ -47,5 +47,7 @@ jobs:
         docker push "${CACHE_TARGET}"
       # NOTE(kearnes): Actions in forks cannot update the cache.
       if: >-
-        (github.event_name == 'pull_request' && !github.event.head.repo.fork) ||
-        (github.event_name == 'push' && !github.event.repository.fork)
+        (github.event_name == 'pull_request' &&
+         !github.event.pull_request.head.repo.fork) ||
+        (github.event_name == 'push' &&
+         !github.event.repository.fork)
