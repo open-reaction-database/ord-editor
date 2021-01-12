@@ -13,5 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Launches ord-editor via docker-compose.
+#
+# Before running, run `cp .env.empty .env` and edit the values in .env.
 docker build -t openreactiondatabase/ord-editor .
 docker-compose --env-file .env up -d
