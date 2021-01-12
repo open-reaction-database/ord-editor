@@ -14,20 +14,15 @@
 
 # docker-compose configuration for the ORD editor + postgres backend database.
 #
-# Two environment variables are required:
-#   * ORD_EDITOR_POSTGRES_PASSWORD: The postgres password.
-#   * ORD_EDITOR_MOUNT: Mount location for the volume on which the database
-#     is stored. This is designed for use with GCP, where the mount location
-#     refers to a persistent disk that will not disappear when the image is
-#     restarted. See https://github.com/docker-library/docs/blob/master/postgres/README.md#pgdata
-#     for more details. When running locally, this should be set to something
-#     like "${HOME}/ord-editor-data".
+# The required environment variables should be set in .env to keep everything
+# in one place and make it easier to update VMs on GCP.
 
 version: "3"
 services:
   db:
     image: "postgres"
     environment:
+      # See https://github.com/docker-library/docs/blob/master/postgres/README.md#pgdata.
       - PGDATA=/var/lib/postgresql/data/pgdata
       - POSTGRES_PASSWORD=${ORD_EDITOR_POSTGRES_PASSWORD}
     volumes:
