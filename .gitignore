@@ -21,3 +21,5 @@ ketcher
 protobuf-*
 node_modules
 package-lock.json
+# docker-compose environment variables
+.env
