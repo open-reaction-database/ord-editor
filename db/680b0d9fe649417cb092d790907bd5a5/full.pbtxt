@@ -507,6 +507,11 @@ reactions {
         }
       }
       measurements {
+        type: SELECTIVITY
+        details: "try a string value"
+        string_value: "this is a string"
+      }
+      measurements {
         analysis_key: "analysis1"
         type: CUSTOM
         details: "all the fields are present"
