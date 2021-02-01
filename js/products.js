@@ -284,8 +284,7 @@ function addMeasurement(node) {
   const measurementTypeSelector =
       $('.product_measurement_type select', measurementNode);
   measurementTypeSelector.change(function() {
-    const element = measurementTypeSelector[0];
-    const measurementType = element.options[element.selectedIndex].text;
+    const measurementType = this.options[this.selectedIndex].text;
     if (measurementType === 'UNSPECIFIED') {
       $('.product_measurement_value_group', measurementNode).hide();
       $('.retention_time', measurementNode).hide();
@@ -370,6 +369,7 @@ function loadMeasurement(productNode, measurement) {
   $('.analysis_key_selector', node).val(measurement.getAnalysisKey());
   ord.reaction.setSelector(
       $('.product_measurement_type', node), measurement.getType());
+  $('.product_measurement_type select', node).trigger('change');
   $('.product_measurement_details', node).text(measurement.getDetails());
   ord.reaction.setOptionalBool(
       $('.product_measurement_uses_internal_standard', node),
@@ -389,9 +389,10 @@ function loadMeasurement(productNode, measurement) {
   if (authenticStandard) {
     ord.compounds.loadIntoCompound(node, authenticStandard);
   }
+  $('.product_measurement_uses_authentic_standard', node).trigger('change');
 
   if (measurement.hasPercentage()) {
-    $('input[value=\'percentage\']', node).click();
+    $('.product_measurement_percentage', node).click();
     $('.product_measurement_value', node).addClass('floattext');
     if (measurement.getPercentage().hasValue()) {
       $('.product_measurement_value', node)
@@ -402,7 +403,7 @@ function loadMeasurement(productNode, measurement) {
           .text(measurement.getPercentage().getPrecision());
     }
   } else if (measurement.hasFloatValue()) {
-    $('input[value=\'float\']', node).click();
+    $('.product_measurement_float', node).click();
     $('.product_measurement_value', node).addClass('floattext');
     if (measurement.getFloatValue().hasValue()) {
       $('.product_measurement_value', node)
@@ -413,14 +414,14 @@ function loadMeasurement(productNode, measurement) {
           .text(measurement.getFloatValue().getPrecision());
     }
   } else if (measurement.getStringValue()) {
-    $('input[value=\'string\']', node).click();
+    $('.product_measurement_string', node).click();
     $('.product_measurement_value', node).removeClass('floattext');
     if (measurement.getStringValue()) {
       $('.product_measurement_value', node).text(measurement.getStringValue());
     }
   } else if (measurement.hasAmount()) {
+    $('.product_measurement_mass', node).click();
     const valueNode = $('.product_measurement_value_type', node);
-    $('input[value=\'mass\']', valueNode).click();
     ord.amounts.load(valueNode, measurement.getAmount());
   }
 
@@ -460,10 +461,6 @@ function loadMeasurement(productNode, measurement) {
     ord.reaction.writeMetric(
         '.product_measurement_wavelength', wavelength, node);
   }
-
-  // Trigger show/hide of fields.
-  $('.product_measurement_uses_authentic_standard', node).trigger('change');
-  $('.product_measurement_type select', node).trigger('change');
 }
 
 /**
@@ -523,9 +520,9 @@ function unloadMeasurement(node) {
       measurement.setFloatValue(floatValue);
     }
   } else if ($('.product_measurement_string', node).is(':checked')) {
-    const stringValue = $('.product_measurement_string', node).text();
+    const stringValue = $('.product_measurement_value', node).text();
     if (stringValue) {
-      measurement.setStringValue();
+      measurement.setStringValue(stringValue);
     }
   } else if ($('.product_measurement_mass', node).is(':checked')) {
     const amount =
