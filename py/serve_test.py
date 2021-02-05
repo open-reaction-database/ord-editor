@@ -122,13 +122,19 @@ class ServeTest(parameterized.TestCase, absltest.TestCase):
         self.assertEqual(response.status_code, expected)
 
     @parameterized.parameters([
-        ('dataset', 409),
-        ('other', 200),
+        ('dataset', 409, True),
+        ('dataset', 409, False),
+        ('other', 200, True),
+        ('other', 200, False),
     ])
-    def test_upload_dataset(self, file_name, expected):
+    def test_upload_dataset(self, file_name, expected, as_text):
         dataset = self._get_dataset()
+        if as_text:
+            data = text_format.MessageToString(dataset)
+        else:
+            data = dataset.SerializeToString()
         response = self.client.post(f'/dataset/{file_name}/upload',
-                                    data=text_format.MessageToString(dataset),
+                                    data=data,
                                     follow_redirects=True)
         self.assertEqual(response.status_code, expected)
         if response.status_code == 200:
