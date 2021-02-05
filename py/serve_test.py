@@ -84,9 +84,7 @@ class ServeTest(parameterized.TestCase, absltest.TestCase):
         response = self.client.get(f'/dataset/{name}/download',
                                    follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        dataset = dataset_pb2.Dataset()
-        text_format.Parse(response.data, dataset)
-        return dataset
+        return dataset_pb2.Dataset.FromString(response.data)
 
     def _upload_dataset(self, dataset, name):
         """Uploads a Dataset for testing."""
@@ -137,8 +135,7 @@ class ServeTest(parameterized.TestCase, absltest.TestCase):
             response = self.client.get(f'/dataset/{file_name}/download',
                                        follow_redirects=True)
             self.assertEqual(response.status_code, 200)
-            downloaded_dataset = dataset_pb2.Dataset()
-            text_format.Parse(response.data, downloaded_dataset)
+            downloaded_dataset = dataset_pb2.Dataset.FromString(response.data)
             self.assertEqual(downloaded_dataset, dataset)
 
     @parameterized.parameters([
@@ -169,8 +166,7 @@ class ServeTest(parameterized.TestCase, absltest.TestCase):
         response = self.client.get('/dataset/test_dataset/download',
                                    follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        dataset = dataset_pb2.Dataset()
-        text_format.Parse(response.data, dataset)
+        dataset = dataset_pb2.Dataset.FromString(response.data)
         self.assertLen(dataset.reactions, 80)
 
     @parameterized.parameters([

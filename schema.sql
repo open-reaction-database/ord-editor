@@ -42,9 +42,9 @@ CREATE TABLE logins (
 
 CREATE TABLE datasets (
   user_id CHARACTER(32) REFERENCES users,
-  dataset_name TEXT NOT NULL,
-  pbtxt TEXT NOT NULL,
-  PRIMARY KEY (user_id, dataset_name)
+  name TEXT NOT NULL,
+  serialized BYTEA NOT NULL,
+  PRIMARY KEY (user_id, name)
 );
 
 -- System users:
