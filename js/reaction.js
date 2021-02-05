@@ -639,7 +639,8 @@ function unloadReaction() {
 function isEmptyMessage(obj) {
   const empty = new obj.constructor();
   // Compare binary encodings to cover optional fields.
-  return JSON.stringify(obj.serializeBinary()) === JSON.stringify(empty.serializeBinary());
+  return JSON.stringify(obj.serializeBinary()) ===
+      JSON.stringify(empty.serializeBinary());
 }
 
 /**
