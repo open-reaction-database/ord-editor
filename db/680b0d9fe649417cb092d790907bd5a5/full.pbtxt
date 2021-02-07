@@ -494,6 +494,13 @@ reactions {
         }
       }
       measurements {
+        type: YIELD
+        details: "explicit zero yield"
+        percentage {
+          value: 0.0
+        }
+      }
+      measurements {
         type: PURITY
         details: "even more details"
         percentage {
