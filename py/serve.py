@@ -115,15 +115,21 @@ def show_dataset(name):
                                  client_id=client_id)
 
 
-@app.route('/dataset/<name>/download')
-def download_dataset(name):
+@app.route('/dataset/<name>/download/<kind>')
+def download_dataset(name, kind):
     """Returns a pbtxt from the datasets table as an attachment."""
     dataset = get_dataset(name)
-    data = io.BytesIO(dataset.SerializeToString(deterministic=True))
+    data = None
+    if kind == 'pb':
+        data = io.BytesIO(dataset.SerializeToString(deterministic=True))
+    elif kind == 'pbtxt':
+        data = io.BytesIO(text_format.MessageToBytes(dataset))
+    else:
+        flask.abort(flask.make_response(f'unsupported format: {kind}', 406))
     return flask.send_file(data,
                            mimetype='application/protobuf',
                            as_attachment=True,
-                           attachment_filename=f'{name}.pb')
+                           attachment_filename=f'{name}.{kind}')
 
 
 @app.route('/dataset/<name>/upload', methods=['POST'])

@@ -92,16 +92,17 @@ function commit() {
 
 /**
  * Downloads the current dataset.
+ * @param {string} kind Serialization format; one of 'pb' or 'pbtxt'.
  */
-function download() {
+function download(kind) {
   const xhr = new XMLHttpRequest();
-  xhr.open('GET', '/dataset/' + session.fileName + '/download');
+  xhr.open('GET', '/dataset/' + session.fileName + '/download/' + kind);
   xhr.onload = () => {
     // Make the browser write the file.
     const url = URL.createObjectURL(new Blob([xhr.response]));
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', session.fileName + '.pbtxt');
+    link.setAttribute('download', session.fileName + '.' + kind);
     document.body.appendChild(link);
     link.click();
   };
