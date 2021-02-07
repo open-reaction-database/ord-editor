@@ -23,6 +23,7 @@ from absl.testing import parameterized
 from google.protobuf import text_format
 from rdkit import Chem
 
+from ord_schema import message_helpers
 from ord_schema.proto import dataset_pb2
 from ord_schema.proto import reaction_pb2
 
@@ -58,6 +59,7 @@ class ServeTest(parameterized.TestCase, absltest.TestCase):
 
     def setUp(self):
         super().setUp()
+        self.test_directory = self.create_tempdir()
         serve.app.config['TESTING'] = True
         self.client = serve.app.test_client()
         # GET requests automatically login as the test user.
@@ -120,6 +122,35 @@ class ServeTest(parameterized.TestCase, absltest.TestCase):
         response = self.client.get(f'/dataset/{file_name}/download',
                                    follow_redirects=True)
         self.assertEqual(response.status_code, expected)
+        if response.status_code == 200:
+            # Make sure it parses.
+            filename = os.path.join(self.test_directory, 'dataset.pb')
+            with open(filename, 'wb') as f:
+                f.write(response.data)
+            message_helpers.load_message(filename, dataset_pb2.Dataset)
+
+    @parameterized.parameters([
+        ('dataset', 'pb', 200),
+        ('dataset', 'pbtxt', 200),
+        ('../dataset', 'pb', 404),
+        ('../dataset', 'pbtxt', 404),
+        (urllib.parse.quote_plus('../dataset'), 'pb', 404),
+        (urllib.parse.quote_plus('../dataset'), 'pbtxt', 404),
+        ('/foo/bar', 'pb', 404),
+        ('/foo/bar', 'pbtxt', 404),
+        ('other', 'pb', 404),
+        ('other', 'pbtxt', 404),
+    ])
+    def test_download_dataset_with_kind(self, file_name, kind, expected):
+        response = self.client.get(f'/dataset/{file_name}/download/{kind}',
+                                   follow_redirects=True)
+        self.assertEqual(response.status_code, expected)
+        if response.status_code == 200:
+            # Make sure it parses.
+            filename = os.path.join(self.test_directory, f'dataset.{kind}')
+            with open(filename, 'wb') as f:
+                f.write(response.data)
+            message_helpers.load_message(filename, dataset_pb2.Dataset)
 
     @parameterized.parameters([
         ('dataset', 409, True),

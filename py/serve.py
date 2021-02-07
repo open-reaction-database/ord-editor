@@ -115,9 +115,10 @@ def show_dataset(name):
                                  client_id=client_id)
 
 
+@app.route('/dataset/<name>/download')
 @app.route('/dataset/<name>/download/<kind>')
-def download_dataset(name, kind):
-    """Returns a pbtxt from the datasets table as an attachment."""
+def download_dataset(name, kind='pb'):
+    """Returns a pb or pbtxt from the datasets table as an attachment."""
     dataset = get_dataset(name)
     data = None
     if kind == 'pb':
