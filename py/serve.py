@@ -14,6 +14,7 @@
 """A web editor for Open Reaction Database structures."""
 
 import base64
+import binascii
 import collections
 import contextlib
 import difflib
@@ -148,10 +149,7 @@ def upload_dataset(name):
         user_id = flask.g.user_id
         with flask.g.db.cursor() as cursor:
             query = psycopg2.sql.SQL('INSERT INTO datasets VALUES (%s, %s, %s)')
-            cursor.execute(
-                query,
-                [user_id, name,
-                 dataset.SerializeToString(deterministic=True)])
+            cursor.execute(query, [user_id, name, serialize_for_db(dataset)])
             flask.g.db.commit()
         return 'ok'
     except Exception as error:  # pylint: disable=broad-except
@@ -625,10 +623,9 @@ def sync_reviews():
                                               remote.filename[:-6])
                 query = psycopg2.sql.SQL(
                     'INSERT INTO datasets VALUES (%s, %s, %s)')
-                cursor.execute(query, [
-                    user_id, name,
-                    dataset.SerializeToString(deterministic=True)
-                ])
+                cursor.execute(
+                    query,
+                    [user_id, name, serialize_for_db(dataset)])
     flask.g.db.commit()
     return flask.redirect('/review')
 
@@ -653,7 +650,8 @@ def get_dataset(name):
         cursor.execute(query, [flask.g.user_id, name])
         if cursor.rowcount == 0:
             flask.abort(404)
-        return dataset_pb2.Dataset.FromString(cursor.fetchone()[0])
+        serialized = binascii.unhexlify(cursor.fetchone()[0].tobytes())
+        return dataset_pb2.Dataset.FromString(serialized)
 
 
 def put_dataset(name, dataset):
@@ -663,7 +661,7 @@ def put_dataset(name, dataset):
             'INSERT INTO datasets VALUES (%s, %s, %s) '
             'ON CONFLICT (user_id, name) DO UPDATE SET serialized=%s')
         user_id = flask.g.user_id
-        serialized = dataset.SerializeToString(deterministic=True)
+        serialized = serialize_for_db(dataset)
         cursor.execute(query, [user_id, name, serialized, serialized])
         flask.g.db.commit()
 
@@ -970,3 +968,8 @@ def logout():
     response = flask.redirect('/login')
     response.set_cookie('Access-Token', '', expires=0)
     return response
+
+
+def serialize_for_db(dataset):
+    """Serializes a Dataset for input into postgres."""
+    return dataset.SerializeToString(deterministic=True).hex()
