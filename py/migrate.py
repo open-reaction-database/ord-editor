@@ -22,15 +22,20 @@ import time
 import psycopg2
 import psycopg2.sql
 
+from ord_schema import message_helpers
+from ord_schema.proto import dataset_pb2
+
 
 def migrate_one(user_id, name, conn):
     """Slurp one named dataset from the db/ directory into Postgres."""
-    pbtxt = open(f'db/{user_id}/{name}').read()
+    dataset = message_helpers.load_message(f'db/{user_id}/{name}',
+                                           dataset_pb2.Dataset)
+    serialized = dataset.SerializeToString(deterministic=True)
     query = psycopg2.sql.SQL(
         'INSERT INTO datasets VALUES (%s, %s, %s) '
-        'ON CONFLICT (user_id, dataset_name) DO UPDATE SET pbtxt=%s')
+        'ON CONFLICT (user_id, name) DO UPDATE SET serialized=%s')
     with conn.cursor() as cursor:
-        cursor.execute(query, [user_id, name[:-6], pbtxt, pbtxt])
+        cursor.execute(query, [user_id, name[:-6], serialized, serialized])
 
 
 def migrate_all():
