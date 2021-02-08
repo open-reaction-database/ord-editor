@@ -972,4 +972,4 @@ def logout():
 
 def serialize_for_db(dataset):
     """Serializes a Dataset for input into postgres."""
-    return dataset.SerializeToString().hex()
+    return dataset.SerializeToString(deterministic=True).hex()
