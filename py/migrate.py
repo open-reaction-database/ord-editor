@@ -30,7 +30,7 @@ def migrate_one(user_id, name, conn):
     """Slurp one named dataset from the db/ directory into Postgres."""
     dataset = message_helpers.load_message(f'db/{user_id}/{name}',
                                            dataset_pb2.Dataset)
-    serialized = dataset.SerializeToString(deterministic=True)
+    serialized = dataset.SerializeToString().hex()
     query = psycopg2.sql.SQL(
         'INSERT INTO datasets VALUES (%s, %s, %s) '
         'ON CONFLICT (user_id, name) DO UPDATE SET serialized=%s')
