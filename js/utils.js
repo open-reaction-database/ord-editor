@@ -21,23 +21,31 @@ exports = {
   addSlowly,
   clean,
   compareDataset,
-  dirty,
   getDataset,
   getOptionalBool,
   getReactionById,
   getSelector,
   getSelectorText,
+  initCollapse,
+  initOptionalBool,
+  initSelector,
+  initValidateNode,
   isEmptyMessage,
   isTemplateOrUndoBuffer,
   listen,
-  nameToProto,
   prepareFloat,
+  putDataset,
+  ready,
   readMetric,
   removeSlowly,
+  setupObserver,
   setOptionalBool,
   setSelector,
   setTextFromFile,
+  toggleAutosave,
   toggleValidateMessage,
+  undoSlowly,
+  updateSidebar,
   validate,
   writeMetric,
 };
@@ -45,8 +53,27 @@ exports = {
 goog.require('ord.enums');  // Used by nameToProto.
 goog.require('proto.ord.Dataset');
 
+// Remember the dataset and reaction we are editing.
+const session = {
+  fileName: null,
+  dataset: null,
+  index: null,             // Ordinal position of the Reaction in its Dataset.
+  observer: null,          // IntersectionObserver used for the sidebar.
+  navSelectors: {},        // Dictionary from navigation to section.
+  timers: {'short': null}  // A timer used by autosave.
+};
+// Export session, because it's used by test.js.
+exports.session = session;
+
 const FLOAT_PATTERN = /^-?(?:\d+|\d+\.\d*|\d*\.\d+)(?:[eE]-?\d+)?$/;
 const INTEGER_PATTERN = /^-?\d+$/;
+
+/**
+ * Sets the `ready` value to true.
+ */
+function ready() {
+  $('body').attr('ready', true);
+}
 
 /**
  * Shows the 'save' button.
@@ -69,10 +96,45 @@ function clean() {
  * @param {!Node} node
  */
 function listen(node) {
-  ord.utils.addChangeHandler($(node), dirty);
+  addChangeHandler($(node), dirty);
   $('.edittext', node).on('focus', event => selectText(event.target));
   $('.floattext', node).on('blur', event => checkFloat(event.target));
   $('.integertext', node).on('blur', event => checkInteger(event.target));
+}
+
+/**
+ * Clicks the 'save' button if ready for a save.
+ */
+function clickSave() {
+  // Only save if there are unsaved changes still to be saved -- hence save
+  // button visible -- and if ready for a save (not in the process of saving
+  // already).
+  const saveButton = $('#save');
+  if (saveButton.css('visibility') === 'visible' &&
+      saveButton.text() === 'save') {
+    saveButton.click();
+  }
+}
+
+/**
+ * Toggles autosave being active.
+ */
+function toggleAutosave() {
+  // We keep track of timers by holding references, only if they're active.
+  if (!session.timers.short) {
+    // Enable a simple timer that saves periodically.
+    session.timers.short =
+        setInterval(clickSave, 1000 * 15);  // Save after 15 seconds
+    $('#toggle_autosave').text('autosave: on');
+    $('#toggle_autosave').css('backgroundColor', 'lightgreen');
+  } else {
+    // Stop the interval timer itself, then remove reference in order to
+    // properly later detect that it's stopped.
+    clearInterval(session.timers.short);
+    session.timers.short = null;
+    $('#toggle_autosave').text('autosave: off');
+    $('#toggle_autosave').css('backgroundColor', 'pink');
+  }
 }
 
 /**
@@ -114,6 +176,147 @@ function removeSlowly(button, pattern) {
     updateSidebar();
   });
   dirty();
+}
+
+/**
+ * Reverses the hide() in the most recent invocation of removeSlowly().
+ * Removes the node's "undo" button. Does not trigger validation.
+ */
+function undoSlowly() {
+  $('.undoable').removeClass('undoable').show('slow');
+  $('.undo').not('#undo_template').hide('slow', function() {
+    $(this).remove();
+    updateSidebar();
+  });
+  dirty();
+}
+
+/**
+ * Marks the given node for possible future undo. Adds an "undo" button to do
+ * it. Deletes any preexisting undoable nodes and undo buttons.
+ * @param {!Node} node The DOM fragment to hide and re-show.
+ */
+function makeUndoable(node) {
+  $('.undoable').remove();
+  node.addClass('undoable');
+  $('.undo').not('#undo_template').remove();
+  const button = $('#undo_template').clone();
+  button.removeAttr('id');
+  node.after(button);
+  button.show('slow');
+}
+
+/**
+ * Toggles the visibility of all siblings of an element, or if a pattern is
+ * provided, toggles the visibility of all siblings of the nearest ancestor
+ * element matching the pattern.
+ * @param {!Node} node The element to toggle or use as the search root.
+ * @param {string} pattern The pattern to match for finding siblings to toggle.
+ */
+function toggleSlowly(node, pattern) {
+  node = $(node);
+  if (pattern) {
+    node = node.closest(pattern);
+  }
+  // 'collapsed' tag is used to hold previously collapsed siblings,
+  // and would be stored as node's next sibling;
+  // the following line checks whether a collapse has occured.
+  if (node.next('collapsed').length !== 0) {
+    // Need to uncollapse.
+    const collapsedNode = node.next('collapsed');
+    collapsedNode.toggle('slow', () => {
+      collapsedNode.children().unwrap();
+    });
+  } else {
+    // Need to collapse.
+    node.siblings().wrapAll('<collapsed>');
+    node.next('collapsed').toggle('slow');
+  }
+}
+
+/**
+ * Toggles the collapse of a section in the form.
+ * @param {string} button The element to toggle.
+ */
+function collapseToggle(button) {
+  $(button).toggleClass('fa-chevron-down fa-chevron-right');
+  toggleSlowly(button, 'legend');
+}
+
+/**
+ * Adds and populates a <select/> node according to its data-proto type
+ * declaration.
+ * @param {!Node} node A node containing a `data-proto` attribute.
+ */
+function initSelector(node) {
+  const protoName = node.attr('data-proto');
+  const protoEnum = nameToProto(protoName);
+  if (!protoEnum) {
+    console.log('missing require: "' + protoName + '"');
+  }
+  const types = Object.entries(protoEnum);
+  const select = $('<select>');
+  for (let i = 0; i < types.length; i++) {
+    const option = $('<option>').text(types[i][0]);
+    option.attr('value', types[i][1]);
+    if (types[i][0] === 'UNSPECIFIED') {
+      option.attr('selected', 'selected');
+    }
+    select.append(option);
+  }
+  node.append(select);
+}
+
+/**
+ * Sets up a three-way popup (true/false/unspecified).
+ * @param {!Node} node Target node for the new <select/> element.
+ */
+function initOptionalBool(node) {
+  const select = $('<select>');
+  const options = ['UNSPECIFIED', 'TRUE', 'FALSE'];
+  for (let i = 0; i < options.length; i++) {
+    const option = $('<option>').text(options[i]);
+    option.attr('value', options[i]);
+    if (options[i] === 'UNSPECIFIED') {
+      option.attr('selected', 'selected');
+    }
+    select.append(option);
+  }
+  node.append(select);
+}
+
+/**
+ * Sets up and initializes a collapse button by adding attributes into a div in
+ * reaction.html.
+ * @param {!Node} node Target node for the new button.
+ */
+function initCollapse(node) {
+  node.addClass('fa');
+  node.addClass('fa-chevron-down');
+  node.click(function() {
+    collapseToggle(this);
+  });
+  if (node.hasClass('starts_collapsed')) {
+    node.trigger('click');
+  }
+}
+
+/**
+ * Sets up a validator div (button, status indicator, error list, etc.) by
+ * inserting contents into a div in reaction.html.
+ * @param {!Node} oldNode Target node for the new validation elements.
+ */
+function initValidateNode(oldNode) {
+  let newNode = $('#validate_template').clone();
+  // Add attributes necessary for validation functions:
+  // Convert the placeholder onclick method into the button's onclick method.
+  $('.validate_button', newNode).attr('onclick', oldNode.attr('onclick'));
+  oldNode.removeAttr('onclick');
+  // Add an id to the button.
+  if (oldNode.attr('id')) {
+    $('.validate_button', newNode).attr('id', oldNode.attr('id') + '_button');
+  }
+  oldNode.append(newNode.children());
 }
 
 /**
@@ -342,6 +545,20 @@ function getDataset(fileName) {
 }
 
 /**
+ * Uploads a serialized Dataset proto.
+ * @param {string} fileName The name of the new dataset.
+ * @param {!proto.ord.Dataset} dataset
+ */
+function putDataset(fileName, dataset) {
+  $('#save').text('saving');
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/dataset/proto/write/' + fileName);
+  const binary = dataset.serializeBinary();
+  xhr.onload = clean;
+  xhr.send(binary);
+}
+
+/**
  * Compares a local Dataset to a Dataset on the server (used for testing).
  * @param {string} fileName The name of a dataset on the server.
  * @param {!proto.ord.Dataset} dataset A local Dataset.
@@ -528,4 +745,117 @@ function getOptionalBool(node) {
     return false;
   }
   return null;
+}
+
+/**
+ * Switches the UI into a read-only mode. This is irreversible.
+ */
+function freeze() {
+  // Hide the header buttons...
+  $('#header_buttons').children().hide();
+  // ...except for "download".
+  $('#download').show();
+  $('#identity').hide();
+  $('select').attr('disabled', 'true');
+  $('input:radio').prop('disabled', 'true');
+  $('.validate').hide();
+  $('.add').hide();
+  $('.remove').hide();
+  $('.text_upload').hide();
+  $('#provenance_created button').hide();
+  $('.edittext').each((i, x) => {
+    const node = $(x);
+    node.attr('contenteditable', 'false');
+    node.css('background-color', '#ebebe4');
+  });
+}
+
+/**
+ * Highlights navigation buttons in the sidebar corresponding to visible
+ * sections. Used as a callback function for the IntersectionObserver.
+ * @param {!Array<!IntersectionObserverEntry>} entries
+ */
+function observerCallback(entries) {
+  entries.forEach(entry => {
+    const target = $(entry.target);
+    let section;
+    if (target[0].hasAttribute('input_name')) {
+      section = target.attr('input_name');
+    } else {
+      section = target.attr('id').split('_')[1];
+    }
+    if (entry.isIntersecting) {
+      session.navSelectors[section].css('background-color', 'lightblue');
+    } else {
+      session.navSelectors[section].css('background-color', '');
+    }
+  });
+}
+
+/**
+ * Sets up the IntersectionObserver used to highlight navigation buttons
+ * in the sidebar.
+ */
+function setupObserver() {
+  const headerSize = $('#header').outerHeight();
+  const observerOptions = {rootMargin: '-' + headerSize + 'px 0px 0px 0px'};
+  session.observer =
+      new IntersectionObserver(observerCallback, observerOptions);
+  updateObserver();
+}
+
+/**
+ * Updates the set of elements watched by the IntersectionObserver.
+ */
+function updateObserver() {
+  if (!session.observer) {
+    return;  // Do nothing until setupObserver has been run.
+  }
+  session.observer.disconnect();
+  $('.section:visible').not('.workup_input').each(function() {
+    session.observer.observe(this);
+  });
+  // Index the selector controls.
+  session.navSelectors = {};
+  $('.navSection').each((index, selector) => {
+    selector = $(selector);
+    const section = selector.attr('data-section');
+    session.navSelectors[section] = selector;
+  });
+  $('.inputNavSection').each((index, selector) => {
+    selector = $(selector);
+    const section = selector.attr('input_name');
+    session.navSelectors[section] = selector;
+  });
+}
+
+/**
+ * Scrolls the viewport to the selected input.
+ * @param {!Event} event
+ */
+function scrollToInput(event) {
+  const section = $(event.target).attr('input_name');
+  const target = $('.input[input_name=\'' + section + '\']');
+  target[0].scrollIntoView({behavior: 'smooth'});
+}
+
+/**
+ * Updates the input entries in the sidebar.
+ */
+function updateSidebar() {
+  $('#navInputs').empty();
+  $('.input:visible').not('.workup_input').each(function(index) {
+    const node = $(this);
+    let name = node.find('.input_name').first().text();
+    if (name === '') {
+      name = '(Input #' + (index + 1) + ')';
+    }
+    node.attr('input_name', 'INPUT-' + name);
+    const navNode = $('<div>&#8226; ' + name + '</div>');
+    navNode.addClass('inputNavSection');
+    navNode.attr('input_name', 'INPUT-' + name);
+    $('#navInputs').append(navNode);
+    navNode.click(scrollToInput);
+  });
+  updateObserver();
 }

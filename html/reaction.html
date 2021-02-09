@@ -64,7 +64,7 @@ limitations under the License.
         <span>|</span>
         <div id="save" onclick="ord.reaction.commit();" style="visibility: hidden;">save</div>
         <span id="reaction_validate" class="validate" onclick="ord.reaction.validateReaction()"></span>
-        <span id="toggle_autosave" onclick="ord.reaction.toggleAutosave()"></span>
+        <span id="toggle_autosave" onclick="ord.utils.toggleAutosave()"></span>
       </div>
     </div>
 
@@ -1199,9 +1199,9 @@ limitations under the License.
             const section = $(event.target).attr('data-section');
             $('#section_' + section)[0].scrollIntoView({behavior: 'smooth'});
           });
-          ord.reaction.setupObserver();
+          ord.utils.setupObserver();
           {% if freeze %}
-            ord.reaction.freeze();
+            ord.utils.freeze();
           {% endif %}
           if (location.hash) {
             const section = location.hash.replace('#', '');

@@ -46,7 +46,7 @@ const puppeteer = require('puppeteer');
     await page.waitFor('body[ready=true]');
     const testResult = await page.evaluate(function(url) {
       const reaction = ord.reaction.unloadReaction();
-      const session = ord.reaction.session;
+      const session = ord.utils.session;
       const reactions = session.dataset.getReactionsList();
       reactions[session.index] = reaction;
       return ord.utils.compareDataset(session.fileName, session.dataset)

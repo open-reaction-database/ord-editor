@@ -43,7 +43,7 @@ function load(inputs) {
     const input = inputs.get(name);
     loadInput('#inputs', name, input);
   });
-  ord.reaction.updateSidebar();
+  ord.utils.updateSidebar();
 }
 
 /**
@@ -244,14 +244,14 @@ function add(root, classes) {
   if (Array.isArray(classes) && classes.length) {
     node.addClass(classes);
   }
-  ord.reaction.updateSidebar();
+  ord.utils.updateSidebar();
   // Add live validation handling.
   ord.utils.addChangeHandler(node, () => {
     validateInput(node);
   });
   // Update the sidebar when the input name is changed.
   const nameNode = node.find('.input_name').first();
-  nameNode.blur(ord.reaction.updateSidebar);
+  nameNode.blur(ord.utils.updateSidebar);
   return node;
 }
 
