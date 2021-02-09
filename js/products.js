@@ -579,7 +579,7 @@ function unloadMeasurement(node) {
 /**
  * Validates a ProductMeasurement defined in the form.
  * @param {!Node} node A node containing a ProductMeasurement.
- * @param {?Node} validateNode The target div for validation results.
+ * @param {?Node=} validateNode The target div for validation results.
  */
 function validateMeasurement(node, validateNode = null) {
   const measurement = unloadMeasurement(node);
@@ -589,7 +589,7 @@ function validateMeasurement(node, validateNode = null) {
 /**
  * Validates a product defined in the form.
  * @param {!Node} node A node containing a reaction product.
- * @param {?Node} validateNode The target div for validation results.
+ * @param {?Node=} validateNode The target div for validation results.
  */
 function validateProduct(node, validateNode = null) {
   const product = unloadProduct(node);

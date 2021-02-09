@@ -303,7 +303,7 @@ function addData(node) {
 /**
  * Validates a reaction outcome defined in the form.
  * @param {!Node} node Root node for the reaction outcome.
- * @param {?Node} validateNode The target node for validation results.
+ * @param {?Node=} validateNode The target node for validation results.
  */
 function validateOutcome(node, validateNode = null) {
   const outcome = unloadOutcome(node);
@@ -313,7 +313,7 @@ function validateOutcome(node, validateNode = null) {
 /**
  * Validates a reaction analysis defined in the form.
  * @param {!Node} node Root node for the reaction analysis.
- * @param {?Node} validateNode The target node for validation results.
+ * @param {?Node=} validateNode The target node for validation results.
  */
 function validateAnalysis(node, validateNode = null) {
   const analysis = unloadAnalysisSingle(node);

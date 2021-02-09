@@ -194,7 +194,7 @@ function addMeasurement() {
 /**
  * Validates the electrochemistry conditions defined in the form.
  * @param {!Node} node Root node for the electrochemistry conditions.
- * @param {?Node} validateNode Target node for validation results.
+ * @param {?Node=} validateNode Target node for validation results.
  */
 function validateElectro(node, validateNode = null) {
   const electro = unload();
