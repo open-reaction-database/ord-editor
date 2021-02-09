@@ -28,6 +28,7 @@ exports = {
 
 goog.require('ord.data');
 goog.require('ord.products');
+goog.require('ord.utils');
 goog.require('proto.ord.ReactionOutcome');
 
 // Freely create radio button groups by generating new input names.
@@ -50,12 +51,11 @@ function loadOutcome(outcome) {
 
   const time = outcome.getReactionTime();
   if (time != null) {
-    ord.reaction.writeMetric('.outcome_time', time, node);
+    ord.utils.writeMetric('.outcome_time', time, node);
   }
   const conversion = outcome.getConversion();
   if (conversion) {
-    ord.reaction.writeMetric(
-        '.outcome_conversion', outcome.getConversion(), node);
+    ord.utils.writeMetric('.outcome_conversion', outcome.getConversion(), node);
   }
 
   const analyses = outcome.getAnalysesMap();
@@ -80,8 +80,7 @@ function loadAnalysis(outcomeNode, name, analysis) {
 
   $('.outcome_analysis_name', node).text(name).trigger('input');
 
-  ord.reaction.setSelector(
-      $('.outcome_analysis_type', node), analysis.getType());
+  ord.utils.setSelector($('.outcome_analysis_type', node), analysis.getType());
   const chmoId = analysis.getChmoId();
   if (chmoId != 0) {
     $('.outcome_analysis_chmo_id', node).text(analysis.getChmoId());
@@ -102,7 +101,7 @@ function loadAnalysis(outcomeNode, name, analysis) {
   if (calibrated) {
     $('.outcome_analysis_calibrated', node).text(calibrated.getValue());
   }
-  ord.reaction.setOptionalBool(
+  ord.utils.setOptionalBool(
       $('.outcome_analysis_is_of_isolated_species', node),
       analysis.hasIsOfIsolatedSpecies() ? analysis.getIsOfIsolatedSpecies() :
                                           null);
@@ -127,9 +126,9 @@ function unload() {
   const outcomes = [];
   $('.outcome').each(function(index, node) {
     node = $(node);
-    if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
+    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
       const outcome = unloadOutcome(node);
-      if (!ord.reaction.isEmptyMessage(outcome)) {
+      if (!ord.utils.isEmptyMessage(outcome)) {
         outcomes.push(outcome);
       }
     }
@@ -146,14 +145,14 @@ function unloadOutcome(node) {
   const outcome = new proto.ord.ReactionOutcome();
 
   const time =
-      ord.reaction.readMetric('.outcome_time', new proto.ord.Time(), node);
-  if (!ord.reaction.isEmptyMessage(time)) {
+      ord.utils.readMetric('.outcome_time', new proto.ord.Time(), node);
+  if (!ord.utils.isEmptyMessage(time)) {
     outcome.setReactionTime(time);
   }
 
-  const conversion = ord.reaction.readMetric(
+  const conversion = ord.utils.readMetric(
       '.outcome_conversion', new proto.ord.Percentage(), node);
-  if (!ord.reaction.isEmptyMessage(conversion)) {
+  if (!ord.utils.isEmptyMessage(conversion)) {
     outcome.setConversion(conversion);
   }
 
@@ -163,7 +162,7 @@ function unloadOutcome(node) {
   const analyses = outcome.getAnalysesMap();
   $('.outcome_analysis', node).each(function(index, node) {
     node = $(node);
-    if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
+    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
       unloadAnalysis(node, analyses);
     }
   });
@@ -178,7 +177,7 @@ function unloadOutcome(node) {
 function unloadAnalysisSingle(analysisNode) {
   const analysis = new proto.ord.Analysis();
   analysis.setType(
-      ord.reaction.getSelector($('.outcome_analysis_type', analysisNode)));
+      ord.utils.getSelector($('.outcome_analysis_type', analysisNode)));
   const chmoId = $('.outcome_analysis_chmo_id', analysisNode).text();
   if (!isNaN(chmoId)) {
     analysis.setChmoId(chmoId);
@@ -196,10 +195,10 @@ function unloadAnalysisSingle(analysisNode) {
       $('.outcome_analysis_manufacturer', analysisNode).text());
   const calibrated = new proto.ord.DateTime();
   calibrated.setValue($('.outcome_analysis_calibrated', analysisNode).text());
-  if (!ord.reaction.isEmptyMessage(calibrated)) {
+  if (!ord.utils.isEmptyMessage(calibrated)) {
     analysis.setInstrumentLastCalibrated(calibrated);
   }
-  analysis.setIsOfIsolatedSpecies(ord.reaction.getOptionalBool(
+  analysis.setIsOfIsolatedSpecies(ord.utils.getOptionalBool(
       $('.outcome_analysis_is_of_isolated_species', analysisNode)));
 
   return analysis;
@@ -213,7 +212,7 @@ function unloadAnalysisSingle(analysisNode) {
 function unloadAnalysis(analysisNode, analyses) {
   const analysis = unloadAnalysisSingle(analysisNode);
   const name = $('.outcome_analysis_name', analysisNode).text();
-  if (name || !ord.reaction.isEmptyMessage(analysis)) {
+  if (name || !ord.utils.isEmptyMessage(analysis)) {
     analyses.set(name, analysis);
   }
 }
@@ -226,7 +225,7 @@ function unloadAnalysis(analysisNode, analyses) {
 function unloadData(node, dataMap) {
   const name = $('.outcome_data_name', node).text();
   const data = ord.data.unloadData(node);
-  if (name || !ord.reaction.isEmptyMessage(data)) {
+  if (name || !ord.utils.isEmptyMessage(data)) {
     dataMap.set(name, data);
   }
 }
@@ -236,9 +235,9 @@ function unloadData(node, dataMap) {
  * @return {!Node} The newly added parent node for the reaction outcome.
  */
 function add() {
-  const node = ord.reaction.addSlowly('#outcome_template', '#outcomes');
+  const node = ord.utils.addSlowly('#outcome_template', '#outcomes');
   // Add live validation handling.
-  ord.reaction.addChangeHandler(node, () => {
+  ord.utils.addChangeHandler(node, () => {
     validateOutcome(node);
   });
   return node;
@@ -250,7 +249,7 @@ function add() {
  * @return {!Node} The newly added parent node for the reaction analysis.
  */
 function addAnalysis(node) {
-  const analysisNode = ord.reaction.addSlowly(
+  const analysisNode = ord.utils.addSlowly(
       '#outcome_analysis_template', $('.outcome_analyses', node));
 
   // Handle name changes.
@@ -283,7 +282,7 @@ function addAnalysis(node) {
   });
 
   // Add live validation handling.
-  ord.reaction.addChangeHandler(analysisNode, () => {
+  ord.utils.addChangeHandler(analysisNode, () => {
     validateAnalysis(analysisNode);
   });
   return analysisNode;
@@ -295,7 +294,7 @@ function addAnalysis(node) {
  * @return {!Node} The newly added parent node for the Data record.
  */
 function addData(node) {
-  const processNode = ord.reaction.addSlowly(
+  const processNode = ord.utils.addSlowly(
       '#outcome_data_template', $('.outcome_data_repeated', node));
   ord.data.addData(processNode);
   return processNode;
@@ -306,9 +305,9 @@ function addData(node) {
  * @param {!Node} node Root node for the reaction outcome.
  * @param {?Node} validateNode The target node for validation results.
  */
-function validateOutcome(node, validateNode) {
+function validateOutcome(node, validateNode = null) {
   const outcome = unloadOutcome(node);
-  ord.reaction.validate(outcome, 'ReactionOutcome', node, validateNode);
+  ord.utils.validate(outcome, 'ReactionOutcome', node, validateNode);
 }
 
 /**
@@ -316,7 +315,7 @@ function validateOutcome(node, validateNode) {
  * @param {!Node} node Root node for the reaction analysis.
  * @param {?Node} validateNode The target node for validation results.
  */
-function validateAnalysis(node, validateNode) {
+function validateAnalysis(node, validateNode = null) {
   const analysis = unloadAnalysisSingle(node);
-  ord.reaction.validate(analysis, 'Analysis', node, validateNode);
+  ord.utils.validate(analysis, 'Analysis', node, validateNode);
 }

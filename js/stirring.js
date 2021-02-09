@@ -22,6 +22,7 @@ exports = {
   validateStirring
 };
 
+goog.require('ord.utils');
 goog.require('proto.ord.StirringConditions');
 
 /**
@@ -31,12 +32,12 @@ goog.require('proto.ord.StirringConditions');
 function load(stirring) {
   const method = stirring.getMethod();
   if (method) {
-    ord.reaction.setSelector($('#stirring_method_type'), method.getType());
+    ord.utils.setSelector($('#stirring_method_type'), method.getType());
     $('#stirring_method_details').text(method.getDetails());
   }
   const rate = stirring.getRate();
   if (rate) {
-    ord.reaction.setSelector($('#stirring_rate_type'), rate.getType());
+    ord.utils.setSelector($('#stirring_rate_type'), rate.getType());
     $('#stirring_rate_details').text(rate.getDetails());
     const rpm = rate.getRpm();
     if (rpm != 0) {
@@ -53,20 +54,20 @@ function unload() {
   const stirring = new proto.ord.StirringConditions();
 
   const method = new proto.ord.StirringConditions.StirringMethod();
-  method.setType(ord.reaction.getSelector($('#stirring_method_type')));
+  method.setType(ord.utils.getSelector($('#stirring_method_type')));
   method.setDetails($('#stirring_method_details').text());
-  if (!ord.reaction.isEmptyMessage(method)) {
+  if (!ord.utils.isEmptyMessage(method)) {
     stirring.setMethod(method);
   }
 
   const rate = new proto.ord.StirringConditions.StirringRate();
-  rate.setType(ord.reaction.getSelector($('#stirring_rate_type')));
+  rate.setType(ord.utils.getSelector($('#stirring_rate_type')));
   rate.setDetails($('#stirring_rate_details').text());
   const rpm = parseFloat($('#stirring_rpm').text());
   if (!isNaN(rpm)) {
     rate.setRpm(rpm);
   }
-  if (!ord.reaction.isEmptyMessage(rate)) {
+  if (!ord.utils.isEmptyMessage(rate)) {
     stirring.setRate(rate);
   }
   return stirring;
@@ -77,7 +78,7 @@ function unload() {
  * @param {!Node} node The div containing the stirring conditions.
  * @param {?Node} validateNode The target div for validation results.
  */
-function validateStirring(node, validateNode) {
+function validateStirring(node, validateNode = null) {
   const stirring = unload();
-  ord.reaction.validate(stirring, 'StirringConditions', node, validateNode);
+  ord.utils.validate(stirring, 'StirringConditions', node, validateNode);
 }

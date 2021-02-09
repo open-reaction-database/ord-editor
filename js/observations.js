@@ -24,6 +24,7 @@ exports = {
 };
 
 goog.require('ord.data');
+goog.require('ord.utils');
 goog.require('proto.ord.ReactionObservation');
 
 /**
@@ -40,7 +41,7 @@ function load(observations) {
  */
 function loadObservation(observation) {
   const node = add();
-  ord.reaction.writeMetric('.observation_time', observation.getTime(), node);
+  ord.utils.writeMetric('.observation_time', observation.getTime(), node);
   $('.observation_comment', node).text(observation.getComment());
   ord.data.loadData(node, observation.getImage());
 }
@@ -53,9 +54,9 @@ function unload() {
   const observations = [];
   $('.observation').each(function(index, node) {
     node = $(node);
-    if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
+    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
       const observation = unloadObservation(node);
-      if (!ord.reaction.isEmptyMessage(observation)) {
+      if (!ord.utils.isEmptyMessage(observation)) {
         observations.push(observation);
       }
     }
@@ -71,13 +72,13 @@ function unload() {
 function unloadObservation(node) {
   const observation = new proto.ord.ReactionObservation();
   const time =
-      ord.reaction.readMetric('.observation_time', new proto.ord.Time(), node);
-  if (!ord.reaction.isEmptyMessage(time)) {
+      ord.utils.readMetric('.observation_time', new proto.ord.Time(), node);
+  if (!ord.utils.isEmptyMessage(time)) {
     observation.setTime(time);
   }
   observation.setComment($('.observation_comment', node).text());
   const image = ord.data.unloadData(node);
-  if (!ord.reaction.isEmptyMessage(image)) {
+  if (!ord.utils.isEmptyMessage(image)) {
     observation.setImage(image);
   }
   return observation;
@@ -88,10 +89,10 @@ function unloadObservation(node) {
  * @return {!Node} The newly added parent node for the reaction observation.
  */
 function add() {
-  const node = ord.reaction.addSlowly('#observation_template', '#observations');
+  const node = ord.utils.addSlowly('#observation_template', '#observations');
   ord.data.addData(node);
   // Add live validation handling.
-  ord.reaction.addChangeHandler(node, () => {
+  ord.utils.addChangeHandler(node, () => {
     validateObservation(node);
   });
   return node;
@@ -102,7 +103,7 @@ function add() {
  * @param {!Node} node Root node for the reaction observation.
  * @param {?Node} validateNode Target node for validation results.
  */
-function validateObservation(node, validateNode) {
+function validateObservation(node, validateNode = null) {
   const observation = unloadObservation(node);
-  ord.reaction.validate(observation, 'ReactionObservation', node, validateNode);
+  ord.utils.validate(observation, 'ReactionObservation', node, validateNode);
 }

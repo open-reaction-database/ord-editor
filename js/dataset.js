@@ -27,8 +27,8 @@ exports = {
   freeze
 };
 
+goog.require('ord.utils');
 goog.require('proto.ord.Dataset');
-goog.require('ord.reaction');
 
 const session = {
   fileName: null,
@@ -200,7 +200,7 @@ function unloadDataset() {
   const reactionIds = [];
   $('.other_reaction_id').each(function(index, node) {
     node = $(node);
-    if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
+    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
       reactionIds.push($('.other_reaction_id_text', node).text());
     }
   });

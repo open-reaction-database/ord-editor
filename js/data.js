@@ -22,6 +22,7 @@ exports = {
   unloadData,
 };
 
+goog.require('ord.utils');
 goog.require('proto.ord.Data');
 
 // Freely create radio button groups by generating new input names.
@@ -34,7 +35,7 @@ let radioGroupCounter = 0;
  */
 function addData(parentNode) {
   const target = parentNode.children('fieldset').first();
-  const node = ord.reaction.addSlowly('#data_template', target);
+  const node = ord.utils.addSlowly('#data_template', target);
   const typeButtons = $('input[type=\'radio\']', node);
   typeButtons.attr('name', 'data_' + radioGroupCounter++);
   typeButtons.change(function() {

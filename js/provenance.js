@@ -23,6 +23,7 @@ exports = {
   validateProvenance
 };
 
+goog.require('ord.utils');
 goog.require('proto.ord.DateTime');
 goog.require('proto.ord.Person');
 goog.require('proto.ord.ReactionProvenance');
@@ -96,7 +97,7 @@ function unload() {
   const provenance = new proto.ord.ReactionProvenance();
 
   const experimenter = unloadPerson($('#provenance_experimenter'));
-  if (!ord.reaction.isEmptyMessage(experimenter)) {
+  if (!ord.utils.isEmptyMessage(experimenter)) {
     provenance.setExperimenter(experimenter);
   }
 
@@ -104,7 +105,7 @@ function unload() {
 
   const start = new proto.ord.DateTime();
   start.setValue($('#provenance_start').text());
-  if (!ord.reaction.isEmptyMessage(start)) {
+  if (!ord.utils.isEmptyMessage(start)) {
     provenance.setExperimentStart(start);
   }
 
@@ -113,7 +114,7 @@ function unload() {
   provenance.setPublicationUrl($('#provenance_url').text());
 
   const created = unloadRecordEvent($('#provenance_created'));
-  if (!ord.reaction.isEmptyMessage(created)) {
+  if (!ord.utils.isEmptyMessage(created)) {
     provenance.setRecordCreated(created);
   }
 
@@ -121,9 +122,9 @@ function unload() {
   $('.provenance_modified', '#provenance_modifieds')
       .each(function(index, node) {
         node = $(node);
-        if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
+        if (!ord.utils.isTemplateOrUndoBuffer(node)) {
           const modified = unloadRecordEvent(node);
-          if (!ord.reaction.isEmptyMessage(modified)) {
+          if (!ord.utils.isEmptyMessage(modified)) {
             modifieds.push(modified);
           }
         }
@@ -141,11 +142,11 @@ function unloadRecordEvent(node) {
   const created = new proto.ord.RecordEvent();
   const createdTime = new proto.ord.DateTime();
   createdTime.setValue($('.provenance_time', node).text());
-  if (!ord.reaction.isEmptyMessage(createdTime)) {
+  if (!ord.utils.isEmptyMessage(createdTime)) {
     created.setTime(createdTime);
   }
   const createdPerson = unloadPerson(node);
-  if (!ord.reaction.isEmptyMessage(createdPerson)) {
+  if (!ord.utils.isEmptyMessage(createdPerson)) {
     created.setPerson(createdPerson);
   }
   const createdDetails = $('.provenance_details', node).text();
@@ -173,7 +174,7 @@ function unloadPerson(node) {
  * @return {!Node} The div containing the new event.
  */
 function addModification() {
-  return ord.reaction.addSlowly(
+  return ord.utils.addSlowly(
       '#provenance_modified_template', '#provenance_modifieds');
 }
 
@@ -182,7 +183,7 @@ function addModification() {
  * @param {!Node} node The node containing reaction provenance information.
  * @param {?Node} validateNode The target div for validation results.
  */
-function validateProvenance(node, validateNode) {
+function validateProvenance(node, validateNode = null) {
   const provenance = unload();
-  ord.reaction.validate(provenance, 'ReactionProvenance', node, validateNode);
+  ord.utils.validate(provenance, 'ReactionProvenance', node, validateNode);
 }

@@ -14,217 +14,42 @@
  * limitations under the License.
  */
 
-goog.module('ord.reaction');
+goog.module('ord.utils');
 goog.module.declareLegacyNamespace();
 exports = {
-  initFromDataset,
-  initFromReactionId,
-  commit,
-  toggleAutosave,
-  downloadReaction,
-  validateReaction,
-  setTextFromFile,
-  removeSlowly,
-  collapseToggle,
-  addSlowly,
   addChangeHandler,
-  validate,
-  toggleValidateMessage,
+  addSlowly,
+  checkFloat,
+  checkInteger,
   compareDataset,
-  unloadReaction,
-  isEmptyMessage,
-  readMetric,
-  writeMetric,
-  setSelector,
+  getOptionalBool,
   getSelector,
   getSelectorText,
+  initCollapse,
+  initOptionalBool,
+  initSelector,
+  initValidateNode,
+  isEmptyMessage,
+  isTemplateOrUndoBuffer,
+  prepareFloat,
+  readMetric,
+  removeSlowly,
+  scrollToInput,
+  selectText,
   setOptionalBool,
-  getOptionalBool,
-  freeze,
-  setupObserver,
-  updateObserver,
+  setSelector,
+  setTextFromFile,
+  toggleValidateMessage,
   undoSlowly,
-  isTemplateOrUndoBuffer
+  validate,
+  writeMetric,
 };
 
-goog.require('ord.conditions');
-goog.require('ord.enums');
-goog.require('ord.identifiers');
-goog.require('ord.inputs');
-goog.require('ord.notes');
-goog.require('ord.observations');
-goog.require('ord.outcomes');
-goog.require('ord.provenance');
-goog.require('ord.setups');
-goog.require('ord.workups');
+goog.require('ord.enums');  // Used by nameToProto.
 goog.require('proto.ord.Dataset');
-goog.require('proto.ord.Reaction');
-
-// Remember the dataset and reaction we are editing.
-const session = {
-  fileName: null,
-  dataset: null,
-  index: null,             // Ordinal position of the Reaction in its Dataset.
-  observer: null,          // IntersectionObserver used for the sidebar.
-  navSelectors: {},        // Dictionary from navigation to section.
-  timers: {'short': null}  // A timer used by autosave.
-};
-// Export session, because it's used by test.js.
-exports.session = session;
 
 const FLOAT_PATTERN = /^-?(?:\d+|\d+\.\d*|\d*\.\d+)(?:[eE]-?\d+)?$/;
 const INTEGER_PATTERN = /^-?\d+$/;
-
-/**
- * Initializes the form.
- * @param {!proto.ord.Reaction} reaction Reaction proto to load.
- */
-function init(reaction) {
-  // Initialize all the template popup menus.
-  $('.selector').each((index, node) => initSelector($(node)));
-  $('.optional_bool').each((index, node) => initOptionalBool($(node)));
-  // Enable all the editable text fields.
-  $('.edittext').attr('contentEditable', 'true');
-  // Initialize all the validators.
-  $('.validate').each((index, node) => initValidateNode($(node)));
-  // Initialize validation handlers that don't go in "add" methods.
-  initValidateHandlers();
-  // Initailize tooltips.
-  $('[data-toggle=\'tooltip\']').tooltip();
-  // Prevent tooltip pop-ups from blurring.
-  // (see github.com/twbs/bootstrap/issues/22610)
-  Popper.Defaults.modifiers.computeStyle.gpuAcceleration = false;
-  // Show "save" on modifications.
-  listen('body');
-  // Load Ketcher content into an element with attribute role="application".
-  document.getElementById('ketcher-iframe').contentWindow.ketcher.initKetcher();
-  // Initialize the UI with the Reaction.
-  loadReaction(reaction);
-  clean();
-  // Initialize the collaped/uncollapsed state of the fieldset groups.
-  $('.collapse').each((index, node) => initCollapse($(node)));
-  // Trigger reaction-level validation.
-  validateReaction();
-  // Initialize autosave being on.
-  toggleAutosave();
-  // Signal to tests that the DOM is initialized.
-  ready();
-}
-
-/**
- * Initializes the form from a Dataset name and Reaction index.
- * @param {string} fileName Path to a Dataset proto.
- * @param {number} index The index of this Reaction in the Dataset.
- */
-async function initFromDataset(fileName, index) {
-  session.fileName = fileName;
-  session.index = index;
-  // Fetch the Dataset containing the Reaction proto.
-  session.dataset = await getDataset(fileName);
-  const reaction = session.dataset.getReactionsList()[index];
-  init(reaction);
-}
-
-/**
- * Initializes the form from a Reaction ID.
- * @param {string} reactionId
- */
-async function initFromReactionId(reactionId) {
-  const reaction = await getReactionById(reactionId);
-  // NOTE(kearnes): Without this next line, `reaction` will be
-  // partial/incomplete, and I have no idea why.
-  console.log(reaction.toObject());
-  init(reaction);
-  $('#dataset_context').hide();
-}
-
-/**
- * Fetches a reaction as a serialized Reaction proto.
- * @param {string} reactionId The ID of the Reaction to fetch.
- * @return {!Promise<!Uint8Array>}
- */
-function getReactionById(reactionId) {
-  return new Promise(resolve => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', '/reaction/id/' + reactionId + '/proto');
-    xhr.responseType = 'arraybuffer';
-    xhr.onload = function() {
-      const bytes = new Uint8Array(xhr.response);
-      const reaction = proto.ord.Reaction.deserializeBinary(bytes);
-      resolve(reaction);
-    };
-    xhr.send();
-  });
-}
-
-/**
- * Sets the `ready` value to true.
- */
-function ready() {
-  $('body').attr('ready', true);
-}
-
-/**
- * Adds a change handler to the given node that shows the 'save' button when
- * the node text is edited.
- * @param {!Node} node
- */
-function listen(node) {
-  addChangeHandler($(node), dirty);
-  $('.edittext', node).on('focus', event => selectText(event.target));
-  $('.floattext', node).on('blur', event => checkFloat(event.target));
-  $('.integertext', node).on('blur', event => checkInteger(event.target));
-}
-
-/**
- * Clicks the 'save' button if ready for a save.
- */
-function clickSave() {
-  // Only save if there are unsaved changes still to be saved -- hence save
-  // button visible -- and if ready for a save (not in the process of saving
-  // already).
-  const saveButton = $('#save');
-  if (saveButton.css('visibility') == 'visible' &&
-      saveButton.text() == 'save') {
-    saveButton.click();
-  }
-}
-
-/**
- * Toggles autosave being active.
- */
-function toggleAutosave() {
-  // We keep track of timers by holding references, only if they're active.
-  if (!session.timers['short']) {
-    // Enable a simple timer that saves periodically.
-    session.timers['short'] =
-        setInterval(clickSave, 1000 * 15);  // Save after 15 seconds
-    $('#toggle_autosave').text('autosave: on');
-    $('#toggle_autosave').css('backgroundColor', 'lightgreen');
-  } else {
-    // Stop the interval timer itself, then remove reference in order to
-    // properly later detect that it's stopped.
-    clearInterval(session.timers['short']);
-    session.timers['short'] = null;
-    $('#toggle_autosave').text('autosave: off');
-    $('#toggle_autosave').css('backgroundColor', 'pink');
-  }
-}
-
-/**
- * Shows the 'save' button.
- */
-function dirty() {
-  $('#save').css('visibility', 'visible');
-}
-
-/**
- * Hides the 'save' button.
- */
-function clean() {
-  $('#save').css('visibility', 'hidden');
-  $('#save').text('save');
-}
 
 /**
  * Selects the contents of the given node.
@@ -397,104 +222,6 @@ function toggleValidateMessage(node, target) {
 }
 
 /**
- * Updates the visual summary of the current reaction.
- * @param {!proto.ord.Reaction} reaction
- */
-function renderReaction(reaction) {
-  const xhr = new XMLHttpRequest();
-  xhr.open('POST', '/render/reaction');
-  const binary = reaction.serializeBinary();
-  xhr.responseType = 'json';
-  xhr.onload = function() {
-    const html_block = xhr.response;
-    $('#reaction_render').html(html_block);
-  };
-  xhr.send(binary);
-}
-
-/**
- * Validates the current reaction.
- */
-function validateReaction() {
-  const node = $('#sections');
-  const validateNode = $('#reaction_validate');
-  const reaction = unloadReaction();
-  validate(reaction, 'Reaction', node, validateNode);
-  // Trigger all submessages to validate.
-  $('.validate_button:visible:not(#reaction_validate_button)').trigger('click');
-  // Render reaction as an HTML block.
-  renderReaction(reaction);
-}
-
-/**
- * Writes the current reaction to disk.
- */
-function commit() {
-  if (!session.dataset) {
-    // Do nothing when there is no Dataset; e.g. when viewing reactions by ID.
-    return;
-  }
-  const reaction = unloadReaction();
-  const reactions = session.dataset.getReactionsList();
-  reactions[session.index] = reaction;
-  putDataset(session.fileName, session.dataset);
-  ord.uploads.putAll(session.fileName);
-}
-
-/**
- * Downloads the current reaction as a serialized Reaction proto.
- */
-function downloadReaction() {
-  const reaction = unloadReaction();
-  const binary = reaction.serializeBinary();
-  const xhr = new XMLHttpRequest();
-  xhr.open('POST', '/reaction/download');
-  xhr.onload = () => {
-    // Make the browser write the file.
-    const url = URL.createObjectURL(new Blob([xhr.response]));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'reaction.pbtxt');
-    document.body.appendChild(link);
-    link.click();
-  };
-  xhr.send(binary);
-}
-
-/**
- * Downloads a dataset as a serialized Dataset proto.
- * @param {string} fileName The name of the dataset to fetch.
- * @return {!Promise<!Uint8Array>}
- */
-function getDataset(fileName) {
-  return new Promise(resolve => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', '/dataset/proto/read/' + fileName);
-    xhr.responseType = 'arraybuffer';
-    xhr.onload = function(event) {
-      const bytes = new Uint8Array(xhr.response);
-      const dataset = proto.ord.Dataset.deserializeBinary(bytes);
-      resolve(dataset);
-    };
-    xhr.send();
-  });
-}
-
-/**
- * Uploads a serialized Dataset proto.
- * @param {string} fileName The name of the new dataset.
- * @param {!proto.ord.Dataset} dataset
- */
-function putDataset(fileName, dataset) {
-  $('#save').text('saving');
-  const xhr = new XMLHttpRequest();
-  xhr.open('POST', '/dataset/proto/write/' + fileName);
-  const binary = dataset.serializeBinary();
-  xhr.onload = clean;
-  xhr.send(binary);
-}
-
-/**
  * Compares a local Dataset to a Dataset on the server (used for testing).
  * @param {string} fileName The name of a dataset on the server.
  * @param {!proto.ord.Dataset} dataset A local Dataset.
@@ -506,7 +233,7 @@ async function compareDataset(fileName, dataset) {
     xhr.open('POST', '/dataset/proto/compare/' + fileName);
     const binary = dataset.serializeBinary();
     xhr.onload = () => {
-      if (xhr.status == 200) {
+      if (xhr.status === 200) {
         resolve();
       } else {
         reject();
@@ -515,108 +242,6 @@ async function compareDataset(fileName, dataset) {
     xhr.onerror = reject;
     xhr.send(binary);
   });
-}
-
-/**
- * Adds and populates the form with the given reaction.
- * @param {!proto.ord.Reaction} reaction
- */
-function loadReaction(reaction) {
-  const identifiers = reaction.getIdentifiersList();
-  ord.identifiers.load(identifiers);
-  const inputs = reaction.getInputsMap();
-  // Reactions start with an input by default.
-  if (inputs.arr_.length) {
-    ord.inputs.load(inputs);
-  } else {
-    ord.inputs.add('#inputs');
-  }
-  const setup = reaction.getSetup();
-  if (setup) {
-    ord.setups.load(setup);
-  }
-  const conditions = reaction.getConditions();
-  if (conditions) {
-    ord.conditions.load(conditions);
-  }
-  const notes = reaction.getNotes();
-  if (notes) {
-    ord.notes.load(notes);
-  }
-  const observations = reaction.getObservationsList();
-  ord.observations.load(observations);
-
-  const workups = reaction.getWorkupsList();
-  ord.workups.load(workups);
-
-  const outcomes = reaction.getOutcomesList();
-  // Reactions start with an outcome by default.
-  if (outcomes.length) {
-    ord.outcomes.load(outcomes);
-  } else {
-    ord.outcomes.add();
-  }
-
-  const provenance = reaction.getProvenance();
-  if (provenance) {
-    ord.provenance.load(provenance);
-  }
-  $('#reaction_id').text(reaction.getReactionId());
-
-  // Clean up floating point entries.
-  $('.floattext').each(function(index) {
-    const node = $(this);
-    if (node.text() !== '') {
-      node.text(prepareFloat(parseFloat(node.text())));
-    }
-  });
-}
-
-/**
- * Fetches the current reaction from the form.
- * @return {!proto.ord.Reaction}
- */
-function unloadReaction() {
-  const reaction = new proto.ord.Reaction();
-  const identifiers = ord.identifiers.unload();
-  reaction.setIdentifiersList(identifiers);
-
-  const inputs = reaction.getInputsMap();
-  // isEmptyMessage check occurs in inputs.unload.
-  ord.inputs.unload(inputs);
-
-  const setup = ord.setups.unload();
-  if (!isEmptyMessage(setup)) {
-    reaction.setSetup(setup);
-  }
-
-  const conditions = ord.conditions.unload();
-  if (!isEmptyMessage(conditions)) {
-    reaction.setConditions(conditions);
-  }
-
-  const notes = ord.notes.unload();
-  if (!isEmptyMessage(notes)) {
-    reaction.setNotes(notes);
-  }
-
-  const observations = ord.observations.unload();
-  reaction.setObservationsList(observations);
-
-  const workups = ord.workups.unload();
-  reaction.setWorkupsList(workups);
-
-  const outcomes = ord.outcomes.unload();
-  reaction.setOutcomesList(outcomes);
-
-  const provenance = ord.provenance.unload();
-  if (!isEmptyMessage(provenance)) {
-    reaction.setProvenance(provenance);
-  }
-
-  // Setter does nothing when passed an empty string.
-  reaction.setReactionId($('#reaction_id').text());
-  return reaction;
 }
 
 /**
@@ -654,8 +279,8 @@ function addSlowly(template, root) {
   node.removeAttr('id');
   $(root).append(node);
   node.show('slow');
-  dirty();
-  listen(node);
+  ord.reaction.dirty();
+  ord.reaction.listen(node);
   $('[data-toggle=\'tooltip\']', node).tooltip();
   return node;
 }
@@ -679,7 +304,7 @@ function removeSlowly(button, pattern) {
   makeUndoable(node);
   node.hide('slow', function() {
     buttonsToClick.trigger('click');
-    ord.inputs.updateSidebar();
+    updateSidebar();
   });
   dirty();
 }
@@ -692,7 +317,7 @@ function undoSlowly() {
   $('.undoable').removeClass('undoable').show('slow');
   $('.undo').not('#undo_template').hide('slow', function() {
     $(this).remove();
-    ord.inputs.updateSidebar();
+    updateSidebar();
   });
   dirty();
 }
@@ -845,7 +470,7 @@ function initSelector(node) {
   for (let i = 0; i < types.length; i++) {
     const option = $('<option>').text(types[i][0]);
     option.attr('value', types[i][1]);
-    if (types[i][0] == 'UNSPECIFIED') {
+    if (types[i][0] === 'UNSPECIFIED') {
       option.attr('selected', 'selected');
     }
     select.append(option);
@@ -892,7 +517,7 @@ function initOptionalBool(node) {
   for (let i = 0; i < options.length; i++) {
     const option = $('<option>').text(options[i]);
     option.attr('value', options[i]);
-    if (options[i] == 'UNSPECIFIED') {
+    if (options[i] === 'UNSPECIFIED') {
       option.attr('selected', 'selected');
     }
     select.append(option);
@@ -907,10 +532,10 @@ function initOptionalBool(node) {
  */
 function setOptionalBool(node, value) {
   $('option', node).removeAttr('selected');
-  if (value == true) {
+  if (value === true) {
     $('option[value=TRUE]', node).attr('selected', 'selected');
   }
-  if (value == false) {
+  if (value === false) {
     $('option[value=FALSE]', node).attr('selected', 'selected');
   }
   if (value == null) {
@@ -925,10 +550,10 @@ function setOptionalBool(node, value) {
  */
 function getOptionalBool(node) {
   const value = $('select', node).val();
-  if (value == 'TRUE') {
+  if (value === 'TRUE') {
     return true;
   }
-  if (value == 'FALSE') {
+  if (value === 'FALSE') {
     return false;
   }
   return null;
@@ -942,7 +567,9 @@ function getOptionalBool(node) {
 function initCollapse(node) {
   node.addClass('fa');
   node.addClass('fa-chevron-down');
-  node.attr('onclick', 'ord.reaction.collapseToggle(this)');
+  node.click(function() {
+    collapseToggle(this);
+  });
   if (node.hasClass('starts_collapsed')) {
     node.trigger('click');
   }
@@ -964,74 +591,6 @@ function initValidateNode(oldNode) {
     $('.validate_button', newNode).attr('id', oldNode.attr('id') + '_button');
   }
   oldNode.append(newNode.children());
-}
-
-/**
- * Initializes the validation handlers. Some nodes are dynamically added or
- * removed; we add their validation handlers when the nodes themselves are
- * added. However, other nodes are always present in the HTML, and aren't
- * dynamically added nor removed. We add live validation to these nodes here.
- */
-function initValidateHandlers() {
-  // For setup
-  const setupNode = $('#section_setup');
-  addChangeHandler(setupNode, () => {
-    ord.setups.validateSetup(setupNode);
-  });
-
-  // For conditions
-  const conditionNode = $('#section_conditions');
-  addChangeHandler(conditionNode, () => {
-    ord.conditions.validateConditions(conditionNode);
-  });
-
-  // For temperature
-  const temperatureNode = $('#section_conditions_temperature');
-  addChangeHandler(temperatureNode, () => {
-    ord.temperature.validateTemperature(temperatureNode);
-  });
-
-  // For pressure
-  const pressureNode = $('#section_conditions_pressure');
-  addChangeHandler(pressureNode, () => {
-    ord.pressure.validatePressure(pressureNode);
-  });
-
-  // For stirring
-  const stirringNode = $('#section_conditions_stirring');
-  addChangeHandler(stirringNode, () => {
-    ord.stirring.validateStirring(stirringNode);
-  });
-
-  // For illumination
-  const illuminationNode = $('#section_conditions_illumination');
-  addChangeHandler(illuminationNode, () => {
-    ord.illumination.validateIllumination(illuminationNode);
-  });
-
-  // For electro
-  const electroNode = $('#section_conditions_electro');
-  addChangeHandler(electroNode, () => {
-    ord.electro.validateElectro(electroNode);
-  });
-
-  // For flow
-  const flowNode = $('#section_conditions_flow');
-  addChangeHandler(flowNode, () => {
-    ord.flows.validateFlow(flowNode);
-  });
-
-  // For notes
-  const notesNode = $('#section_notes');
-  addChangeHandler(notesNode, () => {
-    ord.notes.validateNotes(notesNode);
-  });
-
-  // For provenance
-  const provenanceNode = $('#section_provenance');
-  addChangeHandler(provenanceNode, () => {
-    ord.provenance.validateProvenance(provenanceNode);
-  });
 }
 
 /**
@@ -1062,83 +621,11 @@ function stringToEnum(name, protoEnum) {
 }
 
 /**
- * Switches the UI into a read-only mode. This is irreversible.
+ * Scrolls the viewport to the selected input.
+ * @param {!Event} event
  */
-function freeze() {
-  // Hide the header buttons...
-  $('#header_buttons').children().hide();
-  // ...except for "download".
-  $('#download').show();
-  $('#identity').hide();
-  $('select').attr('disabled', 'true');
-  $('input:radio').prop('disabled', 'true');
-  $('.validate').hide();
-  $('.add').hide();
-  $('.remove').hide();
-  $('.text_upload').hide();
-  $('#provenance_created button').hide();
-  $('.edittext').each((i, x) => {
-    const node = $(x);
-    node.attr('contenteditable', 'false');
-    node.css('background-color', '#ebebe4');
-  });
-}
-
-/**
- * Highlights navigation buttons in the sidebar corresponding to visible
- * sections. Used as a callback function for the IntersectionObserver.
- * @param {!Array<!IntersectionObserverEntry>} entries
- */
-function observerCallback(entries) {
-  entries.forEach(entry => {
-    const target = $(entry.target);
-    let section;
-    if (target[0].hasAttribute('input_name')) {
-      section = target.attr('input_name');
-    } else {
-      section = target.attr('id').split('_')[1];
-    }
-    if (entry.isIntersecting) {
-      session.navSelectors[section].css('background-color', 'lightblue');
-    } else {
-      session.navSelectors[section].css('background-color', '');
-    }
-  });
-}
-
-/**
- * Sets up the IntersectionObserver used to highlight navigation buttons
- * in the sidebar.
- */
-function setupObserver() {
-  const headerSize = $('#header').outerHeight();
-  const observerOptions = {rootMargin: '-' + headerSize + 'px 0px 0px 0px'};
-  session.observer =
-      new IntersectionObserver(observerCallback, observerOptions);
-  updateObserver();
-}
-
-/**
- * Updates the set of elements watched by the IntersectionObserver.
- */
-function updateObserver() {
-  if (!session.observer) {
-    return;  // Do nothing until setupObserver has been run.
-  }
-  session.observer.disconnect();
-  $('.section:visible').not('.workup_input').each(function() {
-    session.observer.observe(this);
-  });
-  // Index the selector controls.
-  session.navSelectors = {};
-  $('.navSection').each((index, selector) => {
-    selector = $(selector);
-    const section = selector.attr('data-section');
-    session.navSelectors[section] = selector;
-  });
-  $('.inputNavSection').each((index, selector) => {
-    selector = $(selector);
-    const section = selector.attr('input_name');
-    session.navSelectors[section] = selector;
-  });
+function scrollToInput(event) {
+  const section = $(event.target).attr('input_name');
+  const target = $('.input[input_name=\'' + section + '\']');
+  target[0].scrollIntoView({behavior: 'smooth'});
 }

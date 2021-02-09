@@ -22,6 +22,7 @@ exports = {
   validateFlow
 };
 
+goog.require('ord.utils');
 goog.require('proto.ord.FlowConditions');
 goog.require('proto.ord.FlowConditions.Tubing');
 
@@ -32,15 +33,15 @@ goog.require('proto.ord.FlowConditions.Tubing');
 function load(flow) {
   const type = flow.getFlowType();
   if (type) {
-    ord.reaction.setSelector($('#flow_type'), type.getType());
+    ord.utils.setSelector($('#flow_type'), type.getType());
     $('#flow_details').text(type.getDetails());
   }
   $('#flow_pump').text(flow.getPumpType());
 
   const tubing = flow.getTubing();
-  ord.reaction.setSelector($('#flow_tubing_type'), tubing.getType());
+  ord.utils.setSelector($('#flow_tubing_type'), tubing.getType());
   $('#flow_tubing_details').text(tubing.getDetails());
-  ord.reaction.writeMetric('#flow_tubing', tubing.getDiameter());
+  ord.utils.writeMetric('#flow_tubing', tubing.getDiameter());
 }
 
 /**
@@ -51,24 +52,23 @@ function unload() {
   const flow = new proto.ord.FlowConditions();
 
   const type = new proto.ord.FlowConditions.FlowType();
-  type.setType(ord.reaction.getSelector('#flow_type'));
+  type.setType(ord.utils.getSelector('#flow_type'));
   type.setDetails($('#flow_details').text());
-  if (!ord.reaction.isEmptyMessage(type)) {
+  if (!ord.utils.isEmptyMessage(type)) {
     flow.setFlowType(type);
   }
 
   flow.setPumpType($('#flow_pump').text());
 
   const tubing = new proto.ord.FlowConditions.Tubing();
-  tubing.setType(ord.reaction.getSelector('#flow_tubing_type'));
+  tubing.setType(ord.utils.getSelector('#flow_tubing_type'));
   tubing.setDetails($('#flow_tubing_details').text());
-  const diameter =
-      ord.reaction.readMetric('#flow_tubing', new proto.ord.Length());
-  if (!ord.reaction.isEmptyMessage(diameter)) {
+  const diameter = ord.utils.readMetric('#flow_tubing', new proto.ord.Length());
+  if (!ord.utils.isEmptyMessage(diameter)) {
     tubing.setDiameter(diameter);
   }
 
-  if (!ord.reaction.isEmptyMessage(tubing)) {
+  if (!ord.utils.isEmptyMessage(tubing)) {
     flow.setTubing(tubing);
   }
   return flow;
@@ -79,7 +79,7 @@ function unload() {
  * @param {!Node} node Root node for the flow conditions.
  * @param {?Node} validateNode Target node for validation results.
  */
-function validateFlow(node, validateNode) {
+function validateFlow(node, validateNode = null) {
   const flow = unload();
-  ord.reaction.validate(flow, 'FlowConditions', node, validateNode);
+  ord.utils.validate(flow, 'FlowConditions', node, validateNode);
 }

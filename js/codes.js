@@ -23,6 +23,7 @@ exports = {
 };
 
 goog.require('ord.data');
+goog.require('ord.utils');
 goog.require('proto.ord.Data');
 
 /**
@@ -55,7 +56,7 @@ function loadCode(name, code) {
 function unload(codes) {
   $('.setup_code').each(function(index, node) {
     node = $(node);
-    if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
+    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
       unloadCode(codes, node);
     }
   });
@@ -70,7 +71,7 @@ function unload(codes) {
 function unloadCode(codes, node) {
   const name = $('.setup_code_name', node).text();
   const code = ord.data.unloadData(node);
-  if (name || !ord.reaction.isEmptyMessage(code)) {
+  if (name || !ord.utils.isEmptyMessage(code)) {
     codes.set(name, code);
   }
 }
@@ -80,7 +81,7 @@ function unloadCode(codes, node) {
  * @return {!Node} The newly added root node for the automation_code section.
  */
 function addCode() {
-  const node = ord.reaction.addSlowly('#setup_code_template', '#setup_codes');
+  const node = ord.utils.addSlowly('#setup_code_template', '#setup_codes');
   ord.data.addData(node);
   return node;
 }

@@ -23,6 +23,7 @@ exports = {
 };
 
 goog.require('ord.uploads');
+goog.require('ord.utils');
 goog.require('proto.ord.ReactionIdentifier');
 
 /**
@@ -44,7 +45,7 @@ function loadIdentifier(identifier) {
   const node = add();
   const value = identifier.getValue();
   $('.reaction_identifier_value', node).text(value);
-  ord.reaction.setSelector(node, identifier.getType());
+  ord.utils.setSelector(node, identifier.getType());
   $('.reaction_identifier_details', node).text(identifier.getDetails());
 }
 
@@ -56,9 +57,9 @@ function unload() {
   const identifiers = [];
   $('.reaction_identifier').each(function(index, node) {
     node = $(node);
-    if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
+    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
       const identifier = unloadIdentifier(node);
-      if (!ord.reaction.isEmptyMessage(identifier)) {
+      if (!ord.utils.isEmptyMessage(identifier)) {
         identifiers.push(identifier);
       }
     }
@@ -79,7 +80,7 @@ function unloadIdentifier(node) {
     identifier.setValue(value);
   }
 
-  const type = ord.reaction.getSelector(node);
+  const type = ord.utils.getSelector(node);
   if (type) {
     identifier.setType(type);
   }
@@ -96,7 +97,7 @@ function unloadIdentifier(node) {
  */
 function add() {
   const node =
-      ord.reaction.addSlowly('#reaction_identifier_template', '#identifiers');
+      ord.utils.addSlowly('#reaction_identifier_template', '#identifiers');
 
   const uploadButton = $('.reaction_identifier_upload', node);
   uploadButton.change(function() {
