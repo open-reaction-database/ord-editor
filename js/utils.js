@@ -20,6 +20,7 @@ exports = {
   addChangeHandler,
   addSlowly,
   clean,
+  collapseToggle,  // Used by initCollapse.
   compareDataset,
   getDataset,
   getOptionalBool,
@@ -293,9 +294,7 @@ function initOptionalBool(node) {
 function initCollapse(node) {
   node.addClass('fa');
   node.addClass('fa-chevron-down');
-  node.click(function() {
-    collapseToggle(this);
-  });
+  node.attr('onclick', 'ord.utils.collapseToggle(this)');
   if (node.hasClass('starts_collapsed')) {
     node.trigger('click');
   }
