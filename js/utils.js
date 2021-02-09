@@ -19,28 +19,25 @@ goog.module.declareLegacyNamespace();
 exports = {
   addChangeHandler,
   addSlowly,
-  checkFloat,
-  checkInteger,
+  clean,
   compareDataset,
+  dirty,
+  getDataset,
   getOptionalBool,
+  getReactionById,
   getSelector,
   getSelectorText,
-  initCollapse,
-  initOptionalBool,
-  initSelector,
-  initValidateNode,
   isEmptyMessage,
   isTemplateOrUndoBuffer,
+  listen,
+  nameToProto,
   prepareFloat,
   readMetric,
   removeSlowly,
-  scrollToInput,
-  selectText,
   setOptionalBool,
   setSelector,
   setTextFromFile,
   toggleValidateMessage,
-  undoSlowly,
   validate,
   writeMetric,
 };
@@ -50,6 +47,110 @@ goog.require('proto.ord.Dataset');
 
 const FLOAT_PATTERN = /^-?(?:\d+|\d+\.\d*|\d*\.\d+)(?:[eE]-?\d+)?$/;
 const INTEGER_PATTERN = /^-?\d+$/;
+
+/**
+ * Shows the 'save' button.
+ */
+function dirty() {
+  $('#save').css('visibility', 'visible');
+}
+
+/**
+ * Hides the 'save' button.
+ */
+function clean() {
+  $('#save').css('visibility', 'hidden');
+  $('#save').text('save');
+}
+
+/**
+ * Adds a change handler to the given node that shows the 'save' button when
+ * the node text is edited.
+ * @param {!Node} node
+ */
+function listen(node) {
+  ord.utils.addChangeHandler($(node), dirty);
+  $('.edittext', node).on('focus', event => selectText(event.target));
+  $('.floattext', node).on('blur', event => checkFloat(event.target));
+  $('.integertext', node).on('blur', event => checkInteger(event.target));
+}
+
+/**
+ * Adds an instance of `template` to the root node.
+ * @param {string} template A jQuery selector.
+ * @param {!Node} root A jQuery object.
+ * @return {!Node} The new copy of the template.
+ */
+function addSlowly(template, root) {
+  const node = $(template).clone();
+  node.removeAttr('id');
+  $(root).append(node);
+  node.show('slow');
+  dirty();
+  listen(node);
+  $('[data-toggle=\'tooltip\']', node).tooltip();
+  return node;
+}
+
+/**
+ * Removes from the DOM the nearest ancestor element matching the pattern.
+ * @param {string} button The element from which to start the search.
+ * @param {string} pattern The pattern for the element to remove.
+ */
+function removeSlowly(button, pattern) {
+  const node = $(button).closest(pattern);
+  // Must call necessary validators only after the node is removed,
+  // but we can only figure out which validators these are before removal.
+  // We do so, and after removal, click the corresponding buttons to trigger
+  // validation.
+  let buttonsToClick = $();
+  node.parents('fieldset').each(function() {
+    buttonsToClick =
+        buttonsToClick.add($(this).children('legend').find('.validate_button'));
+  });
+  makeUndoable(node);
+  node.hide('slow', function() {
+    buttonsToClick.trigger('click');
+    updateSidebar();
+  });
+  dirty();
+}
+
+/**
+ * Fetches a reaction as a serialized Reaction proto.
+ * @param {string} reactionId The ID of the Reaction to fetch.
+ * @return {!Promise<!Uint8Array>}
+ */
+function getReactionById(reactionId) {
+  return new Promise(resolve => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', '/reaction/id/' + reactionId + '/proto');
+    xhr.responseType = 'arraybuffer';
+    xhr.onload = function() {
+      const bytes = new Uint8Array(xhr.response);
+      const reaction = proto.ord.Reaction.deserializeBinary(bytes);
+      resolve(reaction);
+    };
+    xhr.send();
+  });
+}
+
+/**
+ * Converts a Message_Field name from a data-proto attribute into a proto class.
+ * @param {string} protoName Underscore-delimited protocol buffer field name,
+ *     such as Reaction_provenance.
+ * @return {?typeof jspb.Message}
+ */
+function nameToProto(protoName) {
+  let clazz = proto.ord;
+  protoName.split('_').forEach(function(name) {
+    clazz = clazz[name];
+    if (!clazz) {
+      return null;
+    }
+  });
+  return clazz;
+}
 
 /**
  * Selects the contents of the given node.
@@ -222,6 +323,25 @@ function toggleValidateMessage(node, target) {
 }
 
 /**
+ * Downloads a dataset as a serialized Dataset proto.
+ * @param {string} fileName The name of the dataset to fetch.
+ * @return {!Promise<!Uint8Array>}
+ */
+function getDataset(fileName) {
+  return new Promise(resolve => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', '/dataset/proto/read/' + fileName);
+    xhr.responseType = 'arraybuffer';
+    xhr.onload = function(event) {
+      const bytes = new Uint8Array(xhr.response);
+      const dataset = proto.ord.Dataset.deserializeBinary(bytes);
+      resolve(dataset);
+    };
+    xhr.send();
+  });
+}
+
+/**
  * Compares a local Dataset to a Dataset on the server (used for testing).
  * @param {string} fileName The name of a dataset on the server.
  * @param {!proto.ord.Dataset} dataset A local Dataset.
@@ -269,75 +389,6 @@ function isEmptyMessage(obj) {
 }
 
 /**
- * Adds an instance of `template` to the root node.
- * @param {string} template A jQuery selector.
- * @param {!Node} root A jQuery object.
- * @return {!Node} The new copy of the template.
- */
-function addSlowly(template, root) {
-  const node = $(template).clone();
-  node.removeAttr('id');
-  $(root).append(node);
-  node.show('slow');
-  ord.reaction.dirty();
-  ord.reaction.listen(node);
-  $('[data-toggle=\'tooltip\']', node).tooltip();
-  return node;
-}
-
-/**
- * Removes from the DOM the nearest ancestor element matching the pattern.
- * @param {string} button The element from which to start the search.
- * @param {string} pattern The pattern for the element to remove.
- */
-function removeSlowly(button, pattern) {
-  const node = $(button).closest(pattern);
-  // Must call necessary validators only after the node is removed,
-  // but we can only figure out which validators these are before removal.
-  // We do so, and after removal, click the corresponding buttons to trigger
-  // validation.
-  let buttonsToClick = $();
-  node.parents('fieldset').each(function() {
-    buttonsToClick =
-        buttonsToClick.add($(this).children('legend').find('.validate_button'));
-  });
-  makeUndoable(node);
-  node.hide('slow', function() {
-    buttonsToClick.trigger('click');
-    updateSidebar();
-  });
-  dirty();
-}
-
-/**
- * Reverses the hide() in the most recent invocation of removeSlowly().
- * Removes the node's "undo" button. Does not trigger validation.
- */
-function undoSlowly() {
-  $('.undoable').removeClass('undoable').show('slow');
-  $('.undo').not('#undo_template').hide('slow', function() {
-    $(this).remove();
-    updateSidebar();
-  });
-  dirty();
-}
-
-/**
- * Marks the given node for possible future undo. Adds an "undo" button to do
- * it. Deletes any preexisting undoable nodes and undo buttons.
- * @param {!Node} node The DOM fragment to hide and re-show.
- */
-function makeUndoable(node) {
-  $('.undoable').remove();
-  node.addClass('undoable');
-  $('.undo').not('#undo_template').remove();
-  const button = $('#undo_template').clone();
-  button.removeAttr('id');
-  node.after(button);
-  button.show('slow');
-}
-
-/**
  * Supports unload() operations by filtering spurious selector matches due
  * either to DOM templates or elements the user has removed undoably.
  * @param {!Node node} node The DOM node to test for spuriousness.
@@ -345,44 +396,6 @@ function makeUndoable(node) {
  */
 function isTemplateOrUndoBuffer(node) {
   return node.attr('id') || node.hasClass('undoable');
-}
-
-/**
- * Toggles the visibility of all siblings of an element, or if a pattern is
- * provided, toggles the visibility of all siblings of the nearest ancestor
- * element matching the pattern.
- * @param {!Node} node The element to toggle or use as the search root.
- * @param {string} pattern The pattern to match for finding siblings to toggle.
- */
-//
-function toggleSlowly(node, pattern) {
-  node = $(node);
-  if (pattern) {
-    node = node.closest(pattern);
-  }
-  // 'collapsed' tag is used to hold previously collapsed siblings,
-  // and would be stored as node's next sibling;
-  // the following line checks whether a collapse has occured.
-  if (node.next('collapsed').length !== 0) {
-    // Need to uncollapse.
-    const collapsedNode = node.next('collapsed');
-    collapsedNode.toggle('slow', () => {
-      collapsedNode.children().unwrap();
-    });
-  } else {
-    // Need to collapse.
-    node.siblings().wrapAll('<collapsed>');
-    node.next('collapsed').toggle('slow');
-  }
-}
-
-/**
- * Toggles the collapse of a section in the form.
- * @param {string} button The element to toggle.
- */
-function collapseToggle(button) {
-  $(button).toggleClass('fa-chevron-down fa-chevron-right');
-  toggleSlowly(button, 'legend');
 }
 
 /**
@@ -455,30 +468,6 @@ function setTextFromFile(identifierNode, valueClass) {
 }
 
 /**
- * Adds and populates a <select/> node according to its data-proto type
- * declaration.
- * @param {!Node} node A node containing a `data-proto` attribute.
- */
-function initSelector(node) {
-  const protoName = node.attr('data-proto');
-  const protoEnum = nameToProto(protoName);
-  if (!protoEnum) {
-    console.log('missing require: "' + protoName + '"');
-  }
-  const types = Object.entries(protoEnum);
-  const select = $('<select>');
-  for (let i = 0; i < types.length; i++) {
-    const option = $('<option>').text(types[i][0]);
-    option.attr('value', types[i][1]);
-    if (types[i][0] === 'UNSPECIFIED') {
-      option.attr('selected', 'selected');
-    }
-    select.append(option);
-  }
-  node.append(select);
-}
-
-/**
  * Selects an <option/> under a <select/>.
  * @param {!Node} node A <select/> element.
  * @param {number} value
@@ -505,24 +494,6 @@ function getSelector(node) {
 function getSelectorText(node) {
   const selectorElement = node.getElementsByTagName('select')[0];
   return selectorElement.options[selectorElement.selectedIndex].text;
-}
-
-/**
- * Sets up a three-way popup (true/false/unspecified).
- * @param {!Node} node Target node for the new <select/> element.
- */
-function initOptionalBool(node) {
-  const select = $('<select>');
-  const options = ['UNSPECIFIED', 'TRUE', 'FALSE'];
-  for (let i = 0; i < options.length; i++) {
-    const option = $('<option>').text(options[i]);
-    option.attr('value', options[i]);
-    if (options[i] === 'UNSPECIFIED') {
-      option.attr('selected', 'selected');
-    }
-    select.append(option);
-  }
-  node.append(select);
 }
 
 /**
@@ -557,75 +528,4 @@ function getOptionalBool(node) {
     return false;
   }
   return null;
-}
-
-/**
- * Sets up and initializes a collapse button by adding attributes into a div in
- * reaction.html.
- * @param {!Node} node Target node for the new button.
- */
-function initCollapse(node) {
-  node.addClass('fa');
-  node.addClass('fa-chevron-down');
-  node.click(function() {
-    collapseToggle(this);
-  });
-  if (node.hasClass('starts_collapsed')) {
-    node.trigger('click');
-  }
-}
-
-/**
- * Sets up a validator div (button, status indicator, error list, etc.) by
- * inserting contents into a div in reaction.html.
- * @param {!Node} oldNode Target node for the new validation elements.
- */
-function initValidateNode(oldNode) {
-  let newNode = $('#validate_template').clone();
-  // Add attributes necessary for validation functions:
-  // Convert the placeholder onclick method into the button's onclick method.
-  $('.validate_button', newNode).attr('onclick', oldNode.attr('onclick'));
-  oldNode.removeAttr('onclick');
-  // Add an id to the button.
-  if (oldNode.attr('id')) {
-    $('.validate_button', newNode).attr('id', oldNode.attr('id') + '_button');
-  }
-  oldNode.append(newNode.children());
-}
-
-/**
- * Converts a Message_Field name from a data-proto attribute into a proto class.
- * @param {string} protoName Underscore-delimited protocol buffer field name,
- *     such as Reaction_provenance.
- * @return {?typeof jspb.Message}
- */
-function nameToProto(protoName) {
-  let clazz = proto.ord;
-  protoName.split('_').forEach(function(name) {
-    clazz = clazz[name];
-    if (!clazz) {
-      return null;
-    }
-  });
-  return clazz;
-}
-
-/**
- * Converts an Enum name string to its protobuf member value.
- * @param {string} name A text representation of an enum member.
- * @param {!enum} protoEnum The protocol buffer enum to search.
- * @return {number}
- */
-function stringToEnum(name, protoEnum) {
-  return protoEnum[name];
-}
-
-/**
- * Scrolls the viewport to the selected input.
- * @param {!Event} event
- */
-function scrollToInput(event) {
-  const section = $(event.target).attr('input_name');
-  const target = $('.input[input_name=\'' + section + '\']');
-  target[0].scrollIntoView({behavior: 'smooth'});
 }
