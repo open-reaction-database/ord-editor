@@ -64,7 +64,7 @@ limitations under the License.
         <span>|</span>
         <div id="save" onclick="ord.reaction.commit();" style="visibility: hidden;">save</div>
         <span id="reaction_validate" class="validate" onclick="ord.reaction.validateReaction()"></span>
-        <span id="toggle_autosave" onclick="ord.reaction.toggleAutosave()"></span>
+        <span id="toggle_autosave" onclick="ord.utils.toggleAutosave()"></span>
       </div>
     </div>
 
@@ -115,7 +115,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h3">Input</span>
-                  <div onclick="ord.reaction.removeSlowly(this, '.input');" class="remove">remove</div>
+                  <div onclick="ord.utils.removeSlowly(this, '.input');" class="remove">remove</div>
                   <span class="validate" onclick="ord.inputs.validateInput($(this).closest('.input'))"></span>
                </legend>
                 <div>
@@ -186,7 +186,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h4">Component</span>
-                  <div onclick="ord.reaction.removeSlowly(this, '.component');" class="remove">remove</div>
+                  <div onclick="ord.utils.removeSlowly(this, '.component');" class="remove">remove</div>
                   <span class="validate" onclick="ord.compounds.validateCompound($(this).closest('.component'))"></span>
                 </legend>
                 <table class="component_role_limiting">
@@ -265,7 +265,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h5">Feature</span>
-                  <div onclick="ord.reaction.removeSlowly(this, '.feature');" class="remove">remove</div>
+                  <div onclick="ord.utils.removeSlowly(this, '.feature');" class="remove">remove</div>
                 </legend>
                 <table class="message">
                   <tr><td>name</td><td><div class="feature_name edittext"></div></td></tr>
@@ -279,7 +279,7 @@ limitations under the License.
                   <td>value</td>
                   <td>
                     <div class="component_identifier_value edittext longtext"></div>
-                    <span class="fa fa-upload text_upload" aria-hidden="true" style="cursor:pointer;" onclick="ord.reaction.setTextFromFile($(this).closest('.component_identifier'), 'component_identifier_value');"></span>
+                    <span class="fa fa-upload text_upload" aria-hidden="true" style="cursor:pointer;" onclick="ord.utils.setTextFromFile($(this).closest('.component_identifier'), 'component_identifier_value');"></span>
                   </td>
                 </tr>
                 <tr>
@@ -290,7 +290,7 @@ limitations under the License.
                   <td>details</td>
                   <td>
                     <div class="component_identifier_details edittext longtext"></div>
-                    <div onclick="ord.reaction.removeSlowly(this, '.component_identifier');" class="remove">remove</div>
+                    <div onclick="ord.utils.removeSlowly(this, '.component_identifier');" class="remove">remove</div>
                   </td>
                 </tr>
               </table>
@@ -301,7 +301,7 @@ limitations under the License.
               details <div class="component_compound_preparation_details edittext"></div>
               <span class="component_compound_preparation_reaction_id">reaction ID</span>
               <div class="component_compound_preparation_reaction component_compound_preparation_reaction_id edittext"></div>
-              <div onclick="ord.reaction.removeSlowly(this, '.component_preparation');" class="remove">remove</div>
+              <div onclick="ord.utils.removeSlowly(this, '.component_preparation');" class="remove">remove</div>
             </div>
 
             <div id="crude_template" class="crude" style="display: none;">
@@ -309,7 +309,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h4">Crude Component</span>
-                  <div onclick="ord.reaction.removeSlowly(this, '.crude');" class="remove">remove</div>
+                  <div onclick="ord.utils.removeSlowly(this, '.crude');" class="remove">remove</div>
                   <span data-toggle="tooltip" data-placement="right" title="Crude components use non-isolated material from another reaction as input. The reaction ID must correspond to another reaction in this same dataset.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
                     </span>
@@ -371,7 +371,7 @@ limitations under the License.
             <div id="setup_vessel_preparation_template" class="setup_vessel_preparation" style="display: none;">
               preparation<div class="setup_vessel_preparation_type selector" data-proto="VesselPreparation_VesselPreparationType"></div>
               details <div class="setup_vessel_preparation_details edittext"></div>
-              <div onclick="ord.reaction.removeSlowly(this, '.setup_vessel_preparation');" class="remove">remove</div>
+              <div onclick="ord.utils.removeSlowly(this, '.setup_vessel_preparation');" class="remove">remove</div>
             </div>
           </div>
           <div onclick="ord.setups.addVesselPreparation();" class="add">+ add preparation</div>
@@ -385,7 +385,7 @@ limitations under the License.
             <div id="setup_vessel_attachment_template" class="setup_vessel_attachment" style="display: none;">
               attachment<div class="setup_vessel_attachment_type selector" data-proto="VesselAttachment_VesselAttachmentType"></div>
               details <div class="setup_vessel_attachment_details edittext"></div>
-              <div onclick="ord.reaction.removeSlowly(this, '.setup_vessel_attachment');" class="remove">remove</div>
+              <div onclick="ord.utils.removeSlowly(this, '.setup_vessel_attachment');" class="remove">remove</div>
             </div>
           </div>
           <div onclick="ord.setups.addVesselAttachment();" class="add">+ add attachment</div>
@@ -396,7 +396,7 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h3">Automation code</span>
-                <div onclick="ord.reaction.removeSlowly(this, '.setup_code');" class="remove">remove</div>
+                <div onclick="ord.utils.removeSlowly(this, '.setup_code');" class="remove">remove</div>
                 <span data-toggle="tooltip" data-placement="right" title="Details of the exact automation procedure required to perform the reaction.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
                 </span>
@@ -435,7 +435,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h4">Measurement</span>
-                  <div onclick="ord.reaction.removeSlowly(this, '.temperature_measurement');" class="remove">remove</div>
+                  <div onclick="ord.utils.removeSlowly(this, '.temperature_measurement');" class="remove">remove</div>
                 </legend>
                 <table class="message">
                   <tr><td>type</td><td><div class="temperature_measurement_type selector" data-proto="TemperatureConditions_Measurement_MeasurementType"></div></td></tr>
@@ -473,7 +473,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h4">Measurement</span>
-                  <div onclick="ord.reaction.removeSlowly(this, '.pressure_measurement');" class="remove">remove</div>
+                  <div onclick="ord.utils.removeSlowly(this, '.pressure_measurement');" class="remove">remove</div>
                 </legend>
                 <table class="message">
                   <tr><td>type</td><td><div class="pressure_measurement_type selector" data-proto="PressureConditions_Measurement_MeasurementType"></div></td></tr>
@@ -551,7 +551,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h4">Measurement</span>
-                  <div onclick="ord.reaction.removeSlowly(this, '.electro_measurement');" class="remove">remove</div>
+                  <div onclick="ord.utils.removeSlowly(this, '.electro_measurement');" class="remove">remove</div>
                 </legend>
                 <input type="radio" class="electro_measurement_current" value="current" checked> current
                 <input type="radio" class="electro_measurement_voltage" value="voltage"> voltage
@@ -639,7 +639,7 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h3">Observation</span>
-                <div onclick="ord.reaction.removeSlowly(this, '.observation');" class="remove">remove</div>
+                <div onclick="ord.utils.removeSlowly(this, '.observation');" class="remove">remove</div>
                 <span class="validate" onclick="ord.observations.validateObservation($(this).closest('.observation'))"></span>
               </legend>
               <table class="message">
@@ -668,7 +668,7 @@ limitations under the License.
             <legend>
               <span class="collapse"></span>
               <span class="h3">Workup</span>
-              <div onclick="ord.reaction.removeSlowly(this, '.workup');" class="remove">remove</div>
+              <div onclick="ord.utils.removeSlowly(this, '.workup');" class="remove">remove</div>
               <span class="validate" onclick="ord.workups.validateWorkup($(this).closest('.workup'))"></span>
             </legend>
             <table class="message">
@@ -741,7 +741,7 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h5">Temperature measurement</span>
-                <div onclick="ord.reaction.removeSlowly(this, '.workup_temperature_measurement');" class="remove">remove</div>
+                <div onclick="ord.utils.removeSlowly(this, '.workup_temperature_measurement');" class="remove">remove</div>
               </legend>
               <table class="message">
                 <tr><td>type</td><td><div class="workup_temperature_measurement_type selector" data-proto="TemperatureConditions_Measurement_MeasurementType"></div></td></tr>
@@ -776,7 +776,7 @@ limitations under the License.
             <legend>
               <span class="collapse"></span>
               <span class="h3">Outcome</span>
-              <div onclick="ord.reaction.removeSlowly(this, '.outcome');" class="remove">remove</div>
+              <div onclick="ord.utils.removeSlowly(this, '.outcome');" class="remove">remove</div>
               <span class="validate" onclick="ord.outcomes.validateOutcome($(this).closest('.outcome'))"></span>
             </legend>
             <table class="message">
@@ -809,7 +809,7 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h4">Product</span>
-                <div onclick="ord.reaction.removeSlowly(this, '.outcome_product');" class="remove">remove</div>
+                <div onclick="ord.utils.removeSlowly(this, '.outcome_product');" class="remove">remove</div>
                 <span class="validate" onclick="ord.products.validateProduct($(this).closest('.outcome_product'))"></span>
               </legend>
               <table class="message">
@@ -847,7 +847,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h6">Product Measurement</span>
-                  <div onclick="ord.reaction.removeSlowly(this, '.product_measurement');" class="remove">remove</div>
+                  <div onclick="ord.utils.removeSlowly(this, '.product_measurement');" class="remove">remove</div>
                   <span class="validate" onclick="ord.products.validateMeasurement($(this).closest('.product_measurement'))"></span>
                 </legend>
                 <table class="message product_measurement_value_type">
@@ -988,7 +988,7 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h4">Analysis</span>
-                <div onclick="ord.reaction.removeSlowly(this, '.outcome_analysis');" class="remove">remove</div>
+                <div onclick="ord.utils.removeSlowly(this, '.outcome_analysis');" class="remove">remove</div>
                 <span class="validate" onclick="ord.outcomes.validateAnalysis($(this).closest('.outcome_analysis'))" ></span>
               </legend>
               <table class="message">
@@ -1020,7 +1020,7 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h5">Analytical data</span>
-                <div onclick="ord.reaction.removeSlowly(this, '.outcome_data');" class="remove">remove</div>
+                <div onclick="ord.utils.removeSlowly(this, '.outcome_data');" class="remove">remove</div>
               </legend>
               <table class="message">
                 <tr><td>name</td><td><div class="outcome_data_name edittext"></div></td></tr>
@@ -1084,7 +1084,7 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h3">Record modification</span>
-                <div onclick="ord.reaction.removeSlowly(this, '.provenance_modified');" class="remove">remove</div>
+                <div onclick="ord.utils.removeSlowly(this, '.provenance_modified');" class="remove">remove</div>
                 <span data-toggle="tooltip" data-placement="right" title="Details about subsequent modifications to this reaction record.">
                 <span class="fa fa-question-circle" aria-hidden="true"></span>
               </span>
@@ -1128,8 +1128,8 @@ limitations under the License.
     <span id="validate_template" style="display: none">
       <span class="validate_button" aria-hidden="true">validate</span>
       <span class="validate_status-message">
-        <span onmouseenter="ord.reaction.toggleValidateMessage($(this).closest('.validate'), '.validate_message')" onmouseleave="ord.reaction.toggleValidateMessage($(this).closest('.validate'), '.validate_message')" class="validate_status">unvalidated</span>
-        <span onmouseenter="ord.reaction.toggleValidateMessage($(this).closest('.validate'), '.validate_warning_message')" onmouseleave="ord.reaction.toggleValidateMessage($(this).closest('.validate'), '.validate_warning_message')" class="validate_warning_status fa fa-bell"></span>
+        <span onmouseenter="ord.utils.toggleValidateMessage($(this).closest('.validate'), '.validate_message')" onmouseleave="ord.utils.toggleValidateMessage($(this).closest('.validate'), '.validate_message')" class="validate_status">unvalidated</span>
+        <span onmouseenter="ord.utils.toggleValidateMessage($(this).closest('.validate'), '.validate_warning_message')" onmouseleave="ord.utils.toggleValidateMessage($(this).closest('.validate'), '.validate_warning_message')" class="validate_warning_status fa fa-bell"></span>
         <span class="validate_message"></span>
         <span class="validate_warning_message"></span>
       </span>
@@ -1141,7 +1141,7 @@ limitations under the License.
           <td>value</td>
           <td>
             <div class="reaction_identifier_value edittext longtext"></div>
-            <span class="fa fa-upload text_upload" aria-hidden="true" style="cursor:pointer;" onclick="ord.reaction.setTextFromFile($(this).closest('.reaction_identifier'), 'reaction_identifier_value');"></span>
+            <span class="fa fa-upload text_upload" aria-hidden="true" style="cursor:pointer;" onclick="ord.utils.setTextFromFile($(this).closest('.reaction_identifier'), 'reaction_identifier_value');"></span>
           </td>
         </tr>
         <tr>
@@ -1152,7 +1152,7 @@ limitations under the License.
           <td>details</td>
           <td>
             <div class="reaction_identifier_details edittext"></div>
-            <div class="remove" onclick="ord.reaction.removeSlowly(this, '.reaction_identifier');">remove</div>
+            <div class="remove" onclick="ord.utils.removeSlowly(this, '.reaction_identifier');">remove</div>
           </td>
         </tr>
       </table>
@@ -1186,7 +1186,7 @@ limitations under the License.
       </table>
     </div>
 
-    <div id="undo_template" class="undo" style="display: none;" onclick="ord.reaction.undoSlowly();">undo</div>
+    <div id="undo_template" class="undo" style="display: none;" onclick="ord.utils.undoSlowly();">undo</div>
 
     <script>
         document.body.onload = async function () {
@@ -1199,9 +1199,9 @@ limitations under the License.
             const section = $(event.target).attr('data-section');
             $('#section_' + section)[0].scrollIntoView({behavior: 'smooth'});
           });
-          ord.reaction.setupObserver();
+          ord.utils.setupObserver();
           {% if freeze %}
-            ord.reaction.freeze();
+            ord.utils.freeze();
           {% endif %}
           if (location.hash) {
             const section = location.hash.replace('#', '');

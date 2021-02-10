@@ -22,6 +22,7 @@ exports = {
   unload,
 };
 
+goog.require('ord.utils');
 goog.require('proto.ord.Amount');
 goog.require('proto.ord.Mass');
 goog.require('proto.ord.Moles');
@@ -78,7 +79,7 @@ function load(node, amount) {
       $('.amount_precision', node).text(amount.getMass().getPrecision());
     }
     $('.amount_units_mass', node).show();
-    ord.reaction.setSelector(
+    ord.utils.setSelector(
         $('.amount_units_mass', amountNode), amount.getMass().getUnits());
   } else if (amount.hasMoles()) {
     $('input[value=\'moles\']', amountNode).click();
@@ -89,7 +90,7 @@ function load(node, amount) {
       $('.amount_precision', node).text(amount.getMoles().getPrecision());
     }
     $('.amount_units_moles', node).show();
-    ord.reaction.setSelector(
+    ord.utils.setSelector(
         $('.amount_units_moles', amountNode), amount.getMoles().getUnits());
   } else if (amount.hasVolume()) {
     $('input[value=\'volume\']', amountNode).click();
@@ -104,9 +105,9 @@ function load(node, amount) {
     const solutes = amount.hasVolumeIncludesSolutes() ?
         amount.getVolumeIncludesSolutes() :
         null;
-    ord.reaction.setOptionalBool(
+    ord.utils.setOptionalBool(
         $('.includes_solutes.optional_bool', node), solutes);
-    ord.reaction.setSelector(
+    ord.utils.setSelector(
         $('.amount_units_volume', amountNode), amount.getVolume().getUnits());
   }
 }
@@ -124,14 +125,14 @@ function unload(node) {
   const mass = unloadMass(node);
   const moles = unloadMoles(node);
   const volume = unloadVolume(node);
-  if (!ord.reaction.isEmptyMessage(mass)) {
+  if (!ord.utils.isEmptyMessage(mass)) {
     amount.setMass(mass);
-  } else if (!ord.reaction.isEmptyMessage(moles)) {
+  } else if (!ord.utils.isEmptyMessage(moles)) {
     amount.setMoles(moles);
-  } else if (!ord.reaction.isEmptyMessage(volume)) {
+  } else if (!ord.utils.isEmptyMessage(volume)) {
     amount.setVolume(volume);
-    const solutes = ord.reaction.getOptionalBool(
-        $('.includes_solutes.optional_bool', node));
+    const solutes =
+        ord.utils.getOptionalBool($('.includes_solutes.optional_bool', node));
     amount.setVolumeIncludesSolutes(solutes);
   }
   return amount;
@@ -152,7 +153,7 @@ function unloadMass(node) {
   if (!isNaN(value)) {
     mass.setValue(value);
   }
-  const units = ord.reaction.getSelector($('.amount_units_mass', node));
+  const units = ord.utils.getSelector($('.amount_units_mass', node));
   mass.setUnits(units);
   const precision = parseFloat($('.amount_precision', node).text());
   if (!isNaN(precision)) {
@@ -176,7 +177,7 @@ function unloadMoles(node) {
   if (!isNaN(value)) {
     moles.setValue(value);
   }
-  const units = ord.reaction.getSelector($('.amount_units_moles', node));
+  const units = ord.utils.getSelector($('.amount_units_moles', node));
   moles.setUnits(units);
   const precision = parseFloat($('.amount_precision', node).text());
   if (!isNaN(precision)) {
@@ -200,7 +201,7 @@ function unloadVolume(node) {
   if (!isNaN(value)) {
     volume.setValue(value);
   }
-  const units = ord.reaction.getSelector($('.amount_units_volume', node));
+  const units = ord.utils.getSelector($('.amount_units_volume', node));
   volume.setUnits(units);
   const precision = parseFloat($('.amount_precision', node).text());
   if (!isNaN(precision)) {

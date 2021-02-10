@@ -28,6 +28,7 @@ goog.require('ord.illumination');
 goog.require('ord.pressure');
 goog.require('ord.stirring');
 goog.require('ord.temperature');
+goog.require('ord.utils');
 goog.require('proto.ord.ReactionConditions');
 
 /**
@@ -60,14 +61,14 @@ function load(conditions) {
     ord.flows.load(flow);
   }
   const reflux = conditions.hasReflux() ? conditions.getReflux() : null;
-  ord.reaction.setOptionalBool($('#condition_reflux'), reflux);
+  ord.utils.setOptionalBool($('#condition_reflux'), reflux);
   if (conditions.hasPh()) {
     $('#condition_ph').text(conditions.getPh());
   }
   const dynamic = conditions.hasConditionsAreDynamic() ?
       conditions.getConditionsAreDynamic() :
       null;
-  ord.reaction.setOptionalBool($('#condition_dynamic'), dynamic);
+  ord.utils.setOptionalBool($('#condition_dynamic'), dynamic);
   $('#condition_details').text(conditions.getDetails());
 }
 
@@ -78,37 +79,37 @@ function load(conditions) {
 function unload() {
   const conditions = new proto.ord.ReactionConditions();
   const temperature = ord.temperature.unload();
-  if (!ord.reaction.isEmptyMessage(temperature)) {
+  if (!ord.utils.isEmptyMessage(temperature)) {
     conditions.setTemperature(temperature);
   }
   const pressure = ord.pressure.unload();
-  if (!ord.reaction.isEmptyMessage(pressure)) {
+  if (!ord.utils.isEmptyMessage(pressure)) {
     conditions.setPressure(pressure);
   }
   const stirring = ord.stirring.unload();
-  if (!ord.reaction.isEmptyMessage(stirring)) {
+  if (!ord.utils.isEmptyMessage(stirring)) {
     conditions.setStirring(stirring);
   }
   const illumination = ord.illumination.unload();
-  if (!ord.reaction.isEmptyMessage(illumination)) {
+  if (!ord.utils.isEmptyMessage(illumination)) {
     conditions.setIllumination(illumination);
   }
   const electro = ord.electro.unload();
-  if (!ord.reaction.isEmptyMessage(electro)) {
+  if (!ord.utils.isEmptyMessage(electro)) {
     conditions.setElectrochemistry(electro);
   }
   const flow = ord.flows.unload();
-  if (!ord.reaction.isEmptyMessage(flow)) {
+  if (!ord.utils.isEmptyMessage(flow)) {
     conditions.setFlow(flow);
   }
 
-  const reflux = ord.reaction.getOptionalBool($('#condition_reflux'));
+  const reflux = ord.utils.getOptionalBool($('#condition_reflux'));
   conditions.setReflux(reflux);
   const ph = parseFloat($('#condition_ph').text());
   if (!isNaN(ph)) {
     conditions.setPh(ph);
   }
-  const dynamic = ord.reaction.getOptionalBool($('#condition_dynamic'));
+  const dynamic = ord.utils.getOptionalBool($('#condition_dynamic'));
   conditions.setConditionsAreDynamic(dynamic);
   const details = $('#condition_details').text();
   conditions.setDetails(details);
@@ -118,9 +119,9 @@ function unload() {
 /**
  * Validates the reaction conditions defined in the form.
  * @param {!Node} node Root node for the reaction conditions.
- * @param {?Node} validateNode Target node for validation results.
+ * @param {?Node=} validateNode Target node for validation results.
  */
-function validateConditions(node, validateNode) {
+function validateConditions(node, validateNode = null) {
   const condition = unload();
-  ord.reaction.validate(condition, 'ReactionConditions', node, validateNode);
+  ord.utils.validate(condition, 'ReactionConditions', node, validateNode);
 }

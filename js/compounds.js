@@ -37,6 +37,7 @@ exports = {
 
 goog.require('ord.amounts');
 goog.require('ord.data');
+goog.require('ord.utils');
 goog.require('proto.ord.Compound');
 goog.require('proto.ord.CompoundIdentifier');
 goog.require('proto.ord.Compound.Source');
@@ -72,11 +73,11 @@ function loadCompound(root, compound) {
  */
 function loadIntoCompound(node, compound) {
   const reactionRole = compound.getReactionRole();
-  ord.reaction.setSelector($('.component_reaction_role', node), reactionRole);
+  ord.utils.setSelector($('.component_reaction_role', node), reactionRole);
   $('.component_reaction_role', node).trigger('change');
 
   const isLimiting = compound.hasIsLimiting() ? compound.getIsLimiting() : null;
-  ord.reaction.setOptionalBool($('.component_limiting', node), isLimiting);
+  ord.utils.setOptionalBool($('.component_limiting', node), isLimiting);
 
   const identifiers = compound.getIdentifiersList();
   identifiers.forEach(identifier => loadIdentifier(node, identifier));
@@ -114,7 +115,7 @@ function loadIdentifier(compoundNode, identifier) {
   const node = addIdentifier(compoundNode);
   const value = identifier.getValue();
   $('.component_identifier_value', node).first().text(value);
-  ord.reaction.setSelector(node, identifier.getType());
+  ord.utils.setSelector(node, identifier.getType());
   $('.component_identifier_details', node)
       .first()
       .text(identifier.getDetails());
@@ -128,8 +129,7 @@ function loadIdentifier(compoundNode, identifier) {
  */
 function loadPreparation(node, preparation) {
   const type = preparation.getType();
-  ord.reaction.setSelector(
-      $('.component_compound_preparation_type', node), type);
+  ord.utils.setSelector($('.component_compound_preparation_type', node), type);
   const details = preparation.getDetails();
   $('.component_compound_preparation_details', node).text(details);
   const reaction = preparation.getReactionId();
@@ -162,7 +162,7 @@ function unload(node) {
     if (!compoundNode.attr('id')) {
       // Not a template.
       const compound = unloadCompound(compoundNode);
-      if (!ord.reaction.isEmptyMessage(compound)) {
+      if (!ord.utils.isEmptyMessage(compound)) {
         compounds.push(compound);
       }
     }
@@ -180,24 +180,24 @@ function unloadCompound(node) {
   const compound = new proto.ord.Compound();
 
   const reactionRole =
-      ord.reaction.getSelector($('.component_reaction_role', node));
+      ord.utils.getSelector($('.component_reaction_role', node));
   compound.setReactionRole(reactionRole);
 
   // Only call setIsLimiting if this is a reactant Compound.
-  if (ord.reaction.getSelectorText($('.component_reaction_role', node)[0]) ===
+  if (ord.utils.getSelectorText($('.component_reaction_role', node)[0]) ===
       'REACTANT') {
     const isLimiting =
-        ord.reaction.getOptionalBool($('.component_limiting', node));
+        ord.utils.getOptionalBool($('.component_limiting', node));
     compound.setIsLimiting(isLimiting);
   }
 
   const identifiers = unloadIdentifiers(node);
-  if (identifiers.some(e => !ord.reaction.isEmptyMessage(e))) {
+  if (identifiers.some(e => !ord.utils.isEmptyMessage(e))) {
     compound.setIdentifiersList(identifiers);
   }
 
   const amount = ord.amounts.unload(node);
-  if (!ord.reaction.isEmptyMessage(amount)) {
+  if (!ord.utils.isEmptyMessage(amount)) {
     compound.setAmount(amount);
   }
 
@@ -206,12 +206,12 @@ function unloadCompound(node) {
     const preparation = unloadPreparation(preparationNode);
     preparations.push(preparation);
   });
-  if (preparations.some(e => !ord.reaction.isEmptyMessage(e))) {
+  if (preparations.some(e => !ord.utils.isEmptyMessage(e))) {
     compound.setPreparationsList(preparations);
   }
 
   const source = unloadSource(node);
-  if (!ord.reaction.isEmptyMessage(source)) {
+  if (!ord.utils.isEmptyMessage(source)) {
     compound.setSource(source);
   }
 
@@ -237,9 +237,9 @@ function unloadIdentifiers(node) {
   const identifiers = [];
   $('.component_identifier', node).each(function(index, node) {
     node = $(node);
-    if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
+    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
       const identifier = unloadIdentifier(node);
-      if (!ord.reaction.isEmptyMessage(identifier)) {
+      if (!ord.utils.isEmptyMessage(identifier)) {
         identifiers.push(identifier);
       }
     }
@@ -260,7 +260,7 @@ function unloadIdentifier(node) {
   if (value) {
     identifier.setValue(value);
   }
-  const type = ord.reaction.getSelector(node);
+  const type = ord.utils.getSelector(node);
   identifier.setType(type);
   const details = $('.component_identifier_details', node).text();
   identifier.setDetails(details);
@@ -276,7 +276,7 @@ function unloadIdentifier(node) {
 function unloadPreparation(node) {
   const preparation = new proto.ord.CompoundPreparation();
   const type =
-      ord.reaction.getSelector($('.component_compound_preparation_type', node));
+      ord.utils.getSelector($('.component_compound_preparation_type', node));
   preparation.setType(type);
   const details = $('.component_compound_preparation_details', node).text();
   preparation.setDetails(details);
@@ -310,12 +310,12 @@ function unloadSource(node) {
  */
 function add(root) {
   const node =
-      ord.reaction.addSlowly('#component_template', $('.components', root));
+      ord.utils.addSlowly('#component_template', $('.components', root));
 
   // Connect reaction role selection to limiting reactant field.
   const roleSelector = $('.component_reaction_role', node);
   roleSelector.change(function() {
-    if (ord.reaction.getSelectorText(this) === 'REACTANT') {
+    if (ord.utils.getSelectorText(this) === 'REACTANT') {
       $('.limiting_reactant', node).show();
     } else {
       $('.limiting_reactant', node).hide();
@@ -325,7 +325,7 @@ function add(root) {
   ord.amounts.init(node);
 
   // Add live validation handling.
-  ord.reaction.addChangeHandler(node, () => {
+  ord.utils.addChangeHandler(node, () => {
     validateCompound(node);
   });
 
@@ -340,7 +340,7 @@ function add(root) {
  * @return {!Node} The node of the new compound identifier div.
  */
 function addIdentifier(node) {
-  const identifierNode = ord.reaction.addSlowly(
+  const identifierNode = ord.utils.addSlowly(
       '#component_identifier_template', $('.identifiers', node).first());
 
   const uploadButton = $('.component_identifier_upload', identifierNode);
@@ -412,7 +412,7 @@ function drawIdentifier(node) {
   // First, pack the current Compound into a message.
   const compound = new proto.ord.Compound();
   const identifiers = unloadIdentifiers(node);
-  if (identifiers.some(e => !ord.reaction.isEmptyMessage(e))) {
+  if (identifiers.some(e => !ord.utils.isEmptyMessage(e))) {
     compound.setIdentifiersList(identifiers);
   }
   // Then, try to resolve compound into a MolBlock.
@@ -457,13 +457,13 @@ function drawIdentifier(node) {
     // Check if an existing SMILES/MolBlock identifier exists. If yes, remove.
     $('.component_identifier', node).each(function(index, node) {
       node = $(node);
-      if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
+      if (!ord.utils.isTemplateOrUndoBuffer(node)) {
         const identifier = unloadIdentifier(node);
         if ((identifier.getType() ===
              proto.ord.CompoundIdentifier.IdentifierType.SMILES) ||
             (identifier.getType() ===
              proto.ord.CompoundIdentifier.IdentifierType.MOLBLOCK)) {
-          ord.reaction.removeSlowly(node, '.component_identifier');
+          ord.utils.removeSlowly(node, '.component_identifier');
         }
       }
     });
@@ -502,13 +502,13 @@ function drawIdentifier(node) {
  * @return {!Node} The div corresponding to the new compound preparation.
  */
 function addPreparation(node) {
-  const PreparationNode = ord.reaction.addSlowly(
+  const PreparationNode = ord.utils.addSlowly(
       '#component_preparation_template', $('.preparations', node));
 
   const typeSelector =
       $('.component_compound_preparation_type', PreparationNode);
   typeSelector.change(function() {
-    if (ord.reaction.getSelectorText(this) == 'SYNTHESIZED') {
+    if (ord.utils.getSelectorText(this) == 'SYNTHESIZED') {
       $('.component_compound_preparation_reaction_id', PreparationNode)
           .css('display', 'inline-block');
     } else {
@@ -547,12 +547,12 @@ function renderCompound(node, compound) {
  * display node.
  * @param {!Node} node The div corresponding to the compound that should be
  *     read from the form and validated.
- * @param {?Node} validateNode The div that is used to show the results of
+ * @param {?Node=} validateNode The div that is used to show the results of
  *     validation (i.e., success or errors).
  */
-function validateCompound(node, validateNode) {
+function validateCompound(node, validateNode = null) {
   const compound = unloadCompound(node);
-  ord.reaction.validate(compound, 'Compound', node, validateNode);
+  ord.utils.validate(compound, 'Compound', node, validateNode);
 
   // Try to resolve compound structural identifiers. This is tied to
   // validation so the same trigger is used and we only have to unload the
@@ -567,7 +567,7 @@ function validateCompound(node, validateNode) {
  */
 function addFeature(node) {
   const featureNode =
-      ord.reaction.addSlowly('#feature_template', $('.features', node));
+      ord.utils.addSlowly('#feature_template', $('.features', node));
   ord.data.addData(featureNode);
   return featureNode;
 }
@@ -591,7 +591,7 @@ function loadFeature(node, name, feature) {
 function unloadFeature(node, featuresMap) {
   const name = $('.feature_name', node).text();
   const data = ord.data.unloadData(node);
-  if (name || !ord.reaction.isEmptyMessage(data)) {
+  if (name || !ord.utils.isEmptyMessage(data)) {
     featuresMap.set(name, data);
   }
 }

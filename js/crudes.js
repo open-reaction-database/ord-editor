@@ -23,6 +23,7 @@ exports = {
 };
 
 goog.require('ord.amounts');
+goog.require('ord.utils');
 goog.require('proto.ord.CrudeComponent');
 
 /**
@@ -46,11 +47,11 @@ function loadCrude(root, crude) {
   $('.crude_reaction', node).text(reactionId);
 
   const workup = crude.hasIncludesWorkup() ? crude.getIncludesWorkup() : null;
-  ord.reaction.setOptionalBool($('.crude_includes_workup', node), workup);
+  ord.utils.setOptionalBool($('.crude_includes_workup', node), workup);
 
   const derived =
       crude.hasHasDerivedAmount() ? crude.getHasDerivedAmount() : null;
-  ord.reaction.setOptionalBool($('.crude_has_derived', node), derived);
+  ord.utils.setOptionalBool($('.crude_has_derived', node), derived);
 
   const amount = crude.getAmount();
   ord.amounts.load(node, amount);
@@ -68,7 +69,7 @@ function unload(node) {
     if (!crudeNode.attr('id')) {
       // Not a template.
       const crude = unloadCrude(crudeNode);
-      if (!ord.reaction.isEmptyMessage(crude)) {
+      if (!ord.utils.isEmptyMessage(crude)) {
         crudes.push(crude);
       }
     }
@@ -87,15 +88,14 @@ function unloadCrude(node) {
   const reactionId = $('.crude_reaction', node).text();
   crude.setReactionId(reactionId);
 
-  const workup =
-      ord.reaction.getOptionalBool($('.crude_includes_workup', node));
+  const workup = ord.utils.getOptionalBool($('.crude_includes_workup', node));
   crude.setIncludesWorkup(workup);
 
-  const derived = ord.reaction.getOptionalBool($('.crude_has_derived', node));
+  const derived = ord.utils.getOptionalBool($('.crude_has_derived', node));
   crude.setHasDerivedAmount(derived);
 
   const amount = ord.amounts.unload(node);
-  if (!ord.reaction.isEmptyMessage(amount)) {
+  if (!ord.utils.isEmptyMessage(amount)) {
     crude.setAmount(amount);
   }
 
@@ -108,7 +108,7 @@ function unloadCrude(node) {
  * @return {!Node} The newly added root node for the crude component.
  */
 function add(root) {
-  const node = ord.reaction.addSlowly('#crude_template', $('.crudes', root));
+  const node = ord.utils.addSlowly('#crude_template', $('.crudes', root));
   ord.amounts.init(node);
   return node;
 }

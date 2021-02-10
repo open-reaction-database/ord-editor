@@ -22,6 +22,7 @@ exports = {
   validateIllumination
 };
 
+goog.require('ord.utils');
 goog.require('proto.ord.IlluminationConditions');
 goog.require('proto.ord.Length');
 goog.require('proto.ord.Wavelength');
@@ -33,14 +34,14 @@ goog.require('proto.ord.Wavelength');
 function load(illumination) {
   const type = illumination.getType();
   if (type) {
-    ord.reaction.setSelector($('#illumination_type'), type.getType());
+    ord.utils.setSelector($('#illumination_type'), type.getType());
     $('#illumination_details').text(type.getDetails());
   }
   const wavelength = illumination.getPeakWavelength();
-  ord.reaction.writeMetric('#illumination_wavelength', wavelength);
+  ord.utils.writeMetric('#illumination_wavelength', wavelength);
   $('#illumination_color').text(illumination.getColor());
   const distance = illumination.getDistanceToVessel();
-  ord.reaction.writeMetric('#illumination_distance', distance);
+  ord.utils.writeMetric('#illumination_distance', distance);
 }
 
 /**
@@ -51,21 +52,21 @@ function unload() {
   const illumination = new proto.ord.IlluminationConditions();
 
   const type = new proto.ord.IlluminationConditions.IlluminationType();
-  type.setType(ord.reaction.getSelector($('#illumination_type')));
+  type.setType(ord.utils.getSelector($('#illumination_type')));
   type.setDetails($('#illumination_details').text());
-  if (!ord.reaction.isEmptyMessage(type)) {
+  if (!ord.utils.isEmptyMessage(type)) {
     illumination.setType(type);
   }
 
-  const wavelength = ord.reaction.readMetric(
+  const wavelength = ord.utils.readMetric(
       '#illumination_wavelength', new proto.ord.Wavelength());
-  if (!ord.reaction.isEmptyMessage(wavelength)) {
+  if (!ord.utils.isEmptyMessage(wavelength)) {
     illumination.setPeakWavelength(wavelength);
   }
   illumination.setColor($('#illumination_color').text());
   const distance =
-      ord.reaction.readMetric('#illumination_distance', new proto.ord.Length());
-  if (!ord.reaction.isEmptyMessage(distance)) {
+      ord.utils.readMetric('#illumination_distance', new proto.ord.Length());
+  if (!ord.utils.isEmptyMessage(distance)) {
     illumination.setDistanceToVessel(distance);
   }
   return illumination;
@@ -74,10 +75,10 @@ function unload() {
 /**
  * Validates the illumination conditions defined in the form.
  * @param {!Node} node Root node for the illumination conditions.
- * @param {?Node} validateNode Target node for validation results.
+ * @param {?Node=} validateNode Target node for validation results.
  */
-function validateIllumination(node, validateNode) {
+function validateIllumination(node, validateNode = null) {
   const illumination = unload();
-  ord.reaction.validate(
+  ord.utils.validate(
       illumination, 'IlluminationConditions', node, validateNode);
 }
