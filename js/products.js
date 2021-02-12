@@ -30,8 +30,13 @@ goog.require('ord.compounds');
 goog.require('ord.utils');
 goog.require('proto.ord.FloatValue');
 goog.require('proto.ord.Percentage');
+goog.require('proto.ord.ProductCompound.Texture');
 goog.require('proto.ord.ProductMeasurement');
+goog.require('proto.ord.ProductMeasurement.MassSpecMeasurementDetails');
+goog.require('proto.ord.ProductMeasurement.Selectivity');
 goog.require('proto.ord.ProductCompound');
+goog.require('proto.ord.Time');
+goog.require('proto.ord.Wavelength');
 
 // Freely create radio button groups by generating new input names.
 let radioGroupCounter = 0;
@@ -74,9 +79,7 @@ function loadProduct(outcomeNode, product) {
     $('.outcome_product_texture_details', node).text(texture.getDetails());
   }
   const features = product.getFeaturesMap();
-  const featureNames = features.stringKeys_();
-  featureNames.forEach(function(name) {
-    const feature = features.get(name);
+  features.forEach(function(feature, name) {
     const featureNode = ord.compounds.addFeature(node);
     ord.compounds.loadFeature(featureNode, name, feature);
   });
@@ -440,10 +443,10 @@ function loadMeasurement(productNode, measurement) {
         .text(massSpec.getDetails());
     ord.utils.setOptionalBool(
         $('.product_measurement_mass_spec_tic_minimum_mz', node),
-        massSpec.hasTicMinimumMz() ? measurement.getTicMinimumMz() : null);
+        massSpec.hasTicMinimumMz() ? massSpec.getTicMinimumMz() : null);
     ord.utils.setOptionalBool(
         $('.product_measurement_mass_spec_tic_maximum_mz', node),
-        massSpec.hasTicMaximumMz() ? measurement.getTicMaximumMz() : null);
+        massSpec.hasTicMaximumMz() ? massSpec.getTicMaximumMz() : null);
     const eicMasses = massSpec.getEicMassesList().join(',');
     $('.product_measurement_mass_spec_eic_masses', node).text(eicMasses);
   }

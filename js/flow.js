@@ -24,7 +24,9 @@ exports = {
 
 goog.require('ord.utils');
 goog.require('proto.ord.FlowConditions');
+goog.require('proto.ord.FlowConditions.FlowType');
 goog.require('proto.ord.FlowConditions.Tubing');
+goog.require('proto.ord.Length');
 
 /**
  * Adds and populates the flow conditions section in the form.
@@ -52,7 +54,7 @@ function unload() {
   const flow = new proto.ord.FlowConditions();
 
   const type = new proto.ord.FlowConditions.FlowType();
-  type.setType(ord.utils.getSelector('#flow_type'));
+  type.setType(ord.utils.getSelector($('#flow_type')));
   type.setDetails($('#flow_details').text());
   if (!ord.utils.isEmptyMessage(type)) {
     flow.setFlowType(type);
@@ -61,7 +63,7 @@ function unload() {
   flow.setPumpType($('#flow_pump').text());
 
   const tubing = new proto.ord.FlowConditions.Tubing();
-  tubing.setType(ord.utils.getSelector('#flow_tubing_type'));
+  tubing.setType(ord.utils.getSelector($('#flow_tubing_type')));
   tubing.setDetails($('#flow_tubing_details').text());
   const diameter = ord.utils.readMetric('#flow_tubing', new proto.ord.Length());
   if (!ord.utils.isEmptyMessage(diameter)) {

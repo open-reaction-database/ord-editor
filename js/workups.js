@@ -27,6 +27,14 @@ exports = {
 goog.require('ord.amounts');
 goog.require('ord.inputs');
 goog.require('ord.utils');
+goog.require('proto.ord.StirringConditions');
+goog.require('proto.ord.StirringConditions.StirringMethod');
+goog.require('proto.ord.StirringConditions.StirringRate');
+goog.require('proto.ord.Temperature');
+goog.require('proto.ord.TemperatureConditions');
+goog.require('proto.ord.TemperatureConditions.Measurement');
+goog.require('proto.ord.TemperatureConditions.TemperatureControl');
+goog.require('proto.ord.Time');
 goog.require('proto.ord.ReactionWorkup');
 
 
@@ -52,9 +60,7 @@ function loadWorkup(workup) {
   }
 
   const input = workup.getInput();
-  if (input) {
-    ord.inputs.loadInputUnnamed($('.workup_input', node), input);
-  }
+  ord.inputs.loadInputUnnamed($('.workup_input', node), input);
 
   const amount = workup.getAmount();
   ord.amounts.load(node, amount);
@@ -92,7 +98,7 @@ function loadWorkup(workup) {
           $('.workup_stirring_rate_type', node), rate.getType());
       $('.workup_stirring_rate_details', node).text(rate.getDetails());
       const rpm = rate.getRpm();
-      if (rpm != 0) {
+      if (rpm !== 0) {
         $('.workup_stirring_rate_rpm', node).text(rpm);
       }
     }
@@ -273,7 +279,7 @@ function unloadMeasurement(node) {
  * @return {!Node} The newly added parent node for the reaction workup.
  */
 function add() {
-  const workupNode = ord.utils.addSlowly('#workup_template', '#workups');
+  const workupNode = ord.utils.addSlowly('#workup_template', $('#workups'));
   const inputNode = $('.workup_input', workupNode);
   // The template for ReactionWorkup.input is taken from Reaction.inputs.
   const workupInputNode = ord.inputs.add(inputNode, ['workup_input']);

@@ -31,9 +31,7 @@ goog.require('proto.ord.Data');
  * @param {!jspb.Map<string, !proto.ord.Data>} codes
  */
 function load(codes) {
-  const names = codes.stringKeys_();
-  names.forEach(function(name) {
-    const code = codes.get(name);
+  codes.forEach(function(code, name) {
     loadCode(name, code);
   });
 }
@@ -81,7 +79,7 @@ function unloadCode(codes, node) {
  * @return {!Node} The newly added root node for the automation_code section.
  */
 function addCode() {
-  const node = ord.utils.addSlowly('#setup_code_template', '#setup_codes');
+  const node = ord.utils.addSlowly('#setup_code_template', $('#setup_codes'));
   ord.data.addData(node);
   return node;
 }

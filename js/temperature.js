@@ -132,7 +132,7 @@ function unloadMeasurement(node) {
  */
 function addMeasurement() {
   return ord.utils.addSlowly(
-      '#temperature_measurement_template', '#temperature_measurements');
+      '#temperature_measurement_template', $('#temperature_measurements'));
 }
 
 /**

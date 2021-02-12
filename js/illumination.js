@@ -24,6 +24,7 @@ exports = {
 
 goog.require('ord.utils');
 goog.require('proto.ord.IlluminationConditions');
+goog.require('proto.ord.IlluminationConditions.IlluminationType');
 goog.require('proto.ord.Length');
 goog.require('proto.ord.Wavelength');
 

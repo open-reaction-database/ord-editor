@@ -51,7 +51,7 @@ function loadIdentifier(identifier) {
 
 /**
  * Fetches the reaction identifiers defined in the form.
- * @return {!Array<!proto.ord.ReactionIdentifiers>}
+ * @return {!Array<!proto.ord.ReactionIdentifier>}
  */
 function unload() {
   const identifiers = [];
@@ -97,7 +97,7 @@ function unloadIdentifier(node) {
  */
 function add() {
   const node =
-      ord.utils.addSlowly('#reaction_identifier_template', '#identifiers');
+      ord.utils.addSlowly('#reaction_identifier_template', $('#identifiers'));
 
   const uploadButton = $('.reaction_identifier_upload', node);
   uploadButton.change(function() {

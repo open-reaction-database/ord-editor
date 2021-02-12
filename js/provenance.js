@@ -48,11 +48,7 @@ function load(provenance) {
   $('#provenance_doi').text(provenance.getDoi());
   $('#provenance_patent').text(provenance.getPatent());
   $('#provenance_url').text(provenance.getPublicationUrl());
-
-  const created = provenance.getRecordCreated();
-  if (created) {
-    loadRecordEvent($('#provenance_created'), created);
-  }
+  loadRecordEvent($('#provenance_created'), provenance.getRecordCreated());
   provenance.getRecordModifiedList().forEach(modified => {
     const node = addModification();
     loadRecordEvent(node, modified);
@@ -62,26 +58,29 @@ function load(provenance) {
 /**
  * Adds and populates a record event section in the form.
  * @param {!Node} node The target div.
- * @param {!proto.ord.RecordEvent} record
+ * @param {?proto.ord.RecordEvent} record
  */
 function loadRecordEvent(node, record) {
+  if (!record) {
+    return;
+  }
   const time = record.getTime();
   if (time) {
     $('.provenance_time', node).text(time.getValue());
   }
-  const person = record.getPerson();
-  if (person) {
-    loadPerson(node, record.getPerson());
-  }
+  loadPerson(node, record.getPerson());
   $('.provenance_details', node).text(record.getDetails());
 }
 
 /**
  * Adds and populates a person section in the form.
  * @param {!Node} node The target div.
- * @param {!proto.ord.Person} person
+ * @param {?proto.ord.Person} person
  */
 function loadPerson(node, person) {
+  if (!person) {
+    return;
+  }
   $('.provenance_username', node).text(person.getUsername());
   $('.provenance_name', node).text(person.getName());
   $('.provenance_orcid', node).text(person.getOrcid());
@@ -175,7 +174,7 @@ function unloadPerson(node) {
  */
 function addModification() {
   return ord.utils.addSlowly(
-      '#provenance_modified_template', '#provenance_modifieds');
+      '#provenance_modified_template', $('#provenance_modifieds'));
 }
 
 /**

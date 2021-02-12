@@ -27,7 +27,12 @@ exports = {
 goog.require('ord.codes');
 goog.require('ord.utils');
 goog.require('proto.ord.ReactionSetup');
+goog.require('proto.ord.ReactionSetup.ReactionEnvironment');
 goog.require('proto.ord.Vessel');
+goog.require('proto.ord.VesselAttachment');
+goog.require('proto.ord.VesselMaterial');
+goog.require('proto.ord.VesselPreparation');
+goog.require('proto.ord.VesselType');
 goog.require('proto.ord.Volume');
 
 /**
@@ -35,18 +40,16 @@ goog.require('proto.ord.Volume');
  * @param {!proto.ord.ReactionSetup} setup
  */
 function load(setup) {
-  const vessel = setup.getVessel();
-  if (vessel) {
-    loadVessel(vessel);
-  }
+  loadVessel(setup.getVessel());
   const isAutomated = setup.hasIsAutomated() ? setup.getIsAutomated() : null;
-  ord.utils.setOptionalBool($('#setup_automated'), isAutomated);
+  const setupAutomated = $('#setup_automated');
+  ord.utils.setOptionalBool(setupAutomated, isAutomated);
   if (isAutomated) {
     $('#automation_platform').show();
   }
 
-  $('#setup_automated').change(function() {
-    if (ord.utils.getSelectorText(this) == 'TRUE') {
+  setupAutomated.change(function() {
+    if (ord.utils.getSelectorText(this) === 'TRUE') {
       $('#automation_platform').show();
     } else {
       $('#automation_platform').hide();
@@ -68,9 +71,12 @@ function load(setup) {
 
 /**
  * Adds and populates the reaction vessel section of the form.
- * @param {!proto.ord.Vessel} vessel
+ * @param {?proto.ord.Vessel} vessel
  */
 function loadVessel(vessel) {
+  if (!vessel) {
+    return;
+  }
   const type = vessel.getType();
   if (type) {
     ord.utils.setSelector($('#setup_vessel_type'), type.getType());
@@ -147,7 +153,7 @@ function unloadVessel() {
   }
 
   const material = new proto.ord.VesselMaterial();
-  material.setType(ord.utils.getSelector('#setup_vessel_material'));
+  material.setType(ord.utils.getSelector($('#setup_vessel_material')));
   material.setDetails($('#setup_vessel_material_details').text());
   if (!ord.utils.isEmptyMessage(material)) {
     vessel.setMaterial(material);
@@ -201,7 +207,7 @@ function unloadVessel() {
  */
 function addVesselPreparation() {
   return ord.utils.addSlowly(
-      '#setup_vessel_preparation_template', '#setup_vessel_preparations');
+      '#setup_vessel_preparation_template', $('#setup_vessel_preparations'));
 }
 
 /**
@@ -210,7 +216,7 @@ function addVesselPreparation() {
  */
 function addVesselAttachment() {
   return ord.utils.addSlowly(
-      '#setup_vessel_attachment_template', '#setup_vessel_attachments');
+      '#setup_vessel_attachment_template', $('#setup_vessel_attachments'));
 }
 
 /**

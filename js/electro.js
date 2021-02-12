@@ -24,8 +24,14 @@ exports = {
 };
 
 goog.require('ord.utils');
+goog.require('proto.ord.Current');
 goog.require('proto.ord.ElectrochemistryConditions');
+goog.require('proto.ord.ElectrochemistryConditions.ElectrochemistryCell');
+goog.require('proto.ord.ElectrochemistryConditions.ElectrochemistryType');
 goog.require('proto.ord.ElectrochemistryConditions.Measurement');
+goog.require('proto.ord.Length');
+goog.require('proto.ord.Time');
+goog.require('proto.ord.Voltage');
 
 // Freely create radio button groups by generating new input names.
 let radioGroupCounter = 0;
@@ -173,16 +179,16 @@ function unloadMeasurement(node) {
  */
 function addMeasurement() {
   const node = ord.utils.addSlowly(
-      '#electro_measurement_template', '#electro_measurements');
+      '#electro_measurement_template', $('#electro_measurements'));
 
   const metricButtons = $('input', node);
   metricButtons.attr('name', 'electro_' + radioGroupCounter++);
   metricButtons.change(function() {
-    if (this.value == 'current') {
+    if (this.value === 'current') {
       $('.electro_measurement_current_fields', node).show();
       $('.electro_measurement_voltage_fields', node).hide();
     }
-    if (this.value == 'voltage') {
+    if (this.value === 'voltage') {
       $('.electro_measurement_current_fields', node).hide();
       $('.electro_measurement_voltage_fields', node).show();
     }

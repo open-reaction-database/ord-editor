@@ -29,10 +29,11 @@ exports = {
 goog.require('ord.data');
 goog.require('ord.products');
 goog.require('ord.utils');
+goog.require('proto.ord.Analysis');
+goog.require('proto.ord.DateTime');
+goog.require('proto.ord.Percentage');
 goog.require('proto.ord.ReactionOutcome');
-
-// Freely create radio button groups by generating new input names.
-let radioGroupCounter = 0;
+goog.require('proto.ord.Time');
 
 /**
  * Adds and populates the reaction outcome sections in the form.
@@ -44,7 +45,7 @@ function load(outcomes) {
 
 /**
  * Adds and populates a reaction outcome section in the form.
- * @param outcome
+ * @param {!proto.ord.ReactionOutcome} outcome
  */
 function loadOutcome(outcome) {
   const node = add();
@@ -59,9 +60,7 @@ function loadOutcome(outcome) {
   }
 
   const analyses = outcome.getAnalysesMap();
-  const names = analyses.stringKeys_();
-  names.forEach(function(name) {
-    const analysis = analyses.get(name);
+  analyses.forEach(function(analysis, name) {
     loadAnalysis(node, name, analysis);
   });
 
@@ -82,15 +81,13 @@ function loadAnalysis(outcomeNode, name, analysis) {
 
   ord.utils.setSelector($('.outcome_analysis_type', node), analysis.getType());
   const chmoId = analysis.getChmoId();
-  if (chmoId != 0) {
+  if (chmoId !== 0) {
     $('.outcome_analysis_chmo_id', node).text(analysis.getChmoId());
   }
   $('.outcome_analysis_details', node).text(analysis.getDetails());
 
   const dataMap = analysis.getDataMap();
-  const dataNames = dataMap.stringKeys_();
-  dataNames.forEach(function(name) {
-    const data = dataMap.get(name);
+  dataMap.forEach(function(data, name) {
     const dataNode = addData(node);
     loadData(dataNode, name, data);
   });
@@ -235,7 +232,7 @@ function unloadData(node, dataMap) {
  * @return {!Node} The newly added parent node for the reaction outcome.
  */
 function add() {
-  const node = ord.utils.addSlowly('#outcome_template', '#outcomes');
+  const node = ord.utils.addSlowly('#outcome_template', $('#outcomes'));
   // Add live validation handling.
   ord.utils.addChangeHandler(node, () => {
     validateOutcome(node);
@@ -265,7 +262,7 @@ function addAnalysis(node) {
     if (old_name) {
       // If any selector had this value selected, reset it.
       $('.analysis_key_selector', node).each(function() {
-        if ($(this).val() == old_name) {
+        if ($(this).val() === old_name) {
           $(this).val('');
         }
       });

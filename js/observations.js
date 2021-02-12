@@ -26,6 +26,7 @@ exports = {
 goog.require('ord.data');
 goog.require('ord.utils');
 goog.require('proto.ord.ReactionObservation');
+goog.require('proto.ord.Time');
 
 /**
  * Adds and populates the reaction observation sections in the form.
@@ -89,7 +90,7 @@ function unloadObservation(node) {
  * @return {!Node} The newly added parent node for the reaction observation.
  */
 function add() {
-  const node = ord.utils.addSlowly('#observation_template', '#observations');
+  const node = ord.utils.addSlowly('#observation_template', $('#observations'));
   ord.data.addData(node);
   // Add live validation handling.
   ord.utils.addChangeHandler(node, () => {

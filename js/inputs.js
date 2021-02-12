@@ -31,6 +31,9 @@ goog.require('ord.crudes');
 goog.require('ord.utils');
 goog.require('proto.ord.FlowRate');
 goog.require('proto.ord.ReactionInput');
+goog.require('proto.ord.ReactionInput.AdditionDevice');
+goog.require('proto.ord.ReactionInput.AdditionSpeed');
+goog.require('proto.ord.Temperature');
 goog.require('proto.ord.Time');
 
 /**
@@ -38,10 +41,8 @@ goog.require('proto.ord.Time');
  * @param {!jspb.Map<string, !proto.ord.ReactionInput>} inputs
  */
 function load(inputs) {
-  const names = inputs.stringKeys_();
-  names.forEach(function(name) {
-    const input = inputs.get(name);
-    loadInput('#inputs', name, input);
+  inputs.forEach(function(input, name) {
+    loadInput($('#inputs'), name, input);
   });
   ord.utils.updateSidebar();
 }
@@ -77,7 +78,7 @@ function addInputByString(root) {
   xhr.open('POST', '/resolve/input');
   xhr.responseType = 'arraybuffer';
   xhr.onload = () => {
-    if (xhr.status == 409) {
+    if (xhr.status === 409) {
       const decoder = new TextDecoder('utf-8');
       alert('Could not parse: ' + decoder.decode(xhr.response));
     } else {
@@ -96,10 +97,13 @@ function addInputByString(root) {
  * Adds and populates a single reaction input section in the form without
  * assigning it a name.
  * @param {!Node} node Root node for the reaction input.
- * @param {!proto.ord.ReactionInput} input
+ * @param {?proto.ord.ReactionInput} input
  * @return {!Node} The original root node.
  */
 function loadInputUnnamed(node, input) {
+  if (!input) {
+    return node;
+  }
   const compounds = input.getComponentsList();
   ord.compounds.load(node, compounds);
 
@@ -107,7 +111,7 @@ function loadInputUnnamed(node, input) {
   ord.crudes.load(node, crudes);
 
   const additionOrder = input.getAdditionOrder();
-  if (additionOrder != 0) {
+  if (additionOrder !== 0) {
     $('.input_addition_order', node).text(additionOrder);
   }
 
@@ -236,10 +240,10 @@ function unloadInputUnnamed(node) {
 /**
  * Adds a reaction input section to the form.
  * @param {!Node} root Parent node for reaction inputs.
- * @param {?Array<string>} classes Additional classes to add to the new node.
+ * @param {?Array<string>=} classes Additional classes to add to the new node.
  * @return {!Node} The newly added parent node for the reaction input.
  */
-function add(root, classes) {
+function add(root, classes = null) {
   const node = ord.utils.addSlowly('#input_template', root);
   if (Array.isArray(classes) && classes.length) {
     node.addClass(classes);

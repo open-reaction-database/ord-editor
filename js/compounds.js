@@ -37,9 +37,12 @@ exports = {
 
 goog.require('ord.amounts');
 goog.require('ord.data');
+goog.require('ord.uploads');
 goog.require('ord.utils');
 goog.require('proto.ord.Compound');
 goog.require('proto.ord.CompoundIdentifier');
+goog.require('proto.ord.CompoundIdentifier.IdentifierType');
+goog.require('proto.ord.CompoundPreparation');
 goog.require('proto.ord.Compound.Source');
 
 /**
@@ -69,9 +72,12 @@ function loadCompound(root, compound) {
  * Adds and populates the form's fields describing a compound.
  * @param {!Node} node The div corresponding to the compound whose fields
  *     should be updated.
- * @param {!proto.ord.Compound} compound
+ * @param {?proto.ord.Compound} compound
  */
 function loadIntoCompound(node, compound) {
+  if (!compound) {
+    return;
+  }
   const reactionRole = compound.getReactionRole();
   ord.utils.setSelector($('.component_reaction_role', node), reactionRole);
   $('.component_reaction_role', node).trigger('change');
@@ -94,11 +100,8 @@ function loadIntoCompound(node, compound) {
     const source = compound.getSource();
     loadSource(node, source);
   }
-
   const features = compound.getFeaturesMap();
-  const featureNames = features.stringKeys_();
-  featureNames.forEach(function(name) {
-    const feature = features.get(name);
+  features.forEach(function(feature, name) {
     const featureNode = addFeature(node);
     loadFeature(featureNode, name, feature);
   });
@@ -140,9 +143,12 @@ function loadPreparation(node, preparation) {
  * Adds and populates the form's fields describing a compound's source.
  * @param {!Node} compoundNode The div corresponding to the compound whose
  *     source information should be updated on the form.
- * @param {!proto.ord.Compound.Source} source
+ * @param {?proto.ord.Compound.Source} source
  */
 function loadSource(compoundNode, source) {
+  if (!source) {
+    return;
+  }
   const node = $('fieldset.source', compoundNode);
   $('.component_source_vendor', node).text(source.getVendor());
   $('.component_source_id', node).text(source.getId());
@@ -508,7 +514,7 @@ function addPreparation(node) {
   const typeSelector =
       $('.component_compound_preparation_type', PreparationNode);
   typeSelector.change(function() {
-    if (ord.utils.getSelectorText(this) == 'SYNTHESIZED') {
+    if (ord.utils.getSelectorText(this) === 'SYNTHESIZED') {
       $('.component_compound_preparation_reaction_id', PreparationNode)
           .css('display', 'inline-block');
     } else {
@@ -524,7 +530,7 @@ function addPreparation(node) {
  * Updates a png rendering of a compound as defined by its identifiers.
  * @param {!Node} node The div corresponding to the compound whose rendering
  *     should be updated.
- * @param {!proto.ord.Compound} compound
+ * @param {!proto.ord.Compound|!proto.ord.ProductCompound} compound
  */
 function renderCompound(node, compound) {
   const xhr = new XMLHttpRequest();

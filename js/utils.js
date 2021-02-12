@@ -27,6 +27,7 @@ exports = {
   getReactionById,
   getSelector,
   getSelectorText,
+  freeze,
   initCollapse,
   initOptionalBool,
   initSelector,
@@ -53,6 +54,7 @@ exports = {
 
 goog.require('ord.enums');  // Used by nameToProto.
 goog.require('proto.ord.Dataset');
+goog.require('proto.ord.Reaction');
 
 // Remember the dataset and reaction we are editing.
 const session = {
@@ -87,8 +89,9 @@ function dirty() {
  * Hides the 'save' button.
  */
 function clean() {
-  $('#save').css('visibility', 'hidden');
-  $('#save').text('save');
+  const matcher = $('#save');
+  matcher.css('visibility', 'hidden');
+  matcher.text('save');
 }
 
 /**
@@ -121,20 +124,21 @@ function clickSave() {
  * Toggles autosave being active.
  */
 function toggleAutosave() {
+  const matcher = $('#toggle_autosave');
   // We keep track of timers by holding references, only if they're active.
   if (!session.timers.short) {
     // Enable a simple timer that saves periodically.
     session.timers.short =
         setInterval(clickSave, 1000 * 15);  // Save after 15 seconds
-    $('#toggle_autosave').text('autosave: on');
-    $('#toggle_autosave').css('backgroundColor', 'lightgreen');
+    matcher.text('autosave: on');
+    matcher.css('backgroundColor', 'lightgreen');
   } else {
     // Stop the interval timer itself, then remove reference in order to
     // properly later detect that it's stopped.
     clearInterval(session.timers.short);
     session.timers.short = null;
-    $('#toggle_autosave').text('autosave: off');
-    $('#toggle_autosave').css('backgroundColor', 'pink');
+    matcher.text('autosave: off');
+    matcher.css('backgroundColor', 'pink');
   }
 }
 
@@ -147,7 +151,7 @@ function toggleAutosave() {
 function addSlowly(template, root) {
   const node = $(template).clone();
   node.removeAttr('id');
-  $(root).append(node);
+  root.append(node);
   node.show('slow');
   dirty();
   listen(node);
@@ -456,7 +460,7 @@ function validate(message, messageTypeString, node, validateNode) {
     const errors = validationOutput.errors;
     const warnings = validationOutput.warnings;
     // Add client-side validation errors.
-    $(node).find('.invalid').each(function(index) {
+    $(node).find('.invalid').each(function() {
       const invalidName = $(this).attr('class').split(' ')[0];
       errors.push('Value for ' + invalidName + ' is invalid');
     });
@@ -534,7 +538,7 @@ function getDataset(fileName) {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', '/dataset/proto/read/' + fileName);
     xhr.responseType = 'arraybuffer';
-    xhr.onload = function(event) {
+    xhr.onload = function() {
       const bytes = new Uint8Array(xhr.response);
       const dataset = proto.ord.Dataset.deserializeBinary(bytes);
       resolve(dataset);
@@ -607,7 +611,7 @@ function isEmptyMessage(obj) {
 /**
  * Supports unload() operations by filtering spurious selector matches due
  * either to DOM templates or elements the user has removed undoably.
- * @param {!Node node} node The DOM node to test for spuriousness.
+ * @param {!Node} node The DOM node to test for spuriousness.
  * @return {boolean} True means ignore this node.
  */
 function isTemplateOrUndoBuffer(node) {
@@ -619,11 +623,11 @@ function isTemplateOrUndoBuffer(node) {
  * @param {string} prefix The prefix for element attributes.
  * @param {!jspb.Message} proto A protocol buffer with `value`, `precision`,
  *     and `units` fields.
- * @param {!Node} node The node containing the tuple.
+ * @param {?Node=} node The node containing the tuple.
  * @return {!jspb.Message} The updated protocol buffer. Note that the message
  *     is modified in-place.
  */
-function readMetric(prefix, proto, node) {
+function readMetric(prefix, proto, node = null) {
   const value = parseFloat($(prefix + '_value', node).text());
   if (!isNaN(value)) {
     proto.setValue(value);
@@ -642,12 +646,12 @@ function readMetric(prefix, proto, node) {
 /**
  * Packs a (value, units, precision) tuple into form elements.
  * @param {string} prefix The prefix for element attributes.
- * @param {!jspb.Message} proto A protocol buffer with `value`, `precision`,
+ * @param {?jspb.Message} proto A protocol buffer with `value`, `precision`,
  *     and`units` fields.
- * @param {!Node} node The target node for the tuple.
+ * @param {?Node=} node The target node for the tuple.
  */
-function writeMetric(prefix, proto, node) {
-  if (!(proto)) {
+function writeMetric(prefix, proto, node = null) {
+  if (!proto) {
     return;
   }
   if (proto.hasValue()) {

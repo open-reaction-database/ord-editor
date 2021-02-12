@@ -169,10 +169,10 @@ function loadReaction(reaction) {
   ord.identifiers.load(identifiers);
   const inputs = reaction.getInputsMap();
   // Reactions start with an input by default.
-  if (inputs.arr_.length) {
+  if (inputs.getLength()) {
     ord.inputs.load(inputs);
   } else {
-    ord.inputs.add('#inputs');
+    ord.inputs.add($('#inputs'));
   }
   const setup = reaction.getSetup();
   if (setup) {

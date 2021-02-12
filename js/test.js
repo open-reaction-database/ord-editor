@@ -63,7 +63,7 @@ const puppeteer = require('puppeteer');
     // Report results of testing to environment (shell, Git CI, etc.)
     // If _any_ test fails (i.e. testResult 1), then the entire process must
     // fail too. We still run all tests though, for convenience's sake.
-    if (testResult == 1) {
+    if (testResult === 1) {
       process.exitCode = 1;
     }
   }
@@ -100,7 +100,7 @@ const puppeteer = require('puppeteer');
     // Report results of testing to environment (shell, Git CI, etc.)
     // If _any_ test fails (i.e. testResult 1), then the entire process must
     // fail too. We still run all tests though, for convenience's sake.
-    if (testResult == 1) {
+    if (testResult === 1) {
       process.exitCode = 1;
     }
   }

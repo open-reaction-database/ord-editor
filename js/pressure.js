@@ -26,7 +26,9 @@ exports = {
 goog.require('ord.utils');
 goog.require('proto.ord.Pressure');
 goog.require('proto.ord.PressureConditions');
+goog.require('proto.ord.PressureConditions.Atmosphere');
 goog.require('proto.ord.PressureConditions.Measurement');
+goog.require('proto.ord.PressureConditions.PressureControl');
 goog.require('proto.ord.Time');
 
 /**
@@ -92,7 +94,7 @@ function unload() {
   }
 
   const atmosphere = new proto.ord.PressureConditions.Atmosphere();
-  atmosphere.setType(ord.utils.getSelector('#pressure_atmosphere_type'));
+  atmosphere.setType(ord.utils.getSelector($('#pressure_atmosphere_type')));
   atmosphere.setDetails($('#pressure_atmosphere_details').text());
   if (!ord.utils.isEmptyMessage(atmosphere)) {
     pressure.setAtmosphere(atmosphere);
@@ -144,7 +146,7 @@ function unloadMeasurement(node) {
  */
 function addMeasurement() {
   return ord.utils.addSlowly(
-      '#pressure_measurement_template', '#pressure_measurements');
+      '#pressure_measurement_template', $('#pressure_measurements'));
 }
 
 /**

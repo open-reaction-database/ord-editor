@@ -22,8 +22,10 @@ exports = {
   unloadData,
 };
 
+goog.require('ord.uploads');
 goog.require('ord.utils');
 goog.require('proto.ord.Data');
+goog.require('proto.ord.Data.KindCase');
 
 // Freely create radio button groups by generating new input names.
 let radioGroupCounter = 0;
@@ -60,9 +62,12 @@ function addData(parentNode) {
 /**
  * Populates an existing Data section in the form.
  * @param {!Node} node Root node.
- * @param {!proto.ord.Data} data
+ * @param {?proto.ord.Data} data
  */
 function loadData(node, data) {
+  if (!data) {
+    return;
+  }
   $('.data_description', node).text(data.getDescription());
   $('.data_format', node).text(data.getFormat());
   let value;

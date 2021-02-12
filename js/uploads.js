@@ -17,10 +17,11 @@
 goog.module('ord.uploads');
 goog.module.declareLegacyNamespace();
 exports = {
-  putAll,
-  retrieve,
+  getFile,
   initialize,
   load,
+  putAll,
+  retrieve,
   unload
 };
 

@@ -66,8 +66,9 @@ function dirty() {
  * Hides the 'save' button.
  */
 function clean() {
-  $('#save').css('visibility', 'hidden');
-  $('#save').text('save');
+  const matcher = $('#save');
+  matcher.css('visibility', 'hidden');
+  matcher.text('save');
 }
 
 /**
@@ -82,7 +83,7 @@ function commit() {
     xhr.open(
         'POST', '/dataset/proto/write/' + session.fileName, true /* async */);
     const binary = dataset.serializeBinary();
-    xhr.onload = function(event) {
+    xhr.onload = function() {
       clean();
       resolve('saved');
     };

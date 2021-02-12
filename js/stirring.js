@@ -24,6 +24,8 @@ exports = {
 
 goog.require('ord.utils');
 goog.require('proto.ord.StirringConditions');
+goog.require('proto.ord.StirringConditions.StirringMethod');
+goog.require('proto.ord.StirringConditions.StirringRate');
 
 /**
  * Adds and populates the stirring conditions section in the form.
@@ -40,7 +42,7 @@ function load(stirring) {
     ord.utils.setSelector($('#stirring_rate_type'), rate.getType());
     $('#stirring_rate_details').text(rate.getDetails());
     const rpm = rate.getRpm();
-    if (rpm != 0) {
+    if (rpm !== 0) {
       $('#stirring_rpm').text(rpm);
     }
   }
