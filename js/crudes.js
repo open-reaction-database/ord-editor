@@ -22,6 +22,8 @@ exports = {
   add
 };
 
+const asserts = goog.require('goog.asserts');
+
 const amounts = goog.require('ord.amounts');
 const utils = goog.require('ord.utils');
 
@@ -87,13 +89,17 @@ function unloadCrude(node) {
   const crude = new CrudeComponent();
 
   const reactionId = $('.crude_reaction', node).text();
-  crude.setReactionId(reactionId);
+  crude.setReactionId(asserts.assertString(reactionId));
 
   const workup = utils.getOptionalBool($('.crude_includes_workup', node));
-  crude.setIncludesWorkup(workup);
+  if (workup !== null) {
+    crude.setIncludesWorkup(workup);
+  }
 
   const derived = utils.getOptionalBool($('.crude_has_derived', node));
-  crude.setHasDerivedAmount(derived);
+  if (derived !== null) {
+    crude.setHasDerivedAmount(derived);
+  }
 
   const amount = amounts.unload(node);
   if (!utils.isEmptyMessage(amount)) {

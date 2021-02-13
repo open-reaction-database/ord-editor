@@ -200,11 +200,11 @@ function addSlowly(template, root) {
 
 /**
  * Removes from the DOM the nearest ancestor element matching the pattern.
- * @param {string} button The element from which to start the search.
+ * @param {!jQuery} button The element from which to start the search.
  * @param {string} pattern The pattern for the element to remove.
  */
 function removeSlowly(button, pattern) {
-  const node = $(button).closest(pattern);
+  const node = button.closest(pattern);
   // Must call necessary validators only after the node is removed,
   // but we can only figure out which validators these are before removal.
   // We do so, and after removal, click the corresponding buttons to trigger

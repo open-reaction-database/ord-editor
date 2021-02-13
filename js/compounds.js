@@ -35,7 +35,9 @@ exports = {
   renderCompound,
 };
 
-const jspbMap = goog.requireType('jspb.Map');
+const asserts = goog.require('goog.asserts');
+
+const JspbMap = goog.requireType('jspb.Map');
 
 const amounts = goog.require('ord.amounts');
 const data = goog.require('ord.data');
@@ -46,7 +48,11 @@ const Compound = goog.require('proto.ord.Compound');
 const CompoundIdentifier = goog.require('proto.ord.CompoundIdentifier');
 const IdentifierType = goog.require('proto.ord.CompoundIdentifier.IdentifierType');
 const CompoundPreparation = goog.require('proto.ord.CompoundPreparation');
+const PreparationType = goog.require('proto.ord.CompoundPreparation.PreparationType');
 const Source = goog.require('proto.ord.Compound.Source');
+const Data = goog.require('proto.ord.Data');
+const ProductCompound = goog.require('proto.ord.ProductCompound');
+const ReactionRoleType = goog.require('proto.ord.ReactionRole.ReactionRoleType');
 
 /**
  * Adds and populates the form's fields describing multiple compounds for a
@@ -188,14 +194,16 @@ function unload(node) {
 function unloadCompound(node) {
   const compound = new Compound();
 
-  const reactionRole = utils.getSelector($('.component_reaction_role', node));
-  compound.setReactionRole(reactionRole);
+  const reactionRole = utils.getSelectorText($('.component_reaction_role', node)[0]);
+  compound.setReactionRole(ReactionRoleType[reactionRole]);
 
   // Only call setIsLimiting if this is a reactant Compound.
   if (utils.getSelectorText($('.component_reaction_role', node)[0]) ===
       'REACTANT') {
     const isLimiting = utils.getOptionalBool($('.component_limiting', node));
-    compound.setIsLimiting(isLimiting);
+    if (isLimiting !== null) {
+      compound.setIsLimiting(isLimiting);
+    }
   }
 
   const identifiers = unloadIdentifiers(node);
@@ -210,6 +218,7 @@ function unloadCompound(node) {
 
   const preparations = [];
   $('.component_preparation', node).each(function(index, preparationNode) {
+    asserts.assertInstanceof(preparationNode, Element);
     const preparation = unloadPreparation(preparationNode);
     preparations.push(preparation);
   });
@@ -264,31 +273,29 @@ function unloadIdentifier(node) {
   const identifier = new CompoundIdentifier();
 
   const value = $('.component_identifier_value', node).text();
-  if (value) {
-    identifier.setValue(value);
-  }
-  const type = utils.getSelector(node);
-  identifier.setType(type);
+  identifier.setValue(asserts.assertString(value));
+  const type = utils.getSelectorText(node[0]);
+  identifier.setType(IdentifierType[type]);
   const details = $('.component_identifier_details', node).text();
-  identifier.setDetails(details);
+  identifier.setDetails(asserts.assertString(details));
   return identifier;
 }
 
 /**
  * Reads and returns a single compound preparation as defined on the form.
- * @param {!jQuery} node The div corresponding to a compound preparation that
+ * @param {!Element} node The div corresponding to a compound preparation that
  *     should be read from the form.
  * @return {!CompoundPreparation}
  */
 function unloadPreparation(node) {
   const preparation = new CompoundPreparation();
   const type =
-      utils.getSelector($('.component_compound_preparation_type', node));
-  preparation.setType(type);
+      utils.getSelectorText($('.component_compound_preparation_type', node)[0]);
+  preparation.setType(PreparationType[type]);
   const details = $('.component_compound_preparation_details', node).text();
-  preparation.setDetails(details);
+  preparation.setDetails(asserts.assertString(details));
   const reaction = $('.component_compound_preparation_reaction', node).text();
-  preparation.setReactionId(reaction);
+  preparation.setReactionId(asserts.assertString(reaction));
   return preparation;
 }
 
@@ -301,11 +308,11 @@ function unloadPreparation(node) {
 function unloadSource(node) {
   const source = new Source();
   const vendor = $('.component_source_vendor', node).text();
-  source.setVendor(vendor);
+  source.setVendor(asserts.assertString(vendor));
   const lot = $('.component_source_lot', node).text();
-  source.setLot(lot);
+  source.setLot(asserts.assertString(lot));
   const id = $('.component_source_id', node).text();
-  source.setId(id);
+  source.setId(asserts.assertString(id));
   return source;
 }
 
@@ -320,7 +327,7 @@ function add(root) {
 
   // Connect reaction role selection to limiting reactant field.
   const roleSelector = $('.component_reaction_role', node);
-  roleSelector.change(function() {
+  roleSelector.on('change', function() {
     if (utils.getSelectorText(this) === 'REACTANT') {
       $('.limiting_reactant', node).show();
     } else {
@@ -350,7 +357,7 @@ function addIdentifier(node) {
       '#component_identifier_template', $('.identifiers', node).first());
 
   const uploadButton = $('.component_identifier_upload', identifierNode);
-  uploadButton.change(function() {
+  uploadButton.on('change', function() {
     if ($(this).is(':checked')) {
       $('.uploader', identifierNode).show();
       $('.component_identifier_value', identifierNode).hide();
@@ -406,6 +413,10 @@ function addNameIdentifier(node) {
  * Ketcher window.
  * @param {!jQuery} node The div corresponding to the compound to which the new
  *     identifiers should be added.
+ *
+ * NOTE(kearnes): Lots of undefined properties on `ketcher`.
+ * NOTE(kearnes): `.modal()` is defined by jQuery Modal.
+ * @suppress {missingProperties}
  */
 function drawIdentifier(node) {
   // Get a reference to Ketcher, and to look nice, clear any old drawings.
@@ -479,8 +490,7 @@ function drawIdentifier(node) {
       xhr.onload = function() {
         const smilesIdentifier = new CompoundIdentifier();
         smilesIdentifier.setType(IdentifierType.SMILES);
-        const smiles = xhr.response;
-        smilesIdentifier.setValue(smiles);
+        smilesIdentifier.setValue(asserts.assertString(xhr.response));
         smilesIdentifier.setDetails('Drawn with Ketcher');
         loadIdentifier(node, smilesIdentifier);
       };
@@ -509,7 +519,7 @@ function addPreparation(node) {
 
   const typeSelector =
       $('.component_compound_preparation_type', PreparationNode);
-  typeSelector.change(function() {
+  typeSelector.on('change', function() {
     if (utils.getSelectorText(this) === 'SYNTHESIZED') {
       $('.component_compound_preparation_reaction_id', PreparationNode)
           .css('display', 'inline-block');
@@ -534,9 +544,8 @@ function renderCompound(node, compound) {
   const binary = compound.serializeBinary();
   xhr.responseType = 'json';
   xhr.onload = function() {
-    const svg_data = xhr.response;
-    if (svg_data) {
-      $('.component_rendering', node).html(svg_data);
+    if (xhr.response) {
+      $('.component_rendering', node).html(asserts.assertString(xhr.response));
     } else {
       $('.component_rendering', node).html('');
     }
@@ -588,12 +597,12 @@ function loadFeature(node, name, feature) {
 /**
  * Fetches a feature record defined in the form and adds it to `featuresMap`.
  * @param {!jQuery} node Root node for the Data record.
- * @param {!jspbMap<string, !Data>} featuresMap
+ * @param {!JspbMap<string, !Data>} featuresMap
  */
 function unloadFeature(node, featuresMap) {
   const name = $('.feature_name', node).text();
   const dataMessage = data.unloadData(node);
   if (name || !utils.isEmptyMessage(dataMessage)) {
-    featuresMap.set(name, dataMessage);
+    featuresMap.set(asserts.assertString(name), dataMessage);
   }
 }

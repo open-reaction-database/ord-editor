@@ -22,6 +22,8 @@ exports = {
   validateConditions
 };
 
+const asserts = goog.require('goog.asserts');
+
 const electro = goog.require('ord.electro');
 const flows = goog.require('ord.flows');
 const illumination = goog.require('ord.illumination');
@@ -105,15 +107,19 @@ function unload() {
   }
 
   const reflux = utils.getOptionalBool($('#condition_reflux'));
-  conditions.setReflux(reflux);
+  if (reflux !== null) {
+    conditions.setReflux(reflux);
+  }
   const ph = parseFloat($('#condition_ph').text());
   if (!isNaN(ph)) {
     conditions.setPh(ph);
   }
   const dynamic = utils.getOptionalBool($('#condition_dynamic'));
-  conditions.setConditionsAreDynamic(dynamic);
+  if (dynamic !== null) {
+    conditions.setConditionsAreDynamic(dynamic);
+  }
   const details = $('#condition_details').text();
-  conditions.setDetails(details);
+  conditions.setDetails(asserts.assertString(details));
   return conditions;
 }
 

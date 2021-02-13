@@ -26,8 +26,11 @@ const utils = goog.require('ord.utils');
 
 const Amount = goog.require('proto.ord.Amount');
 const Mass = goog.require('proto.ord.Mass');
+const MassUnit = goog.require('proto.ord.Mass.MassUnit');
 const Moles = goog.require('proto.ord.Moles');
+const MolesUnit = goog.require('proto.ord.Moles.MolesUnit');
 const Volume = goog.require('proto.ord.Volume');
+const VolumeUnit = goog.require('proto.ord.Volume.VolumeUnit');
 
 // Freely create radio button groups by generating new input names.
 let radioGroupCounter = 0;
@@ -39,7 +42,7 @@ let radioGroupCounter = 0;
 function init(node) {
   const amountButtons = $('.amount input', node);
   amountButtons.attr('name', 'amount_' + radioGroupCounter++);
-  amountButtons.change(function() {
+  amountButtons.on('change', function() {
     $('.amount .selector', node).hide();
     if (this.value === 'mass') {
       $('.amount_units_mass', node).show();
@@ -72,7 +75,7 @@ function load(node, amount) {
   $('.amount_units_volume', node).hide();
   $('.includes_solutes', node).hide();
   if (amount.hasMass()) {
-    $('input[value=\'mass\']', amountNode).click();
+    $('input[value=\'mass\']', amountNode).trigger('click');
     if (amount.getMass().hasValue()) {
       $('.amount_value', node).text(amount.getMass().getValue());
     }
@@ -83,7 +86,7 @@ function load(node, amount) {
     utils.setSelector(
         $('.amount_units_mass', amountNode), amount.getMass().getUnits());
   } else if (amount.hasMoles()) {
-    $('input[value=\'moles\']', amountNode).click();
+    $('input[value=\'moles\']', amountNode).trigger('click');
     if (amount.getMoles().hasValue()) {
       $('.amount_value', node).text(amount.getMoles().getValue());
     }
@@ -94,7 +97,7 @@ function load(node, amount) {
     utils.setSelector(
         $('.amount_units_moles', amountNode), amount.getMoles().getUnits());
   } else if (amount.hasVolume()) {
-    $('input[value=\'volume\']', amountNode).click();
+    $('input[value=\'volume\']', amountNode).trigger('click');
     if (amount.getVolume().hasValue()) {
       $('.amount_value', node).text(amount.getVolume().getValue());
     }
@@ -133,7 +136,9 @@ function unload(node) {
     amount.setVolume(volume);
     const solutes =
         utils.getOptionalBool($('.includes_solutes.optional_bool', node));
-    amount.setVolumeIncludesSolutes(solutes);
+    if (solutes !== null) {
+      amount.setVolumeIncludesSolutes(solutes);
+    }
   }
   return amount;
 }
@@ -153,8 +158,8 @@ function unloadMass(node) {
   if (!isNaN(value)) {
     mass.setValue(value);
   }
-  const units = utils.getSelector($('.amount_units_mass', node));
-  mass.setUnits(units);
+  const units = utils.getSelectorText($('.amount_units_mass', node)[0]);
+  mass.setUnits(MassUnit[units]);
   const precision = parseFloat($('.amount_precision', node).text());
   if (!isNaN(precision)) {
     mass.setPrecision(precision);
@@ -177,8 +182,8 @@ function unloadMoles(node) {
   if (!isNaN(value)) {
     moles.setValue(value);
   }
-  const units = utils.getSelector($('.amount_units_moles', node));
-  moles.setUnits(units);
+  const units = utils.getSelectorText($('.amount_units_moles', node)[0]);
+  moles.setUnits(MolesUnit[units]);
   const precision = parseFloat($('.amount_precision', node).text());
   if (!isNaN(precision)) {
     moles.setPrecision(precision);
@@ -201,8 +206,8 @@ function unloadVolume(node) {
   if (!isNaN(value)) {
     volume.setValue(value);
   }
-  const units = utils.getSelector($('.amount_units_volume', node));
-  volume.setUnits(units);
+  const units = utils.getSelectorText($('.amount_units_volume', node)[0]);
+  volume.setUnits(VolumeUnit[units]);
   const precision = parseFloat($('.amount_precision', node).text());
   if (!isNaN(precision)) {
     volume.setPrecision(precision);
