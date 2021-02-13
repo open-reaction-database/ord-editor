@@ -128,8 +128,7 @@ function getDataset(fileName, listener) {
   xhr.open('GET', '/dataset/proto/read/' + session.fileName, true /* async */);
   xhr.responseType = 'arraybuffer';
   xhr.onload = () => {
-    asserts.assertArray(xhr.response);  // Type hint.
-    const bytes = new Uint8Array(xhr.response);
+    const bytes = new Uint8Array(asserts.assertArray(xhr.response));
     const dataset = Dataset.deserializeBinary(bytes);
     session.dataset = dataset;
     listener(dataset);
@@ -200,9 +199,10 @@ function loadReactionId(reactionId) {
  */
 function unloadDataset() {
   const dataset = session.dataset;
-  dataset.setName($('#name').text().toString());
-  dataset.setDescription($('#description').text().toString());
-  dataset.setDatasetId($('#dataset_id').text().toString());
+
+  dataset.setName(asserts.assertString($('#name').text()));
+  dataset.setDescription(asserts.assertString($('#description').text()));
+  dataset.setDatasetId(asserts.assertString($('#dataset_id').text()));
   const reactionIds = [];
   $('.other_reaction_id').each(function(index, node) {
     node = $(node);

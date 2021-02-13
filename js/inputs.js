@@ -179,7 +179,7 @@ function unloadInput(inputs, node) {
 
 /**
  * Fetches a single reaction input defined in the form.
- * @param {!Node} node Root node for the reaction input.
+ * @param {!jQuery} node Root node for the reaction input.
  * @return {!ReactionInput}
  */
 function unloadInputUnnamed(node) {
@@ -243,9 +243,9 @@ function unloadInputUnnamed(node) {
 
 /**
  * Adds a reaction input section to the form.
- * @param {!Node} root Parent node for reaction inputs.
+ * @param {!jQuery} root Parent node for reaction inputs.
  * @param {?Array<string>=} classes Additional classes to add to the new node.
- * @return {!Node} The newly added parent node for the reaction input.
+ * @return {!jQuery} The newly added parent node for the reaction input.
  */
 function add(root, classes = null) {
   const node = utils.addSlowly('#input_template', root);
@@ -265,7 +265,7 @@ function add(root, classes = null) {
 
 /**
  * Validates a reaction input defined in the form.
- * @param {!Node} node Root node for the reaction input.
+ * @param {!jQuery} node Root node for the reaction input.
  * @param {?Node=} validateNode Target node for validation results.
  */
 function validateInput(node, validateNode = null) {

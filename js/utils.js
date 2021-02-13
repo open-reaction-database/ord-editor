@@ -293,12 +293,11 @@ function collapseToggle(button) {
  */
 function initSelector(node) {
   const protoName = node.attr('data-proto');
-  const protoEnum = nameToProto(protoName.toString());
+  const protoEnum = nameToProto(asserts.assertString(protoName));
   if (!protoEnum) {
     console.log('missing require: "' + protoName + '"');
   }
-  asserts.assertObject(protoEnum);  // Type hint.
-  const types = Object.entries(protoEnum);
+  const types = Object.entries(asserts.assertObject(protoEnum));
   const select = $('<select>');
   for (let i = 0; i < types.length; i++) {
     const option = $('<option>').text(types[i][0]);
@@ -375,8 +374,7 @@ function getReactionById(reactionId) {
     xhr.open('GET', '/reaction/id/' + reactionId + '/proto');
     xhr.responseType = 'arraybuffer';
     xhr.onload = function() {
-      asserts.assertArray(xhr.response);  // Type hint.
-      const bytes = new Uint8Array(xhr.response);
+      const bytes = new Uint8Array(asserts.assertArray(xhr.response));
       const reaction = Reaction.deserializeBinary(bytes);
       resolve(reaction);
     };
@@ -486,7 +484,7 @@ function addChangeHandler(node, handler) {
  * NOTE: This function does not commit or save anything!
  * @param {!Message} message The proto to validate.
  * @param {string} messageTypeString The message type.
- * @param {!Node} node Parent node for the unloaded message.
+ * @param {!jQuery} node Parent node for the unloaded message.
  * @param {?Node} validateNode Target div for validation output.
  *
  * NOTE(kearnes): serializeBinary is not defined in the base class.
@@ -507,7 +505,7 @@ function validate(message, messageTypeString, node, validateNode) {
     const errors = validationOutput.errors;
     const warnings = validationOutput.warnings;
     // Add client-side validation errors.
-    $(node).find('.invalid').each(function() {
+    node.find('.invalid').each(function() {
       const invalidName = $(this).attr('class').split(' ')[0];
       errors.push('Value for ' + invalidName + ' is invalid');
     });
@@ -586,8 +584,7 @@ function getDataset(fileName) {
     xhr.open('GET', '/dataset/proto/read/' + fileName);
     xhr.responseType = 'arraybuffer';
     xhr.onload = function() {
-      asserts.assertArray(xhr.response);  // Type hint.
-      const bytes = new Uint8Array(xhr.response);
+      const bytes = new Uint8Array(asserts.assertArray(xhr.response));
       const dataset = Dataset.deserializeBinary(bytes);
       resolve(dataset);
     };
@@ -672,11 +669,12 @@ function isTemplateOrUndoBuffer(node) {
 /**
  * Unpacks a (value, units, precision) tuple into the given type.
  * @param {string} prefix The prefix for element attributes.
- * @param {!UnitMessage} proto A protocol buffer with `value`, `precision`,
+ * @param {TYPE} proto A protocol buffer with `value`, `precision`,
  *     and `units` fields.
- * @param {?Node=} node The node containing the tuple.
- * @return {!Message} The updated protocol buffer. Note that the message
+ * @param {?jQuery=} node The node containing the tuple.
+ * @return {TYPE} The updated protocol buffer. Note that the message
  *     is modified in-place.
+ * @template TYPE
  */
 function readMetric(prefix, proto, node = null) {
   const value = parseFloat($(prefix + '_value', node).text());
@@ -699,7 +697,7 @@ function readMetric(prefix, proto, node = null) {
  * @param {string} prefix The prefix for element attributes.
  * @param {?UnitMessage} proto A protocol buffer with `value`, `precision`,
  *     and`units` fields.
- * @param {?Node=} node The target node for the tuple.
+ * @param {?jQuery=} node The target node for the tuple.
  */
 function writeMetric(prefix, proto, node = null) {
   if (!proto) {
@@ -787,7 +785,7 @@ function setOptionalBool(node, value) {
 
 /**
  * Fetches the value of a three-way popup (true/false/unspecified).
- * @param {!Node} node A node containing a three-way selector.
+ * @param {!jQuery} node A node containing a three-way selector.
  * @return {boolean|null}
  */
 function getOptionalBool(node) {

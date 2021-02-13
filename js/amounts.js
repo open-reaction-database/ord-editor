@@ -114,7 +114,7 @@ function load(node, amount) {
 
 /**
  * Creates an Amount message according to the form.
- * @param {!Node} node The parent node for the amount fields.
+ * @param {!jQuery} node The parent node for the amount fields.
  * @return {!Amount}
  */
 function unload(node) {
@@ -140,7 +140,7 @@ function unload(node) {
 
 /**
  * Reads and returns a mass amount of a compound as defined in the form.
- * @param {!Node} node The div corresponding to the compound whose mass fields
+ * @param {!jQuery} node The div corresponding to the compound whose mass fields
  *     should be read from the form.
  * @return {!Mass}
  */
@@ -164,7 +164,7 @@ function unloadMass(node) {
 
 /**
  * Reads and returns a molar amount of a compound as defined in the form.
- * @param {!Node} node The div corresponding to the compound whose moles fields
+ * @param {!jQuery} node The div corresponding to the compound whose moles fields
  *     should be read from the form.
  * @return {!Moles}
  */
@@ -188,7 +188,7 @@ function unloadMoles(node) {
 
 /**
  * Reads and returns a volumetric amount of a compound as defined in the form.
- * @param {!Node} node The div corresponding to the compound whose volume fields
+ * @param {!jQuery} node The div corresponding to the compound whose volume fields
  *     should be read from the form.
  * @return {!Volume}
  */

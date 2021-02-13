@@ -17,18 +17,25 @@
 goog.module('ord.workups');
 goog.module.declareLegacyNamespace();
 
+const asserts = goog.require('goog.asserts');
+
 const amounts = goog.require('ord.amounts');
 const inputs = goog.require('ord.inputs');
 const utils = goog.require('ord.utils');
 
 const ReactionWorkup = goog.require('proto.ord.ReactionWorkup');
+const WorkupType = goog.require('proto.ord.ReactionWorkup.WorkupType');
 const StirringConditions = goog.require('proto.ord.StirringConditions');
 const StirringMethod = goog.require('proto.ord.StirringConditions.StirringMethod');
+const StirringMethodType = goog.require('proto.ord.StirringConditions.StirringMethod.StirringMethodType');
 const StirringRate = goog.require('proto.ord.StirringConditions.StirringRate');
+const StirringRateType = goog.require('proto.ord.StirringConditions.StirringRate.StirringRateType');
 const Temperature = goog.require('proto.ord.Temperature');
 const TemperatureConditions = goog.require('proto.ord.TemperatureConditions');
 const Measurement = goog.require('proto.ord.TemperatureConditions.Measurement');
+const MeasurementType = goog.require('proto.ord.TemperatureConditions.Measurement.MeasurementType');
 const TemperatureControl = goog.require('proto.ord.TemperatureConditions.TemperatureControl');
+const TemperatureControlType = goog.require('proto.ord.TemperatureConditions.TemperatureControl.TemperatureControlType');
 const Time = goog.require('proto.ord.Time');
 
 exports = {
@@ -113,7 +120,7 @@ function loadWorkup(workup) {
 
 /**
  * Loads a measurement into the given node in a workup.
- * @param {!Node} workupNode The div corresponding to the workup whose fields
+ * @param {!jQuery} workupNode The div corresponding to the workup whose fields
  *     should be updated.
  * @param {!TemperatureConditions.Measurement} measurement
  */
@@ -154,15 +161,14 @@ function unload() {
 
 /**
  * Fetches a single workup from the form.
- * @param {!Node} node The div corresponding to the workup to fetch.
+ * @param {!jQuery} node The div corresponding to the workup to fetch.
  * @return {!ReactionWorkup}
  */
 function unloadWorkup(node) {
   const workup = new ReactionWorkup();
-
-  workup.setType(utils.getSelector($('.workup_type', node)));
-
-  workup.setDetails($('.workup_details', node).text());
+  const workupType = utils.getSelectorText($('.workup_type', node)[0]);
+  workup.setType(WorkupType[workupType]);
+  workup.setDetails(asserts.assertString($('.workup_details', node).text()));
 
   const duration = utils.readMetric('.workup_duration', new Time(), node);
   if (!utils.isEmptyMessage(duration)) {
@@ -180,9 +186,9 @@ function unloadWorkup(node) {
   }
 
   const control = new TemperatureControl();
-  control.setType(
-      utils.getSelector($('.workup_temperature_control_type', node)));
-  control.setDetails($('.workup_temperature_details', node).text());
+  const temperatureControlType = utils.getSelectorText($('.workup_temperature_control_type', node)[0]);
+  control.setType(TemperatureControlType[temperatureControlType]);
+  control.setDetails(asserts.assertString($('.workup_temperature_details', node).text()));
 
   const temperature = new TemperatureConditions();
   if (!utils.isEmptyMessage(control)) {
@@ -211,21 +217,22 @@ function unloadWorkup(node) {
   if (!utils.isEmptyMessage(temperature)) {
     workup.setTemperature(temperature);
   }
-
-  workup.setKeepPhase($('.workup_keep_phase', node).text());
+  workup.setKeepPhase(asserts.assertString($('.workup_keep_phase', node).text()));
 
   const stirring = new StirringConditions();
 
   const method = new StirringMethod();
-  method.setType(utils.getSelector($('.workup_stirring_method_type', node)));
-  method.setDetails($('.workup_stirring_method_details').text());
+  const stirringMethodType = utils.getSelectorText($('.workup_stirring_method_type', node)[0]);
+  method.setType(StirringMethodType[stirringMethodType]);
+  method.setDetails(asserts.assertString($('.workup_stirring_method_details').text()));
   if (!utils.isEmptyMessage(method)) {
     stirring.setMethod(method);
   }
 
   const rate = new StirringRate();
-  rate.setType(utils.getSelector($('.workup_stirring_rate_type', node)));
-  rate.setDetails($('.workup_stirring_rate_details').text());
+  const stirringRateType = utils.getSelectorText($('.workup_stirring_rate_type', node)[0]);
+  rate.setType(StirringRateType[stirringRateType]);
+  rate.setDetails(asserts.assertString($('.workup_stirring_rate_details').text()));
   const rpm = parseFloat($('.workup_stirring_rate_rpm', node).text());
   if (!isNaN(rpm)) {
     rate.setRpm(rpm);
@@ -242,21 +249,24 @@ function unloadWorkup(node) {
   if (!isNaN(targetPh)) {
     workup.setTargetPh(targetPh);
   }
-  workup.setIsAutomated(utils.getOptionalBool($('.workup_automated', node)));
+  const isAutomated = utils.getOptionalBool($('.workup_automated', node));
+  if (isAutomated !== null) {
+    workup.setIsAutomated(isAutomated);
+  }
   return workup;
 }
 
 /**
  * Fetches a single workup temperature measurement from the form.
- * @param {!Node} node The div corresponding to the measurement to fetch.
+ * @param {!jQuery} node The div corresponding to the measurement to fetch.
  * @return {!TemperatureConditions.Measurement}
  */
 function unloadMeasurement(node) {
   const measurement = new Measurement();
-  measurement.setType(
-      utils.getSelector($('.workup_temperature_measurement_type', node)));
+  const measurementType = utils.getSelectorText($('.workup_temperature_measurement_type', node)[0]);
+  measurement.setType(MeasurementType[measurementType]);
   measurement.setDetails(
-      $('.workup_temperature_measurement_details', node).text());
+      asserts.assertString($('.workup_temperature_measurement_details', node).text()));
   const time = utils.readMetric(
       '.workup_temperature_measurement_time', new Time(), node);
   if (!utils.isEmptyMessage(time)) {
@@ -272,7 +282,7 @@ function unloadMeasurement(node) {
 
 /**
  * Adds a new reaction workup section to the form.
- * @return {!Node} The newly added parent node for the reaction workup.
+ * @return {!jQuery} The newly added parent node for the reaction workup.
  */
 function add() {
   const workupNode = utils.addSlowly('#workup_template', $('#workups'));
@@ -309,8 +319,8 @@ function add() {
 
 /**
  * Adds a new measurement section to the current workup in the form.
- * @param {!Node} node The workup div where the new measurement should be added.
- * @return {!Node} The node of the new measurement div.
+ * @param {!jQuery} node The workup div where the new measurement should be added.
+ * @return {!jQuery} The node of the new measurement div.
  */
 function addMeasurement(node) {
   return utils.addSlowly(
@@ -320,7 +330,7 @@ function addMeasurement(node) {
 
 /**
  * Validates a workup as defined in the form.
- * @param {!Node} node The div containing to the workup in the form.
+ * @param {!jQuery} node The div containing to the workup in the form.
  * @param {?Node=} validateNode The target div for validation results.
  */
 function validateWorkup(node, validateNode = null) {
