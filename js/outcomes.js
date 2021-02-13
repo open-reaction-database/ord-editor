@@ -17,13 +17,17 @@
 goog.module('ord.outcomes');
 goog.module.declareLegacyNamespace();
 
-const jspbMap = goog.requireType('jspb.Map');
+const asserts = goog.require('goog.asserts');
+
+const JspbMap = goog.requireType('jspb.Map');
 
 const data = goog.require('ord.data');
 const products = goog.require('ord.products');
 const utils = goog.require('ord.utils');
 
 const Analysis = goog.require('proto.ord.Analysis');
+const AnalysisType = goog.require('proto.ord.Analysis.AnalysisType');
+const Data = goog.require('proto.ord.Data');
 const DateTime = goog.require('proto.ord.DateTime');
 const Percentage = goog.require('proto.ord.Percentage');
 const ReactionOutcome = goog.require('proto.ord.ReactionOutcome');
@@ -177,13 +181,13 @@ function unloadOutcome(node) {
  */
 function unloadAnalysisSingle(analysisNode) {
   const analysis = new Analysis();
-  analysis.setType(
-      utils.getSelector($('.outcome_analysis_type', analysisNode)));
-  const chmoId = $('.outcome_analysis_chmo_id', analysisNode).text();
+  const analysisType = utils.getSelector($('.outcome_analysis_type', analysisNode)[0]);
+  analysis.setType(AnalysisType[analysisType]);
+  const chmoId = parseInt($('.outcome_analysis_chmo_id', analysisNode).text(), 10);
   if (!isNaN(chmoId)) {
     analysis.setChmoId(chmoId);
   }
-  analysis.setDetails($('.outcome_analysis_details', analysisNode).text());
+  analysis.setDetails(asserts.assertString($('.outcome_analysis_details', analysisNode).text()));
 
   const dataMap = analysis.getDataMap();
   $('.outcome_data', analysisNode).each(function(index, dataNode) {
@@ -193,14 +197,17 @@ function unloadAnalysisSingle(analysisNode) {
     }
   });
   analysis.setInstrumentManufacturer(
-      $('.outcome_analysis_manufacturer', analysisNode).text());
+      asserts.assertString($('.outcome_analysis_manufacturer', analysisNode).text()));
   const calibrated = new DateTime();
-  calibrated.setValue($('.outcome_analysis_calibrated', analysisNode).text());
+  calibrated.setValue(asserts.assertString($('.outcome_analysis_calibrated', analysisNode).text()));
   if (!utils.isEmptyMessage(calibrated)) {
     analysis.setInstrumentLastCalibrated(calibrated);
   }
-  analysis.setIsOfIsolatedSpecies(utils.getOptionalBool(
-      $('.outcome_analysis_is_of_isolated_species', analysisNode)));
+  const isOfIsolatedSpecies = utils.getOptionalBool(
+      $('.outcome_analysis_is_of_isolated_species', analysisNode));
+  if (isOfIsolatedSpecies !== null) {
+    analysis.setIsOfIsolatedSpecies(isOfIsolatedSpecies);
+  }
 
   return analysis;
 }
@@ -208,26 +215,26 @@ function unloadAnalysisSingle(analysisNode) {
 /**
  * Fetches a reaction analysis defined in the form and adds it to `analyses`.
  * @param {!jQuery} analysisNode Root node for the reaction analysis.
- * @param {!jspbMap<string, !Analysis>} analyses
+ * @param {!JspbMap<string, !Analysis>} analyses
  */
 function unloadAnalysis(analysisNode, analyses) {
   const analysis = unloadAnalysisSingle(analysisNode);
   const name = $('.outcome_analysis_name', analysisNode).text();
   if (name || !utils.isEmptyMessage(analysis)) {
-    analyses.set(name, analysis);
+    analyses.set(asserts.assertString(name), analysis);
   }
 }
 
 /**
  * Fetches a data record defined in the form and adds it to `dataMap`.
  * @param {!jQuery} node Root node for the Data record.
- * @param {!jspbMap<string, !Data>} dataMap
+ * @param {!JspbMap<string, !Data>} dataMap
  */
 function unloadData(node, dataMap) {
   const name = $('.outcome_data_name', node).text();
-  const datadataMessage = data.unloadData(node);
-  if (name || !utils.isEmptyMessage(datadataMessage)) {
-    dataMap.set(name, datadataMessage);
+  const dataMessage = data.unloadData(node);
+  if (name || !utils.isEmptyMessage(dataMessage)) {
+    dataMap.set(asserts.assertString(name), dataMessage);
   }
 }
 

@@ -17,13 +17,18 @@
 goog.module('ord.pressure');
 goog.module.declareLegacyNamespace();
 
+const asserts = goog.require('goog.asserts');
+
 const utils = goog.require('ord.utils');
 
 const Pressure = goog.require('proto.ord.Pressure');
 const PressureConditions = goog.require('proto.ord.PressureConditions');
 const Atmosphere = goog.require('proto.ord.PressureConditions.Atmosphere');
+const AtmosphereType = goog.require('proto.ord.PressureConditions.Atmosphere.AtmosphereType');
 const Measurement = goog.require('proto.ord.PressureConditions.Measurement');
+const MeasurementType = goog.require('proto.ord.PressureConditions.Measurement.MeasurementType');
 const PressureControl = goog.require('proto.ord.PressureConditions.PressureControl');
+const PressureControlType = goog.require('proto.ord.PressureConditions.PressureControl.PressureControlType');
 const Time = goog.require('proto.ord.Time');
 
 exports = {
@@ -84,8 +89,9 @@ function unload() {
   const pressure = new PressureConditions();
 
   const control = new PressureControl();
-  control.setType(utils.getSelector($('#pressure_control_type')));
-  control.setDetails($('#pressure_control_details').text());
+  const controlType = utils.getSelectorText($('#pressure_control_type')[0]);
+  control.setType(PressureControlType[controlType]);
+  control.setDetails(asserts.assertString($('#pressure_control_details').text()));
   if (!utils.isEmptyMessage(control)) {
     pressure.setControl(control);
   }
@@ -96,8 +102,9 @@ function unload() {
   }
 
   const atmosphere = new Atmosphere();
-  atmosphere.setType(utils.getSelector($('#pressure_atmosphere_type')));
-  atmosphere.setDetails($('#pressure_atmosphere_details').text());
+  const atmosphereType = utils.getSelectorText($('#pressure_atmosphere_type')[0]);
+  atmosphere.setType(AtmosphereType[atmosphereType]);
+  atmosphere.setDetails(asserts.assertString($('#pressure_atmosphere_details').text()));
   if (!utils.isEmptyMessage(atmosphere)) {
     pressure.setAtmosphere(atmosphere);
   }
@@ -124,10 +131,9 @@ function unload() {
  */
 function unloadMeasurement(node) {
   const measurement = new Measurement();
-  const type = utils.getSelector($('.pressure_measurement_type', node));
-  measurement.setType(type);
-  const details = $('.pressure_measurement_details', node).text();
-  measurement.setDetails(details);
+  const measurementType = utils.getSelectorText($('.pressure_measurement_type', node)[0]);
+  measurement.setType(MeasurementType[measurementType]);
+  measurement.setDetails(asserts.assertString($('.pressure_measurement_details', node).text()));
   const pressure =
       utils.readMetric('.pressure_measurement_pressure', new Pressure(), node);
   if (!utils.isEmptyMessage(pressure)) {

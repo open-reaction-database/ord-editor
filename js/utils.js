@@ -30,6 +30,7 @@ const FlowRate = goog.require('proto.ord.FlowRate');
 const Length = goog.require('proto.ord.Length');
 const Mass = goog.require('proto.ord.Mass');
 const Moles = goog.require('proto.ord.Moles');
+const Percentage = goog.require('proto.ord.Percentage');
 const Pressure = goog.require('proto.ord.Pressure');
 const Reaction = goog.require('proto.ord.Reaction');
 const Temperature = goog.require('proto.ord.Temperature');
@@ -695,8 +696,9 @@ function readMetric(prefix, proto, node = null) {
 /**
  * Packs a (value, units, precision) tuple into form elements.
  * @param {string} prefix The prefix for element attributes.
- * @param {?UnitMessage} proto A protocol buffer with `value`, `precision`,
- *     and`units` fields.
+ * @param {?UnitMessage|?Percentage} proto A protocol buffer with
+ *    `value`, `precision`, and `units` fields. (Percentage is allowed
+ *    as a special case even though it doesn't have a `units` field.)
  * @param {?jQuery=} node The target node for the tuple.
  */
 function writeMetric(prefix, proto, node = null) {

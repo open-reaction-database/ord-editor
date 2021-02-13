@@ -17,6 +17,8 @@
 goog.module('ord.observations');
 goog.module.declareLegacyNamespace();
 
+const asserts = goog.require('goog.asserts');
+
 const data = goog.require('ord.data');
 const utils = goog.require('ord.utils');
 
@@ -79,7 +81,7 @@ function unloadObservation(node) {
   if (!utils.isEmptyMessage(time)) {
     observation.setTime(time);
   }
-  observation.setComment($('.observation_comment', node).text());
+  observation.setComment(asserts.assertString($('.observation_comment', node).text()));
   const image = data.unloadData(node);
   if (!utils.isEmptyMessage(image)) {
     observation.setImage(image);

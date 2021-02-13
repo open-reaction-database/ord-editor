@@ -17,6 +17,8 @@
 goog.module('ord.notes');
 goog.module.declareLegacyNamespace();
 
+const asserts = goog.require('goog.asserts');
+
 const utils = goog.require('ord.utils');
 
 const ReactionNotes = goog.require('proto.ord.ReactionNotes');
@@ -64,15 +66,36 @@ function load(notes) {
  */
 function unload() {
   const notes = new ReactionNotes();
-  notes.setIsHeterogeneous(utils.getOptionalBool($('#notes_heterogeneous')));
-  notes.setFormsPrecipitate(utils.getOptionalBool($('#notes_precipitate')));
-  notes.setIsExothermic(utils.getOptionalBool($('#notes_exothermic')));
-  notes.setOffgasses(utils.getOptionalBool($('#notes_offgas')));
-  notes.setIsSensitiveToMoisture(utils.getOptionalBool($('#notes_moisture')));
-  notes.setIsSensitiveToOxygen(utils.getOptionalBool($('#notes_oxygen')));
-  notes.setIsSensitiveToLight(utils.getOptionalBool($('#notes_light')));
-  notes.setSafetyNotes($('#notes_safety').text());
-  notes.setProcedureDetails($('#notes_details').text());
+  const isHeterogeneous = utils.getOptionalBool($('#notes_heterogeneous'));
+  if (isHeterogeneous !== null) {
+    notes.setIsHeterogeneous(isHeterogeneous);
+  }
+  const formsPrecipitate = utils.getOptionalBool($('#notes_precipitate'));
+  if (formsPrecipitate !== null) {
+    notes.setFormsPrecipitate(formsPrecipitate);
+  }
+  const isExothermic = utils.getOptionalBool($('#notes_exothermic'));
+  if (isExothermic !== null) {
+    notes.setIsExothermic(isExothermic);
+  }
+  const offgasses = utils.getOptionalBool($('#notes_offgas'));
+  if (offgasses !== null) {
+    notes.setOffgasses(offgasses);
+  }
+  const isSensitiveToMoisture = utils.getOptionalBool($('#notes_moisture'));
+  if (isSensitiveToMoisture !== null) {
+    notes.setIsSensitiveToMoisture(isSensitiveToMoisture);
+  }
+  const isSensitiveToOxygen = utils.getOptionalBool($('#notes_oxygen'));
+  if (isSensitiveToOxygen !== null) {
+    notes.setIsSensitiveToOxygen(isSensitiveToOxygen);
+  }
+  const isSensitiveToLight = utils.getOptionalBool($('#notes_light'));
+  if (isSensitiveToLight !== null) {
+    notes.setIsSensitiveToLight(isSensitiveToLight);
+  }
+  notes.setSafetyNotes(asserts.assertString($('#notes_safety').text()));
+  notes.setProcedureDetails(asserts.assertString($('#notes_details').text()));
   return notes;
 }
 
