@@ -17,12 +17,16 @@
 goog.module('ord.electro');
 goog.module.declareLegacyNamespace();
 
+const asserts = goog.require('goog.asserts');
+
 const utils = goog.require('ord.utils');
 
 const Current = goog.require('proto.ord.Current');
 const ElectrochemistryConditions = goog.require('proto.ord.ElectrochemistryConditions');
 const ElectrochemistryCell = goog.require('proto.ord.ElectrochemistryConditions.ElectrochemistryCell');
+const ElectrochemistryCellType = goog.require('proto.ord.ElectrochemistryConditions.ElectrochemistryCell.ElectrochemistryCellType');
 const ElectrochemistryType = goog.require('proto.ord.ElectrochemistryConditions.ElectrochemistryType');
+const ElectrochemistryTypeEnum = goog.require('proto.ord.ElectrochemistryConditions.ElectrochemistryType.ElectrochemistryTypeEnum');
 const Measurement = goog.require('proto.ord.ElectrochemistryConditions.Measurement');
 const Length = goog.require('proto.ord.Length');
 const Time = goog.require('proto.ord.Time');
@@ -99,8 +103,9 @@ function unload() {
   const electro = new ElectrochemistryConditions();
 
   const type = new ElectrochemistryType();
-  type.setType(utils.getSelector($('#electro_type')));
-  type.setDetails($('#electro_details').text());
+  const typeEnum = utils.getSelectorText($('#electro_type')[0]);
+  type.setType(ElectrochemistryTypeEnum[typeEnum]);
+  type.setDetails(asserts.assertString($('#electro_details').text()));
   if (!utils.isEmptyMessage(type)) {
     electro.setElectrochemistryType(type);
   }
@@ -113,8 +118,8 @@ function unload() {
   if (!utils.isEmptyMessage(voltage)) {
     electro.setVoltage(voltage);
   }
-  electro.setAnodeMaterial($('#electro_anode').text());
-  electro.setCathodeMaterial($('#electro_cathode').text());
+  electro.setAnodeMaterial(asserts.assertString($('#electro_anode').text()));
+  electro.setCathodeMaterial(asserts.assertString($('#electro_cathode').text()));
   const electrodeSeparation =
       utils.readMetric('#electro_separation', new Length());
   if (!utils.isEmptyMessage(electrodeSeparation)) {
@@ -122,8 +127,9 @@ function unload() {
   }
 
   const cell = new ElectrochemistryCell();
-  cell.setType(utils.getSelector($('#electro_cell_type')));
-  cell.setDetails($('#electro_cell_details').text());
+  const cellType = utils.getSelectorText($('#electro_cell_type')[0]);
+  cell.setType(ElectrochemistryCellType[cellType]);
+  cell.setDetails(asserts.assertString($('#electro_cell_details').text()));
   if (!utils.isEmptyMessage(cell)) {
     electro.setCell(cell);
   }
@@ -181,7 +187,7 @@ function addMeasurement() {
 
   const metricButtons = $('input', node);
   metricButtons.attr('name', 'electro_' + radioGroupCounter++);
-  metricButtons.change(function() {
+  metricButtons.on('change', function() {
     if (this.value === 'current') {
       $('.electro_measurement_current_fields', node).show();
       $('.electro_measurement_voltage_fields', node).hide();

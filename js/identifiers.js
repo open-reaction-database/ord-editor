@@ -17,10 +17,13 @@
 goog.module('ord.identifiers');
 goog.module.declareLegacyNamespace();
 
+const asserts = goog.require('goog.asserts');
+
 const uploads = goog.require('ord.uploads');
 const utils = goog.require('ord.utils');
 
 const ReactionIdentifier = goog.require('proto.ord.ReactionIdentifier');
+const IdentifierType = goog.require('proto.ord.ReactionIdentifier.IdentifierType');
 
 exports = {
   load,
@@ -78,19 +81,11 @@ function unload() {
 function unloadIdentifier(node) {
   const identifier = new ReactionIdentifier();
 
-  const value = $('.reaction_identifier_value', node).text();
-  if (value) {
-    identifier.setValue(value);
-  }
+  identifier.setValue(asserts.assertString($('.reaction_identifier_value', node).text()));
 
-  const type = utils.getSelector(node);
-  if (type) {
-    identifier.setType(type);
-  }
-  const details = $('.reaction_identifier_details', node).text();
-  if (details) {
-    identifier.setDetails(details);
-  }
+  const type = utils.getSelectorText(node[0]);
+  identifier.setType(IdentifierType[type]);
+  identifier.setDetails(asserts.assertString($('.reaction_identifier_details', node).text()));
   return identifier;
 }
 
@@ -103,7 +98,7 @@ function add() {
       utils.addSlowly('#reaction_identifier_template', $('#identifiers'));
 
   const uploadButton = $('.reaction_identifier_upload', node);
-  uploadButton.change(function() {
+  uploadButton.on('change', function() {
     if ($(this).is(':checked')) {
       $('.uploader', node).show();
       $('.reaction_identifier_value', node).hide();

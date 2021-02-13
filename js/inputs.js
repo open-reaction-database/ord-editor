@@ -17,7 +17,9 @@
 goog.module('ord.inputs');
 goog.module.declareLegacyNamespace();
 
-const jspbMap = goog.requireType('jspb.Map');
+const asserts = goog.require('goog.asserts');
+
+const JspbMap = goog.requireType('jspb.Map');
 
 const compounds = goog.require('ord.compounds');
 const crudes = goog.require('ord.crudes');
@@ -26,7 +28,9 @@ const utils = goog.require('ord.utils');
 const FlowRate = goog.require('proto.ord.FlowRate');
 const ReactionInput = goog.require('proto.ord.ReactionInput');
 const AdditionDevice = goog.require('proto.ord.ReactionInput.AdditionDevice');
+const AdditionDeviceType = goog.require('proto.ord.ReactionInput.AdditionDevice.AdditionDeviceType');
 const AdditionSpeed = goog.require('proto.ord.ReactionInput.AdditionSpeed');
+const AdditionSpeedType = goog.require('proto.ord.ReactionInput.AdditionSpeed.AdditionSpeedType');
 const Temperature = goog.require('proto.ord.Temperature');
 const Time = goog.require('proto.ord.Time');
 
@@ -43,7 +47,7 @@ exports = {
 
 /**
  * Adds and populates the reaction input sections in the form.
- * @param {!jspbMap<string, !ReactionInput>} inputs
+ * @param {!JspbMap<string, !ReactionInput>} inputs
  */
 function load(inputs) {
   inputs.forEach(function(input, name) {
@@ -85,12 +89,13 @@ function addInputByString(root) {
   xhr.onload = () => {
     if (xhr.status === 409) {
       const decoder = new TextDecoder('utf-8');
+      asserts.assertInstanceof(xhr.response, ArrayBuffer);  // Type hint.
       alert('Could not parse: ' + decoder.decode(xhr.response));
     } else {
-      const bytes = new Uint8Array(xhr.response);
+      const bytes = new Uint8Array(asserts.assertArray(xhr.response));
       const input = ReactionInput.deserializeBinary(bytes);
       if (input) {
-        const input_node = loadInput(root, string, input);
+        const input_node = loadInput(root, asserts.assertString(string), input);
         $('.edittext', input_node).trigger('blur');
       }
     }
@@ -153,7 +158,7 @@ function loadInputUnnamed(node, input) {
 
 /**
  * Fetches the reaction inputs defined in the form and adds them to `inputs`.
- * @param {!jspbMap<string, !ReactionInput>} inputs
+ * @param {!JspbMap<string, !ReactionInput>} inputs
  */
 function unload(inputs) {
   $('#inputs > div.input').each(function(index, node) {
@@ -166,14 +171,14 @@ function unload(inputs) {
 
 /**
  * Fetches a single reaction input defined in the form and adds it to `inputs`.
- * @param {!jspbMap<string, !ReactionInput>} inputs
+ * @param {!JspbMap<string, !ReactionInput>} inputs
  * @param {!jQuery} node Root node for the reaction input.
  */
 function unloadInput(inputs, node) {
   const name = $('.input_name', node).text();
   const input = unloadInputUnnamed(node);
   if (name || !utils.isEmptyMessage(input)) {
-    inputs.set(name, input);
+    inputs.set(asserts.assertString(name), input);
   }
 }
 
@@ -195,7 +200,7 @@ function unloadInputUnnamed(node) {
     input.setCrudeComponentsList(crudeComponentsList);
   }
 
-  const additionOrder = parseInt($('.input_addition_order', node).text());
+  const additionOrder = parseInt($('.input_addition_order', node).text(), 10);
   if (!isNaN(additionOrder)) {
     input.setAdditionOrder(additionOrder);
   }
@@ -206,17 +211,17 @@ function unloadInputUnnamed(node) {
   }
 
   const additionSpeed = new AdditionSpeed();
-  additionSpeed.setType(
-      utils.getSelector($('.input_addition_speed_type', node)));
-  additionSpeed.setDetails($('.input_addition_speed_details', node).text());
+  const additionSpeedType = utils.getSelectorText($('.input_addition_speed_type', node)[0]);
+  additionSpeed.setType(AdditionSpeedType[additionSpeedType]);
+  additionSpeed.setDetails(asserts.assertString($('.input_addition_speed_details', node).text()));
   if (!utils.isEmptyMessage(additionSpeed)) {
     input.setAdditionSpeed(additionSpeed);
   }
 
   const additionDevice = new AdditionDevice();
-  additionDevice.setType(
-      utils.getSelector($('.input_addition_device_type', node)));
-  additionDevice.setDetails($('.input_addition_device_details', node).text());
+  const additionDeviceType = utils.getSelectorText($('.input_addition_device_type', node)[0]);
+  additionDevice.setType(AdditionDeviceType[additionDeviceType]);
+  additionDevice.setDetails(asserts.assertString($('.input_addition_device_details', node).text()));
   if (!utils.isEmptyMessage(additionDevice)) {
     input.setAdditionDevice(additionDevice);
   }
@@ -259,7 +264,7 @@ function add(root, classes = null) {
   });
   // Update the sidebar when the input name is changed.
   const nameNode = node.find('.input_name').first();
-  nameNode.blur(utils.updateSidebar);
+  nameNode.on('blur', utils.updateSidebar);
   return node;
 }
 

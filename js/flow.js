@@ -17,11 +17,15 @@
 goog.module('ord.flows');
 goog.module.declareLegacyNamespace();
 
+const asserts = goog.require('goog.asserts');
+
 const utils = goog.require('ord.utils');
 
 const FlowConditions = goog.require('proto.ord.FlowConditions');
 const FlowType = goog.require('proto.ord.FlowConditions.FlowType');
+const FlowTypeEnum = goog.require('proto.ord.FlowConditions.FlowType.FlowTypeEnum');
 const Tubing = goog.require('proto.ord.FlowConditions.Tubing');
+const TubingMaterialType = goog.require('proto.ord.FlowConditions.Tubing.TubingMaterialType');
 const Length = goog.require('proto.ord.Length');
 
 
@@ -58,17 +62,19 @@ function unload() {
   const flow = new FlowConditions();
 
   const type = new FlowType();
-  type.setType(utils.getSelector($('#flow_type')));
-  type.setDetails($('#flow_details').text());
+  const flowType = utils.getSelectorText($('#flow_type')[0]);
+  type.setType(FlowTypeEnum[flowType]);
+  type.setDetails(asserts.assertString($('#flow_details').text()));
   if (!utils.isEmptyMessage(type)) {
     flow.setFlowType(type);
   }
 
-  flow.setPumpType($('#flow_pump').text());
+  flow.setPumpType(asserts.assertString($('#flow_pump').text()));
 
   const tubing = new Tubing();
-  tubing.setType(utils.getSelector($('#flow_tubing_type')));
-  tubing.setDetails($('#flow_tubing_details').text());
+  const tubingType = utils.getSelectorText($('#flow_tubing_type')[0]);
+  tubing.setType(TubingMaterialType[tubingType]);
+  tubing.setDetails(asserts.assertString($('#flow_tubing_details').text()));
   const diameter = utils.readMetric('#flow_tubing', new Length());
   if (!utils.isEmptyMessage(diameter)) {
     tubing.setDiameter(diameter);

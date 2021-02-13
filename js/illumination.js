@@ -17,10 +17,13 @@
 goog.module('ord.illumination');
 goog.module.declareLegacyNamespace();
 
+const asserts = goog.require('goog.asserts');
+
 const utils = goog.require('ord.utils');
 
 const IlluminationConditions = goog.require('proto.ord.IlluminationConditions');
 const IlluminationType = goog.require('proto.ord.IlluminationConditions.IlluminationType');
+const IlluminationTypeEnum = goog.require('proto.ord.IlluminationConditions.IlluminationType.IlluminationTypeEnum');
 const Length = goog.require('proto.ord.Length');
 const Wavelength = goog.require('proto.ord.Wavelength');
 
@@ -56,8 +59,9 @@ function unload() {
   const illumination = new IlluminationConditions();
 
   const type = new IlluminationType();
-  type.setType(utils.getSelector($('#illumination_type')));
-  type.setDetails($('#illumination_details').text());
+  const illuminationType = utils.getSelectorText($('#illumination_type')[0]);
+  type.setType(IlluminationTypeEnum[illuminationType]);
+  type.setDetails(asserts.assertString($('#illumination_details').text()));
   if (!utils.isEmptyMessage(type)) {
     illumination.setType(type);
   }
@@ -67,7 +71,7 @@ function unload() {
   if (!utils.isEmptyMessage(wavelength)) {
     illumination.setPeakWavelength(wavelength);
   }
-  illumination.setColor($('#illumination_color').text());
+  illumination.setColor(asserts.assertString($('#illumination_color').text()));
   const distance = utils.readMetric('#illumination_distance', new Length());
   if (!utils.isEmptyMessage(distance)) {
     illumination.setDistanceToVessel(distance);

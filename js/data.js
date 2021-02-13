@@ -22,6 +22,8 @@ exports = {
   unloadData,
 };
 
+const asserts = goog.require('goog.asserts');
+
 const uploads = goog.require('ord.uploads');
 const utils = goog.require('ord.utils');
 
@@ -41,7 +43,7 @@ function addData(parentNode) {
   const node = utils.addSlowly('#data_template', target);
   const typeButtons = $('input[type=\'radio\']', node);
   typeButtons.attr('name', 'data_' + radioGroupCounter++);
-  typeButtons.change(function() {
+  typeButtons.on('change', function() {
     if ((this.value === 'text') || (this.value === 'number') ||
         (this.value === 'url')) {
       $('.data_text', node).show();
@@ -94,7 +96,7 @@ function loadData(node, data) {
       value = data.getBytesValue();
       $('.data_text', node).hide();
       $('.data_uploader', node).show();
-      uploads.load(node, value);
+      uploads.load(node, asserts.assertArray(value));
       $('input[value=\'upload\']', node).prop('checked', true);
       break;
     case KindCase.STRING_VALUE:
@@ -124,13 +126,13 @@ function loadData(node, data) {
 function unloadData(node) {
   const data = new Data();
   const description = $('.data_description', node).text();
-  data.setDescription(description);
+  data.setDescription(asserts.assertString(description));
   const format = $('.data_format', node).text();
-  data.setFormat(format);
+  data.setFormat(asserts.assertString(format));
   if ($('input[value=\'text\']', node).is(':checked')) {
     const stringValue = $('.data_text', node).text();
     if (stringValue) {
-      data.setStringValue(stringValue);
+      data.setStringValue(asserts.assertString(stringValue));
     }
   } else if ($('input[value=\'number\']', node).is(':checked')) {
     const stringValue = $('.data_text', node).text();
@@ -148,7 +150,7 @@ function unloadData(node) {
   } else if ($('input[value=\'url\']', node).is(':checked')) {
     const url = $('.data_text', node).text();
     if (url) {
-      data.setUrl(url);
+      data.setUrl(asserts.assertString(url));
     }
   }
   return data;
