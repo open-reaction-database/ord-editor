@@ -17,6 +17,8 @@
 goog.module('ord.products');
 goog.module.declareLegacyNamespace();
 
+const asserts = goog.require('goog.asserts');
+
 const amounts = goog.require('ord.amounts');
 const compounds = goog.require('ord.compounds');
 const utils = goog.require('ord.utils');
@@ -25,9 +27,14 @@ const FloatValue = goog.require('proto.ord.FloatValue');
 const Percentage = goog.require('proto.ord.Percentage');
 const ProductCompound = goog.require('proto.ord.ProductCompound');
 const Texture = goog.require('proto.ord.ProductCompound.Texture');
+const TextureType = goog.require('proto.ord.ProductCompound.Texture.TextureType');
 const ProductMeasurement = goog.require('proto.ord.ProductMeasurement');
+const MeasurementType = goog.require('proto.ord.ProductMeasurement.MeasurementType');
 const MassSpecMeasurementDetails = goog.require('proto.ord.ProductMeasurement.MassSpecMeasurementDetails');
+const MassSpecMeasurementType = goog.require('proto.ord.ProductMeasurement.MassSpecMeasurementDetails.MassSpecMeasurementType');
+const ReactionRoleType = goog.require('proto.ord.ReactionRole.ReactionRoleType');
 const Selectivity = goog.require('proto.ord.ProductMeasurement.Selectivity');
+const SelectivityType = goog.require('proto.ord.ProductMeasurement.Selectivity.SelectivityType');
 const Time = goog.require('proto.ord.Time');
 const Wavelength = goog.require('proto.ord.Wavelength');
 
@@ -115,8 +122,8 @@ function unload(node) {
 function unloadProduct(node) {
   const product = new ProductCompound();
 
-  const reactionRole = utils.getSelector($('.component_reaction_role', node));
-  product.setReactionRole(reactionRole);
+  const reactionRole = utils.getSelectorText($('.component_reaction_role', node)[0]);
+  product.setReactionRole(ReactionRoleType[reactionRole]);
 
   const identifiers =
       compounds.unloadIdentifiers($('.product_compound_identifiers', node));
@@ -125,8 +132,10 @@ function unloadProduct(node) {
     product.setIdentifiersList(identifiers);
   }
 
-  product.setIsDesiredProduct(
-      utils.getOptionalBool($('.outcome_product_desired', node)));
+  const isDesiredProduct = utils.getOptionalBool($('.outcome_product_desired', node));
+  if (isDesiredProduct !== null) {
+    product.setIsDesiredProduct(isDesiredProduct);
+  }
 
   const measurements = [];
   $('.product_measurement', node).each(function(index, measurementNode) {
@@ -141,12 +150,12 @@ function unloadProduct(node) {
   });
   product.setMeasurementsList(measurements);
 
-  const color = $('.outcome_product_color', node).text();
-  product.setIsolatedColor(color);
+  product.setIsolatedColor(asserts.assertString($('.outcome_product_color', node).text()));
 
   const texture = new Texture();
-  texture.setType(utils.getSelector($('.outcome_product_texture_type', node)));
-  texture.setDetails($('.outcome_product_texture_details', node).text());
+  const textureType = utils.getSelectorText($('.outcome_product_texture_type', node)[0]);
+  texture.setType(TextureType[textureType]);
+  texture.setDetails(asserts.assertString($('.outcome_product_texture_details', node).text()));
   if (!utils.isEmptyMessage(texture)) {
     product.setTexture(texture);
   }
@@ -195,7 +204,7 @@ function add(node) {
 
   // Connect reaction role selection to is_desired_product.
   const roleSelector = $('.component_reaction_role', node);
-  roleSelector.change(function() {
+  roleSelector.on('change', function() {
     if (utils.getSelectorText(this) === 'PRODUCT') {
       $('.is_desired_product', node).show();
     } else {
@@ -242,7 +251,7 @@ function addMeasurement(node) {
   // Set up the radio buttons for the value type.
   const buttons = $('.product_measurement_value_type input', measurementNode);
   buttons.attr('name', 'product_measurements_' + radioGroupCounter++);
-  buttons.change(function() {
+  buttons.on('change', function() {
     if (this.value === 'string') {
       $('.product_measurement_pm', measurementNode).hide();
       $('.product_measurement_precision', measurementNode).hide();
@@ -270,7 +279,7 @@ function addMeasurement(node) {
   // Show/hide the authentic standard based on the optional bool.
   const usesAuthenticStandard =
       $('.product_measurement_uses_authentic_standard', measurementNode);
-  usesAuthenticStandard.change(function() {
+  usesAuthenticStandard.on('change', function() {
     if (utils.getOptionalBool(usesAuthenticStandard)) {
       $('.product_measurement_authentic_standard', measurementNode).show();
     } else {
@@ -287,7 +296,7 @@ function addMeasurement(node) {
   // Show/hide fields based on the measurement type.
   const measurementTypeSelector =
       $('.product_measurement_type select', measurementNode);
-  measurementTypeSelector.change(function() {
+  measurementTypeSelector.on('change', function() {
     const measurementType = this.options[this.selectedIndex].text;
     if (measurementType === 'UNSPECIFIED') {
       $('.product_measurement_value_group', measurementNode).hide();
@@ -313,49 +322,49 @@ function addMeasurement(node) {
       $('.wavelength', measurementNode).hide();
       $('.mass_spec_details', measurementNode).hide();
       $('.selectivity', measurementNode).hide();
-      $('.product_measurement_percentage', measurementNode).click();
+      $('.product_measurement_percentage', measurementNode).trigger('click');
     } else if (measurementType === 'SELECTIVITY') {
       $('.product_measurement_value_group', measurementNode).show();
       $('.retention_time', measurementNode).hide();
       $('.wavelength', measurementNode).hide();
       $('.mass_spec_details', measurementNode).hide();
       $('.selectivity', measurementNode).show();
-      $('.product_measurement_string', measurementNode).click();
+      $('.product_measurement_string', measurementNode).trigger('click');
     } else if (measurementType === 'PURITY') {
       $('.product_measurement_value_group', measurementNode).show();
       $('.retention_time', measurementNode).hide();
       $('.wavelength', measurementNode).show();
       $('.mass_spec_details', measurementNode).hide();
       $('.selectivity', measurementNode).hide();
-      $('.product_measurement_percentage', measurementNode).click();
+      $('.product_measurement_percentage', measurementNode).trigger('click');
     } else if (measurementType === 'AREA') {
       $('.product_measurement_value_group', measurementNode).show();
       $('.retention_time', measurementNode).show();
       $('.wavelength', measurementNode).show();
       $('.mass_spec_details', measurementNode).show();
       $('.selectivity', measurementNode).hide();
-      $('.product_measurement_float', measurementNode).click();
+      $('.product_measurement_float', measurementNode).trigger('click');
     } else if (measurementType === 'COUNTS') {
       $('.product_measurement_value_group', measurementNode).show();
       $('.retention_time', measurementNode).show();
       $('.wavelength', measurementNode).hide();
       $('.mass_spec_details', measurementNode).show();
       $('.selectivity', measurementNode).hide();
-      $('.product_measurement_float', measurementNode).click();
+      $('.product_measurement_float', measurementNode).trigger('click');
     } else if (measurementType === 'INTENSITY') {
       $('.product_measurement_value_group', measurementNode).show();
       $('.retention_time', measurementNode).show();
       $('.wavelength', measurementNode).show();
       $('.mass_spec_details', measurementNode).show();
       $('.selectivity', measurementNode).hide();
-      $('.product_measurement_float', measurementNode).click();
+      $('.product_measurement_float', measurementNode).trigger('click');
     } else if (measurementType === 'AMOUNT') {
       $('.product_measurement_value_group', measurementNode).show();
       $('.retention_time', measurementNode).hide();
       $('.wavelength', measurementNode).hide();
       $('.mass_spec_details', measurementNode).hide();
       $('.selectivity', measurementNode).hide();
-      $('.product_measurement_mass', measurementNode).click();
+      $('.product_measurement_mass', measurementNode).trigger('click');
     }
   });
   measurementTypeSelector.trigger('change');
@@ -396,7 +405,7 @@ function loadMeasurement(productNode, measurement) {
   $('.product_measurement_uses_authentic_standard', node).trigger('change');
 
   if (measurement.hasPercentage()) {
-    $('.product_measurement_percentage', node).click();
+    $('.product_measurement_percentage', node).trigger('click');
     $('.product_measurement_value', node).addClass('floattext');
     if (measurement.getPercentage().hasValue()) {
       $('.product_measurement_value', node)
@@ -407,7 +416,7 @@ function loadMeasurement(productNode, measurement) {
           .text(measurement.getPercentage().getPrecision());
     }
   } else if (measurement.hasFloatValue()) {
-    $('.product_measurement_float', node).click();
+    $('.product_measurement_float', node).trigger('click');
     $('.product_measurement_value', node).addClass('floattext');
     if (measurement.getFloatValue().hasValue()) {
       $('.product_measurement_value', node)
@@ -418,13 +427,13 @@ function loadMeasurement(productNode, measurement) {
           .text(measurement.getFloatValue().getPrecision());
     }
   } else if (measurement.getStringValue()) {
-    $('.product_measurement_string', node).click();
+    $('.product_measurement_string', node).trigger('click');
     $('.product_measurement_value', node).removeClass('floattext');
     if (measurement.getStringValue()) {
       $('.product_measurement_value', node).text(measurement.getStringValue());
     }
   } else if (measurement.hasAmount()) {
-    $('.product_measurement_mass', node).click();
+    $('.product_measurement_mass', node).trigger('click');
     const valueNode = $('.product_measurement_value_type', node);
     amounts.load(valueNode, measurement.getAmount());
   }
@@ -441,12 +450,12 @@ function loadMeasurement(productNode, measurement) {
         $('.product_measurement_mass_spec_type', node), massSpec.getType());
     $('.product_measurement_mass_spec_details', node)
         .text(massSpec.getDetails());
-    utils.setOptionalBool(
-        $('.product_measurement_mass_spec_tic_minimum_mz', node),
-        massSpec.hasTicMinimumMz() ? massSpec.getTicMinimumMz() : null);
-    utils.setOptionalBool(
-        $('.product_measurement_mass_spec_tic_maximum_mz', node),
-        massSpec.hasTicMaximumMz() ? massSpec.getTicMaximumMz() : null);
+    if (massSpec.hasTicMinimumMz()) {
+      $('.product_measurement_mass_spec_tic_minimum_mz', node).text(massSpec.getTicMinimumMz());
+    }
+    if (massSpec.hasTicMaximumMz()) {
+      $('.product_measurement_mass_spec_tic_maximum_mz', node).text(massSpec.getTicMaximumMz());
+    }
     const eicMasses = massSpec.getEicMassesList().join(',');
     $('.product_measurement_mass_spec_eic_masses', node).text(eicMasses);
   }
@@ -475,16 +484,25 @@ function unloadMeasurement(node) {
   const measurement = new ProductMeasurement();
   const analysisKey = $('.product_measurement_analysis_key select', node).val();
   if (analysisKey) {
-    measurement.setAnalysisKey(analysisKey);
+    measurement.setAnalysisKey(asserts.assertString(analysisKey));
   }
-  measurement.setType(utils.getSelector($('.product_measurement_type', node)));
-  measurement.setDetails($('.product_measurement_details', node).text());
-  measurement.setUsesInternalStandard(utils.getOptionalBool(
-      $('.product_measurement_uses_internal_standard', node)));
-  measurement.setIsNormalized(
-      utils.getOptionalBool($('.product_measurement_is_normalized', node)));
-  measurement.setUsesAuthenticStandard(utils.getOptionalBool(
-      $('.product_measurement_uses_authentic_standard', node)));
+  const measurementType = utils.getSelectorText($('.product_measurement_type', node)[0]);
+  measurement.setType(MeasurementType[measurementType]);
+  measurement.setDetails(asserts.assertString($('.product_measurement_details', node).text()));
+  const usesInternalStandard = utils.getOptionalBool(
+      $('.product_measurement_uses_internal_standard', node));
+  if (usesInternalStandard !== null) {
+    measurement.setUsesInternalStandard(usesInternalStandard);
+  }
+  const isNormalized = utils.getOptionalBool($('.product_measurement_is_normalized', node));
+  if (isNormalized !== null) {
+    measurement.setIsNormalized(isNormalized);
+  }
+  const usesAuthenticStandard = utils.getOptionalBool(
+      $('.product_measurement_uses_authentic_standard', node));
+  if (usesAuthenticStandard !== null) {
+    measurement.setUsesAuthenticStandard(usesAuthenticStandard);
+  }
 
   const authenticStandardNode =
       $('.product_measurement_authentic_standard', node);
@@ -524,7 +542,7 @@ function unloadMeasurement(node) {
   } else if ($('.product_measurement_string', node).is(':checked')) {
     const stringValue = $('.product_measurement_value', node).text();
     if (stringValue) {
-      measurement.setStringValue(stringValue);
+      measurement.setStringValue(asserts.assertString(stringValue));
     }
   } else if ($('.product_measurement_mass', node).is(':checked')) {
     const amount = amounts.unload($('.product_measurement_value_type', node));
@@ -540,14 +558,18 @@ function unloadMeasurement(node) {
   }
 
   const massSpecDetails = new MassSpecMeasurementDetails();
-  massSpecDetails.setType(
-      utils.getSelector($('.product_measurement_mass_spec_type', node)));
+  const massSpecType = utils.getSelectorText($('.product_measurement_mass_spec_type', node)[0]);
+  massSpecDetails.setType(MassSpecMeasurementType[massSpecType]);
   massSpecDetails.setDetails(
-      $('.product_measurement_mass_spec_details', node).text());
-  massSpecDetails.setTicMinimumMz(utils.getOptionalBool(
-      $('.product_measurement_mass_spec_tic_minimum_mz', node)));
-  massSpecDetails.setTicMaximumMz(utils.getOptionalBool(
-      $('.product_measurement_mass_spec_tic_maximum_mz', node)));
+      asserts.assertString($('.product_measurement_mass_spec_details', node).text()));
+  const ticMinimumMz = parseFloat($('.product_measurement_mass_spec_tic_minimum_mz', node).text());
+  if (!isNaN(ticMinimumMz)) {
+    massSpecDetails.setTicMinimumMz(ticMinimumMz);
+  }
+  const ticMaximumMz = parseFloat($('.product_measurement_mass_spec_tic_maximum_mz', node).text());
+  if (!isNaN(ticMaximumMz)) {
+    massSpecDetails.setTicMaximumMz(ticMaximumMz);
+  }
   if ($('.product_measurement_mass_spec_eic_masses', node).text()) {
     const eicMasses = $('.product_measurement_mass_spec_eic_masses', node)
                           .text()
@@ -560,10 +582,10 @@ function unloadMeasurement(node) {
   }
 
   const selectivity = new Selectivity();
-  selectivity.setType(
-      utils.getSelector($('.product_measurement_selectivity_type', node)));
+  const selectivityType = utils.getSelectorText($('.product_measurement_selectivity_type', node)[0]);
+  selectivity.setType(SelectivityType[selectivityType]);
   selectivity.setDetails(
-      $('.product_measurement_selectivity_details', node).text());
+      asserts.assertString($('.product_measurement_selectivity_details', node).text()));
   if (!utils.isEmptyMessage(selectivity)) {
     measurement.setSelectivity(selectivity);
   }

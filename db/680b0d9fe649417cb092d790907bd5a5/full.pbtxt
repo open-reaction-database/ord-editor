@@ -533,6 +533,8 @@ reactions {
         mass_spec_details {
           type: TIC
           details: "mass spec details"
+          tic_minimum_mz: 1.23
+          tic_maximum_mz: 4.56
           eic_masses: 1.0
           eic_masses: 3.0
           eic_masses: 4.0

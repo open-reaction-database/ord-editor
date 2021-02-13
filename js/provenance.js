@@ -17,6 +17,8 @@
 goog.module('ord.provenance');
 goog.module.declareLegacyNamespace();
 
+const asserts = goog.require('goog.asserts');
+
 const utils = goog.require('ord.utils');
 
 const DateTime = goog.require('proto.ord.DateTime');
@@ -103,17 +105,17 @@ function unload() {
     provenance.setExperimenter(experimenter);
   }
 
-  provenance.setCity($('#provenance_city').text());
+  provenance.setCity(asserts.assertString($('#provenance_city').text()));
 
   const start = new DateTime();
-  start.setValue($('#provenance_start').text());
+  start.setValue(asserts.assertString($('#provenance_start').text()));
   if (!utils.isEmptyMessage(start)) {
     provenance.setExperimentStart(start);
   }
 
-  provenance.setDoi($('#provenance_doi').text());
-  provenance.setPatent($('#provenance_patent').text());
-  provenance.setPublicationUrl($('#provenance_url').text());
+  provenance.setDoi(asserts.assertString($('#provenance_doi').text()));
+  provenance.setPatent(asserts.assertString($('#provenance_patent').text()));
+  provenance.setPublicationUrl(asserts.assertString($('#provenance_url').text()));
 
   const created = unloadRecordEvent($('#provenance_created'));
   if (!utils.isEmptyMessage(created)) {
@@ -121,16 +123,15 @@ function unload() {
   }
 
   const modifieds = [];
-  $('.provenance_modified', '#provenance_modifieds')
-      .each(function(index, node) {
-        node = $(node);
-        if (!utils.isTemplateOrUndoBuffer(node)) {
-          const modified = unloadRecordEvent(node);
-          if (!utils.isEmptyMessage(modified)) {
-            modifieds.push(modified);
-          }
-        }
-      });
+  $('.provenance_modified', $('#provenance_modifieds')).each(function(index, node) {
+    node = $(node);
+    if (!utils.isTemplateOrUndoBuffer(node)) {
+      const modified = unloadRecordEvent(node);
+      if (!utils.isEmptyMessage(modified)) {
+        modifieds.push(modified);
+      }
+    }
+  });
   provenance.setRecordModifiedList(modifieds);
   return provenance;
 }
@@ -143,7 +144,7 @@ function unload() {
 function unloadRecordEvent(node) {
   const created = new RecordEvent();
   const createdTime = new DateTime();
-  createdTime.setValue($('.provenance_time', node).text());
+  createdTime.setValue(asserts.assertString($('.provenance_time', node).text()));
   if (!utils.isEmptyMessage(createdTime)) {
     created.setTime(createdTime);
   }
@@ -151,8 +152,7 @@ function unloadRecordEvent(node) {
   if (!utils.isEmptyMessage(createdPerson)) {
     created.setPerson(createdPerson);
   }
-  const createdDetails = $('.provenance_details', node).text();
-  created.setDetails(createdDetails);
+  created.setDetails(asserts.assertString($('.provenance_details', node).text()));
   return created;
 }
 
@@ -163,11 +163,11 @@ function unloadRecordEvent(node) {
  */
 function unloadPerson(node) {
   const person = new Person();
-  person.setUsername($('.provenance_username', node).text());
-  person.setName($('.provenance_name', node).text());
-  person.setOrcid($('.provenance_orcid', node).text());
-  person.setOrganization($('.provenance_organization', node).text());
-  person.setEmail($('.provenance_email', node).text());
+  person.setUsername(asserts.assertString($('.provenance_username', node).text()));
+  person.setName(asserts.assertString($('.provenance_name', node).text()));
+  person.setOrcid(asserts.assertString($('.provenance_orcid', node).text()));
+  person.setOrganization(asserts.assertString($('.provenance_organization', node).text()));
+  person.setEmail(asserts.assertString($('.provenance_email', node).text()));
   return person;
 }
 

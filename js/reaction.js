@@ -17,6 +17,8 @@
 goog.module('ord.reaction');
 goog.module.declareLegacyNamespace();
 
+const asserts = goog.require('goog.asserts');
+
 const conditions = goog.require('ord.conditions');
 const electro = goog.require('ord.electro');
 const flows = goog.require('ord.flows');
@@ -35,6 +37,7 @@ const uploads = goog.require('ord.uploads');
 const utils = goog.require('ord.utils');
 const workups = goog.require('ord.workups');
 
+const Dataset = goog.require('proto.ord.Dataset');
 const Reaction = goog.require('proto.ord.Reaction');
 
 exports = {
@@ -51,6 +54,9 @@ const session = utils.session;
 /**
  * Initializes the form.
  * @param {!Reaction} reaction Reaction proto to load.
+ *
+ * TODO(kearnes): Many undefined properties here.
+ * @suppress {missingProperties}
  */
 function init(reaction) {
   // Initialize all the template popup menus.
@@ -69,7 +75,7 @@ function init(reaction) {
   /** @suppress {undefinedVars} */
   Popper.Defaults.modifiers.computeStyle.gpuAcceleration = false;
   // Show "save" on modifications.
-  utils.listen('body');
+  utils.listen($('body'));
   // Load Ketcher content into an element with attribute role="application".
   document.getElementById('ketcher-iframe').contentWindow.ketcher.initKetcher();
   // Initialize the UI with the Reaction.
@@ -95,6 +101,7 @@ async function initFromDataset(fileName, index) {
   session.index = index;
   // Fetch the Dataset containing the Reaction proto.
   session.dataset = await utils.getDataset(fileName);
+  asserts.assertInstanceof(session.dataset, Dataset);  // Type hint.
   const reaction = session.dataset.getReactionsList()[index];
   init(reaction);
 }
@@ -105,6 +112,7 @@ async function initFromDataset(fileName, index) {
  */
 async function initFromReactionId(reactionId) {
   const reaction = await utils.getReactionById(reactionId);
+  asserts.assertInstanceof(reaction, Reaction);  // Type hint.
   // NOTE(kearnes): Without this next line, `reaction` will be
   // partial/incomplete, and I have no idea why.
   console.log(reaction.toObject());
@@ -122,8 +130,7 @@ function renderReaction(reaction) {
   const binary = reaction.serializeBinary();
   xhr.responseType = 'json';
   xhr.onload = function() {
-    const html_block = xhr.response;
-    $('#reaction_render').html(html_block);
+    $('#reaction_render').html(asserts.assertString(xhr.response));
   };
   xhr.send(binary);
 }
@@ -154,7 +161,7 @@ function downloadReaction() {
     // Make the browser write the file.
     const url = URL.createObjectURL(new Blob([xhr.response]));
     const link = document.createElement('a');
-    link.href = url;
+    link.setAttribute('href', url);
     link.setAttribute('download', 'reaction.pbtxt');
     document.body.appendChild(link);
     link.click();
@@ -260,7 +267,7 @@ function unloadReaction() {
   }
 
   // Setter does nothing when passed an empty string.
-  reaction.setReactionId($('#reaction_id').text());
+  reaction.setReactionId(asserts.assertString($('#reaction_id').text()));
   return reaction;
 }
 
@@ -341,8 +348,10 @@ function commit() {
     return;
   }
   const reaction = unloadReaction();
+  asserts.assertInstanceof(session.dataset, Dataset);  // Type hint.
   const reactions = session.dataset.getReactionsList();
-  reactions[session.index] = reaction;
-  utils.putDataset(session.fileName, session.dataset);
-  uploads.putAll(session.fileName);
+  reactions[asserts.assertNumber(session.index)] = reaction;
+  const fileName = asserts.assertString(session.fileName);
+  utils.putDataset(fileName, session.dataset);
+  uploads.putAll(fileName);
 }

@@ -135,7 +135,7 @@ function clean() {
  * @param {!jQuery} node
  */
 function listen(node) {
-  addChangeHandler($(node), dirty);
+  addChangeHandler(node, dirty);
   $('.edittext', node).on('focus', event => selectText(event.target));
   $('.floattext', node).on('blur', event => checkFloat(event.target));
   $('.integertext', node).on('blur', event => checkInteger(event.target));
