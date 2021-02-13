@@ -35,6 +35,8 @@ exports = {
   renderCompound,
 };
 
+const jspbMap = goog.requireType('jspb.Map');
+
 const amounts = goog.require('ord.amounts');
 const data = goog.require('ord.data');
 const uploads = goog.require('ord.uploads');
@@ -593,7 +595,7 @@ function loadFeature(node, name, feature) {
 /**
  * Fetches a feature record defined in the form and adds it to `featuresMap`.
  * @param {!Node} node Root node for the Data record.
- * @param {!jspb.Map<string, !Data>} featuresMap
+ * @param {!jspbMap<string, !Data>} featuresMap
  */
 function unloadFeature(node, featuresMap) {
   const name = $('.feature_name', node).text();

@@ -22,6 +22,8 @@ exports = {
   addCode
 };
 
+const jspbMap = goog.requireType('jspb.Map');
+
 const data = goog.require('ord.data');
 const utils = goog.require('ord.utils');
 
@@ -29,7 +31,7 @@ const Data = goog.require('proto.ord.Data');
 
 /**
  * Adds and populates the automation_code sections in the form.
- * @param {!jspb.Map<string, !Data>} codes
+ * @param {!jspbMap<string, !Data>} codes
  */
 function load(codes) {
   codes.forEach(function(code, name) {
@@ -50,7 +52,7 @@ function loadCode(name, code) {
 
 /**
  * Fetches the automation_code sections from the form and adds them to `codes`.
- * @param {!jspb.Map<string, !Data>} codes
+ * @param {!jspbMap<string, !Data>} codes
  */
 function unload(codes) {
   $('.setup_code').each(function(index, node) {
@@ -64,7 +66,7 @@ function unload(codes) {
 /**
  * Fetches a single automation_code section from the form and adds it to
  * `codes`.
- * @param {!jspb.Map<string, !Data>} codes
+ * @param {!jspbMap<string, !Data>} codes
  * @param {!Node} node The root node of the automation_code section to fetch.
  */
 function unloadCode(codes, node) {

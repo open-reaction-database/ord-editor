@@ -17,6 +17,8 @@
 goog.module('ord.outcomes');
 goog.module.declareLegacyNamespace();
 
+const jspbMap = goog.requireType('jspb.Map');
+
 const data = goog.require('ord.data');
 const products = goog.require('ord.products');
 const utils = goog.require('ord.utils');
@@ -111,7 +113,7 @@ function loadAnalysis(outcomeNode, name, analysis) {
  * Adds and populates a data section in a reaction analysis.
  * @param {!Node} node Parent reaction analysis node.
  * @param {string} name The name of this Data record.
- * @param {!proto.ord.Data} data
+ * @param {!Data} dataMessage
  */
 function loadData(node, name, dataMessage) {
   $('.outcome_data_name', node).text(name);
@@ -207,7 +209,7 @@ function unloadAnalysisSingle(analysisNode) {
 /**
  * Fetches a reaction analysis defined in the form and adds it to `analyses`.
  * @param {!Node} analysisNode Root node for the reaction analysis.
- * @param {!jspb.Map<string, !Analysis>} analyses
+ * @param {!jspbMap<string, !Analysis>} analyses
  */
 function unloadAnalysis(analysisNode, analyses) {
   const analysis = unloadAnalysisSingle(analysisNode);
@@ -220,7 +222,7 @@ function unloadAnalysis(analysisNode, analyses) {
 /**
  * Fetches a data record defined in the form and adds it to `dataMap`.
  * @param {!Node} node Root node for the Data record.
- * @param {!jspb.Map<string, !proto.ord.Data>} dataMap
+ * @param {!jspbMap<string, !Data>} dataMap
  */
 function unloadData(node, dataMap) {
   const name = $('.outcome_data_name', node).text();

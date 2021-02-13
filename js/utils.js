@@ -17,6 +17,9 @@
 goog.module('ord.utils');
 goog.module.declareLegacyNamespace();
 
+const jspbMessage = goog.requireType('jspb.Message');
+
+/** @suppress {extraRequire} */
 const enums = goog.require('ord.enums');  // Used by nameToProto.
 
 const Dataset = goog.require('proto.ord.Dataset');
@@ -75,6 +78,7 @@ const INTEGER_PATTERN = /^-?\d+$/;
 
 /**
  * Sets the `ready` value to true.
+ * @suppress {undefinedVars}
  */
 function ready() {
   $('body').attr('ready', true);
@@ -347,7 +351,7 @@ function getReactionById(reactionId) {
  * Converts a Message_Field name from a data-proto attribute into a proto class.
  * @param {string} protoName Underscore-delimited protocol buffer field name,
  *     such as Reaction_provenance.
- * @return {?typeof jspb.Message}
+ * @return {?typeof jspbMessage}
  */
 function nameToProto(protoName) {
   let clazz = proto.ord;
@@ -443,7 +447,7 @@ function addChangeHandler(node, handler) {
 /**
  * Generic validator for many message types, not just reaction.
  * NOTE: This function does not commit or save anything!
- * @param {!jspb.Message} message The proto to validate.
+ * @param {!jspbMessage} message The proto to validate.
  * @param {string} messageTypeString The message type.
  * @param {!Node} node Parent node for the unloaded message.
  * @param {?Node} validateNode Target div for validation output.
@@ -600,7 +604,7 @@ async function compareDataset(fileName, dataset) {
  * assume that the message is truly “empty” (that is, doesn’t have anything
  * meaningful that is set) and can be omitted when constructing the surrounding
  * message.
- * @param {!jspb.Message} obj The object to test.
+ * @param {!jspbMessage} obj The object to test.
  * @return {boolean} Whether the message is empty.
  */
 function isEmptyMessage(obj) {
@@ -623,10 +627,10 @@ function isTemplateOrUndoBuffer(node) {
 /**
  * Unpacks a (value, units, precision) tuple into the given type.
  * @param {string} prefix The prefix for element attributes.
- * @param {!jspb.Message} proto A protocol buffer with `value`, `precision`,
+ * @param {!jspbMessage} proto A protocol buffer with `value`, `precision`,
  *     and `units` fields.
  * @param {?Node=} node The node containing the tuple.
- * @return {!jspb.Message} The updated protocol buffer. Note that the message
+ * @return {!jspbMessage} The updated protocol buffer. Note that the message
  *     is modified in-place.
  */
 function readMetric(prefix, proto, node = null) {
@@ -648,7 +652,7 @@ function readMetric(prefix, proto, node = null) {
 /**
  * Packs a (value, units, precision) tuple into form elements.
  * @param {string} prefix The prefix for element attributes.
- * @param {?jspb.Message} proto A protocol buffer with `value`, `precision`,
+ * @param {?jspbMessage} proto A protocol buffer with `value`, `precision`,
  *     and`units` fields.
  * @param {?Node=} node The target node for the tuple.
  */

@@ -17,6 +17,8 @@
 goog.module('ord.inputs');
 goog.module.declareLegacyNamespace();
 
+const jspbMap = goog.requireType('jspb.Map');
+
 const compounds = goog.require('ord.compounds');
 const crudes = goog.require('ord.crudes');
 const utils = goog.require('ord.utils');
@@ -41,7 +43,7 @@ exports = {
 
 /**
  * Adds and populates the reaction input sections in the form.
- * @param {!jspb.Map<string, !ReactionInput>} inputs
+ * @param {!jspbMap<string, !ReactionInput>} inputs
  */
 function load(inputs) {
   inputs.forEach(function(input, name) {
@@ -151,7 +153,7 @@ function loadInputUnnamed(node, input) {
 
 /**
  * Fetches the reaction inputs defined in the form and adds them to `inputs`.
- * @param {!jspb.Map<string, !ReactionInput>} inputs
+ * @param {!jspbMap<string, !ReactionInput>} inputs
  */
 function unload(inputs) {
   $('#inputs > div.input').each(function(index, node) {
@@ -164,7 +166,7 @@ function unload(inputs) {
 
 /**
  * Fetches a single reaction input defined in the form and adds it to `inputs`.
- * @param {!jspb.Map<string, !ReactionInput>} inputs
+ * @param {!jspbMap<string, !ReactionInput>} inputs
  * @param {!Node} node Root node for the reaction input.
  */
 function unloadInput(inputs, node) {
