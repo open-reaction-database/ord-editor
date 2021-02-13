@@ -140,7 +140,7 @@ function unload() {
   codes.unload(automationCodeMap);
 
   const environment = new ReactionEnvironment();
-  const environmentType = utils.getSelector($('#setup_environment_type')[0]);
+  const environmentType = utils.getSelectorText($('#setup_environment_type')[0]);
   environment.setType(ReactionEnvironmentType[environmentType]);
   environment.setDetails(
       asserts.assertString($('#setup_environment_details').text()));
@@ -159,7 +159,7 @@ function unloadVessel() {
   const vessel = new Vessel();
 
   const type = new VesselType();
-  const vesselType = utils.getSelector($('#setup_vessel_type')[0]);
+  const vesselType = utils.getSelectorText($('#setup_vessel_type')[0]);
   type.setType(VesselTypeEnum[vesselType]);
   type.setDetails(asserts.assertString($('#setup_vessel_details').text()));
   if (!utils.isEmptyMessage(type)) {
@@ -167,7 +167,7 @@ function unloadVessel() {
   }
 
   const material = new VesselMaterial();
-  const materialType = utils.getSelector($('#setup_vessel_material')[0]);
+  const materialType = utils.getSelectorText($('#setup_vessel_material')[0]);
   material.setType(VesselMaterialType[materialType]);
   material.setDetails(
       asserts.assertString($('#setup_vessel_material_details').text()));
@@ -201,9 +201,9 @@ function unloadVessel() {
       return;
     }
     const attachment = new VesselAttachment();
-    const attachementType =
+    const attachmentType =
         utils.getSelectorText($('.setup_vessel_attachment_type', node)[0]);
-    attachment.setType(VesselAttachmentType[attachementType]);
+    attachment.setType(VesselAttachmentType[attachmentType]);
     attachment.setDetails(asserts.assertString(
         $('.setup_vessel_attachment_details', node).text()));
     if (!utils.isEmptyMessage(attachment)) {

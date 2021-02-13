@@ -182,7 +182,7 @@ function unloadOutcome(node) {
 function unloadAnalysisSingle(analysisNode) {
   const analysis = new Analysis();
   const analysisType =
-      utils.getSelector($('.outcome_analysis_type', analysisNode)[0]);
+      utils.getSelectorText($('.outcome_analysis_type', analysisNode)[0]);
   analysis.setType(AnalysisType[analysisType]);
   const chmoId =
       parseInt($('.outcome_analysis_chmo_id', analysisNode).text(), 10);
