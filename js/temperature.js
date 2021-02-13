@@ -17,12 +17,16 @@
 goog.module('ord.temperature');
 goog.module.declareLegacyNamespace();
 
+const asserts = goog.require('goog.asserts');
+
 const utils = goog.require('ord.utils');
 
 const Temperature = goog.require('proto.ord.Temperature');
 const TemperatureConditions = goog.require('proto.ord.TemperatureConditions');
 const Measurement = goog.require('proto.ord.TemperatureConditions.Measurement');
+const MeasurementType = goog.require('proto.ord.TemperatureConditions.Measurement.MeasurementType');
 const TemperatureControl = goog.require('proto.ord.TemperatureConditions.TemperatureControl');
+const TemperatureControlType = goog.require('proto.ord.TemperatureConditions.TemperatureControl.TemperatureControlType');
 const Time = goog.require('proto.ord.Time');
 
 exports = {
@@ -76,8 +80,9 @@ function unload() {
   const temperature = new TemperatureConditions();
 
   const control = new TemperatureControl();
-  control.setType(utils.getSelector($('#temperature_control')));
-  control.setDetails($('#temperature_control_details').text());
+  const controlType = utils.getSelectorText($('#temperature_control')[0]);
+  control.setType(TemperatureControlType[controlType]);
+  control.setDetails(asserts.assertString($('#temperature_control_details').text()));
   if (!utils.isEmptyMessage(control)) {
     temperature.setControl(control);
   }
@@ -108,10 +113,9 @@ function unload() {
  */
 function unloadMeasurement(node) {
   const measurement = new Measurement();
-  const type = utils.getSelector($('.temperature_measurement_type', node));
-  measurement.setType(type);
-  const details = $('.temperature_measurement_details', node).text();
-  measurement.setDetails(details);
+  const measurementType = utils.getSelectorText($('.temperature_measurement_type', node)[0]);
+  measurement.setType(MeasurementType[measurementType]);
+  measurement.setDetails(asserts.assertString($('.temperature_measurement_details', node).text()));
   const temperature = utils.readMetric(
       '.temperature_measurement_temperature', new Temperature(), node);
   if (!utils.isEmptyMessage(temperature)) {

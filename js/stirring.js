@@ -17,11 +17,15 @@
 goog.module('ord.stirring');
 goog.module.declareLegacyNamespace();
 
+const asserts = goog.require('goog.asserts');
+
 const utils = goog.require('ord.utils');
 
 const StirringConditions = goog.require('proto.ord.StirringConditions');
 const StirringMethod = goog.require('proto.ord.StirringConditions.StirringMethod');
+const StirringMethodType = goog.require('proto.ord.StirringConditions.StirringMethod.StirringMethodType');
 const StirringRate = goog.require('proto.ord.StirringConditions.StirringRate');
+const StirringRateType = goog.require('proto.ord.StirringConditions.StirringRate.StirringRateType');
 
 exports = {
   load,
@@ -59,15 +63,17 @@ function unload() {
   const stirring = new StirringConditions();
 
   const method = new StirringMethod();
-  method.setType(utils.getSelector($('#stirring_method_type')));
-  method.setDetails($('#stirring_method_details').text());
+  const methodType = utils.getSelectorText($('#stirring_method_type')[0]);
+  method.setType(StirringMethodType[methodType]);
+  method.setDetails(asserts.assertString($('#stirring_method_details').text()));
   if (!utils.isEmptyMessage(method)) {
     stirring.setMethod(method);
   }
 
   const rate = new StirringRate();
-  rate.setType(utils.getSelector($('#stirring_rate_type')));
-  rate.setDetails($('#stirring_rate_details').text());
+  const rateType = utils.getSelectorText($('#stirring_rate_type')[0]);
+  rate.setType(StirringRateType[rateType]);
+  rate.setDetails(asserts.assertString($('#stirring_rate_details').text()));
   const rpm = parseFloat($('#stirring_rpm').text());
   if (!isNaN(rpm)) {
     rate.setRpm(rpm);

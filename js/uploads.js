@@ -16,6 +16,9 @@
 
 goog.module('ord.uploads');
 goog.module.declareLegacyNamespace();
+
+const asserts = goog.require('goog.asserts');
+
 exports = {
   getFile,
   initialize,
@@ -104,14 +107,14 @@ function putAll(dirName) {
  * @param {!jQuery} uploader A `.data_uploader` div.
  */
 function retrieve(uploader) {
-  const token = uploader.attr('data-token');
+  const token = asserts.assertString(uploader.attr('data-token'));
   const xhr = new XMLHttpRequest();
   xhr.open('POST', '/dataset/proto/download/' + token);
   xhr.onload = () => {
     // Make the browser write the file.
     const url = URL.createObjectURL(new Blob([xhr.response]));
     const link = document.createElement('a');
-    link.href = url;
+    link.setAttribute('href', url);
     link.setAttribute('download', token);
     document.body.appendChild(link);
     link.click();
@@ -155,7 +158,7 @@ function load(node, bytesValue) {
  * @returns {!Uint8Array}
  */
 function unload(node) {
-  const token = $('.data_uploader', node).attr('data-token');
+  const token = asserts.assertString($('.data_uploader', node).attr('data-token'));
   const bytesValue = unstashUpload(token);
   if (bytesValue) {
     // This is just a round-trip for bytesValue.
