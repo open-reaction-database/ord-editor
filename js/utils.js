@@ -64,7 +64,6 @@ exports = {
   getDataset,
   getOptionalBool,
   getReactionById,
-  getSelector,
   getSelectorText,
   freeze,
   initCollapse,
@@ -686,7 +685,11 @@ function readMetric(prefix, proto, node = null) {
   }
   if (proto.setUnits) {
     // proto.ord.Percentage doesn't have units.
-    proto.setUnits(getSelector($(prefix + '_units', node)));
+    const unitsNode = $(prefix + '_units', node);
+    const unitsName = unitsNode.attr('data-proto');
+    const unitsEnum = nameToProto(asserts.assertString(unitsName));
+    const units = getSelectorText(unitsNode[0]);
+    proto.setUnits(unitsEnum[units]);
   }
   const precision = parseFloat($(prefix + '_precision', node).text());
   if (!isNaN(precision)) {
@@ -748,15 +751,6 @@ function setTextFromFile(identifierNode, valueClass) {
 function setSelector(node, value) {
   $('option', node).first().removeAttr('selected');
   $('option[value=' + value + ']', node).first().attr('selected', 'selected');
-}
-
-/**
- * Finds the selected <option/> and maps its text onto a proto Enum.
- * @param {!jQuery} node A <select/> element.
- * @return {number}
- */
-function getSelector(node) {
-  return parseInt($('select', node).first().val(), 10);
 }
 
 /**
