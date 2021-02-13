@@ -66,3 +66,15 @@ jobs:
           cd "${GITHUB_WORKSPACE}/ord-editor"
           pip install flask pylint
           pylint py/
+
+  check_javascript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: clang-format
+        run: |
+          cd "${GITHUB_WORKSPACE}"
+          sudo apt update && sudo apt install clang-format-10 --yes
+          # NOTE(kearnes): Run clang-format before installing anything with npm.
+          find . -name '*.js' -exec clang-format-10 -n -Werror --style=file {} +
+
