@@ -64,13 +64,11 @@ function load(notes) {
  */
 function unload() {
   const notes = new ReactionNotes();
-  notes.setIsHeterogeneous(
-      utils.getOptionalBool($('#notes_heterogeneous')));
+  notes.setIsHeterogeneous(utils.getOptionalBool($('#notes_heterogeneous')));
   notes.setFormsPrecipitate(utils.getOptionalBool($('#notes_precipitate')));
   notes.setIsExothermic(utils.getOptionalBool($('#notes_exothermic')));
   notes.setOffgasses(utils.getOptionalBool($('#notes_offgas')));
-  notes.setIsSensitiveToMoisture(
-      utils.getOptionalBool($('#notes_moisture')));
+  notes.setIsSensitiveToMoisture(utils.getOptionalBool($('#notes_moisture')));
   notes.setIsSensitiveToOxygen(utils.getOptionalBool($('#notes_oxygen')));
   notes.setIsSensitiveToLight(utils.getOptionalBool($('#notes_light')));
   notes.setSafetyNotes($('#notes_safety').text());

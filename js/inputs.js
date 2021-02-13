@@ -221,20 +221,19 @@ function unloadInputUnnamed(node) {
     input.setAdditionDevice(additionDevice);
   }
 
-  const additionDuration = utils.readMetric(
-      '.input_addition_duration', new Time(), node);
+  const additionDuration =
+      utils.readMetric('.input_addition_duration', new Time(), node);
   if (!utils.isEmptyMessage(additionDuration)) {
     input.setAdditionDuration(additionDuration);
   }
 
-  const additionTemperature = utils.readMetric(
-      '.input_addition_temperature', new Temperature(), node);
+  const additionTemperature =
+      utils.readMetric('.input_addition_temperature', new Temperature(), node);
   if (!utils.isEmptyMessage(additionTemperature)) {
     input.setAdditionTemperature(additionTemperature);
   }
 
-  const flowRate =
-      utils.readMetric('.input_flow_rate', new FlowRate(), node);
+  const flowRate = utils.readMetric('.input_flow_rate', new FlowRate(), node);
   if (!utils.isEmptyMessage(flowRate)) {
     input.setFlowRate(flowRate);
   }

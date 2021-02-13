@@ -52,8 +52,7 @@ function load(electro) {
   utils.writeMetric('#electro_voltage', electro.getVoltage());
   $('#electro_anode').text(electro.getAnodeMaterial());
   $('#electro_cathode').text(electro.getCathodeMaterial());
-  utils.writeMetric(
-      '#electro_separation', electro.getElectrodeSeparation());
+  utils.writeMetric('#electro_separation', electro.getElectrodeSeparation());
 
   const cell = electro.getCell();
   if (cell) {
@@ -106,13 +105,11 @@ function unload() {
     electro.setElectrochemistryType(type);
   }
 
-  const current =
-      utils.readMetric('#electro_current', new Current());
+  const current = utils.readMetric('#electro_current', new Current());
   if (!utils.isEmptyMessage(current)) {
     electro.setCurrent(current);
   }
-  const voltage =
-      utils.readMetric('#electro_voltage', new Voltage());
+  const voltage = utils.readMetric('#electro_voltage', new Voltage());
   if (!utils.isEmptyMessage(voltage)) {
     electro.setVoltage(voltage);
   }
@@ -152,22 +149,21 @@ function unload() {
  */
 function unloadMeasurement(node) {
   const measurement = new Measurement();
-  const time = utils.readMetric(
-      '.electro_measurement_time', new Time(), node);
+  const time = utils.readMetric('.electro_measurement_time', new Time(), node);
   if (!utils.isEmptyMessage(time)) {
     measurement.setTime(time);
   }
 
   if ($('.electro_measurement_current', node).is(':checked')) {
-    const current = utils.readMetric(
-        '.electro_measurement_current', new Current(), node);
+    const current =
+        utils.readMetric('.electro_measurement_current', new Current(), node);
     if (!utils.isEmptyMessage(current)) {
       measurement.setCurrent(current);
     }
   }
   if ($('.electro_measurement_voltage', node).is(':checked')) {
-    const voltage = utils.readMetric(
-        '.electro_measurement_voltage', new Voltage(), node);
+    const voltage =
+        utils.readMetric('.electro_measurement_voltage', new Voltage(), node);
     if (!utils.isEmptyMessage(voltage)) {
       measurement.setVoltage(voltage);
     }

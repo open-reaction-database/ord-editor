@@ -75,8 +75,7 @@ function unload() {
  */
 function unloadObservation(node) {
   const observation = new ReactionObservation();
-  const time =
-      utils.readMetric('.observation_time', new Time(), node);
+  const time = utils.readMetric('.observation_time', new Time(), node);
   if (!utils.isEmptyMessage(time)) {
     observation.setTime(time);
   }

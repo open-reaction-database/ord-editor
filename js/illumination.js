@@ -62,14 +62,13 @@ function unload() {
     illumination.setType(type);
   }
 
-  const wavelength = utils.readMetric(
-      '#illumination_wavelength', new Wavelength());
+  const wavelength =
+      utils.readMetric('#illumination_wavelength', new Wavelength());
   if (!utils.isEmptyMessage(wavelength)) {
     illumination.setPeakWavelength(wavelength);
   }
   illumination.setColor($('#illumination_color').text());
-  const distance =
-      utils.readMetric('#illumination_distance', new Length());
+  const distance = utils.readMetric('#illumination_distance', new Length());
   if (!utils.isEmptyMessage(distance)) {
     illumination.setDistanceToVessel(distance);
   }
@@ -83,6 +82,5 @@ function unload() {
  */
 function validateIllumination(node, validateNode = null) {
   const illumination = unload();
-  utils.validate(
-      illumination, 'IlluminationConditions', node, validateNode);
+  utils.validate(illumination, 'IlluminationConditions', node, validateNode);
 }

@@ -106,8 +106,7 @@ function load(node, amount) {
     const solutes = amount.hasVolumeIncludesSolutes() ?
         amount.getVolumeIncludesSolutes() :
         null;
-    utils.setOptionalBool(
-        $('.includes_solutes.optional_bool', node), solutes);
+    utils.setOptionalBool($('.includes_solutes.optional_bool', node), solutes);
     utils.setSelector(
         $('.amount_units_volume', amountNode), amount.getVolume().getUnits());
   }

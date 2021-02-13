@@ -95,8 +95,7 @@ function loadWorkup(workup) {
     }
     const rate = stirring.getRate();
     if (rate) {
-      utils.setSelector(
-          $('.workup_stirring_rate_type', node), rate.getType());
+      utils.setSelector($('.workup_stirring_rate_type', node), rate.getType());
       $('.workup_stirring_rate_details', node).text(rate.getDetails());
       const rpm = rate.getRpm();
       if (rpm !== 0) {
@@ -165,8 +164,7 @@ function unloadWorkup(node) {
 
   workup.setDetails($('.workup_details', node).text());
 
-  const duration =
-      utils.readMetric('.workup_duration', new Time(), node);
+  const duration = utils.readMetric('.workup_duration', new Time(), node);
   if (!utils.isEmptyMessage(duration)) {
     workup.setDuration(duration);
   }
@@ -191,8 +189,8 @@ function unloadWorkup(node) {
     temperature.setControl(control);
   }
 
-  const setpoint = utils.readMetric(
-      '.workup_temperature_setpoint', new Temperature(), node);
+  const setpoint =
+      utils.readMetric('.workup_temperature_setpoint', new Temperature(), node);
   if (!utils.isEmptyMessage(setpoint)) {
     temperature.setSetpoint(setpoint);
   }
@@ -219,8 +217,7 @@ function unloadWorkup(node) {
   const stirring = new StirringConditions();
 
   const method = new StirringMethod();
-  method.setType(
-      utils.getSelector($('.workup_stirring_method_type', node)));
+  method.setType(utils.getSelector($('.workup_stirring_method_type', node)));
   method.setDetails($('.workup_stirring_method_details').text());
   if (!utils.isEmptyMessage(method)) {
     stirring.setMethod(method);
@@ -245,8 +242,7 @@ function unloadWorkup(node) {
   if (!isNaN(targetPh)) {
     workup.setTargetPh(targetPh);
   }
-  workup.setIsAutomated(
-      utils.getOptionalBool($('.workup_automated', node)));
+  workup.setIsAutomated(utils.getOptionalBool($('.workup_automated', node)));
   return workup;
 }
 
@@ -267,8 +263,7 @@ function unloadMeasurement(node) {
     measurement.setTime(time);
   }
   const temperature = utils.readMetric(
-      '.workup_temperature_measurement_temperature',
-      new Temperature(), node);
+      '.workup_temperature_measurement_temperature', new Temperature(), node);
   if (!utils.isEmptyMessage(temperature)) {
     measurement.setTemperature(temperature);
   }

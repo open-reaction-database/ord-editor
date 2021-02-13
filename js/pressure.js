@@ -90,8 +90,7 @@ function unload() {
     pressure.setControl(control);
   }
 
-  const setpoint =
-      utils.readMetric('#pressure_setpoint', new Pressure());
+  const setpoint = utils.readMetric('#pressure_setpoint', new Pressure());
   if (!utils.isEmptyMessage(setpoint)) {
     pressure.setSetpoint(setpoint);
   }
@@ -129,13 +128,12 @@ function unloadMeasurement(node) {
   measurement.setType(type);
   const details = $('.pressure_measurement_details', node).text();
   measurement.setDetails(details);
-  const pressure = utils.readMetric(
-      '.pressure_measurement_pressure', new Pressure(), node);
+  const pressure =
+      utils.readMetric('.pressure_measurement_pressure', new Pressure(), node);
   if (!utils.isEmptyMessage(pressure)) {
     measurement.setPressure(pressure);
   }
-  const time = utils.readMetric(
-      '.pressure_measurement_time', new Time(), node);
+  const time = utils.readMetric('.pressure_measurement_time', new Time(), node);
   if (!utils.isEmptyMessage(time)) {
     measurement.setTime(time);
   }

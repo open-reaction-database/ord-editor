@@ -146,14 +146,13 @@ function unload() {
 function unloadOutcome(node) {
   const outcome = new ReactionOutcome();
 
-  const time =
-      utils.readMetric('.outcome_time', new Time(), node);
+  const time = utils.readMetric('.outcome_time', new Time(), node);
   if (!utils.isEmptyMessage(time)) {
     outcome.setReactionTime(time);
   }
 
-  const conversion = utils.readMetric(
-      '.outcome_conversion', new Percentage(), node);
+  const conversion =
+      utils.readMetric('.outcome_conversion', new Percentage(), node);
   if (!utils.isEmptyMessage(conversion)) {
     outcome.setConversion(conversion);
   }

@@ -115,8 +115,7 @@ function unload(node) {
 function unloadProduct(node) {
   const product = new ProductCompound();
 
-  const reactionRole =
-      utils.getSelector($('.component_reaction_role', node));
+  const reactionRole = utils.getSelector($('.component_reaction_role', node));
   product.setReactionRole(reactionRole);
 
   const identifiers =
@@ -146,8 +145,7 @@ function unloadProduct(node) {
   product.setIsolatedColor(color);
 
   const texture = new Texture();
-  texture.setType(
-      utils.getSelector($('.outcome_product_texture_type', node)));
+  texture.setType(utils.getSelector($('.outcome_product_texture_type', node)));
   texture.setDetails($('.outcome_product_texture_details', node).text());
   if (!utils.isEmptyMessage(texture)) {
     product.setTexture(texture);
@@ -479,8 +477,7 @@ function unloadMeasurement(node) {
   if (analysisKey) {
     measurement.setAnalysisKey(analysisKey);
   }
-  measurement.setType(
-      utils.getSelector($('.product_measurement_type', node)));
+  measurement.setType(utils.getSelector($('.product_measurement_type', node)));
   measurement.setDetails($('.product_measurement_details', node).text());
   measurement.setUsesInternalStandard(utils.getOptionalBool(
       $('.product_measurement_uses_internal_standard', node)));
@@ -530,21 +527,19 @@ function unloadMeasurement(node) {
       measurement.setStringValue(stringValue);
     }
   } else if ($('.product_measurement_mass', node).is(':checked')) {
-    const amount =
-        amounts.unload($('.product_measurement_value_type', node));
+    const amount = amounts.unload($('.product_measurement_value_type', node));
     if (!utils.isEmptyMessage(amount)) {
       measurement.setAmount(amount);
     }
   }
 
-  const retentionTime = utils.readMetric(
-      '.product_measurement_retention_time', new Time(), node);
+  const retentionTime =
+      utils.readMetric('.product_measurement_retention_time', new Time(), node);
   if (!utils.isEmptyMessage(retentionTime)) {
     measurement.setRetentionTime(retentionTime);
   }
 
-  const massSpecDetails =
-      new MassSpecMeasurementDetails();
+  const massSpecDetails = new MassSpecMeasurementDetails();
   massSpecDetails.setType(
       utils.getSelector($('.product_measurement_mass_spec_type', node)));
   massSpecDetails.setDetails(

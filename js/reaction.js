@@ -55,8 +55,7 @@ const session = utils.session;
 function init(reaction) {
   // Initialize all the template popup menus.
   $('.selector').each((index, node) => utils.initSelector($(node)));
-  $('.optional_bool')
-      .each((index, node) => utils.initOptionalBool($(node)));
+  $('.optional_bool').each((index, node) => utils.initOptionalBool($(node)));
   // Enable all the editable text fields.
   $('.edittext').attr('contentEditable', 'true');
   // Initialize all the validators.

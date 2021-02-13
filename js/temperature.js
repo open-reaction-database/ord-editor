@@ -62,8 +62,7 @@ function loadMeasurement(measurement, node) {
   $('.temperature_measurement_details', node).text(measurement.getDetails());
 
   const temperature = measurement.getTemperature();
-  utils.writeMetric(
-      '.temperature_measurement_temperature', temperature, node);
+  utils.writeMetric('.temperature_measurement_temperature', temperature, node);
 
   const time = measurement.getTime();
   utils.writeMetric('.temperature_measurement_time', time, node);
@@ -83,8 +82,7 @@ function unload() {
     temperature.setControl(control);
   }
 
-  const setpoint = utils.readMetric(
-      '#temperature_setpoint', new Temperature());
+  const setpoint = utils.readMetric('#temperature_setpoint', new Temperature());
   if (!utils.isEmptyMessage(setpoint)) {
     temperature.setSetpoint(setpoint);
   }
@@ -115,13 +113,12 @@ function unloadMeasurement(node) {
   const details = $('.temperature_measurement_details', node).text();
   measurement.setDetails(details);
   const temperature = utils.readMetric(
-      '.temperature_measurement_temperature', new Temperature(),
-      node);
+      '.temperature_measurement_temperature', new Temperature(), node);
   if (!utils.isEmptyMessage(temperature)) {
     measurement.setTemperature(temperature);
   }
-  const time = utils.readMetric(
-      '.temperature_measurement_time', new Time(), node);
+  const time =
+      utils.readMetric('.temperature_measurement_time', new Time(), node);
   if (!utils.isEmptyMessage(time)) {
     measurement.setTime(time);
   }

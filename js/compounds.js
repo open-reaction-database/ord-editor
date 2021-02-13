@@ -188,15 +188,13 @@ function unload(node) {
 function unloadCompound(node) {
   const compound = new Compound();
 
-  const reactionRole =
-      utils.getSelector($('.component_reaction_role', node));
+  const reactionRole = utils.getSelector($('.component_reaction_role', node));
   compound.setReactionRole(reactionRole);
 
   // Only call setIsLimiting if this is a reactant Compound.
   if (utils.getSelectorText($('.component_reaction_role', node)[0]) ===
       'REACTANT') {
-    const isLimiting =
-        utils.getOptionalBool($('.component_limiting', node));
+    const isLimiting = utils.getOptionalBool($('.component_limiting', node));
     compound.setIsLimiting(isLimiting);
   }
 
@@ -318,8 +316,7 @@ function unloadSource(node) {
  * @return {!Node} The node of the new component div.
  */
 function add(root) {
-  const node =
-      utils.addSlowly('#component_template', $('.components', root));
+  const node = utils.addSlowly('#component_template', $('.components', root));
 
   // Connect reaction role selection to limiting reactant field.
   const roleSelector = $('.component_reaction_role', node);
@@ -468,10 +465,8 @@ function drawIdentifier(node) {
       node = $(node);
       if (!utils.isTemplateOrUndoBuffer(node)) {
         const identifier = unloadIdentifier(node);
-        if ((identifier.getType() ===
-             IdentifierType.SMILES) ||
-            (identifier.getType() ===
-             IdentifierType.MOLBLOCK)) {
+        if ((identifier.getType() === IdentifierType.SMILES) ||
+            (identifier.getType() === IdentifierType.MOLBLOCK)) {
           utils.removeSlowly(node, '.component_identifier');
         }
       }
@@ -483,8 +478,7 @@ function drawIdentifier(node) {
       xhr.responseType = 'json';
       xhr.onload = function() {
         const smilesIdentifier = new CompoundIdentifier();
-        smilesIdentifier.setType(
-            IdentifierType.SMILES);
+        smilesIdentifier.setType(IdentifierType.SMILES);
         const smiles = xhr.response;
         smilesIdentifier.setValue(smiles);
         smilesIdentifier.setDetails('Drawn with Ketcher');
@@ -492,8 +486,7 @@ function drawIdentifier(node) {
       };
       xhr.send(ketcher.getSmiles());
       const molfileIdentifier = new CompoundIdentifier();
-      molfileIdentifier.setType(
-          IdentifierType.MOLBLOCK);
+      molfileIdentifier.setType(IdentifierType.MOLBLOCK);
       molfileIdentifier.setValue(ketcher.getMolfile());
       molfileIdentifier.setDetails('Drawn with Ketcher');
       loadIdentifier(node, molfileIdentifier);

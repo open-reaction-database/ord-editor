@@ -194,8 +194,7 @@ function unloadVessel() {
   });
   vessel.setAttachmentsList(attachments);
 
-  const volume =
-      utils.readMetric('#setup_vessel_volume', new Volume());
+  const volume = utils.readMetric('#setup_vessel_volume', new Volume());
   if (!utils.isEmptyMessage(volume)) {
     vessel.setVolume(volume);
   }
