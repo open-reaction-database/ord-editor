@@ -133,7 +133,8 @@ function unload() {
     setup.setIsAutomated(isAutomated);
   }
 
-  setup.setAutomationPlatform(asserts.assertString($('#setup_platform').text()));
+  setup.setAutomationPlatform(
+      asserts.assertString($('#setup_platform').text()));
 
   const automationCodeMap = setup.getAutomationCodeMap();
   codes.unload(automationCodeMap);
@@ -141,7 +142,8 @@ function unload() {
   const environment = new ReactionEnvironment();
   const environmentType = utils.getSelector($('#setup_environment_type')[0]);
   environment.setType(ReactionEnvironmentType[environmentType]);
-  environment.setDetails(asserts.assertString($('#setup_environment_details').text()));
+  environment.setDetails(
+      asserts.assertString($('#setup_environment_details').text()));
   if (!utils.isEmptyMessage(environment)) {
     setup.setEnvironment(environment);
   }
@@ -167,7 +169,8 @@ function unloadVessel() {
   const material = new VesselMaterial();
   const materialType = utils.getSelector($('#setup_vessel_material')[0]);
   material.setType(VesselMaterialType[materialType]);
-  material.setDetails(asserts.assertString($('#setup_vessel_material_details').text()));
+  material.setDetails(
+      asserts.assertString($('#setup_vessel_material_details').text()));
   if (!utils.isEmptyMessage(material)) {
     vessel.setMaterial(material);
   }
@@ -180,9 +183,11 @@ function unloadVessel() {
       return;
     }
     const preparation = new VesselPreparation();
-    const preparationType = utils.getSelectorText($('.setup_vessel_preparation_type', node)[0]);
+    const preparationType =
+        utils.getSelectorText($('.setup_vessel_preparation_type', node)[0]);
     preparation.setType(VesselPreparationType[preparationType]);
-    preparation.setDetails(asserts.assertString($('.setup_vessel_preparation_details', node).text()));
+    preparation.setDetails(asserts.assertString(
+        $('.setup_vessel_preparation_details', node).text()));
     if (!utils.isEmptyMessage(preparation)) {
       preparations.push(preparation);
     }
@@ -196,9 +201,11 @@ function unloadVessel() {
       return;
     }
     const attachment = new VesselAttachment();
-    const attachementType = utils.getSelectorText($('.setup_vessel_attachment_type', node)[0]);
+    const attachementType =
+        utils.getSelectorText($('.setup_vessel_attachment_type', node)[0]);
     attachment.setType(VesselAttachmentType[attachementType]);
-    attachment.setDetails(asserts.assertString($('.setup_vessel_attachment_details', node).text()));
+    attachment.setDetails(asserts.assertString(
+        $('.setup_vessel_attachment_details', node).text()));
     if (!utils.isEmptyMessage(attachment)) {
       attachments.push(attachment);
     }

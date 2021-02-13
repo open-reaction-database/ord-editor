@@ -122,7 +122,8 @@ function unload(node) {
 function unloadProduct(node) {
   const product = new ProductCompound();
 
-  const reactionRole = utils.getSelectorText($('.component_reaction_role', node)[0]);
+  const reactionRole =
+      utils.getSelectorText($('.component_reaction_role', node)[0]);
   product.setReactionRole(ReactionRoleType[reactionRole]);
 
   const identifiers =
@@ -132,7 +133,8 @@ function unloadProduct(node) {
     product.setIdentifiersList(identifiers);
   }
 
-  const isDesiredProduct = utils.getOptionalBool($('.outcome_product_desired', node));
+  const isDesiredProduct =
+      utils.getOptionalBool($('.outcome_product_desired', node));
   if (isDesiredProduct !== null) {
     product.setIsDesiredProduct(isDesiredProduct);
   }
@@ -150,12 +152,15 @@ function unloadProduct(node) {
   });
   product.setMeasurementsList(measurements);
 
-  product.setIsolatedColor(asserts.assertString($('.outcome_product_color', node).text()));
+  product.setIsolatedColor(
+      asserts.assertString($('.outcome_product_color', node).text()));
 
   const texture = new Texture();
-  const textureType = utils.getSelectorText($('.outcome_product_texture_type', node)[0]);
+  const textureType =
+      utils.getSelectorText($('.outcome_product_texture_type', node)[0]);
   texture.setType(TextureType[textureType]);
-  texture.setDetails(asserts.assertString($('.outcome_product_texture_details', node).text()));
+  texture.setDetails(
+      asserts.assertString($('.outcome_product_texture_details', node).text()));
   if (!utils.isEmptyMessage(texture)) {
     product.setTexture(texture);
   }
@@ -451,10 +456,12 @@ function loadMeasurement(productNode, measurement) {
     $('.product_measurement_mass_spec_details', node)
         .text(massSpec.getDetails());
     if (massSpec.hasTicMinimumMz()) {
-      $('.product_measurement_mass_spec_tic_minimum_mz', node).text(massSpec.getTicMinimumMz());
+      $('.product_measurement_mass_spec_tic_minimum_mz', node)
+          .text(massSpec.getTicMinimumMz());
     }
     if (massSpec.hasTicMaximumMz()) {
-      $('.product_measurement_mass_spec_tic_maximum_mz', node).text(massSpec.getTicMaximumMz());
+      $('.product_measurement_mass_spec_tic_maximum_mz', node)
+          .text(massSpec.getTicMaximumMz());
     }
     const eicMasses = massSpec.getEicMassesList().join(',');
     $('.product_measurement_mass_spec_eic_masses', node).text(eicMasses);
@@ -486,15 +493,18 @@ function unloadMeasurement(node) {
   if (analysisKey) {
     measurement.setAnalysisKey(asserts.assertString(analysisKey));
   }
-  const measurementType = utils.getSelectorText($('.product_measurement_type', node)[0]);
+  const measurementType =
+      utils.getSelectorText($('.product_measurement_type', node)[0]);
   measurement.setType(MeasurementType[measurementType]);
-  measurement.setDetails(asserts.assertString($('.product_measurement_details', node).text()));
+  measurement.setDetails(
+      asserts.assertString($('.product_measurement_details', node).text()));
   const usesInternalStandard = utils.getOptionalBool(
       $('.product_measurement_uses_internal_standard', node));
   if (usesInternalStandard !== null) {
     measurement.setUsesInternalStandard(usesInternalStandard);
   }
-  const isNormalized = utils.getOptionalBool($('.product_measurement_is_normalized', node));
+  const isNormalized =
+      utils.getOptionalBool($('.product_measurement_is_normalized', node));
   if (isNormalized !== null) {
     measurement.setIsNormalized(isNormalized);
   }
@@ -558,15 +568,18 @@ function unloadMeasurement(node) {
   }
 
   const massSpecDetails = new MassSpecMeasurementDetails();
-  const massSpecType = utils.getSelectorText($('.product_measurement_mass_spec_type', node)[0]);
+  const massSpecType =
+      utils.getSelectorText($('.product_measurement_mass_spec_type', node)[0]);
   massSpecDetails.setType(MassSpecMeasurementType[massSpecType]);
-  massSpecDetails.setDetails(
-      asserts.assertString($('.product_measurement_mass_spec_details', node).text()));
-  const ticMinimumMz = parseFloat($('.product_measurement_mass_spec_tic_minimum_mz', node).text());
+  massSpecDetails.setDetails(asserts.assertString(
+      $('.product_measurement_mass_spec_details', node).text()));
+  const ticMinimumMz = parseFloat(
+      $('.product_measurement_mass_spec_tic_minimum_mz', node).text());
   if (!isNaN(ticMinimumMz)) {
     massSpecDetails.setTicMinimumMz(ticMinimumMz);
   }
-  const ticMaximumMz = parseFloat($('.product_measurement_mass_spec_tic_maximum_mz', node).text());
+  const ticMaximumMz = parseFloat(
+      $('.product_measurement_mass_spec_tic_maximum_mz', node).text());
   if (!isNaN(ticMaximumMz)) {
     massSpecDetails.setTicMaximumMz(ticMaximumMz);
   }
@@ -582,10 +595,11 @@ function unloadMeasurement(node) {
   }
 
   const selectivity = new Selectivity();
-  const selectivityType = utils.getSelectorText($('.product_measurement_selectivity_type', node)[0]);
+  const selectivityType = utils.getSelectorText(
+      $('.product_measurement_selectivity_type', node)[0]);
   selectivity.setType(SelectivityType[selectivityType]);
-  selectivity.setDetails(
-      asserts.assertString($('.product_measurement_selectivity_details', node).text()));
+  selectivity.setDetails(asserts.assertString(
+      $('.product_measurement_selectivity_details', node).text()));
   if (!utils.isEmptyMessage(selectivity)) {
     measurement.setSelectivity(selectivity);
   }

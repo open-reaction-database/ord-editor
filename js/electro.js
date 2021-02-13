@@ -119,7 +119,8 @@ function unload() {
     electro.setVoltage(voltage);
   }
   electro.setAnodeMaterial(asserts.assertString($('#electro_anode').text()));
-  electro.setCathodeMaterial(asserts.assertString($('#electro_cathode').text()));
+  electro.setCathodeMaterial(
+      asserts.assertString($('#electro_cathode').text()));
   const electrodeSeparation =
       utils.readMetric('#electro_separation', new Length());
   if (!utils.isEmptyMessage(electrodeSeparation)) {

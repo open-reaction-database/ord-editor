@@ -181,13 +181,16 @@ function unloadOutcome(node) {
  */
 function unloadAnalysisSingle(analysisNode) {
   const analysis = new Analysis();
-  const analysisType = utils.getSelector($('.outcome_analysis_type', analysisNode)[0]);
+  const analysisType =
+      utils.getSelector($('.outcome_analysis_type', analysisNode)[0]);
   analysis.setType(AnalysisType[analysisType]);
-  const chmoId = parseInt($('.outcome_analysis_chmo_id', analysisNode).text(), 10);
+  const chmoId =
+      parseInt($('.outcome_analysis_chmo_id', analysisNode).text(), 10);
   if (!isNaN(chmoId)) {
     analysis.setChmoId(chmoId);
   }
-  analysis.setDetails(asserts.assertString($('.outcome_analysis_details', analysisNode).text()));
+  analysis.setDetails(asserts.assertString(
+      $('.outcome_analysis_details', analysisNode).text()));
 
   const dataMap = analysis.getDataMap();
   $('.outcome_data', analysisNode).each(function(index, dataNode) {
@@ -196,10 +199,11 @@ function unloadAnalysisSingle(analysisNode) {
       unloadData(dataNode, dataMap);
     }
   });
-  analysis.setInstrumentManufacturer(
-      asserts.assertString($('.outcome_analysis_manufacturer', analysisNode).text()));
+  analysis.setInstrumentManufacturer(asserts.assertString(
+      $('.outcome_analysis_manufacturer', analysisNode).text()));
   const calibrated = new DateTime();
-  calibrated.setValue(asserts.assertString($('.outcome_analysis_calibrated', analysisNode).text()));
+  calibrated.setValue(asserts.assertString(
+      $('.outcome_analysis_calibrated', analysisNode).text()));
   if (!utils.isEmptyMessage(calibrated)) {
     analysis.setInstrumentLastCalibrated(calibrated);
   }

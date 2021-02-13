@@ -91,7 +91,8 @@ function unload() {
   const control = new PressureControl();
   const controlType = utils.getSelectorText($('#pressure_control_type')[0]);
   control.setType(PressureControlType[controlType]);
-  control.setDetails(asserts.assertString($('#pressure_control_details').text()));
+  control.setDetails(
+      asserts.assertString($('#pressure_control_details').text()));
   if (!utils.isEmptyMessage(control)) {
     pressure.setControl(control);
   }
@@ -102,9 +103,11 @@ function unload() {
   }
 
   const atmosphere = new Atmosphere();
-  const atmosphereType = utils.getSelectorText($('#pressure_atmosphere_type')[0]);
+  const atmosphereType =
+      utils.getSelectorText($('#pressure_atmosphere_type')[0]);
   atmosphere.setType(AtmosphereType[atmosphereType]);
-  atmosphere.setDetails(asserts.assertString($('#pressure_atmosphere_details').text()));
+  atmosphere.setDetails(
+      asserts.assertString($('#pressure_atmosphere_details').text()));
   if (!utils.isEmptyMessage(atmosphere)) {
     pressure.setAtmosphere(atmosphere);
   }
@@ -131,9 +134,11 @@ function unload() {
  */
 function unloadMeasurement(node) {
   const measurement = new Measurement();
-  const measurementType = utils.getSelectorText($('.pressure_measurement_type', node)[0]);
+  const measurementType =
+      utils.getSelectorText($('.pressure_measurement_type', node)[0]);
   measurement.setType(MeasurementType[measurementType]);
-  measurement.setDetails(asserts.assertString($('.pressure_measurement_details', node).text()));
+  measurement.setDetails(
+      asserts.assertString($('.pressure_measurement_details', node).text()));
   const pressure =
       utils.readMetric('.pressure_measurement_pressure', new Pressure(), node);
   if (!utils.isEmptyMessage(pressure)) {

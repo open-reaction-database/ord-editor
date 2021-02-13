@@ -81,7 +81,8 @@ function unloadObservation(node) {
   if (!utils.isEmptyMessage(time)) {
     observation.setTime(time);
   }
-  observation.setComment(asserts.assertString($('.observation_comment', node).text()));
+  observation.setComment(
+      asserts.assertString($('.observation_comment', node).text()));
   const image = data.unloadData(node);
   if (!utils.isEmptyMessage(image)) {
     observation.setImage(image);

@@ -119,8 +119,8 @@ function loadIntoCompound(node, compound) {
 /**
  * Adds fields describing a new identifier to an existing compound in the form
  * and populates them according to the provided identifier.
- * @param {!jQuery} compoundNode The div corresponding to the compound to which a
- *     new compound definition should be added.
+ * @param {!jQuery} compoundNode The div corresponding to the compound to which
+ *     a new compound definition should be added.
  * @param {!CompoundIdentifier} identifier
  */
 function loadIdentifier(compoundNode, identifier) {
@@ -194,7 +194,8 @@ function unload(node) {
 function unloadCompound(node) {
   const compound = new Compound();
 
-  const reactionRole = utils.getSelectorText($('.component_reaction_role', node)[0]);
+  const reactionRole =
+      utils.getSelectorText($('.component_reaction_role', node)[0]);
   compound.setReactionRole(ReactionRoleType[reactionRole]);
 
   // Only call setIsLimiting if this is a reactant Compound.
@@ -349,7 +350,8 @@ function add(root) {
  * Adds fields to the form corresponding to a new, empty compound identifier as
  * specified by the component identifier template with ID
  * "component_identifier_template".
- * @param {!jQuery} node The div within which the new identifier should be added.
+ * @param {!jQuery} node The div within which the new identifier should be
+ *     added.
  * @return {!jQuery} The node of the new compound identifier div.
  */
 function addIdentifier(node) {

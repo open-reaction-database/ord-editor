@@ -158,7 +158,8 @@ function load(node, bytesValue) {
  * @returns {!Uint8Array}
  */
 function unload(node) {
-  const token = asserts.assertString($('.data_uploader', node).attr('data-token'));
+  const token =
+      asserts.assertString($('.data_uploader', node).attr('data-token'));
   const bytesValue = unstashUpload(token);
   if (bytesValue) {
     // This is just a round-trip for bytesValue.

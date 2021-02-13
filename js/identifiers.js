@@ -81,11 +81,13 @@ function unload() {
 function unloadIdentifier(node) {
   const identifier = new ReactionIdentifier();
 
-  identifier.setValue(asserts.assertString($('.reaction_identifier_value', node).text()));
+  identifier.setValue(
+      asserts.assertString($('.reaction_identifier_value', node).text()));
 
   const type = utils.getSelectorText(node[0]);
   identifier.setType(IdentifierType[type]);
-  identifier.setDetails(asserts.assertString($('.reaction_identifier_details', node).text()));
+  identifier.setDetails(
+      asserts.assertString($('.reaction_identifier_details', node).text()));
   return identifier;
 }
 

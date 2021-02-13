@@ -211,17 +211,21 @@ function unloadInputUnnamed(node) {
   }
 
   const additionSpeed = new AdditionSpeed();
-  const additionSpeedType = utils.getSelectorText($('.input_addition_speed_type', node)[0]);
+  const additionSpeedType =
+      utils.getSelectorText($('.input_addition_speed_type', node)[0]);
   additionSpeed.setType(AdditionSpeedType[additionSpeedType]);
-  additionSpeed.setDetails(asserts.assertString($('.input_addition_speed_details', node).text()));
+  additionSpeed.setDetails(
+      asserts.assertString($('.input_addition_speed_details', node).text()));
   if (!utils.isEmptyMessage(additionSpeed)) {
     input.setAdditionSpeed(additionSpeed);
   }
 
   const additionDevice = new AdditionDevice();
-  const additionDeviceType = utils.getSelectorText($('.input_addition_device_type', node)[0]);
+  const additionDeviceType =
+      utils.getSelectorText($('.input_addition_device_type', node)[0]);
   additionDevice.setType(AdditionDeviceType[additionDeviceType]);
-  additionDevice.setDetails(asserts.assertString($('.input_addition_device_details', node).text()));
+  additionDevice.setDetails(
+      asserts.assertString($('.input_addition_device_details', node).text()));
   if (!utils.isEmptyMessage(additionDevice)) {
     input.setAdditionDevice(additionDevice);
   }

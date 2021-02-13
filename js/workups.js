@@ -186,9 +186,11 @@ function unloadWorkup(node) {
   }
 
   const control = new TemperatureControl();
-  const temperatureControlType = utils.getSelectorText($('.workup_temperature_control_type', node)[0]);
+  const temperatureControlType =
+      utils.getSelectorText($('.workup_temperature_control_type', node)[0]);
   control.setType(TemperatureControlType[temperatureControlType]);
-  control.setDetails(asserts.assertString($('.workup_temperature_details', node).text()));
+  control.setDetails(
+      asserts.assertString($('.workup_temperature_details', node).text()));
 
   const temperature = new TemperatureConditions();
   if (!utils.isEmptyMessage(control)) {
@@ -217,22 +219,27 @@ function unloadWorkup(node) {
   if (!utils.isEmptyMessage(temperature)) {
     workup.setTemperature(temperature);
   }
-  workup.setKeepPhase(asserts.assertString($('.workup_keep_phase', node).text()));
+  workup.setKeepPhase(
+      asserts.assertString($('.workup_keep_phase', node).text()));
 
   const stirring = new StirringConditions();
 
   const method = new StirringMethod();
-  const stirringMethodType = utils.getSelectorText($('.workup_stirring_method_type', node)[0]);
+  const stirringMethodType =
+      utils.getSelectorText($('.workup_stirring_method_type', node)[0]);
   method.setType(StirringMethodType[stirringMethodType]);
-  method.setDetails(asserts.assertString($('.workup_stirring_method_details').text()));
+  method.setDetails(
+      asserts.assertString($('.workup_stirring_method_details').text()));
   if (!utils.isEmptyMessage(method)) {
     stirring.setMethod(method);
   }
 
   const rate = new StirringRate();
-  const stirringRateType = utils.getSelectorText($('.workup_stirring_rate_type', node)[0]);
+  const stirringRateType =
+      utils.getSelectorText($('.workup_stirring_rate_type', node)[0]);
   rate.setType(StirringRateType[stirringRateType]);
-  rate.setDetails(asserts.assertString($('.workup_stirring_rate_details').text()));
+  rate.setDetails(
+      asserts.assertString($('.workup_stirring_rate_details').text()));
   const rpm = parseFloat($('.workup_stirring_rate_rpm', node).text());
   if (!isNaN(rpm)) {
     rate.setRpm(rpm);
@@ -263,10 +270,11 @@ function unloadWorkup(node) {
  */
 function unloadMeasurement(node) {
   const measurement = new Measurement();
-  const measurementType = utils.getSelectorText($('.workup_temperature_measurement_type', node)[0]);
+  const measurementType =
+      utils.getSelectorText($('.workup_temperature_measurement_type', node)[0]);
   measurement.setType(MeasurementType[measurementType]);
-  measurement.setDetails(
-      asserts.assertString($('.workup_temperature_measurement_details', node).text()));
+  measurement.setDetails(asserts.assertString(
+      $('.workup_temperature_measurement_details', node).text()));
   const time = utils.readMetric(
       '.workup_temperature_measurement_time', new Time(), node);
   if (!utils.isEmptyMessage(time)) {
@@ -319,7 +327,8 @@ function add() {
 
 /**
  * Adds a new measurement section to the current workup in the form.
- * @param {!jQuery} node The workup div where the new measurement should be added.
+ * @param {!jQuery} node The workup div where the new measurement should be
+ *     added.
  * @return {!jQuery} The node of the new measurement div.
  */
 function addMeasurement(node) {

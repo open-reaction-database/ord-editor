@@ -82,7 +82,8 @@ function unload() {
   const control = new TemperatureControl();
   const controlType = utils.getSelectorText($('#temperature_control')[0]);
   control.setType(TemperatureControlType[controlType]);
-  control.setDetails(asserts.assertString($('#temperature_control_details').text()));
+  control.setDetails(
+      asserts.assertString($('#temperature_control_details').text()));
   if (!utils.isEmptyMessage(control)) {
     temperature.setControl(control);
   }
@@ -113,9 +114,11 @@ function unload() {
  */
 function unloadMeasurement(node) {
   const measurement = new Measurement();
-  const measurementType = utils.getSelectorText($('.temperature_measurement_type', node)[0]);
+  const measurementType =
+      utils.getSelectorText($('.temperature_measurement_type', node)[0]);
   measurement.setType(MeasurementType[measurementType]);
-  measurement.setDetails(asserts.assertString($('.temperature_measurement_details', node).text()));
+  measurement.setDetails(
+      asserts.assertString($('.temperature_measurement_details', node).text()));
   const temperature = utils.readMetric(
       '.temperature_measurement_temperature', new Temperature(), node);
   if (!utils.isEmptyMessage(temperature)) {
