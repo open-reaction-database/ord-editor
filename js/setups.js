@@ -140,7 +140,8 @@ function unload() {
   codes.unload(automationCodeMap);
 
   const environment = new ReactionEnvironment();
-  const environmentType = utils.getSelectorText($('#setup_environment_type')[0]);
+  const environmentType =
+      utils.getSelectorText($('#setup_environment_type')[0]);
   environment.setType(ReactionEnvironmentType[environmentType]);
   environment.setDetails(
       asserts.assertString($('#setup_environment_details').text()));
