@@ -34,7 +34,7 @@ let radioGroupCounter = 0;
 
 /**
  * Initializes the radio buttons and selectors for an Amount section.
- * @param {!Node} node The parent div containing the Amount section.
+ * @param {!jQuery} node The parent div containing the Amount section.
  */
 function init(node) {
   const amountButtons = $('.amount input', node);
