@@ -130,7 +130,9 @@ function renderReaction(reaction) {
   const binary = reaction.serializeBinary();
   xhr.responseType = 'json';
   xhr.onload = function() {
-    $('#reaction_render').html(asserts.assertString(xhr.response));
+    if (xhr.response !== null) {
+      $('#reaction_render').html(asserts.assertString(xhr.response));
+    }
   };
   xhr.send(binary);
 }

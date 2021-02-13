@@ -375,7 +375,8 @@ function getReactionById(reactionId) {
     xhr.open('GET', '/reaction/id/' + reactionId + '/proto');
     xhr.responseType = 'arraybuffer';
     xhr.onload = function() {
-      const bytes = new Uint8Array(asserts.assertArray(xhr.response));
+      asserts.assertInstanceof(xhr.response, ArrayBuffer);  // Type hint.
+      const bytes = new Uint8Array(xhr.response);
       const reaction = Reaction.deserializeBinary(bytes);
       resolve(reaction);
     };
@@ -585,7 +586,8 @@ function getDataset(fileName) {
     xhr.open('GET', '/dataset/proto/read/' + fileName);
     xhr.responseType = 'arraybuffer';
     xhr.onload = function() {
-      const bytes = new Uint8Array(asserts.assertArray(xhr.response));
+      asserts.assertInstanceof(xhr.response, ArrayBuffer);  // Type hint.
+      const bytes = new Uint8Array(xhr.response);
       const dataset = Dataset.deserializeBinary(bytes);
       resolve(dataset);
     };
@@ -763,7 +765,8 @@ function getSelector(node) {
  * @return {string}
  */
 function getSelectorText(node) {
-  const selectorElement = node.getElementsByTagName('select')[0][0];
+  const selectorElement = node.getElementsByTagName('select')[0];
+  asserts.assertInstanceof(selectorElement, HTMLSelectElement);  // Type hint.
   return selectorElement.options[selectorElement.selectedIndex].text;
 }
 

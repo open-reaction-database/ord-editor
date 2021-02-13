@@ -92,7 +92,8 @@ function addInputByString(root) {
       asserts.assertInstanceof(xhr.response, ArrayBuffer);  // Type hint.
       alert('Could not parse: ' + decoder.decode(xhr.response));
     } else {
-      const bytes = new Uint8Array(asserts.assertArray(xhr.response));
+      asserts.assertInstanceof(xhr.response, ArrayBuffer);  // Type hint.
+      const bytes = new Uint8Array(xhr.response);
       const input = ReactionInput.deserializeBinary(bytes);
       if (input) {
         const input_node = loadInput(root, asserts.assertString(string), input);

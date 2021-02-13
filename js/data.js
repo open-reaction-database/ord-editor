@@ -96,7 +96,8 @@ function loadData(node, data) {
       value = data.getBytesValue();
       $('.data_text', node).hide();
       $('.data_uploader', node).show();
-      uploads.load(node, asserts.assertArray(value));
+      asserts.assertInstanceof(value, Uint8Array);  // Type hint.
+      uploads.load(node, value);
       $('input[value=\'upload\']', node).prop('checked', true);
       break;
     case KindCase.STRING_VALUE:

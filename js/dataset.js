@@ -128,7 +128,8 @@ function getDataset(fileName, listener) {
   xhr.open('GET', '/dataset/proto/read/' + session.fileName, true /* async */);
   xhr.responseType = 'arraybuffer';
   xhr.onload = () => {
-    const bytes = new Uint8Array(asserts.assertArray(xhr.response));
+    asserts.assertInstanceof(xhr.response, ArrayBuffer);  // Type hint.
+    const bytes = new Uint8Array(xhr.response);
     const dataset = Dataset.deserializeBinary(bytes);
     session.dataset = dataset;
     listener(dataset);
