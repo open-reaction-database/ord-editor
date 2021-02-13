@@ -57,8 +57,9 @@ RUN wget https://github.com/google/closure-library/archive/v20200517.tar.gz \
 RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.14.0/protobuf-js-3.14.0.tar.gz \
  && tar -xzf protobuf-js-3.14.0.tar.gz \
  && rm protobuf-js-3.14.0.tar.gz
-
-# Dependencies for testing.
+RUN wget https://raw.githubusercontent.com/google/closure-compiler/master/contrib/externs/jquery-3.3.js \
+ && mkdir -p externs \
+ && mv jquery-3.3.js externs
 RUN npm install google-closure-compiler
 
 # Install ord-schema.
