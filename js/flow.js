@@ -16,61 +16,65 @@
 
 goog.module('ord.flows');
 goog.module.declareLegacyNamespace();
+
+const utils = goog.require('ord.utils');
+
+const FlowConditions = goog.require('proto.ord.FlowConditions');
+const FlowType = goog.require('proto.ord.FlowConditions.FlowType');
+const Tubing = goog.require('proto.ord.FlowConditions.Tubing');
+const Length = goog.require('proto.ord.Length');
+
+
+
 exports = {
   load,
   unload,
   validateFlow
 };
 
-goog.require('ord.utils');
-goog.require('proto.ord.FlowConditions');
-goog.require('proto.ord.FlowConditions.FlowType');
-goog.require('proto.ord.FlowConditions.Tubing');
-goog.require('proto.ord.Length');
-
 /**
  * Adds and populates the flow conditions section in the form.
- * @param {!proto.ord.FlowConditions} flow
+ * @param {!FlowConditions} flow
  */
 function load(flow) {
   const type = flow.getFlowType();
   if (type) {
-    ord.utils.setSelector($('#flow_type'), type.getType());
+    utils.setSelector($('#flow_type'), type.getType());
     $('#flow_details').text(type.getDetails());
   }
   $('#flow_pump').text(flow.getPumpType());
 
   const tubing = flow.getTubing();
-  ord.utils.setSelector($('#flow_tubing_type'), tubing.getType());
+  utils.setSelector($('#flow_tubing_type'), tubing.getType());
   $('#flow_tubing_details').text(tubing.getDetails());
-  ord.utils.writeMetric('#flow_tubing', tubing.getDiameter());
+  utils.writeMetric('#flow_tubing', tubing.getDiameter());
 }
 
 /**
  * Fetches the flow conditions defined in the form.
- * @return {!proto.ord.FlowConditions}
+ * @return {!FlowConditions}
  */
 function unload() {
-  const flow = new proto.ord.FlowConditions();
+  const flow = new FlowConditions();
 
-  const type = new proto.ord.FlowConditions.FlowType();
-  type.setType(ord.utils.getSelector($('#flow_type')));
+  const type = new FlowType();
+  type.setType(utils.getSelector($('#flow_type')));
   type.setDetails($('#flow_details').text());
-  if (!ord.utils.isEmptyMessage(type)) {
+  if (!utils.isEmptyMessage(type)) {
     flow.setFlowType(type);
   }
 
   flow.setPumpType($('#flow_pump').text());
 
-  const tubing = new proto.ord.FlowConditions.Tubing();
-  tubing.setType(ord.utils.getSelector($('#flow_tubing_type')));
+  const tubing = new Tubing();
+  tubing.setType(utils.getSelector($('#flow_tubing_type')));
   tubing.setDetails($('#flow_tubing_details').text());
-  const diameter = ord.utils.readMetric('#flow_tubing', new proto.ord.Length());
-  if (!ord.utils.isEmptyMessage(diameter)) {
+  const diameter = utils.readMetric('#flow_tubing', new Length());
+  if (!utils.isEmptyMessage(diameter)) {
     tubing.setDiameter(diameter);
   }
 
-  if (!ord.utils.isEmptyMessage(tubing)) {
+  if (!utils.isEmptyMessage(tubing)) {
     flow.setTubing(tubing);
   }
   return flow;
@@ -83,5 +87,5 @@ function unload() {
  */
 function validateFlow(node, validateNode = null) {
   const flow = unload();
-  ord.utils.validate(flow, 'FlowConditions', node, validateNode);
+  utils.validate(flow, 'FlowConditions', node, validateNode);
 }

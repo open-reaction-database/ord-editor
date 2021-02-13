@@ -22,10 +22,11 @@ exports = {
   unloadData,
 };
 
-goog.require('ord.uploads');
-goog.require('ord.utils');
-goog.require('proto.ord.Data');
-goog.require('proto.ord.Data.KindCase');
+const uploads = goog.require('ord.uploads');
+const utils = goog.require('ord.utils');
+
+const Data = goog.require('proto.ord.Data');
+const KindCase = goog.require('proto.ord.Data.KindCase');
 
 // Freely create radio button groups by generating new input names.
 let radioGroupCounter = 0;
@@ -37,7 +38,7 @@ let radioGroupCounter = 0;
  */
 function addData(parentNode) {
   const target = parentNode.children('fieldset').first();
-  const node = ord.utils.addSlowly('#data_template', target);
+  const node = utils.addSlowly('#data_template', target);
   const typeButtons = $('input[type=\'radio\']', node);
   typeButtons.attr('name', 'data_' + radioGroupCounter++);
   typeButtons.change(function() {
@@ -55,14 +56,14 @@ function addData(parentNode) {
       $('.data_text', node).removeClass('floattext');
     }
   });
-  ord.uploads.initialize(node);
+  uploads.initialize(node);
   return node;
 }
 
 /**
  * Populates an existing Data section in the form.
  * @param {!Node} node Root node.
- * @param {?proto.ord.Data} data
+ * @param {?Data} data
  */
 function loadData(node, data) {
   if (!data) {
@@ -72,7 +73,7 @@ function loadData(node, data) {
   $('.data_format', node).text(data.getFormat());
   let value;
   switch (data.getKindCase()) {
-    case proto.ord.Data.KindCase.FLOAT_VALUE:
+    case KindCase.FLOAT_VALUE:
       value = data.getFloatValue().toString();
       if (value.indexOf('.') === -1) {
         value = value.concat('.0');
@@ -82,28 +83,28 @@ function loadData(node, data) {
       $('.data_text', node).text(value);
       $('input[value=\'number\']', node).prop('checked', true);
       break;
-    case proto.ord.Data.KindCase.INTEGER_VALUE:
+    case KindCase.INTEGER_VALUE:
       value = data.getIntegerValue();
       $('.data_text', node).show();
       $('.data_uploader', node).hide();
       $('.data_text', node).text(value);
       $('input[value=\'number\']', node).prop('checked', true);
       break;
-    case proto.ord.Data.KindCase.BYTES_VALUE:
+    case KindCase.BYTES_VALUE:
       value = data.getBytesValue();
       $('.data_text', node).hide();
       $('.data_uploader', node).show();
-      ord.uploads.load(node, value);
+      uploads.load(node, value);
       $('input[value=\'upload\']', node).prop('checked', true);
       break;
-    case proto.ord.Data.KindCase.STRING_VALUE:
+    case KindCase.STRING_VALUE:
       value = data.getStringValue();
       $('.data_text', node).show();
       $('.data_uploader', node).hide();
       $('.data_text', node).text(value);
       $('input[value=\'text\']', node).prop('checked', true);
       break;
-    case proto.ord.Data.KindCase.URL:
+    case KindCase.URL:
       value = data.getUrl();
       $('.data_text', node).show();
       $('.data_uploader', node).hide();
@@ -118,10 +119,10 @@ function loadData(node, data) {
 /**
  * Fetches a Data section from the form.
  * @param {!Node} node Root node of the Data section to fetch.
- * @return {!proto.ord.Data}
+ * @return {!Data}
  */
 function unloadData(node) {
-  const data = new proto.ord.Data();
+  const data = new Data();
   const description = $('.data_description', node).text();
   data.setDescription(description);
   const format = $('.data_format', node).text();
@@ -140,7 +141,7 @@ function unloadData(node) {
       data.setFloatValue(value);
     }
   } else if ($('input[value=\'upload\']', node).is(':checked')) {
-    const bytesValue = ord.uploads.unload(node);
+    const bytesValue = uploads.unload(node);
     if (bytesValue) {
       data.setBytesValue(bytesValue);
     }

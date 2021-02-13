@@ -16,6 +16,13 @@
 
 goog.module('ord.observations');
 goog.module.declareLegacyNamespace();
+
+const data = goog.require('ord.data');
+const utils = goog.require('ord.utils');
+
+const ReactionObservation = goog.require('proto.ord.ReactionObservation');
+const Time = goog.require('proto.ord.Time');
+
 exports = {
   load,
   unload,
@@ -23,14 +30,10 @@ exports = {
   validateObservation
 };
 
-goog.require('ord.data');
-goog.require('ord.utils');
-goog.require('proto.ord.ReactionObservation');
-goog.require('proto.ord.Time');
 
 /**
  * Adds and populates the reaction observation sections in the form.
- * @param {!Array<!proto.ord.ReactionObservation>} observations
+ * @param {!Array<!ReactionObservation>} observations
  */
 function load(observations) {
   observations.forEach(observation => loadObservation(observation));
@@ -38,26 +41,26 @@ function load(observations) {
 
 /**
  * Adds and populates a single reaction observation section in the form.
- * @param {!proto.ord.ReactionObservation} observation
+ * @param {!ReactionObservation} observation
  */
 function loadObservation(observation) {
   const node = add();
-  ord.utils.writeMetric('.observation_time', observation.getTime(), node);
+  utils.writeMetric('.observation_time', observation.getTime(), node);
   $('.observation_comment', node).text(observation.getComment());
-  ord.data.loadData(node, observation.getImage());
+  data.loadData(node, observation.getImage());
 }
 
 /**
  * Fetches the reaction observations defined in the form.
- * @return {!Array<!proto.ord.ReactionObservation>}
+ * @return {!Array<!ReactionObservation>}
  */
 function unload() {
   const observations = [];
   $('.observation').each(function(index, node) {
     node = $(node);
-    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
+    if (!utils.isTemplateOrUndoBuffer(node)) {
       const observation = unloadObservation(node);
-      if (!ord.utils.isEmptyMessage(observation)) {
+      if (!utils.isEmptyMessage(observation)) {
         observations.push(observation);
       }
     }
@@ -68,18 +71,18 @@ function unload() {
 /**
  * Fetches a single reaction observation defined in the form.
  * @param {!Node} node Root node for the reaction observation.
- * @return {!proto.ord.ReactionObservation}
+ * @return {!ReactionObservation}
  */
 function unloadObservation(node) {
-  const observation = new proto.ord.ReactionObservation();
+  const observation = new ReactionObservation();
   const time =
-      ord.utils.readMetric('.observation_time', new proto.ord.Time(), node);
-  if (!ord.utils.isEmptyMessage(time)) {
+      utils.readMetric('.observation_time', new Time(), node);
+  if (!utils.isEmptyMessage(time)) {
     observation.setTime(time);
   }
   observation.setComment($('.observation_comment', node).text());
-  const image = ord.data.unloadData(node);
-  if (!ord.utils.isEmptyMessage(image)) {
+  const image = data.unloadData(node);
+  if (!utils.isEmptyMessage(image)) {
     observation.setImage(image);
   }
   return observation;
@@ -90,10 +93,10 @@ function unloadObservation(node) {
  * @return {!Node} The newly added parent node for the reaction observation.
  */
 function add() {
-  const node = ord.utils.addSlowly('#observation_template', $('#observations'));
-  ord.data.addData(node);
+  const node = utils.addSlowly('#observation_template', $('#observations'));
+  data.addData(node);
   // Add live validation handling.
-  ord.utils.addChangeHandler(node, () => {
+  utils.addChangeHandler(node, () => {
     validateObservation(node);
   });
   return node;
@@ -106,5 +109,5 @@ function add() {
  */
 function validateObservation(node, validateNode = null) {
   const observation = unloadObservation(node);
-  ord.utils.validate(observation, 'ReactionObservation', node, validateNode);
+  utils.validate(observation, 'ReactionObservation', node, validateNode);
 }

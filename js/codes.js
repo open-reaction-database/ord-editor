@@ -22,13 +22,14 @@ exports = {
   addCode
 };
 
-goog.require('ord.data');
-goog.require('ord.utils');
-goog.require('proto.ord.Data');
+const data = goog.require('ord.data');
+const utils = goog.require('ord.utils');
+
+const Data = goog.require('proto.ord.Data');
 
 /**
  * Adds and populates the automation_code sections in the form.
- * @param {!jspb.Map<string, !proto.ord.Data>} codes
+ * @param {!jspb.Map<string, !Data>} codes
  */
 function load(codes) {
   codes.forEach(function(code, name) {
@@ -39,22 +40,22 @@ function load(codes) {
 /**
  * Adds and populates a single automation_code section in the form.
  * @param {string} name The name of this automation code.
- * @param {!proto.ord.Data} code
+ * @param {!Data} code
  */
 function loadCode(name, code) {
   const node = addCode();
   $('.setup_code_name', node).text(name);
-  ord.data.loadData(node, code);
+  data.loadData(node, code);
 }
 
 /**
  * Fetches the automation_code sections from the form and adds them to `codes`.
- * @param {!jspb.Map<string, !proto.ord.Data>} codes
+ * @param {!jspb.Map<string, !Data>} codes
  */
 function unload(codes) {
   $('.setup_code').each(function(index, node) {
     node = $(node);
-    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
+    if (!utils.isTemplateOrUndoBuffer(node)) {
       unloadCode(codes, node);
     }
   });
@@ -63,13 +64,13 @@ function unload(codes) {
 /**
  * Fetches a single automation_code section from the form and adds it to
  * `codes`.
- * @param {!jspb.Map<string, !proto.ord.Data>} codes
+ * @param {!jspb.Map<string, !Data>} codes
  * @param {!Node} node The root node of the automation_code section to fetch.
  */
 function unloadCode(codes, node) {
   const name = $('.setup_code_name', node).text();
-  const code = ord.data.unloadData(node);
-  if (name || !ord.utils.isEmptyMessage(code)) {
+  const code = data.unloadData(node);
+  if (name || !utils.isEmptyMessage(code)) {
     codes.set(name, code);
   }
 }
@@ -79,7 +80,7 @@ function unloadCode(codes, node) {
  * @return {!Node} The newly added root node for the automation_code section.
  */
 function addCode() {
-  const node = ord.utils.addSlowly('#setup_code_template', $('#setup_codes'));
-  ord.data.addData(node);
+  const node = utils.addSlowly('#setup_code_template', $('#setup_codes'));
+  data.addData(node);
   return node;
 }

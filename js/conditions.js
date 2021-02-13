@@ -22,94 +22,95 @@ exports = {
   validateConditions
 };
 
-goog.require('ord.electro');
-goog.require('ord.flows');
-goog.require('ord.illumination');
-goog.require('ord.pressure');
-goog.require('ord.stirring');
-goog.require('ord.temperature');
-goog.require('ord.utils');
-goog.require('proto.ord.ReactionConditions');
+const electro = goog.require('ord.electro');
+const flows = goog.require('ord.flows');
+const illumination = goog.require('ord.illumination');
+const pressure = goog.require('ord.pressure');
+const stirring = goog.require('ord.stirring');
+const temperature = goog.require('ord.temperature');
+const utils = goog.require('ord.utils');
+
+const ReactionConditions = goog.require('proto.ord.ReactionConditions');
 
 /**
  * Adds and populates the reaction conditions in the form.
- * @param {!proto.ord.ReactionConditions} conditions
+ * @param {!ReactionConditions} conditions
  */
 function load(conditions) {
-  const temperature = conditions.getTemperature();
-  if (temperature) {
-    ord.temperature.load(temperature);
+  const temperatureMessage = conditions.getTemperature();
+  if (temperatureMessage) {
+    temperature.load(temperatureMessage);
   }
-  const pressure = conditions.getPressure();
-  if (pressure) {
-    ord.pressure.load(pressure);
+  const pressureMessage = conditions.getPressure();
+  if (pressureMessage) {
+    pressure.load(pressureMessage);
   }
-  const stirring = conditions.getStirring();
-  if (stirring) {
-    ord.stirring.load(stirring);
+  const stirringMessage = conditions.getStirring();
+  if (stirringMessage) {
+    stirring.load(stirringMessage);
   }
-  const illumination = conditions.getIllumination();
-  if (illumination) {
-    ord.illumination.load(illumination);
+  const illuminationMessage = conditions.getIllumination();
+  if (illuminationMessage) {
+    illumination.load(illuminationMessage);
   }
-  const electro = conditions.getElectrochemistry();
-  if (electro) {
-    ord.electro.load(electro);
+  const electroMessage = conditions.getElectrochemistry();
+  if (electroMessage) {
+    electro.load(electroMessage);
   }
-  const flow = conditions.getFlow();
-  if (flow) {
-    ord.flows.load(flow);
+  const flowMessage = conditions.getFlow();
+  if (flowMessage) {
+    flows.load(flowMessage);
   }
   const reflux = conditions.hasReflux() ? conditions.getReflux() : null;
-  ord.utils.setOptionalBool($('#condition_reflux'), reflux);
+  utils.setOptionalBool($('#condition_reflux'), reflux);
   if (conditions.hasPh()) {
     $('#condition_ph').text(conditions.getPh());
   }
   const dynamic = conditions.hasConditionsAreDynamic() ?
       conditions.getConditionsAreDynamic() :
       null;
-  ord.utils.setOptionalBool($('#condition_dynamic'), dynamic);
+  utils.setOptionalBool($('#condition_dynamic'), dynamic);
   $('#condition_details').text(conditions.getDetails());
 }
 
 /**
  * Fetches the reaction conditions from the form.
- * @return {!proto.ord.ReactionConditions}
+ * @return {!ReactionConditions}
  */
 function unload() {
-  const conditions = new proto.ord.ReactionConditions();
-  const temperature = ord.temperature.unload();
-  if (!ord.utils.isEmptyMessage(temperature)) {
-    conditions.setTemperature(temperature);
+  const conditions = new ReactionConditions();
+  const temperatureMessage = temperature.unload();
+  if (!utils.isEmptyMessage(temperatureMessage)) {
+    conditions.setTemperature(temperatureMessage);
   }
-  const pressure = ord.pressure.unload();
-  if (!ord.utils.isEmptyMessage(pressure)) {
-    conditions.setPressure(pressure);
+  const pressureMessage = pressure.unload();
+  if (!utils.isEmptyMessage(pressureMessage)) {
+    conditions.setPressure(pressureMessage);
   }
-  const stirring = ord.stirring.unload();
-  if (!ord.utils.isEmptyMessage(stirring)) {
-    conditions.setStirring(stirring);
+  const stirringMessage = stirring.unload();
+  if (!utils.isEmptyMessage(stirringMessage)) {
+    conditions.setStirring(stirringMessage);
   }
-  const illumination = ord.illumination.unload();
-  if (!ord.utils.isEmptyMessage(illumination)) {
-    conditions.setIllumination(illumination);
+  const illuminationMessage = illumination.unload();
+  if (!utils.isEmptyMessage(illuminationMessage)) {
+    conditions.setIllumination(illuminationMessage);
   }
-  const electro = ord.electro.unload();
-  if (!ord.utils.isEmptyMessage(electro)) {
-    conditions.setElectrochemistry(electro);
+  const electroMessage = electro.unload();
+  if (!utils.isEmptyMessage(electroMessage)) {
+    conditions.setElectrochemistry(electroMessage);
   }
-  const flow = ord.flows.unload();
-  if (!ord.utils.isEmptyMessage(flow)) {
-    conditions.setFlow(flow);
+  const flowMessage = flows.unload();
+  if (!utils.isEmptyMessage(flowMessage)) {
+    conditions.setFlow(flowMessage);
   }
 
-  const reflux = ord.utils.getOptionalBool($('#condition_reflux'));
+  const reflux = utils.getOptionalBool($('#condition_reflux'));
   conditions.setReflux(reflux);
   const ph = parseFloat($('#condition_ph').text());
   if (!isNaN(ph)) {
     conditions.setPh(ph);
   }
-  const dynamic = ord.utils.getOptionalBool($('#condition_dynamic'));
+  const dynamic = utils.getOptionalBool($('#condition_dynamic'));
   conditions.setConditionsAreDynamic(dynamic);
   const details = $('#condition_details').text();
   conditions.setDetails(details);
@@ -123,5 +124,5 @@ function unload() {
  */
 function validateConditions(node, validateNode = null) {
   const condition = unload();
-  ord.utils.validate(condition, 'ReactionConditions', node, validateNode);
+  utils.validate(condition, 'ReactionConditions', node, validateNode);
 }

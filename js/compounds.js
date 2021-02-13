@@ -35,22 +35,23 @@ exports = {
   renderCompound,
 };
 
-goog.require('ord.amounts');
-goog.require('ord.data');
-goog.require('ord.uploads');
-goog.require('ord.utils');
-goog.require('proto.ord.Compound');
-goog.require('proto.ord.CompoundIdentifier');
-goog.require('proto.ord.CompoundIdentifier.IdentifierType');
-goog.require('proto.ord.CompoundPreparation');
-goog.require('proto.ord.Compound.Source');
+const amounts = goog.require('ord.amounts');
+const data = goog.require('ord.data');
+const uploads = goog.require('ord.uploads');
+const utils = goog.require('ord.utils');
+
+const Compound = goog.require('proto.ord.Compound');
+const CompoundIdentifier = goog.require('proto.ord.CompoundIdentifier');
+const IdentifierType = goog.require('proto.ord.CompoundIdentifier.IdentifierType');
+const CompoundPreparation = goog.require('proto.ord.CompoundPreparation');
+const Source = goog.require('proto.ord.Compound.Source');
 
 /**
  * Adds and populates the form's fields describing multiple compounds for a
  * single reaction input.
  * @param {!Node} node The div corresponding to the reaction input to which
  *     compound definitions should be added.
- * @param {!Array<!proto.ord.Compound>} compounds
+ * @param {!Array<!Compound>} compounds
  */
 function load(node, compounds) {
   compounds.forEach(compound => loadCompound(node, compound));
@@ -61,7 +62,7 @@ function load(node, compounds) {
  * form and populates them according to the provided compound.
  * @param {!Node} root The div corresponding to the reaction input to which
  *     a new compound definition should be added.
- * @param {!proto.ord.Compound} compound
+ * @param {!Compound} compound
  */
 function loadCompound(root, compound) {
   const node = add(root);
@@ -72,24 +73,24 @@ function loadCompound(root, compound) {
  * Adds and populates the form's fields describing a compound.
  * @param {!Node} node The div corresponding to the compound whose fields
  *     should be updated.
- * @param {?proto.ord.Compound} compound
+ * @param {?Compound} compound
  */
 function loadIntoCompound(node, compound) {
   if (!compound) {
     return;
   }
   const reactionRole = compound.getReactionRole();
-  ord.utils.setSelector($('.component_reaction_role', node), reactionRole);
+  utils.setSelector($('.component_reaction_role', node), reactionRole);
   $('.component_reaction_role', node).trigger('change');
 
   const isLimiting = compound.hasIsLimiting() ? compound.getIsLimiting() : null;
-  ord.utils.setOptionalBool($('.component_limiting', node), isLimiting);
+  utils.setOptionalBool($('.component_limiting', node), isLimiting);
 
   const identifiers = compound.getIdentifiersList();
   identifiers.forEach(identifier => loadIdentifier(node, identifier));
 
   const amount = compound.getAmount();
-  ord.amounts.load(node, amount);
+  amounts.load(node, amount);
 
   const preparations = compound.getPreparationsList();
   preparations.forEach(preparation => {
@@ -112,13 +113,13 @@ function loadIntoCompound(node, compound) {
  * and populates them according to the provided identifier.
  * @param {!Node} compoundNode The div corresponding to the compound to which a
  *     new compound definition should be added.
- * @param {!proto.ord.CompoundIdentifier} identifier
+ * @param {!CompoundIdentifier} identifier
  */
 function loadIdentifier(compoundNode, identifier) {
   const node = addIdentifier(compoundNode);
   const value = identifier.getValue();
   $('.component_identifier_value', node).first().text(value);
-  ord.utils.setSelector(node, identifier.getType());
+  utils.setSelector(node, identifier.getType());
   $('.component_identifier_details', node)
       .first()
       .text(identifier.getDetails());
@@ -128,11 +129,11 @@ function loadIdentifier(compoundNode, identifier) {
  * Adds and populates the form's fields describing a compound preparation.
  * @param {!Node} node The div corresponding to the preparation that should be
  *     updated on the form.
- * @param {!proto.ord.CompoundPreparation} preparation
+ * @param {!CompoundPreparation} preparation
  */
 function loadPreparation(node, preparation) {
   const type = preparation.getType();
-  ord.utils.setSelector($('.component_compound_preparation_type', node), type);
+  utils.setSelector($('.component_compound_preparation_type', node), type);
   const details = preparation.getDetails();
   $('.component_compound_preparation_details', node).text(details);
   const reaction = preparation.getReactionId();
@@ -143,7 +144,7 @@ function loadPreparation(node, preparation) {
  * Adds and populates the form's fields describing a compound's source.
  * @param {!Node} compoundNode The div corresponding to the compound whose
  *     source information should be updated on the form.
- * @param {?proto.ord.Compound.Source} source
+ * @param {?Source} source
  */
 function loadSource(compoundNode, source) {
   if (!source) {
@@ -159,7 +160,7 @@ function loadSource(compoundNode, source) {
  * Reads and returns a list of compounds defined within part of the form.
  * @param {!Node} node The div corresponding to the reaction inputs whose
  *     compounds should be read from the form.
- * @return {!Array<!proto.ord.Compound>}
+ * @return {!Array<!Compound>}
  */
 function unload(node) {
   const compounds = [];
@@ -168,7 +169,7 @@ function unload(node) {
     if (!compoundNode.attr('id')) {
       // Not a template.
       const compound = unloadCompound(compoundNode);
-      if (!ord.utils.isEmptyMessage(compound)) {
+      if (!utils.isEmptyMessage(compound)) {
         compounds.push(compound);
       }
     }
@@ -180,30 +181,30 @@ function unload(node) {
  * Reads and returns a single compound as defined on the form.
  * @param {!Node} node The div corresponding to the compound whose definition
  *     should be read from the form.
- * @return {!proto.ord.Compound}
+ * @return {!Compound}
  */
 function unloadCompound(node) {
-  const compound = new proto.ord.Compound();
+  const compound = new Compound();
 
   const reactionRole =
-      ord.utils.getSelector($('.component_reaction_role', node));
+      utils.getSelector($('.component_reaction_role', node));
   compound.setReactionRole(reactionRole);
 
   // Only call setIsLimiting if this is a reactant Compound.
-  if (ord.utils.getSelectorText($('.component_reaction_role', node)[0]) ===
+  if (utils.getSelectorText($('.component_reaction_role', node)[0]) ===
       'REACTANT') {
     const isLimiting =
-        ord.utils.getOptionalBool($('.component_limiting', node));
+        utils.getOptionalBool($('.component_limiting', node));
     compound.setIsLimiting(isLimiting);
   }
 
   const identifiers = unloadIdentifiers(node);
-  if (identifiers.some(e => !ord.utils.isEmptyMessage(e))) {
+  if (identifiers.some(e => !utils.isEmptyMessage(e))) {
     compound.setIdentifiersList(identifiers);
   }
 
-  const amount = ord.amounts.unload(node);
-  if (!ord.utils.isEmptyMessage(amount)) {
+  const amount = amounts.unload(node);
+  if (!utils.isEmptyMessage(amount)) {
     compound.setAmount(amount);
   }
 
@@ -212,12 +213,12 @@ function unloadCompound(node) {
     const preparation = unloadPreparation(preparationNode);
     preparations.push(preparation);
   });
-  if (preparations.some(e => !ord.utils.isEmptyMessage(e))) {
+  if (preparations.some(e => !utils.isEmptyMessage(e))) {
     compound.setPreparationsList(preparations);
   }
 
   const source = unloadSource(node);
-  if (!ord.utils.isEmptyMessage(source)) {
+  if (!utils.isEmptyMessage(source)) {
     compound.setSource(source);
   }
 
@@ -237,15 +238,15 @@ function unloadCompound(node) {
  * defined on the form.
  * @param {!Node} node The div corresponding to the compound whose identifiers
  *     should be read from the form.
- * @return {!Array<!proto.ord.CompoundIdentifier>}
+ * @return {!Array<!CompoundIdentifier>}
  */
 function unloadIdentifiers(node) {
   const identifiers = [];
   $('.component_identifier', node).each(function(index, node) {
     node = $(node);
-    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
+    if (!utils.isTemplateOrUndoBuffer(node)) {
       const identifier = unloadIdentifier(node);
-      if (!ord.utils.isEmptyMessage(identifier)) {
+      if (!utils.isEmptyMessage(identifier)) {
         identifiers.push(identifier);
       }
     }
@@ -257,16 +258,16 @@ function unloadIdentifiers(node) {
  * Reads and returns a single compound identifier as defined on the form.
  * @param {!Node} node The div corresponding to the compound identifier that
  *     should be read from the form.
- * @return {!proto.ord.CompoundIdentifier}
+ * @return {!CompoundIdentifier}
  */
 function unloadIdentifier(node) {
-  const identifier = new proto.ord.CompoundIdentifier();
+  const identifier = new CompoundIdentifier();
 
   const value = $('.component_identifier_value', node).text();
   if (value) {
     identifier.setValue(value);
   }
-  const type = ord.utils.getSelector(node);
+  const type = utils.getSelector(node);
   identifier.setType(type);
   const details = $('.component_identifier_details', node).text();
   identifier.setDetails(details);
@@ -277,12 +278,12 @@ function unloadIdentifier(node) {
  * Reads and returns a single compound preparation as defined on the form.
  * @param {!Node} node The div corresponding to a compound preparation that
  *     should be read from the form.
- * @return {!proto.ord.CompoundPreparation}
+ * @return {!CompoundPreparation}
  */
 function unloadPreparation(node) {
-  const preparation = new proto.ord.CompoundPreparation();
+  const preparation = new CompoundPreparation();
   const type =
-      ord.utils.getSelector($('.component_compound_preparation_type', node));
+      utils.getSelector($('.component_compound_preparation_type', node));
   preparation.setType(type);
   const details = $('.component_compound_preparation_details', node).text();
   preparation.setDetails(details);
@@ -295,10 +296,10 @@ function unloadPreparation(node) {
  * Sets the source information fields of a compound according to the form.
  * @param {!Node} node The div corresponding to the compound whose source
  *     information should be read from the form.
- * @return {!proto.ord.Compound.Source}
+ * @return {!Source}
  */
 function unloadSource(node) {
-  const source = new proto.ord.Compound.Source();
+  const source = new Source();
   const vendor = $('.component_source_vendor', node).text();
   source.setVendor(vendor);
   const lot = $('.component_source_lot', node).text();
@@ -316,22 +317,22 @@ function unloadSource(node) {
  */
 function add(root) {
   const node =
-      ord.utils.addSlowly('#component_template', $('.components', root));
+      utils.addSlowly('#component_template', $('.components', root));
 
   // Connect reaction role selection to limiting reactant field.
   const roleSelector = $('.component_reaction_role', node);
   roleSelector.change(function() {
-    if (ord.utils.getSelectorText(this) === 'REACTANT') {
+    if (utils.getSelectorText(this) === 'REACTANT') {
       $('.limiting_reactant', node).show();
     } else {
       $('.limiting_reactant', node).hide();
     }
   });
 
-  ord.amounts.init(node);
+  amounts.init(node);
 
   // Add live validation handling.
-  ord.utils.addChangeHandler(node, () => {
+  utils.addChangeHandler(node, () => {
     validateCompound(node);
   });
 
@@ -346,7 +347,7 @@ function add(root) {
  * @return {!Node} The node of the new compound identifier div.
  */
 function addIdentifier(node) {
-  const identifierNode = ord.utils.addSlowly(
+  const identifierNode = utils.addSlowly(
       '#component_identifier_template', $('.identifiers', node).first());
 
   const uploadButton = $('.component_identifier_upload', identifierNode);
@@ -360,7 +361,7 @@ function addIdentifier(node) {
       $('.component_identifier_value', identifierNode).show();
     }
   });
-  ord.uploads.initialize(identifierNode);
+  uploads.initialize(identifierNode);
   return identifierNode;
 }
 
@@ -376,9 +377,9 @@ function addNameIdentifier(node) {
   if (!(name)) {
     return;
   }
-  const identifier = new proto.ord.CompoundIdentifier();
+  const identifier = new CompoundIdentifier();
   identifier.setValue(name);
-  identifier.setType(proto.ord.CompoundIdentifier.IdentifierType.NAME);
+  identifier.setType(IdentifierType.NAME);
   loadIdentifier(node, identifier);
 
   const xhr = new XMLHttpRequest();
@@ -388,9 +389,9 @@ function addNameIdentifier(node) {
     if (xhr.response) {
       const smiles = xhr.response[0];
       const resolver = xhr.response[1];
-      const identifier = new proto.ord.CompoundIdentifier();
+      const identifier = new CompoundIdentifier();
       identifier.setValue(smiles);
-      identifier.setType(proto.ord.CompoundIdentifier.IdentifierType.SMILES);
+      identifier.setType(IdentifierType.SMILES);
       identifier.setDetails('NAME resolved by the ' + resolver);
       loadIdentifier(node, identifier);
     }
@@ -416,9 +417,9 @@ function drawIdentifier(node) {
   $('#ketcher-spinner').fadeIn(0);
 
   // First, pack the current Compound into a message.
-  const compound = new proto.ord.Compound();
+  const compound = new Compound();
   const identifiers = unloadIdentifiers(node);
-  if (identifiers.some(e => !ord.utils.isEmptyMessage(e))) {
+  if (identifiers.some(e => !utils.isEmptyMessage(e))) {
     compound.setIdentifiersList(identifiers);
   }
   // Then, try to resolve compound into a MolBlock.
@@ -463,13 +464,13 @@ function drawIdentifier(node) {
     // Check if an existing SMILES/MolBlock identifier exists. If yes, remove.
     $('.component_identifier', node).each(function(index, node) {
       node = $(node);
-      if (!ord.utils.isTemplateOrUndoBuffer(node)) {
+      if (!utils.isTemplateOrUndoBuffer(node)) {
         const identifier = unloadIdentifier(node);
         if ((identifier.getType() ===
-             proto.ord.CompoundIdentifier.IdentifierType.SMILES) ||
+             IdentifierType.SMILES) ||
             (identifier.getType() ===
-             proto.ord.CompoundIdentifier.IdentifierType.MOLBLOCK)) {
-          ord.utils.removeSlowly(node, '.component_identifier');
+             IdentifierType.MOLBLOCK)) {
+          utils.removeSlowly(node, '.component_identifier');
         }
       }
     });
@@ -479,18 +480,18 @@ function drawIdentifier(node) {
       xhr.open('POST', '/canonicalize');
       xhr.responseType = 'json';
       xhr.onload = function() {
-        const smilesIdentifier = new proto.ord.CompoundIdentifier();
+        const smilesIdentifier = new CompoundIdentifier();
         smilesIdentifier.setType(
-            proto.ord.CompoundIdentifier.IdentifierType.SMILES);
+            IdentifierType.SMILES);
         const smiles = xhr.response;
         smilesIdentifier.setValue(smiles);
         smilesIdentifier.setDetails('Drawn with Ketcher');
         loadIdentifier(node, smilesIdentifier);
       };
       xhr.send(ketcher.getSmiles());
-      const molfileIdentifier = new proto.ord.CompoundIdentifier();
+      const molfileIdentifier = new CompoundIdentifier();
       molfileIdentifier.setType(
-          proto.ord.CompoundIdentifier.IdentifierType.MOLBLOCK);
+          IdentifierType.MOLBLOCK);
       molfileIdentifier.setValue(ketcher.getMolfile());
       molfileIdentifier.setDetails('Drawn with Ketcher');
       loadIdentifier(node, molfileIdentifier);
@@ -508,13 +509,13 @@ function drawIdentifier(node) {
  * @return {!Node} The div corresponding to the new compound preparation.
  */
 function addPreparation(node) {
-  const PreparationNode = ord.utils.addSlowly(
+  const PreparationNode = utils.addSlowly(
       '#component_preparation_template', $('.preparations', node));
 
   const typeSelector =
       $('.component_compound_preparation_type', PreparationNode);
   typeSelector.change(function() {
-    if (ord.utils.getSelectorText(this) === 'SYNTHESIZED') {
+    if (utils.getSelectorText(this) === 'SYNTHESIZED') {
       $('.component_compound_preparation_reaction_id', PreparationNode)
           .css('display', 'inline-block');
     } else {
@@ -530,7 +531,7 @@ function addPreparation(node) {
  * Updates a png rendering of a compound as defined by its identifiers.
  * @param {!Node} node The div corresponding to the compound whose rendering
  *     should be updated.
- * @param {!proto.ord.Compound|!proto.ord.ProductCompound} compound
+ * @param {!Compound|!ProductCompound} compound
  */
 function renderCompound(node, compound) {
   const xhr = new XMLHttpRequest();
@@ -558,7 +559,7 @@ function renderCompound(node, compound) {
  */
 function validateCompound(node, validateNode = null) {
   const compound = unloadCompound(node);
-  ord.utils.validate(compound, 'Compound', node, validateNode);
+  utils.validate(compound, 'Compound', node, validateNode);
 
   // Try to resolve compound structural identifiers. This is tied to
   // validation so the same trigger is used and we only have to unload the
@@ -573,8 +574,8 @@ function validateCompound(node, validateNode = null) {
  */
 function addFeature(node) {
   const featureNode =
-      ord.utils.addSlowly('#feature_template', $('.features', node));
-  ord.data.addData(featureNode);
+      utils.addSlowly('#feature_template', $('.features', node));
+  data.addData(featureNode);
   return featureNode;
 }
 
@@ -582,22 +583,22 @@ function addFeature(node) {
  * Adds and populates a feature section in a Compound.
  * @param {!Node} node Parent component node.
  * @param {string} name The name of this Data record.
- * @param {!proto.ord.Data} feature
+ * @param {!Data} feature
  */
 function loadFeature(node, name, feature) {
   $('.feature_name', node).text(name);
-  ord.data.loadData(node, feature);
+  data.loadData(node, feature);
 }
 
 /**
  * Fetches a feature record defined in the form and adds it to `featuresMap`.
  * @param {!Node} node Root node for the Data record.
- * @param {!jspb.Map<string, !proto.ord.Data>} featuresMap
+ * @param {!jspb.Map<string, !Data>} featuresMap
  */
 function unloadFeature(node, featuresMap) {
   const name = $('.feature_name', node).text();
-  const data = ord.data.unloadData(node);
-  if (name || !ord.utils.isEmptyMessage(data)) {
-    featuresMap.set(name, data);
+  const dataMessage = data.unloadData(node);
+  if (name || !utils.isEmptyMessage(dataMessage)) {
+    featuresMap.set(name, dataMessage);
   }
 }

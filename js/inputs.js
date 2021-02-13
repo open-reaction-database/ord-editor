@@ -16,6 +16,18 @@
 
 goog.module('ord.inputs');
 goog.module.declareLegacyNamespace();
+
+const compounds = goog.require('ord.compounds');
+const crudes = goog.require('ord.crudes');
+const utils = goog.require('ord.utils');
+
+const FlowRate = goog.require('proto.ord.FlowRate');
+const ReactionInput = goog.require('proto.ord.ReactionInput');
+const AdditionDevice = goog.require('proto.ord.ReactionInput.AdditionDevice');
+const AdditionSpeed = goog.require('proto.ord.ReactionInput.AdditionSpeed');
+const Temperature = goog.require('proto.ord.Temperature');
+const Time = goog.require('proto.ord.Time');
+
 exports = {
   load,
   loadInputUnnamed,
@@ -26,32 +38,23 @@ exports = {
   addInputByString,
 };
 
-goog.require('ord.compounds');
-goog.require('ord.crudes');
-goog.require('ord.utils');
-goog.require('proto.ord.FlowRate');
-goog.require('proto.ord.ReactionInput');
-goog.require('proto.ord.ReactionInput.AdditionDevice');
-goog.require('proto.ord.ReactionInput.AdditionSpeed');
-goog.require('proto.ord.Temperature');
-goog.require('proto.ord.Time');
 
 /**
  * Adds and populates the reaction input sections in the form.
- * @param {!jspb.Map<string, !proto.ord.ReactionInput>} inputs
+ * @param {!jspb.Map<string, !ReactionInput>} inputs
  */
 function load(inputs) {
   inputs.forEach(function(input, name) {
     loadInput($('#inputs'), name, input);
   });
-  ord.utils.updateSidebar();
+  utils.updateSidebar();
 }
 
 /**
  * Adds and populates a single reaction input section in the form.
  * @param {!Node} root Root node for the reaction input.
  * @param {string} name The name of this input.
- * @param {!proto.ord.ReactionInput} input
+ * @param {!ReactionInput} input
  * @return {!Node} The new input node.
  */
 function loadInput(root, name, input) {
@@ -83,7 +86,7 @@ function addInputByString(root) {
       alert('Could not parse: ' + decoder.decode(xhr.response));
     } else {
       const bytes = new Uint8Array(xhr.response);
-      const input = proto.ord.ReactionInput.deserializeBinary(bytes);
+      const input = ReactionInput.deserializeBinary(bytes);
       if (input) {
         const input_node = loadInput(root, string, input);
         $('.edittext', input_node).trigger('blur');
@@ -97,18 +100,18 @@ function addInputByString(root) {
  * Adds and populates a single reaction input section in the form without
  * assigning it a name.
  * @param {!Node} node Root node for the reaction input.
- * @param {?proto.ord.ReactionInput} input
+ * @param {?ReactionInput} input
  * @return {!Node} The original root node.
  */
 function loadInputUnnamed(node, input) {
   if (!input) {
     return node;
   }
-  const compounds = input.getComponentsList();
-  ord.compounds.load(node, compounds);
+  const componentsList = input.getComponentsList();
+  compounds.load(node, componentsList);
 
-  const crudes = input.getCrudeComponentsList();
-  ord.crudes.load(node, crudes);
+  const crudeComponentsList = input.getCrudeComponentsList();
+  crudes.load(node, crudeComponentsList);
 
   const additionOrder = input.getAdditionOrder();
   if (additionOrder !== 0) {
@@ -117,43 +120,43 @@ function loadInputUnnamed(node, input) {
 
   const additionTime = input.getAdditionTime();
   if (additionTime) {
-    ord.utils.writeMetric('.input_addition_time', additionTime, node);
+    utils.writeMetric('.input_addition_time', additionTime, node);
   }
   const additionSpeed = input.getAdditionSpeed();
   if (additionSpeed) {
-    ord.utils.setSelector(
+    utils.setSelector(
         $('.input_addition_speed_type', node), additionSpeed.getType());
     $('.input_addition_speed_details', node).text(additionSpeed.getDetails());
   }
   const additionDevice = input.getAdditionDevice();
   if (additionDevice) {
-    ord.utils.setSelector(
+    utils.setSelector(
         $('.input_addition_device_type', node), additionDevice.getType());
     $('.input_addition_device_details', node).text(additionDevice.getDetails());
   }
   const duration = input.getAdditionDuration();
   if (duration) {
-    ord.utils.writeMetric('.input_addition_duration', duration, node);
+    utils.writeMetric('.input_addition_duration', duration, node);
   }
   const temperature = input.getAdditionTemperature();
   if (temperature) {
-    ord.utils.writeMetric('.input_addition_temperature', temperature, node);
+    utils.writeMetric('.input_addition_temperature', temperature, node);
   }
   const flowRate = input.getFlowRate();
   if (flowRate) {
-    ord.utils.writeMetric('.input_flow_rate', flowRate, node);
+    utils.writeMetric('.input_flow_rate', flowRate, node);
   }
   return node;
 }
 
 /**
  * Fetches the reaction inputs defined in the form and adds them to `inputs`.
- * @param {!jspb.Map<string, !proto.ord.ReactionInput>} inputs
+ * @param {!jspb.Map<string, !ReactionInput>} inputs
  */
 function unload(inputs) {
   $('#inputs > div.input').each(function(index, node) {
     node = $(node);
-    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
+    if (!utils.isTemplateOrUndoBuffer(node)) {
       unloadInput(inputs, node);
     }
   });
@@ -161,13 +164,13 @@ function unload(inputs) {
 
 /**
  * Fetches a single reaction input defined in the form and adds it to `inputs`.
- * @param {!jspb.Map<string, !proto.ord.ReactionInput>} inputs
+ * @param {!jspb.Map<string, !ReactionInput>} inputs
  * @param {!Node} node Root node for the reaction input.
  */
 function unloadInput(inputs, node) {
   const name = $('.input_name', node).text();
   const input = unloadInputUnnamed(node);
-  if (name || !ord.utils.isEmptyMessage(input)) {
+  if (name || !utils.isEmptyMessage(input)) {
     inputs.set(name, input);
   }
 }
@@ -175,19 +178,19 @@ function unloadInput(inputs, node) {
 /**
  * Fetches a single reaction input defined in the form.
  * @param {!Node} node Root node for the reaction input.
- * @return {!proto.ord.ReactionInput}
+ * @return {!ReactionInput}
  */
 function unloadInputUnnamed(node) {
-  const input = new proto.ord.ReactionInput();
+  const input = new ReactionInput();
 
-  const compounds = ord.compounds.unload(node);
-  if (compounds.some(e => !ord.utils.isEmptyMessage(e))) {
-    input.setComponentsList(compounds);
+  const componentsList = compounds.unload(node);
+  if (componentsList.some(e => !utils.isEmptyMessage(e))) {
+    input.setComponentsList(componentsList);
   }
 
-  const crudes = ord.crudes.unload(node);
-  if (crudes.some(e => !ord.utils.isEmptyMessage(e))) {
-    input.setCrudeComponentsList(crudes);
+  const crudeComponentsList = crudes.unload(node);
+  if (crudeComponentsList.some(e => !utils.isEmptyMessage(e))) {
+    input.setCrudeComponentsList(crudeComponentsList);
   }
 
   const additionOrder = parseInt($('.input_addition_order', node).text());
@@ -195,42 +198,42 @@ function unloadInputUnnamed(node) {
     input.setAdditionOrder(additionOrder);
   }
   const additionTime =
-      ord.utils.readMetric('.input_addition_time', new proto.ord.Time(), node);
-  if (!ord.utils.isEmptyMessage(additionTime)) {
+      utils.readMetric('.input_addition_time', new Time(), node);
+  if (!utils.isEmptyMessage(additionTime)) {
     input.setAdditionTime(additionTime);
   }
 
-  const additionSpeed = new proto.ord.ReactionInput.AdditionSpeed();
+  const additionSpeed = new AdditionSpeed();
   additionSpeed.setType(
-      ord.utils.getSelector($('.input_addition_speed_type', node)));
+      utils.getSelector($('.input_addition_speed_type', node)));
   additionSpeed.setDetails($('.input_addition_speed_details', node).text());
-  if (!ord.utils.isEmptyMessage(additionSpeed)) {
+  if (!utils.isEmptyMessage(additionSpeed)) {
     input.setAdditionSpeed(additionSpeed);
   }
 
-  const additionDevice = new proto.ord.ReactionInput.AdditionDevice();
+  const additionDevice = new AdditionDevice();
   additionDevice.setType(
-      ord.utils.getSelector($('.input_addition_device_type', node)));
+      utils.getSelector($('.input_addition_device_type', node)));
   additionDevice.setDetails($('.input_addition_device_details', node).text());
-  if (!ord.utils.isEmptyMessage(additionDevice)) {
+  if (!utils.isEmptyMessage(additionDevice)) {
     input.setAdditionDevice(additionDevice);
   }
 
-  const additionDuration = ord.utils.readMetric(
-      '.input_addition_duration', new proto.ord.Time(), node);
-  if (!ord.utils.isEmptyMessage(additionDuration)) {
+  const additionDuration = utils.readMetric(
+      '.input_addition_duration', new Time(), node);
+  if (!utils.isEmptyMessage(additionDuration)) {
     input.setAdditionDuration(additionDuration);
   }
 
-  const additionTemperature = ord.utils.readMetric(
-      '.input_addition_temperature', new proto.ord.Temperature(), node);
-  if (!ord.utils.isEmptyMessage(additionTemperature)) {
+  const additionTemperature = utils.readMetric(
+      '.input_addition_temperature', new Temperature(), node);
+  if (!utils.isEmptyMessage(additionTemperature)) {
     input.setAdditionTemperature(additionTemperature);
   }
 
   const flowRate =
-      ord.utils.readMetric('.input_flow_rate', new proto.ord.FlowRate(), node);
-  if (!ord.utils.isEmptyMessage(flowRate)) {
+      utils.readMetric('.input_flow_rate', new FlowRate(), node);
+  if (!utils.isEmptyMessage(flowRate)) {
     input.setFlowRate(flowRate);
   }
 
@@ -244,18 +247,18 @@ function unloadInputUnnamed(node) {
  * @return {!Node} The newly added parent node for the reaction input.
  */
 function add(root, classes = null) {
-  const node = ord.utils.addSlowly('#input_template', root);
+  const node = utils.addSlowly('#input_template', root);
   if (Array.isArray(classes) && classes.length) {
     node.addClass(classes);
   }
-  ord.utils.updateSidebar();
+  utils.updateSidebar();
   // Add live validation handling.
-  ord.utils.addChangeHandler(node, () => {
+  utils.addChangeHandler(node, () => {
     validateInput(node);
   });
   // Update the sidebar when the input name is changed.
   const nameNode = node.find('.input_name').first();
-  nameNode.blur(ord.utils.updateSidebar);
+  nameNode.blur(utils.updateSidebar);
   return node;
 }
 
@@ -266,5 +269,5 @@ function add(root, classes = null) {
  */
 function validateInput(node, validateNode = null) {
   const input = unloadInputUnnamed(node);
-  ord.utils.validate(input, 'ReactionInput', node, validateNode);
+  utils.validate(input, 'ReactionInput', node, validateNode);
 }

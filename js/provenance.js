@@ -16,6 +16,14 @@
 
 goog.module('ord.provenance');
 goog.module.declareLegacyNamespace();
+
+const utils = goog.require('ord.utils');
+
+const DateTime = goog.require('proto.ord.DateTime');
+const Person = goog.require('proto.ord.Person');
+const ReactionProvenance = goog.require('proto.ord.ReactionProvenance');
+const RecordEvent = goog.require('proto.ord.RecordEvent');
+
 exports = {
   load,
   unload,
@@ -23,15 +31,10 @@ exports = {
   validateProvenance
 };
 
-goog.require('ord.utils');
-goog.require('proto.ord.DateTime');
-goog.require('proto.ord.Person');
-goog.require('proto.ord.ReactionProvenance');
-goog.require('proto.ord.RecordEvent');
 
 /**
  * Adds and populates the provenance section in the form.
- * @param {!proto.ord.ReactionProvenance} provenance
+ * @param {!ReactionProvenance} provenance
  */
 function load(provenance) {
   const experimenter = provenance.getExperimenter();
@@ -58,7 +61,7 @@ function load(provenance) {
 /**
  * Adds and populates a record event section in the form.
  * @param {!Node} node The target div.
- * @param {?proto.ord.RecordEvent} record
+ * @param {?RecordEvent} record
  */
 function loadRecordEvent(node, record) {
   if (!record) {
@@ -75,7 +78,7 @@ function loadRecordEvent(node, record) {
 /**
  * Adds and populates a person section in the form.
  * @param {!Node} node The target div.
- * @param {?proto.ord.Person} person
+ * @param {?Person} person
  */
 function loadPerson(node, person) {
   if (!person) {
@@ -90,21 +93,21 @@ function loadPerson(node, person) {
 
 /**
  * Fetches reaction provenance as defined in the form.
- * @return {!proto.ord.ReactionProvenance}
+ * @return {!ReactionProvenance}
  */
 function unload() {
-  const provenance = new proto.ord.ReactionProvenance();
+  const provenance = new ReactionProvenance();
 
   const experimenter = unloadPerson($('#provenance_experimenter'));
-  if (!ord.utils.isEmptyMessage(experimenter)) {
+  if (!utils.isEmptyMessage(experimenter)) {
     provenance.setExperimenter(experimenter);
   }
 
   provenance.setCity($('#provenance_city').text());
 
-  const start = new proto.ord.DateTime();
+  const start = new DateTime();
   start.setValue($('#provenance_start').text());
-  if (!ord.utils.isEmptyMessage(start)) {
+  if (!utils.isEmptyMessage(start)) {
     provenance.setExperimentStart(start);
   }
 
@@ -113,7 +116,7 @@ function unload() {
   provenance.setPublicationUrl($('#provenance_url').text());
 
   const created = unloadRecordEvent($('#provenance_created'));
-  if (!ord.utils.isEmptyMessage(created)) {
+  if (!utils.isEmptyMessage(created)) {
     provenance.setRecordCreated(created);
   }
 
@@ -121,9 +124,9 @@ function unload() {
   $('.provenance_modified', '#provenance_modifieds')
       .each(function(index, node) {
         node = $(node);
-        if (!ord.utils.isTemplateOrUndoBuffer(node)) {
+        if (!utils.isTemplateOrUndoBuffer(node)) {
           const modified = unloadRecordEvent(node);
-          if (!ord.utils.isEmptyMessage(modified)) {
+          if (!utils.isEmptyMessage(modified)) {
             modifieds.push(modified);
           }
         }
@@ -135,17 +138,17 @@ function unload() {
 /**
  * Fetches a record event as defined in the form.
  * @param {!Node} node Parent node containing the record event.
- * @return {!proto.ord.RecordEvent}
+ * @return {!RecordEvent}
  */
 function unloadRecordEvent(node) {
-  const created = new proto.ord.RecordEvent();
-  const createdTime = new proto.ord.DateTime();
+  const created = new RecordEvent();
+  const createdTime = new DateTime();
   createdTime.setValue($('.provenance_time', node).text());
-  if (!ord.utils.isEmptyMessage(createdTime)) {
+  if (!utils.isEmptyMessage(createdTime)) {
     created.setTime(createdTime);
   }
   const createdPerson = unloadPerson(node);
-  if (!ord.utils.isEmptyMessage(createdPerson)) {
+  if (!utils.isEmptyMessage(createdPerson)) {
     created.setPerson(createdPerson);
   }
   const createdDetails = $('.provenance_details', node).text();
@@ -156,10 +159,10 @@ function unloadRecordEvent(node) {
 /**
  * Fetches a person message as defined in the form.
  * @param {!Node} node Parent node containing the person message.
- * @return {!proto.ord.Person}
+ * @return {!Person}
  */
 function unloadPerson(node) {
-  const person = new proto.ord.Person();
+  const person = new Person();
   person.setUsername($('.provenance_username', node).text());
   person.setName($('.provenance_name', node).text());
   person.setOrcid($('.provenance_orcid', node).text());
@@ -173,7 +176,7 @@ function unloadPerson(node) {
  * @return {!Node} The div containing the new event.
  */
 function addModification() {
-  return ord.utils.addSlowly(
+  return utils.addSlowly(
       '#provenance_modified_template', $('#provenance_modifieds'));
 }
 
@@ -184,5 +187,5 @@ function addModification() {
  */
 function validateProvenance(node, validateNode = null) {
   const provenance = unload();
-  ord.utils.validate(provenance, 'ReactionProvenance', node, validateNode);
+  utils.validate(provenance, 'ReactionProvenance', node, validateNode);
 }

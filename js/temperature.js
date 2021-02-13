@@ -16,6 +16,15 @@
 
 goog.module('ord.temperature');
 goog.module.declareLegacyNamespace();
+
+const utils = goog.require('ord.utils');
+
+const Temperature = goog.require('proto.ord.Temperature');
+const TemperatureConditions = goog.require('proto.ord.TemperatureConditions');
+const Measurement = goog.require('proto.ord.TemperatureConditions.Measurement');
+const TemperatureControl = goog.require('proto.ord.TemperatureConditions.TemperatureControl');
+const Time = goog.require('proto.ord.Time');
+
 exports = {
   load,
   unload,
@@ -23,21 +32,14 @@ exports = {
   validateTemperature
 };
 
-goog.require('ord.utils');
-goog.require('proto.ord.Temperature');
-goog.require('proto.ord.TemperatureConditions');
-goog.require('proto.ord.TemperatureConditions.Measurement');
-goog.require('proto.ord.TemperatureConditions.TemperatureControl');
-goog.require('proto.ord.Time');
-
 /**
  * Adds and populates the temperature conditions section in the form.
- * @param {!proto.ord.TemperatureConditions} temperature
+ * @param {!TemperatureConditions} temperature
  */
 function load(temperature) {
   const control = temperature.getControl();
   if (control) {
-    ord.utils.setSelector($('#temperature_control'), control.getType());
+    utils.setSelector($('#temperature_control'), control.getType());
     $('#temperature_control_details').text(control.getDetails());
   }
   const measurements = temperature.getMeasurementsList();
@@ -46,53 +48,53 @@ function load(temperature) {
     loadMeasurement(measurement, node);
   });
   const setpoint = temperature.getSetpoint();
-  ord.utils.writeMetric('#temperature_setpoint', setpoint);
+  utils.writeMetric('#temperature_setpoint', setpoint);
 }
 
 /**
  * Adds and populates a temperature measurement section in the form.
- * @param {!proto.ord.TemperatureConditions.Measurement} measurement
+ * @param {!TemperatureConditions.Measurement} measurement
  * @param {!Node} node The target div.
  */
 function loadMeasurement(measurement, node) {
   const type = measurement.getType();
-  ord.utils.setSelector($('.temperature_measurement_type', node), type);
+  utils.setSelector($('.temperature_measurement_type', node), type);
   $('.temperature_measurement_details', node).text(measurement.getDetails());
 
   const temperature = measurement.getTemperature();
-  ord.utils.writeMetric(
+  utils.writeMetric(
       '.temperature_measurement_temperature', temperature, node);
 
   const time = measurement.getTime();
-  ord.utils.writeMetric('.temperature_measurement_time', time, node);
+  utils.writeMetric('.temperature_measurement_time', time, node);
 }
 
 /**
  * Fetches temperature conditions from the form.
- * @return {!proto.ord.TemperatureConditions}
+ * @return {!TemperatureConditions}
  */
 function unload() {
-  const temperature = new proto.ord.TemperatureConditions();
+  const temperature = new TemperatureConditions();
 
-  const control = new proto.ord.TemperatureConditions.TemperatureControl();
-  control.setType(ord.utils.getSelector($('#temperature_control')));
+  const control = new TemperatureControl();
+  control.setType(utils.getSelector($('#temperature_control')));
   control.setDetails($('#temperature_control_details').text());
-  if (!ord.utils.isEmptyMessage(control)) {
+  if (!utils.isEmptyMessage(control)) {
     temperature.setControl(control);
   }
 
-  const setpoint = ord.utils.readMetric(
-      '#temperature_setpoint', new proto.ord.Temperature());
-  if (!ord.utils.isEmptyMessage(setpoint)) {
+  const setpoint = utils.readMetric(
+      '#temperature_setpoint', new Temperature());
+  if (!utils.isEmptyMessage(setpoint)) {
     temperature.setSetpoint(setpoint);
   }
 
   const measurements = [];
   $('.temperature_measurement').each(function(index, node) {
     node = $(node);
-    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
+    if (!utils.isTemplateOrUndoBuffer(node)) {
       const measurement = unloadMeasurement(node);
-      if (!ord.utils.isEmptyMessage(measurement)) {
+      if (!utils.isEmptyMessage(measurement)) {
         measurements.push(measurement);
       }
     }
@@ -104,23 +106,23 @@ function unload() {
 /**
  * Fetches a temperature measurement from the form.
  * @param {!Node} node The div of the measurement to fetch.
- * @return {!proto.ord.TemperatureConditions.Measurement}
+ * @return {!TemperatureConditions.Measurement}
  */
 function unloadMeasurement(node) {
-  const measurement = new proto.ord.TemperatureConditions.Measurement();
-  const type = ord.utils.getSelector($('.temperature_measurement_type', node));
+  const measurement = new Measurement();
+  const type = utils.getSelector($('.temperature_measurement_type', node));
   measurement.setType(type);
   const details = $('.temperature_measurement_details', node).text();
   measurement.setDetails(details);
-  const temperature = ord.utils.readMetric(
-      '.temperature_measurement_temperature', new proto.ord.Temperature(),
+  const temperature = utils.readMetric(
+      '.temperature_measurement_temperature', new Temperature(),
       node);
-  if (!ord.utils.isEmptyMessage(temperature)) {
+  if (!utils.isEmptyMessage(temperature)) {
     measurement.setTemperature(temperature);
   }
-  const time = ord.utils.readMetric(
-      '.temperature_measurement_time', new proto.ord.Time(), node);
-  if (!ord.utils.isEmptyMessage(time)) {
+  const time = utils.readMetric(
+      '.temperature_measurement_time', new Time(), node);
+  if (!utils.isEmptyMessage(time)) {
     measurement.setTime(time);
   }
   return measurement;
@@ -131,7 +133,7 @@ function unloadMeasurement(node) {
  * @return {!Node} The node of the new measurement div.
  */
 function addMeasurement() {
-  return ord.utils.addSlowly(
+  return utils.addSlowly(
       '#temperature_measurement_template', $('#temperature_measurements'));
 }
 
@@ -142,5 +144,5 @@ function addMeasurement() {
  */
 function validateTemperature(node, validateNode = null) {
   const temperature = unload();
-  ord.utils.validate(temperature, 'TemperatureConditions', node, validateNode);
+  utils.validate(temperature, 'TemperatureConditions', node, validateNode);
 }

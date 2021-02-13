@@ -16,19 +16,22 @@
 
 goog.module('ord.identifiers');
 goog.module.declareLegacyNamespace();
+
+const uploads = goog.require('ord.uploads');
+const utils = goog.require('ord.utils');
+
+const ReactionIdentifier = goog.require('proto.ord.ReactionIdentifier');
+
 exports = {
   load,
   unload,
   add
 };
 
-goog.require('ord.uploads');
-goog.require('ord.utils');
-goog.require('proto.ord.ReactionIdentifier');
 
 /**
  * Adds and populates the reaction identifier sections in the form.
- * @param {!Array<!proto.ord.ReactionIdentifier>} identifiers
+ * @param {!Array<!ReactionIdentifier>} identifiers
  */
 function load(identifiers) {
   identifiers.forEach(identifier => loadIdentifier(identifier));
@@ -39,27 +42,27 @@ function load(identifiers) {
 
 /**
  * Adds and populates a single reaction identifier section in the form.
- * @param {!proto.ord.ReactionIdentifier} identifier
+ * @param {!ReactionIdentifier} identifier
  */
 function loadIdentifier(identifier) {
   const node = add();
   const value = identifier.getValue();
   $('.reaction_identifier_value', node).text(value);
-  ord.utils.setSelector(node, identifier.getType());
+  utils.setSelector(node, identifier.getType());
   $('.reaction_identifier_details', node).text(identifier.getDetails());
 }
 
 /**
  * Fetches the reaction identifiers defined in the form.
- * @return {!Array<!proto.ord.ReactionIdentifier>}
+ * @return {!Array<!ReactionIdentifier>}
  */
 function unload() {
   const identifiers = [];
   $('.reaction_identifier').each(function(index, node) {
     node = $(node);
-    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
+    if (!utils.isTemplateOrUndoBuffer(node)) {
       const identifier = unloadIdentifier(node);
-      if (!ord.utils.isEmptyMessage(identifier)) {
+      if (!utils.isEmptyMessage(identifier)) {
         identifiers.push(identifier);
       }
     }
@@ -70,17 +73,17 @@ function unload() {
 /**
  * Fetches a single reaction identifier defined in the form.
  * @param {!Node} node Root node for the identifier.
- * @return {!proto.ord.ReactionIdentifier}
+ * @return {!ReactionIdentifier}
  */
 function unloadIdentifier(node) {
-  const identifier = new proto.ord.ReactionIdentifier();
+  const identifier = new ReactionIdentifier();
 
   const value = $('.reaction_identifier_value', node).text();
   if (value) {
     identifier.setValue(value);
   }
 
-  const type = ord.utils.getSelector(node);
+  const type = utils.getSelector(node);
   if (type) {
     identifier.setType(type);
   }
@@ -97,7 +100,7 @@ function unloadIdentifier(node) {
  */
 function add() {
   const node =
-      ord.utils.addSlowly('#reaction_identifier_template', $('#identifiers'));
+      utils.addSlowly('#reaction_identifier_template', $('#identifiers'));
 
   const uploadButton = $('.reaction_identifier_upload', node);
   uploadButton.change(function() {
@@ -110,6 +113,6 @@ function add() {
       $('.reaction_identifier_value', node).show();
     }
   });
-  ord.uploads.initialize(node);
+  uploads.initialize(node);
   return node;
 }

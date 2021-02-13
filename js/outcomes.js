@@ -16,6 +16,17 @@
 
 goog.module('ord.outcomes');
 goog.module.declareLegacyNamespace();
+
+const data = goog.require('ord.data');
+const products = goog.require('ord.products');
+const utils = goog.require('ord.utils');
+
+const Analysis = goog.require('proto.ord.Analysis');
+const DateTime = goog.require('proto.ord.DateTime');
+const Percentage = goog.require('proto.ord.Percentage');
+const ReactionOutcome = goog.require('proto.ord.ReactionOutcome');
+const Time = goog.require('proto.ord.Time');
+
 exports = {
   load,
   unload,
@@ -26,18 +37,10 @@ exports = {
   validateAnalysis
 };
 
-goog.require('ord.data');
-goog.require('ord.products');
-goog.require('ord.utils');
-goog.require('proto.ord.Analysis');
-goog.require('proto.ord.DateTime');
-goog.require('proto.ord.Percentage');
-goog.require('proto.ord.ReactionOutcome');
-goog.require('proto.ord.Time');
 
 /**
  * Adds and populates the reaction outcome sections in the form.
- * @param {!Array<!proto.ord.ReactionOutcome>} outcomes
+ * @param {!Array<!ReactionOutcome>} outcomes
  */
 function load(outcomes) {
   outcomes.forEach(outcome => loadOutcome(outcome));
@@ -45,41 +48,41 @@ function load(outcomes) {
 
 /**
  * Adds and populates a reaction outcome section in the form.
- * @param {!proto.ord.ReactionOutcome} outcome
+ * @param {!ReactionOutcome} outcome
  */
 function loadOutcome(outcome) {
   const node = add();
 
   const time = outcome.getReactionTime();
   if (time != null) {
-    ord.utils.writeMetric('.outcome_time', time, node);
+    utils.writeMetric('.outcome_time', time, node);
   }
   const conversion = outcome.getConversion();
   if (conversion) {
-    ord.utils.writeMetric('.outcome_conversion', outcome.getConversion(), node);
+    utils.writeMetric('.outcome_conversion', outcome.getConversion(), node);
   }
 
-  const analyses = outcome.getAnalysesMap();
-  analyses.forEach(function(analysis, name) {
+  const analysesMap = outcome.getAnalysesMap();
+  analysesMap.forEach(function(analysis, name) {
     loadAnalysis(node, name, analysis);
   });
 
-  const products = outcome.getProductsList();
-  ord.products.load(node, products);
+  const productsList = outcome.getProductsList();
+  products.load(node, productsList);
 }
 
 /**
  * Adds and populates a reaction analysis section in the form.
  * @param {!Node} outcomeNode Parent reaction outcome node.
  * @param {string} name The name of this analysis.
- * @param {!proto.ord.Analysis} analysis
+ * @param {!Analysis} analysis
  */
 function loadAnalysis(outcomeNode, name, analysis) {
   const node = addAnalysis(outcomeNode);
 
   $('.outcome_analysis_name', node).text(name).trigger('input');
 
-  ord.utils.setSelector($('.outcome_analysis_type', node), analysis.getType());
+  utils.setSelector($('.outcome_analysis_type', node), analysis.getType());
   const chmoId = analysis.getChmoId();
   if (chmoId !== 0) {
     $('.outcome_analysis_chmo_id', node).text(analysis.getChmoId());
@@ -98,7 +101,7 @@ function loadAnalysis(outcomeNode, name, analysis) {
   if (calibrated) {
     $('.outcome_analysis_calibrated', node).text(calibrated.getValue());
   }
-  ord.utils.setOptionalBool(
+  utils.setOptionalBool(
       $('.outcome_analysis_is_of_isolated_species', node),
       analysis.hasIsOfIsolatedSpecies() ? analysis.getIsOfIsolatedSpecies() :
                                           null);
@@ -110,22 +113,22 @@ function loadAnalysis(outcomeNode, name, analysis) {
  * @param {string} name The name of this Data record.
  * @param {!proto.ord.Data} data
  */
-function loadData(node, name, data) {
+function loadData(node, name, dataMessage) {
   $('.outcome_data_name', node).text(name);
-  ord.data.loadData(node, data);
+  data.loadData(node, dataMessage);
 }
 
 /**
  * Fetches the reaction outcomes defined in the form.
- * @return {!Array<!proto.ord.ReactionOutcome>}
+ * @return {!Array<!ReactionOutcome>}
  */
 function unload() {
   const outcomes = [];
   $('.outcome').each(function(index, node) {
     node = $(node);
-    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
+    if (!utils.isTemplateOrUndoBuffer(node)) {
       const outcome = unloadOutcome(node);
-      if (!ord.utils.isEmptyMessage(outcome)) {
+      if (!utils.isEmptyMessage(outcome)) {
         outcomes.push(outcome);
       }
     }
@@ -136,31 +139,31 @@ function unload() {
 /**
  * Fetches a reaction outcome defined in the form.
  * @param {!Node} node Root node for the reaction outcome.
- * @return {!proto.ord.ReactionOutcome}
+ * @return {!ReactionOutcome}
  */
 function unloadOutcome(node) {
-  const outcome = new proto.ord.ReactionOutcome();
+  const outcome = new ReactionOutcome();
 
   const time =
-      ord.utils.readMetric('.outcome_time', new proto.ord.Time(), node);
-  if (!ord.utils.isEmptyMessage(time)) {
+      utils.readMetric('.outcome_time', new Time(), node);
+  if (!utils.isEmptyMessage(time)) {
     outcome.setReactionTime(time);
   }
 
-  const conversion = ord.utils.readMetric(
-      '.outcome_conversion', new proto.ord.Percentage(), node);
-  if (!ord.utils.isEmptyMessage(conversion)) {
+  const conversion = utils.readMetric(
+      '.outcome_conversion', new Percentage(), node);
+  if (!utils.isEmptyMessage(conversion)) {
     outcome.setConversion(conversion);
   }
 
-  const products = ord.products.unload(node);
-  outcome.setProductsList(products);
+  const productsList = products.unload(node);
+  outcome.setProductsList(productsList);
 
-  const analyses = outcome.getAnalysesMap();
+  const analysesMap = outcome.getAnalysesMap();
   $('.outcome_analysis', node).each(function(index, node) {
     node = $(node);
-    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
-      unloadAnalysis(node, analyses);
+    if (!utils.isTemplateOrUndoBuffer(node)) {
+      unloadAnalysis(node, analysesMap);
     }
   });
   return outcome;
@@ -169,12 +172,12 @@ function unloadOutcome(node) {
 /**
  * Fetches a reaction analysis defined in the form.
  * @param {!Node} analysisNode Root node for the reaction analysis.
- * @return {!proto.ord.Analysis}
+ * @return {!Analysis}
  */
 function unloadAnalysisSingle(analysisNode) {
-  const analysis = new proto.ord.Analysis();
+  const analysis = new Analysis();
   analysis.setType(
-      ord.utils.getSelector($('.outcome_analysis_type', analysisNode)));
+      utils.getSelector($('.outcome_analysis_type', analysisNode)));
   const chmoId = $('.outcome_analysis_chmo_id', analysisNode).text();
   if (!isNaN(chmoId)) {
     analysis.setChmoId(chmoId);
@@ -190,12 +193,12 @@ function unloadAnalysisSingle(analysisNode) {
   });
   analysis.setInstrumentManufacturer(
       $('.outcome_analysis_manufacturer', analysisNode).text());
-  const calibrated = new proto.ord.DateTime();
+  const calibrated = new DateTime();
   calibrated.setValue($('.outcome_analysis_calibrated', analysisNode).text());
-  if (!ord.utils.isEmptyMessage(calibrated)) {
+  if (!utils.isEmptyMessage(calibrated)) {
     analysis.setInstrumentLastCalibrated(calibrated);
   }
-  analysis.setIsOfIsolatedSpecies(ord.utils.getOptionalBool(
+  analysis.setIsOfIsolatedSpecies(utils.getOptionalBool(
       $('.outcome_analysis_is_of_isolated_species', analysisNode)));
 
   return analysis;
@@ -204,12 +207,12 @@ function unloadAnalysisSingle(analysisNode) {
 /**
  * Fetches a reaction analysis defined in the form and adds it to `analyses`.
  * @param {!Node} analysisNode Root node for the reaction analysis.
- * @param {!jspb.Map<string, !proto.ord.Analysis>} analyses
+ * @param {!jspb.Map<string, !Analysis>} analyses
  */
 function unloadAnalysis(analysisNode, analyses) {
   const analysis = unloadAnalysisSingle(analysisNode);
   const name = $('.outcome_analysis_name', analysisNode).text();
-  if (name || !ord.utils.isEmptyMessage(analysis)) {
+  if (name || !utils.isEmptyMessage(analysis)) {
     analyses.set(name, analysis);
   }
 }
@@ -221,9 +224,9 @@ function unloadAnalysis(analysisNode, analyses) {
  */
 function unloadData(node, dataMap) {
   const name = $('.outcome_data_name', node).text();
-  const data = ord.data.unloadData(node);
-  if (name || !ord.utils.isEmptyMessage(data)) {
-    dataMap.set(name, data);
+  const datadataMessage = data.unloadData(node);
+  if (name || !utils.isEmptyMessage(datadataMessage)) {
+    dataMap.set(name, datadataMessage);
   }
 }
 
@@ -232,9 +235,9 @@ function unloadData(node, dataMap) {
  * @return {!Node} The newly added parent node for the reaction outcome.
  */
 function add() {
-  const node = ord.utils.addSlowly('#outcome_template', $('#outcomes'));
+  const node = utils.addSlowly('#outcome_template', $('#outcomes'));
   // Add live validation handling.
-  ord.utils.addChangeHandler(node, () => {
+  utils.addChangeHandler(node, () => {
     validateOutcome(node);
   });
   return node;
@@ -246,7 +249,7 @@ function add() {
  * @return {!Node} The newly added parent node for the reaction analysis.
  */
 function addAnalysis(node) {
-  const analysisNode = ord.utils.addSlowly(
+  const analysisNode = utils.addSlowly(
       '#outcome_analysis_template', $('.outcome_analyses', node));
 
   // Handle name changes.
@@ -279,7 +282,7 @@ function addAnalysis(node) {
   });
 
   // Add live validation handling.
-  ord.utils.addChangeHandler(analysisNode, () => {
+  utils.addChangeHandler(analysisNode, () => {
     validateAnalysis(analysisNode);
   });
   return analysisNode;
@@ -291,9 +294,9 @@ function addAnalysis(node) {
  * @return {!Node} The newly added parent node for the Data record.
  */
 function addData(node) {
-  const processNode = ord.utils.addSlowly(
+  const processNode = utils.addSlowly(
       '#outcome_data_template', $('.outcome_data_repeated', node));
-  ord.data.addData(processNode);
+  data.addData(processNode);
   return processNode;
 }
 
@@ -304,7 +307,7 @@ function addData(node) {
  */
 function validateOutcome(node, validateNode = null) {
   const outcome = unloadOutcome(node);
-  ord.utils.validate(outcome, 'ReactionOutcome', node, validateNode);
+  utils.validate(outcome, 'ReactionOutcome', node, validateNode);
 }
 
 /**
@@ -314,5 +317,5 @@ function validateOutcome(node, validateNode = null) {
  */
 function validateAnalysis(node, validateNode = null) {
   const analysis = unloadAnalysisSingle(node);
-  ord.utils.validate(analysis, 'Analysis', node, validateNode);
+  utils.validate(analysis, 'Analysis', node, validateNode);
 }

@@ -16,30 +16,33 @@
 
 goog.module('ord.stirring');
 goog.module.declareLegacyNamespace();
+
+const utils = goog.require('ord.utils');
+
+const StirringConditions = goog.require('proto.ord.StirringConditions');
+const StirringMethod = goog.require('proto.ord.StirringConditions.StirringMethod');
+const StirringRate = goog.require('proto.ord.StirringConditions.StirringRate');
+
 exports = {
   load,
   unload,
   validateStirring
 };
 
-goog.require('ord.utils');
-goog.require('proto.ord.StirringConditions');
-goog.require('proto.ord.StirringConditions.StirringMethod');
-goog.require('proto.ord.StirringConditions.StirringRate');
 
 /**
  * Adds and populates the stirring conditions section in the form.
- * @param {!proto.ord.StirringConditions} stirring
+ * @param {!StirringConditions} stirring
  */
 function load(stirring) {
   const method = stirring.getMethod();
   if (method) {
-    ord.utils.setSelector($('#stirring_method_type'), method.getType());
+    utils.setSelector($('#stirring_method_type'), method.getType());
     $('#stirring_method_details').text(method.getDetails());
   }
   const rate = stirring.getRate();
   if (rate) {
-    ord.utils.setSelector($('#stirring_rate_type'), rate.getType());
+    utils.setSelector($('#stirring_rate_type'), rate.getType());
     $('#stirring_rate_details').text(rate.getDetails());
     const rpm = rate.getRpm();
     if (rpm !== 0) {
@@ -50,26 +53,26 @@ function load(stirring) {
 
 /**
  * Fetches the stirring conditions from the form.
- * @return {!proto.ord.StirringConditions}
+ * @return {!StirringConditions}
  */
 function unload() {
-  const stirring = new proto.ord.StirringConditions();
+  const stirring = new StirringConditions();
 
-  const method = new proto.ord.StirringConditions.StirringMethod();
-  method.setType(ord.utils.getSelector($('#stirring_method_type')));
+  const method = new StirringMethod();
+  method.setType(utils.getSelector($('#stirring_method_type')));
   method.setDetails($('#stirring_method_details').text());
-  if (!ord.utils.isEmptyMessage(method)) {
+  if (!utils.isEmptyMessage(method)) {
     stirring.setMethod(method);
   }
 
-  const rate = new proto.ord.StirringConditions.StirringRate();
-  rate.setType(ord.utils.getSelector($('#stirring_rate_type')));
+  const rate = new StirringRate();
+  rate.setType(utils.getSelector($('#stirring_rate_type')));
   rate.setDetails($('#stirring_rate_details').text());
   const rpm = parseFloat($('#stirring_rpm').text());
   if (!isNaN(rpm)) {
     rate.setRpm(rpm);
   }
-  if (!ord.utils.isEmptyMessage(rate)) {
+  if (!utils.isEmptyMessage(rate)) {
     stirring.setRate(rate);
   }
   return stirring;
@@ -82,5 +85,5 @@ function unload() {
  */
 function validateStirring(node, validateNode = null) {
   const stirring = unload();
-  ord.utils.validate(stirring, 'StirringConditions', node, validateNode);
+  utils.validate(stirring, 'StirringConditions', node, validateNode);
 }

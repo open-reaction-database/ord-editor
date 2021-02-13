@@ -16,58 +16,61 @@
 
 goog.module('ord.illumination');
 goog.module.declareLegacyNamespace();
+
+const utils = goog.require('ord.utils');
+
+const IlluminationConditions = goog.require('proto.ord.IlluminationConditions');
+const IlluminationType = goog.require('proto.ord.IlluminationConditions.IlluminationType');
+const Length = goog.require('proto.ord.Length');
+const Wavelength = goog.require('proto.ord.Wavelength');
+
 exports = {
   load,
   unload,
   validateIllumination
 };
 
-goog.require('ord.utils');
-goog.require('proto.ord.IlluminationConditions');
-goog.require('proto.ord.IlluminationConditions.IlluminationType');
-goog.require('proto.ord.Length');
-goog.require('proto.ord.Wavelength');
 
 /**
  * Adds and populates the illumination conditions section in the form.
- * @param {!proto.ord.IlluminationConditions} illumination
+ * @param {!IlluminationConditions} illumination
  */
 function load(illumination) {
   const type = illumination.getType();
   if (type) {
-    ord.utils.setSelector($('#illumination_type'), type.getType());
+    utils.setSelector($('#illumination_type'), type.getType());
     $('#illumination_details').text(type.getDetails());
   }
   const wavelength = illumination.getPeakWavelength();
-  ord.utils.writeMetric('#illumination_wavelength', wavelength);
+  utils.writeMetric('#illumination_wavelength', wavelength);
   $('#illumination_color').text(illumination.getColor());
   const distance = illumination.getDistanceToVessel();
-  ord.utils.writeMetric('#illumination_distance', distance);
+  utils.writeMetric('#illumination_distance', distance);
 }
 
 /**
  * Fetches the illumination conditions defined in the form.
- * @return {!proto.ord.IlluminationConditions}
+ * @return {!IlluminationConditions}
  */
 function unload() {
-  const illumination = new proto.ord.IlluminationConditions();
+  const illumination = new IlluminationConditions();
 
-  const type = new proto.ord.IlluminationConditions.IlluminationType();
-  type.setType(ord.utils.getSelector($('#illumination_type')));
+  const type = new IlluminationType();
+  type.setType(utils.getSelector($('#illumination_type')));
   type.setDetails($('#illumination_details').text());
-  if (!ord.utils.isEmptyMessage(type)) {
+  if (!utils.isEmptyMessage(type)) {
     illumination.setType(type);
   }
 
-  const wavelength = ord.utils.readMetric(
-      '#illumination_wavelength', new proto.ord.Wavelength());
-  if (!ord.utils.isEmptyMessage(wavelength)) {
+  const wavelength = utils.readMetric(
+      '#illumination_wavelength', new Wavelength());
+  if (!utils.isEmptyMessage(wavelength)) {
     illumination.setPeakWavelength(wavelength);
   }
   illumination.setColor($('#illumination_color').text());
   const distance =
-      ord.utils.readMetric('#illumination_distance', new proto.ord.Length());
-  if (!ord.utils.isEmptyMessage(distance)) {
+      utils.readMetric('#illumination_distance', new Length());
+  if (!utils.isEmptyMessage(distance)) {
     illumination.setDistanceToVessel(distance);
   }
   return illumination;
@@ -80,6 +83,6 @@ function unload() {
  */
 function validateIllumination(node, validateNode = null) {
   const illumination = unload();
-  ord.utils.validate(
+  utils.validate(
       illumination, 'IlluminationConditions', node, validateNode);
 }

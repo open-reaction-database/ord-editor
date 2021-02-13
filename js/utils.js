@@ -16,6 +16,12 @@
 
 goog.module('ord.utils');
 goog.module.declareLegacyNamespace();
+
+const enums = goog.require('ord.enums');  // Used by nameToProto.
+
+const Dataset = goog.require('proto.ord.Dataset');
+const Reaction = goog.require('proto.ord.Reaction');
+
 exports = {
   addChangeHandler,
   addSlowly,
@@ -51,10 +57,6 @@ exports = {
   validate,
   writeMetric,
 };
-
-goog.require('ord.enums');  // Used by nameToProto.
-goog.require('proto.ord.Dataset');
-goog.require('proto.ord.Reaction');
 
 // Remember the dataset and reaction we are editing.
 const session = {
@@ -334,7 +336,7 @@ function getReactionById(reactionId) {
     xhr.responseType = 'arraybuffer';
     xhr.onload = function() {
       const bytes = new Uint8Array(xhr.response);
-      const reaction = proto.ord.Reaction.deserializeBinary(bytes);
+      const reaction = Reaction.deserializeBinary(bytes);
       resolve(reaction);
     };
     xhr.send();
@@ -540,7 +542,7 @@ function getDataset(fileName) {
     xhr.responseType = 'arraybuffer';
     xhr.onload = function() {
       const bytes = new Uint8Array(xhr.response);
-      const dataset = proto.ord.Dataset.deserializeBinary(bytes);
+      const dataset = Dataset.deserializeBinary(bytes);
       resolve(dataset);
     };
     xhr.send();
@@ -550,7 +552,7 @@ function getDataset(fileName) {
 /**
  * Uploads a serialized Dataset proto.
  * @param {string} fileName The name of the new dataset.
- * @param {!proto.ord.Dataset} dataset
+ * @param {!Dataset} dataset
  */
 function putDataset(fileName, dataset) {
   $('#save').text('saving');
@@ -564,7 +566,7 @@ function putDataset(fileName, dataset) {
 /**
  * Compares a local Dataset to a Dataset on the server (used for testing).
  * @param {string} fileName The name of a dataset on the server.
- * @param {!proto.ord.Dataset} dataset A local Dataset.
+ * @param {!Dataset} dataset A local Dataset.
  * @return {!Promise<!Uint8Array>}
  */
 async function compareDataset(fileName, dataset) {

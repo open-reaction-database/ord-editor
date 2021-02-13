@@ -22,11 +22,12 @@ exports = {
   unload,
 };
 
-goog.require('ord.utils');
-goog.require('proto.ord.Amount');
-goog.require('proto.ord.Mass');
-goog.require('proto.ord.Moles');
-goog.require('proto.ord.Volume');
+const utils = goog.require('ord.utils');
+
+const Amount = goog.require('proto.ord.Amount');
+const Mass = goog.require('proto.ord.Mass');
+const Moles = goog.require('proto.ord.Moles');
+const Volume = goog.require('proto.ord.Volume');
 
 // Freely create radio button groups by generating new input names.
 let radioGroupCounter = 0;
@@ -59,7 +60,7 @@ function init(node) {
  * Adds and populates the form's fields describing the amount of a compound.
  * @param {!Node} node The div corresponding to the compound whose amount fields
  *     on the form should be updated.
- * @param {?proto.ord.Amount} amount
+ * @param {?Amount} amount
  */
 function load(node, amount) {
   if (!amount) {
@@ -79,7 +80,7 @@ function load(node, amount) {
       $('.amount_precision', node).text(amount.getMass().getPrecision());
     }
     $('.amount_units_mass', node).show();
-    ord.utils.setSelector(
+    utils.setSelector(
         $('.amount_units_mass', amountNode), amount.getMass().getUnits());
   } else if (amount.hasMoles()) {
     $('input[value=\'moles\']', amountNode).click();
@@ -90,7 +91,7 @@ function load(node, amount) {
       $('.amount_precision', node).text(amount.getMoles().getPrecision());
     }
     $('.amount_units_moles', node).show();
-    ord.utils.setSelector(
+    utils.setSelector(
         $('.amount_units_moles', amountNode), amount.getMoles().getUnits());
   } else if (amount.hasVolume()) {
     $('input[value=\'volume\']', amountNode).click();
@@ -105,9 +106,9 @@ function load(node, amount) {
     const solutes = amount.hasVolumeIncludesSolutes() ?
         amount.getVolumeIncludesSolutes() :
         null;
-    ord.utils.setOptionalBool(
+    utils.setOptionalBool(
         $('.includes_solutes.optional_bool', node), solutes);
-    ord.utils.setSelector(
+    utils.setSelector(
         $('.amount_units_volume', amountNode), amount.getVolume().getUnits());
   }
 }
@@ -115,24 +116,24 @@ function load(node, amount) {
 /**
  * Creates an Amount message according to the form.
  * @param {!Node} node The parent node for the amount fields.
- * @return {!proto.ord.Amount}
+ * @return {!Amount}
  */
 function unload(node) {
-  const amount = new proto.ord.Amount();
+  const amount = new Amount();
   // NOTE(kearnes): Take the closest amount section; there may be others
   // nested deeper (e.g. in ProductMeasurement fields under a ReactionProduct).
   node = $('.amount', node).first();
   const mass = unloadMass(node);
   const moles = unloadMoles(node);
   const volume = unloadVolume(node);
-  if (!ord.utils.isEmptyMessage(mass)) {
+  if (!utils.isEmptyMessage(mass)) {
     amount.setMass(mass);
-  } else if (!ord.utils.isEmptyMessage(moles)) {
+  } else if (!utils.isEmptyMessage(moles)) {
     amount.setMoles(moles);
-  } else if (!ord.utils.isEmptyMessage(volume)) {
+  } else if (!utils.isEmptyMessage(volume)) {
     amount.setVolume(volume);
     const solutes =
-        ord.utils.getOptionalBool($('.includes_solutes.optional_bool', node));
+        utils.getOptionalBool($('.includes_solutes.optional_bool', node));
     amount.setVolumeIncludesSolutes(solutes);
   }
   return amount;
@@ -142,10 +143,10 @@ function unload(node) {
  * Reads and returns a mass amount of a compound as defined in the form.
  * @param {!Node} node The div corresponding to the compound whose mass fields
  *     should be read from the form.
- * @return {!proto.ord.Mass}
+ * @return {!Mass}
  */
 function unloadMass(node) {
-  const mass = new proto.ord.Mass();
+  const mass = new Mass();
   if (!$('.amount_mass', node).is(':checked')) {
     return mass;
   }
@@ -153,7 +154,7 @@ function unloadMass(node) {
   if (!isNaN(value)) {
     mass.setValue(value);
   }
-  const units = ord.utils.getSelector($('.amount_units_mass', node));
+  const units = utils.getSelector($('.amount_units_mass', node));
   mass.setUnits(units);
   const precision = parseFloat($('.amount_precision', node).text());
   if (!isNaN(precision)) {
@@ -166,10 +167,10 @@ function unloadMass(node) {
  * Reads and returns a molar amount of a compound as defined in the form.
  * @param {!Node} node The div corresponding to the compound whose moles fields
  *     should be read from the form.
- * @return {!proto.ord.Moles}
+ * @return {!Moles}
  */
 function unloadMoles(node) {
-  const moles = new proto.ord.Moles();
+  const moles = new Moles();
   if (!$('.amount_moles', node).is(':checked')) {
     return moles;
   }
@@ -177,7 +178,7 @@ function unloadMoles(node) {
   if (!isNaN(value)) {
     moles.setValue(value);
   }
-  const units = ord.utils.getSelector($('.amount_units_moles', node));
+  const units = utils.getSelector($('.amount_units_moles', node));
   moles.setUnits(units);
   const precision = parseFloat($('.amount_precision', node).text());
   if (!isNaN(precision)) {
@@ -190,10 +191,10 @@ function unloadMoles(node) {
  * Reads and returns a volumetric amount of a compound as defined in the form.
  * @param {!Node} node The div corresponding to the compound whose volume fields
  *     should be read from the form.
- * @return {!proto.ord.Volume}
+ * @return {!Volume}
  */
 function unloadVolume(node) {
-  const volume = new proto.ord.Volume();
+  const volume = new Volume();
   if (!$('.amount_volume', node).is(':checked')) {
     return volume;
   }
@@ -201,7 +202,7 @@ function unloadVolume(node) {
   if (!isNaN(value)) {
     volume.setValue(value);
   }
-  const units = ord.utils.getSelector($('.amount_units_volume', node));
+  const units = utils.getSelector($('.amount_units_volume', node));
   volume.setUnits(units);
   const precision = parseFloat($('.amount_precision', node).text());
   if (!isNaN(precision)) {

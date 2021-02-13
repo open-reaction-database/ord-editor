@@ -27,8 +27,9 @@ exports = {
   freeze
 };
 
-goog.require('ord.utils');
-goog.require('proto.ord.Dataset');
+const utils = goog.require('ord.utils');
+
+const Dataset = goog.require('proto.ord.Dataset');
 
 const session = {
   fileName: null,
@@ -125,7 +126,7 @@ function getDataset(fileName, listener) {
   xhr.responseType = 'arraybuffer';
   xhr.onload = () => {
     const bytes = new Uint8Array(xhr.response);
-    const dataset = proto.ord.Dataset.deserializeBinary(bytes);
+    const dataset = Dataset.deserializeBinary(bytes);
     session.dataset = dataset;
     listener(dataset);
   };
@@ -134,7 +135,7 @@ function getDataset(fileName, listener) {
 
 /**
  * Loads a dataset into the editor.
- * @param {!proto.ord.Dataset} dataset
+ * @param {!Dataset} dataset
  */
 function loadDataset(dataset) {
   $('#name').text(dataset.getName());
@@ -152,7 +153,7 @@ function loadDataset(dataset) {
 
 /**
  * Loads a list of reactions into the editor.
- * @param {!Array<!proto.ord.Reaction>} reactions
+ * @param {!Array<!Reaction>} reactions
  */
 function loadReactions(reactions) {
   for (let i = 0; i < reactions.length; i++) {
@@ -164,7 +165,7 @@ function loadReactions(reactions) {
 /**
  * Loads a single reaction into the editor.
  * @param {number} index The index of the new reaction.
- * @param {!proto.ord.Reaction} reaction
+ * @param {!Reaction} reaction
  */
 function loadReaction(index, reaction) {
   const node = addReaction(index);
@@ -191,7 +192,7 @@ function loadReactionId(reactionId) {
 
 /**
  * Fetches the current dataset.
- * @return {!proto.ord.Dataset}
+ * @return {!Dataset}
  */
 function unloadDataset() {
   const dataset = session.dataset;
@@ -201,7 +202,7 @@ function unloadDataset() {
   const reactionIds = [];
   $('.other_reaction_id').each(function(index, node) {
     node = $(node);
-    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
+    if (!utils.isTemplateOrUndoBuffer(node)) {
       reactionIds.push($('.other_reaction_id_text', node).text());
     }
   });
