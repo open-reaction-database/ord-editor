@@ -80,8 +80,8 @@ function unload() {
 
 /**
  * Validates the stirring conditions defined in the form.
- * @param {!Node} node The div containing the stirring conditions.
- * @param {?Node=} validateNode The target div for validation results.
+ * @param {!jQuery} node The div containing the stirring conditions.
+ * @param {?jQuery=} validateNode The target div for validation results.
  */
 function validateStirring(node, validateNode = null) {
   const stirring = unload();

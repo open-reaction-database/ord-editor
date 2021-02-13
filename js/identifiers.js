@@ -72,7 +72,7 @@ function unload() {
 
 /**
  * Fetches a single reaction identifier defined in the form.
- * @param {!Node} node Root node for the identifier.
+ * @param {!jQuery} node Root node for the identifier.
  * @return {!ReactionIdentifier}
  */
 function unloadIdentifier(node) {
@@ -96,7 +96,7 @@ function unloadIdentifier(node) {
 
 /**
  * Adds a reaction identifier section to the form.
- * @return {!Node} The newly added parent node for the identifier.
+ * @return {!jQuery} The newly added parent node for the identifier.
  */
 function add() {
   const node =

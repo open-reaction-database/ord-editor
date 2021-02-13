@@ -51,7 +51,7 @@ const Source = goog.require('proto.ord.Compound.Source');
 /**
  * Adds and populates the form's fields describing multiple compounds for a
  * single reaction input.
- * @param {!Node} node The div corresponding to the reaction input to which
+ * @param {!jQuery} node The div corresponding to the reaction input to which
  *     compound definitions should be added.
  * @param {!Array<!Compound>} compounds
  */
@@ -62,7 +62,7 @@ function load(node, compounds) {
 /**
  * Adds fields describing a new component to an existing reaction input in the
  * form and populates them according to the provided compound.
- * @param {!Node} root The div corresponding to the reaction input to which
+ * @param {!jQuery} root The div corresponding to the reaction input to which
  *     a new compound definition should be added.
  * @param {!Compound} compound
  */
@@ -73,7 +73,7 @@ function loadCompound(root, compound) {
 
 /**
  * Adds and populates the form's fields describing a compound.
- * @param {!Node} node The div corresponding to the compound whose fields
+ * @param {!jQuery} node The div corresponding to the compound whose fields
  *     should be updated.
  * @param {?Compound} compound
  */
@@ -113,7 +113,7 @@ function loadIntoCompound(node, compound) {
 /**
  * Adds fields describing a new identifier to an existing compound in the form
  * and populates them according to the provided identifier.
- * @param {!Node} compoundNode The div corresponding to the compound to which a
+ * @param {!jQuery} compoundNode The div corresponding to the compound to which a
  *     new compound definition should be added.
  * @param {!CompoundIdentifier} identifier
  */
@@ -129,7 +129,7 @@ function loadIdentifier(compoundNode, identifier) {
 
 /**
  * Adds and populates the form's fields describing a compound preparation.
- * @param {!Node} node The div corresponding to the preparation that should be
+ * @param {!jQuery} node The div corresponding to the preparation that should be
  *     updated on the form.
  * @param {!CompoundPreparation} preparation
  */
@@ -144,7 +144,7 @@ function loadPreparation(node, preparation) {
 
 /**
  * Adds and populates the form's fields describing a compound's source.
- * @param {!Node} compoundNode The div corresponding to the compound whose
+ * @param {!jQuery} compoundNode The div corresponding to the compound whose
  *     source information should be updated on the form.
  * @param {?Source} source
  */
@@ -160,7 +160,7 @@ function loadSource(compoundNode, source) {
 
 /**
  * Reads and returns a list of compounds defined within part of the form.
- * @param {!Node} node The div corresponding to the reaction inputs whose
+ * @param {!jQuery} node The div corresponding to the reaction inputs whose
  *     compounds should be read from the form.
  * @return {!Array<!Compound>}
  */
@@ -181,7 +181,7 @@ function unload(node) {
 
 /**
  * Reads and returns a single compound as defined on the form.
- * @param {!Node} node The div corresponding to the compound whose definition
+ * @param {!jQuery} node The div corresponding to the compound whose definition
  *     should be read from the form.
  * @return {!Compound}
  */
@@ -236,7 +236,7 @@ function unloadCompound(node) {
 /**
  * Reads and returns a list of compound identifiers for a single compound as
  * defined on the form.
- * @param {!Node} node The div corresponding to the compound whose identifiers
+ * @param {!jQuery} node The div corresponding to the compound whose identifiers
  *     should be read from the form.
  * @return {!Array<!CompoundIdentifier>}
  */
@@ -256,7 +256,7 @@ function unloadIdentifiers(node) {
 
 /**
  * Reads and returns a single compound identifier as defined on the form.
- * @param {!Node} node The div corresponding to the compound identifier that
+ * @param {!jQuery} node The div corresponding to the compound identifier that
  *     should be read from the form.
  * @return {!CompoundIdentifier}
  */
@@ -276,7 +276,7 @@ function unloadIdentifier(node) {
 
 /**
  * Reads and returns a single compound preparation as defined on the form.
- * @param {!Node} node The div corresponding to a compound preparation that
+ * @param {!jQuery} node The div corresponding to a compound preparation that
  *     should be read from the form.
  * @return {!CompoundPreparation}
  */
@@ -294,7 +294,7 @@ function unloadPreparation(node) {
 
 /**
  * Sets the source information fields of a compound according to the form.
- * @param {!Node} node The div corresponding to the compound whose source
+ * @param {!jQuery} node The div corresponding to the compound whose source
  *     information should be read from the form.
  * @return {!Source}
  */
@@ -312,8 +312,8 @@ function unloadSource(node) {
 /**
  * Adds fields to the form corresponding to a new, empty compound definition as
  * specified by the component template with ID "component_template".
- * @param {!Node} root The div within which the new compound should be added.
- * @return {!Node} The node of the new component div.
+ * @param {!jQuery} root The div within which the new compound should be added.
+ * @return {!jQuery} The node of the new component div.
  */
 function add(root) {
   const node = utils.addSlowly('#component_template', $('.components', root));
@@ -342,8 +342,8 @@ function add(root) {
  * Adds fields to the form corresponding to a new, empty compound identifier as
  * specified by the component identifier template with ID
  * "component_identifier_template".
- * @param {!Node} node The div within which the new identifier should be added.
- * @return {!Node} The node of the new compound identifier div.
+ * @param {!jQuery} node The div within which the new identifier should be added.
+ * @return {!jQuery} The node of the new compound identifier div.
  */
 function addIdentifier(node) {
   const identifierNode = utils.addSlowly(
@@ -368,7 +368,7 @@ function addIdentifier(node) {
  * Adds new compound identifier(s) after prompting the user for the name of
  * a compound to add. A NAME-type identifier is always included. A SMILES-type
  * identifier is included when the name can be parsed.
- * @param {!Node} node The div corresponding to the compound to which the new
+ * @param {!jQuery} node The div corresponding to the compound to which the new
  *     identifiers should be added.
  */
 function addNameIdentifier(node) {
@@ -404,7 +404,7 @@ function addNameIdentifier(node) {
  * callback is defined to create SMILES and MOLBLOCK-type identifiers; this
  * callback is triggered upon submission of a molecular drawing from the
  * Ketcher window.
- * @param {!Node} node The div corresponding to the compound to which the new
+ * @param {!jQuery} node The div corresponding to the compound to which the new
  *     identifiers should be added.
  */
 function drawIdentifier(node) {
@@ -499,9 +499,9 @@ function drawIdentifier(node) {
  * Adds fields to the form corresponding to a new, empty compound preparation
  * as specified by the component preparation template with ID
  * "component_preparation_template".
- * @param {!Node} node The div corresponding to the compound to which the new
+ * @param {!jQuery} node The div corresponding to the compound to which the new
  *     preparation should be added.
- * @return {!Node} The div corresponding to the new compound preparation.
+ * @return {!jQuery} The div corresponding to the new compound preparation.
  */
 function addPreparation(node) {
   const PreparationNode = utils.addSlowly(
@@ -524,7 +524,7 @@ function addPreparation(node) {
 
 /**
  * Updates a png rendering of a compound as defined by its identifiers.
- * @param {!Node} node The div corresponding to the compound whose rendering
+ * @param {!jQuery} node The div corresponding to the compound whose rendering
  *     should be updated.
  * @param {!Compound|!ProductCompound} compound
  */
@@ -547,9 +547,9 @@ function renderCompound(node, compound) {
 /**
  * Validates the definition of a compound and updates the validation error
  * display node.
- * @param {!Node} node The div corresponding to the compound that should be
+ * @param {!jQuery} node The div corresponding to the compound that should be
  *     read from the form and validated.
- * @param {?Node=} validateNode The div that is used to show the results of
+ * @param {?jQuery=} validateNode The div that is used to show the results of
  *     validation (i.e., success or errors).
  */
 function validateCompound(node, validateNode = null) {
@@ -564,8 +564,8 @@ function validateCompound(node, validateNode = null) {
 
 /**
  * Adds a new feature section to the form.
- * @param {!Node} node Parent component node.
- * @return {!Node} The newly added parent node for the Data record.
+ * @param {!jQuery} node Parent component node.
+ * @return {!jQuery} The newly added parent node for the Data record.
  */
 function addFeature(node) {
   const featureNode =
@@ -576,7 +576,7 @@ function addFeature(node) {
 
 /**
  * Adds and populates a feature section in a Compound.
- * @param {!Node} node Parent component node.
+ * @param {!jQuery} node Parent component node.
  * @param {string} name The name of this Data record.
  * @param {!Data} feature
  */
@@ -587,7 +587,7 @@ function loadFeature(node, name, feature) {
 
 /**
  * Fetches a feature record defined in the form and adds it to `featuresMap`.
- * @param {!Node} node Root node for the Data record.
+ * @param {!jQuery} node Root node for the Data record.
  * @param {!jspbMap<string, !Data>} featuresMap
  */
 function unloadFeature(node, featuresMap) {

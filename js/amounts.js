@@ -58,7 +58,7 @@ function init(node) {
 
 /**
  * Adds and populates the form's fields describing the amount of a compound.
- * @param {!Node} node The div corresponding to the compound whose amount fields
+ * @param {!jQuery} node The div corresponding to the compound whose amount fields
  *     on the form should be updated.
  * @param {?Amount} amount
  */

@@ -67,7 +67,7 @@ function unload(codes) {
  * Fetches a single automation_code section from the form and adds it to
  * `codes`.
  * @param {!jspbMap<string, !Data>} codes
- * @param {!Node} node The root node of the automation_code section to fetch.
+ * @param {!jQuery} node The root node of the automation_code section to fetch.
  */
 function unloadCode(codes, node) {
   const name = $('.setup_code_name', node).text();
@@ -79,7 +79,7 @@ function unloadCode(codes, node) {
 
 /**
  * Adds an automation_code section to the form.
- * @return {!Node} The newly added root node for the automation_code section.
+ * @return {!jQuery} The newly added root node for the automation_code section.
  */
 function addCode() {
   const node = utils.addSlowly('#setup_code_template', $('#setup_codes'));

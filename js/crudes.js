@@ -29,7 +29,7 @@ const CrudeComponent = goog.require('proto.ord.CrudeComponent');
 
 /**
  * Adds and populates the crude components of a reaction input.
- * @param {!Node} node Root node for the parent reaction input.
+ * @param {!jQuery} node Root node for the parent reaction input.
  * @param {!Array<!CrudeComponent>} crudes
  */
 function load(node, crudes) {
@@ -38,7 +38,7 @@ function load(node, crudes) {
 
 /**
  * Adds and populates a single crude component section in the form.
- * @param {!Node} root Root node for the parent reaction input.
+ * @param {!jQuery} root Root node for the parent reaction input.
  * @param {!CrudeComponent} crude
  */
 function loadCrude(root, crude) {
@@ -60,7 +60,7 @@ function loadCrude(root, crude) {
 
 /**
  * Fetches the crude components defined for a reaction input in the form.
- * @param {!Node} node Root node for the parent reaction input.
+ * @param {!jQuery} node Root node for the parent reaction input.
  * @return {!Array<!CrudeComponent>}
  */
 function unload(node) {
@@ -80,7 +80,7 @@ function unload(node) {
 
 /**
  * Fetches a single crude component defined in the form.
- * @param {!Node} node Root node for the crude component.
+ * @param {!jQuery} node Root node for the crude component.
  * @return {!CrudeComponent}
  */
 function unloadCrude(node) {
@@ -105,8 +105,8 @@ function unloadCrude(node) {
 
 /**
  * Adds a crude component section to the given reaction input.
- * @param {!Node} root Root node for the parent reaction input.
- * @return {!Node} The newly added root node for the crude component.
+ * @param {!jQuery} root Root node for the parent reaction input.
+ * @return {!jQuery} The newly added root node for the crude component.
  */
 function add(root) {
   const node = utils.addSlowly('#crude_template', $('.crudes', root));

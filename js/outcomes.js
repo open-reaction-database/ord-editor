@@ -75,7 +75,7 @@ function loadOutcome(outcome) {
 
 /**
  * Adds and populates a reaction analysis section in the form.
- * @param {!Node} outcomeNode Parent reaction outcome node.
+ * @param {!jQuery} outcomeNode Parent reaction outcome node.
  * @param {string} name The name of this analysis.
  * @param {!Analysis} analysis
  */
@@ -111,7 +111,7 @@ function loadAnalysis(outcomeNode, name, analysis) {
 
 /**
  * Adds and populates a data section in a reaction analysis.
- * @param {!Node} node Parent reaction analysis node.
+ * @param {!jQuery} node Parent reaction analysis node.
  * @param {string} name The name of this Data record.
  * @param {!Data} dataMessage
  */
@@ -140,7 +140,7 @@ function unload() {
 
 /**
  * Fetches a reaction outcome defined in the form.
- * @param {!Node} node Root node for the reaction outcome.
+ * @param {!jQuery} node Root node for the reaction outcome.
  * @return {!ReactionOutcome}
  */
 function unloadOutcome(node) {
@@ -172,7 +172,7 @@ function unloadOutcome(node) {
 
 /**
  * Fetches a reaction analysis defined in the form.
- * @param {!Node} analysisNode Root node for the reaction analysis.
+ * @param {!jQuery} analysisNode Root node for the reaction analysis.
  * @return {!Analysis}
  */
 function unloadAnalysisSingle(analysisNode) {
@@ -207,7 +207,7 @@ function unloadAnalysisSingle(analysisNode) {
 
 /**
  * Fetches a reaction analysis defined in the form and adds it to `analyses`.
- * @param {!Node} analysisNode Root node for the reaction analysis.
+ * @param {!jQuery} analysisNode Root node for the reaction analysis.
  * @param {!jspbMap<string, !Analysis>} analyses
  */
 function unloadAnalysis(analysisNode, analyses) {
@@ -220,7 +220,7 @@ function unloadAnalysis(analysisNode, analyses) {
 
 /**
  * Fetches a data record defined in the form and adds it to `dataMap`.
- * @param {!Node} node Root node for the Data record.
+ * @param {!jQuery} node Root node for the Data record.
  * @param {!jspbMap<string, !Data>} dataMap
  */
 function unloadData(node, dataMap) {
@@ -233,7 +233,7 @@ function unloadData(node, dataMap) {
 
 /**
  * Adds a reaction outcome section to the form.
- * @return {!Node} The newly added parent node for the reaction outcome.
+ * @return {!jQuery} The newly added parent node for the reaction outcome.
  */
 function add() {
   const node = utils.addSlowly('#outcome_template', $('#outcomes'));
@@ -246,8 +246,8 @@ function add() {
 
 /**
  * Adds a reaction analysis section to the form.
- * @param {!Node} node Parent reaction outcome node.
- * @return {!Node} The newly added parent node for the reaction analysis.
+ * @param {!jQuery} node Parent reaction outcome node.
+ * @return {!jQuery} The newly added parent node for the reaction analysis.
  */
 function addAnalysis(node) {
   const analysisNode = utils.addSlowly(
@@ -291,8 +291,8 @@ function addAnalysis(node) {
 
 /**
  * Adds a new data section to the form.
- * @param {!Node} node Parent reaction outcome node.
- * @return {!Node} The newly added parent node for the Data record.
+ * @param {!jQuery} node Parent reaction outcome node.
+ * @return {!jQuery} The newly added parent node for the Data record.
  */
 function addData(node) {
   const processNode = utils.addSlowly(
@@ -303,8 +303,8 @@ function addData(node) {
 
 /**
  * Validates a reaction outcome defined in the form.
- * @param {!Node} node Root node for the reaction outcome.
- * @param {?Node=} validateNode The target node for validation results.
+ * @param {!jQuery} node Root node for the reaction outcome.
+ * @param {?jQuery=} validateNode The target node for validation results.
  */
 function validateOutcome(node, validateNode = null) {
   const outcome = unloadOutcome(node);
@@ -313,8 +313,8 @@ function validateOutcome(node, validateNode = null) {
 
 /**
  * Validates a reaction analysis defined in the form.
- * @param {!Node} node Root node for the reaction analysis.
- * @param {?Node=} validateNode The target node for validation results.
+ * @param {!jQuery} node Root node for the reaction analysis.
+ * @param {?jQuery=} validateNode The target node for validation results.
  */
 function validateAnalysis(node, validateNode = null) {
   const analysis = unloadAnalysisSingle(node);

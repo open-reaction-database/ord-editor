@@ -70,7 +70,7 @@ function unload() {
 
 /**
  * Fetches a single reaction observation defined in the form.
- * @param {!Node} node Root node for the reaction observation.
+ * @param {!jQuery} node Root node for the reaction observation.
  * @return {!ReactionObservation}
  */
 function unloadObservation(node) {
@@ -89,7 +89,7 @@ function unloadObservation(node) {
 
 /**
  * Adds a reaction observation section to the form.
- * @return {!Node} The newly added parent node for the reaction observation.
+ * @return {!jQuery} The newly added parent node for the reaction observation.
  */
 function add() {
   const node = utils.addSlowly('#observation_template', $('#observations'));
@@ -103,8 +103,8 @@ function add() {
 
 /**
  * Validates a single reaction observation defined in the form.
- * @param {!Node} node Root node for the reaction observation.
- * @param {?Node=} validateNode Target node for validation results.
+ * @param {!jQuery} node Root node for the reaction observation.
+ * @param {?jQuery=} validateNode Target node for validation results.
  */
 function validateObservation(node, validateNode = null) {
   const observation = unloadObservation(node);

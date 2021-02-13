@@ -261,7 +261,7 @@ async function newReaction() {
 
 /**
  * Deletes a Reaction after triggering 'save'.
- * @param {!Node} button The node of the 'remove' button.
+ * @param {!jQuery} button The node of the 'remove' button.
  */
 async function deleteReaction(button) {
   if ($('#save').css('visibility') === 'visible') {
@@ -275,7 +275,7 @@ async function deleteReaction(button) {
 
 /**
  * Deletes a Reaction ID.
- * @param {!Node} button The node of the 'remove' button.
+ * @param {!jQuery} button The node of the 'remove' button.
  */
 function removeReactionId(button) {
   removeSlowly(button, '.other_reaction_id');
@@ -283,7 +283,7 @@ function removeReactionId(button) {
 
 /**
  * Deletes an element matching `pattern`.
- * @param {!Node} button The node of the 'remove' button.
+ * @param {!jQuery} button The node of the 'remove' button.
  * @param {string} pattern The element pattern to match.
  */
 function removeSlowly(button, pattern) {

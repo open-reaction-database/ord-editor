@@ -60,7 +60,7 @@ function load(provenance) {
 
 /**
  * Adds and populates a record event section in the form.
- * @param {!Node} node The target div.
+ * @param {!jQuery} node The target div.
  * @param {?RecordEvent} record
  */
 function loadRecordEvent(node, record) {
@@ -77,7 +77,7 @@ function loadRecordEvent(node, record) {
 
 /**
  * Adds and populates a person section in the form.
- * @param {!Node} node The target div.
+ * @param {!jQuery} node The target div.
  * @param {?Person} person
  */
 function loadPerson(node, person) {
@@ -137,7 +137,7 @@ function unload() {
 
 /**
  * Fetches a record event as defined in the form.
- * @param {!Node} node Parent node containing the record event.
+ * @param {!jQuery} node Parent node containing the record event.
  * @return {!RecordEvent}
  */
 function unloadRecordEvent(node) {
@@ -158,7 +158,7 @@ function unloadRecordEvent(node) {
 
 /**
  * Fetches a person message as defined in the form.
- * @param {!Node} node Parent node containing the person message.
+ * @param {!jQuery} node Parent node containing the person message.
  * @return {!Person}
  */
 function unloadPerson(node) {
@@ -173,7 +173,7 @@ function unloadPerson(node) {
 
 /**
  * Adds a record_modified section to the form.
- * @return {!Node} The div containing the new event.
+ * @return {!jQuery} The div containing the new event.
  */
 function addModification() {
   return utils.addSlowly(
@@ -182,8 +182,8 @@ function addModification() {
 
 /**
  * Validates the reaction provenence defined in the form.
- * @param {!Node} node The node containing reaction provenance information.
- * @param {?Node=} validateNode The target div for validation results.
+ * @param {!jQuery} node The node containing reaction provenance information.
+ * @param {?jQuery=} validateNode The target div for validation results.
  */
 function validateProvenance(node, validateNode = null) {
   const provenance = unload();

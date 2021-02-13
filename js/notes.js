@@ -78,8 +78,8 @@ function unload() {
 
 /**
  * Validates the reaction notes defined in the form.
- * @param {!Node} node Root node for the reaction notes.
- * @param {?Node=} validateNode Target node for validation results.
+ * @param {!jQuery} node Root node for the reaction notes.
+ * @param {?jQuery=} validateNode Target node for validation results.
  */
 function validateNotes(node, validateNode = null) {
   const notes = unload();

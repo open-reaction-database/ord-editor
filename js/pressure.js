@@ -62,7 +62,7 @@ function load(pressure) {
 /**
  * Adds and populates a pressure measurement section in the form.
  * @param {!PressureConditions.Measurement} measurement
- * @param {!Node} node The target div.
+ * @param {!jQuery} node The target div.
  */
 function loadMeasurement(measurement, node) {
   const type = measurement.getType();
@@ -119,7 +119,7 @@ function unload() {
 
 /**
  * Fetches a pressure measurement from the form.
- * @param {!Node} node The div of the measurement to fetch.
+ * @param {!jQuery} node The div of the measurement to fetch.
  * @return {!PressureConditions.Measurement}
  */
 function unloadMeasurement(node) {
@@ -143,7 +143,7 @@ function unloadMeasurement(node) {
 
 /**
  * Adds a pressure measurement section to the form.
- * @return {!Node} The node of the new measurement div.
+ * @return {!jQuery} The node of the new measurement div.
  */
 function addMeasurement() {
   return utils.addSlowly(
@@ -152,8 +152,8 @@ function addMeasurement() {
 
 /**
  * Validates pressure conditions defined in the form.
- * @param {!Node} node The node containing the pressure conditions div.
- * @param {?Node=} validateNode The target div for validation results.
+ * @param {!jQuery} node The node containing the pressure conditions div.
+ * @param {?jQuery=} validateNode The target div for validation results.
  */
 function validatePressure(node, validateNode = null) {
   const pressure = unload();

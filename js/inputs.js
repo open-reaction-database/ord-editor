@@ -54,10 +54,10 @@ function load(inputs) {
 
 /**
  * Adds and populates a single reaction input section in the form.
- * @param {!Node} root Root node for the reaction input.
+ * @param {!jQuery} root Root node for the reaction input.
  * @param {string} name The name of this input.
  * @param {!ReactionInput} input
- * @return {!Node} The new input node.
+ * @return {!jQuery} The new input node.
  */
 function loadInput(root, name, input) {
   const node = add(root);
@@ -69,7 +69,7 @@ function loadInput(root, name, input) {
 /**
  * Adds and populates a single reaction input section in the form according to
  * a short-hand string describing a stock solution.
- * @param {!Node} root Root node for the reaction input.
+ * @param {!jQuery} root Root node for the reaction input.
  */
 function addInputByString(root) {
   const string =
@@ -101,9 +101,9 @@ function addInputByString(root) {
 /**
  * Adds and populates a single reaction input section in the form without
  * assigning it a name.
- * @param {!Node} node Root node for the reaction input.
+ * @param {!jQuery} node Root node for the reaction input.
  * @param {?ReactionInput} input
- * @return {!Node} The original root node.
+ * @return {!jQuery} The original root node.
  */
 function loadInputUnnamed(node, input) {
   if (!input) {
@@ -167,7 +167,7 @@ function unload(inputs) {
 /**
  * Fetches a single reaction input defined in the form and adds it to `inputs`.
  * @param {!jspbMap<string, !ReactionInput>} inputs
- * @param {!Node} node Root node for the reaction input.
+ * @param {!jQuery} node Root node for the reaction input.
  */
 function unloadInput(inputs, node) {
   const name = $('.input_name', node).text();
@@ -266,7 +266,7 @@ function add(root, classes = null) {
 /**
  * Validates a reaction input defined in the form.
  * @param {!jQuery} node Root node for the reaction input.
- * @param {?Node=} validateNode Target node for validation results.
+ * @param {?jQuery=} validateNode Target node for validation results.
  */
 function validateInput(node, validateNode = null) {
   const input = unloadInputUnnamed(node);

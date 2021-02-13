@@ -67,7 +67,7 @@ function load(electro) {
 
 /**
  * Adds and populates an electrochemistry measurement section in the form.
- * @param {!Node} node The target div.
+ * @param {!jQuery} node The target div.
  * @param {!ElectrochemistryConditions.Measurement} measurement
  */
 function loadMeasurement(node, measurement) {
@@ -144,7 +144,7 @@ function unload() {
 
 /**
  * Fetches an electrochemistry measurement from the form.
- * @param {!Node} node Root node of the measurement.
+ * @param {!jQuery} node Root node of the measurement.
  * @return {!ElectrochemistryConditions.Measurement}
  */
 function unloadMeasurement(node) {
@@ -173,7 +173,7 @@ function unloadMeasurement(node) {
 
 /**
  * Adds an electrochemistry measurement section to the form.
- * @return {!Node} The newly added parent node for the measurement.
+ * @return {!jQuery} The newly added parent node for the measurement.
  */
 function addMeasurement() {
   const node = utils.addSlowly(
@@ -197,8 +197,8 @@ function addMeasurement() {
 
 /**
  * Validates the electrochemistry conditions defined in the form.
- * @param {!Node} node Root node for the electrochemistry conditions.
- * @param {?Node=} validateNode Target node for validation results.
+ * @param {!jQuery} node Root node for the electrochemistry conditions.
+ * @param {?jQuery=} validateNode Target node for validation results.
  */
 function validateElectro(node, validateNode = null) {
   const electro = unload();

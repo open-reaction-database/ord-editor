@@ -45,7 +45,7 @@ let radioGroupCounter = 0;
 
 /**
  * Adds and populates the products section of the form.
- * @param {!Node} node The target node for the product divs.
+ * @param {!jQuery} node The target node for the product divs.
  * @param {!Array<!ProductCompound>} products
  */
 function load(node, products) {
@@ -54,7 +54,7 @@ function load(node, products) {
 
 /**
  * Adds and populates a product section in the form.
- * @param {!Node} outcomeNode The parent ReactionOutcome node.
+ * @param {!jQuery} outcomeNode The parent ReactionOutcome node.
  * @param {!ProductCompound} product
  */
 function loadProduct(outcomeNode, product) {
@@ -89,7 +89,7 @@ function loadProduct(outcomeNode, product) {
 
 /**
  * Fetches the products defined in the form.
- * @param {!Node} node The parent ReactionOutcome node.
+ * @param {!jQuery} node The parent ReactionOutcome node.
  * @return {!Array<!ProductCompound>}
  */
 function unload(node) {
@@ -109,7 +109,7 @@ function unload(node) {
 
 /**
  * Fetches a product defined in the form.
- * @param {!Node} node An element containing a product.
+ * @param {!jQuery} node An element containing a product.
  * @return {!ProductCompound}
  */
 function unloadProduct(node) {
@@ -164,7 +164,7 @@ function unloadProduct(node) {
 
 /**
  * Fetches the set of Analysis keys.
- * @param {!Node} node The parent ReactionOutcome div.
+ * @param {!jQuery} node The parent ReactionOutcome div.
  * @param {string} tag Analysis target, e.g. "identities", "yields", etc.
  * @return {!Array<string>}
  */
@@ -185,8 +185,8 @@ function unloadAnalysisKeys(node, tag) {
 
 /**
  * Adds a reaction product section to the form.
- * @param {!Node} node Target ReactionOutcome node for the new product.
- * @return {!Node} The newly created node.
+ * @param {!jQuery} node Target ReactionOutcome node for the new product.
+ * @return {!jQuery} The newly created node.
  */
 function add(node) {
   const productNode = utils.addSlowly(
@@ -213,8 +213,8 @@ function add(node) {
 
 /**
  * Adds keys for defined analyses to the analysis selector.
- * @param {!Node} node Parent node containing ReactionOutcome data.
- * @param {!Node} analysisSelectorNode Node containing an analysis selector.
+ * @param {!jQuery} node Parent node containing ReactionOutcome data.
+ * @param {!jQuery} analysisSelectorNode Node containing an analysis selector.
  */
 function populateAnalysisSelector(node, analysisSelectorNode) {
   const outcomeNode = node.closest('.outcome');
@@ -229,8 +229,8 @@ function populateAnalysisSelector(node, analysisSelectorNode) {
 
 /**
  * Adds a ProductMeasurement section to the form.
- * @param {!Node} node Parent node for the ProductCompound.
- * @return {!Node} The newly created node.
+ * @param {!jQuery} node Parent node for the ProductCompound.
+ * @return {!jQuery} The newly created node.
  */
 function addMeasurement(node) {
   const measurementNode = utils.addSlowly(
@@ -365,7 +365,7 @@ function addMeasurement(node) {
 
 /**
  * Adds and populates a ProductMeasurement section in the form.
- * @param {!Node} productNode The parent ProductCompound node.
+ * @param {!jQuery} productNode The parent ProductCompound node.
  * @param {!ProductMeasurement} measurement
  */
 function loadMeasurement(productNode, measurement) {
@@ -468,7 +468,7 @@ function loadMeasurement(productNode, measurement) {
 
 /**
  * Fetches a ProductMeasurement defined in the form.
- * @param {!Node} node An element containing a ProductMeasurement.
+ * @param {!jQuery} node An element containing a ProductMeasurement.
  * @return {!ProductMeasurement}
  */
 function unloadMeasurement(node) {
@@ -578,8 +578,8 @@ function unloadMeasurement(node) {
 
 /**
  * Validates a ProductMeasurement defined in the form.
- * @param {!Node} node A node containing a ProductMeasurement.
- * @param {?Node=} validateNode The target div for validation results.
+ * @param {!jQuery} node A node containing a ProductMeasurement.
+ * @param {?jQuery=} validateNode The target div for validation results.
  */
 function validateMeasurement(node, validateNode = null) {
   const measurement = unloadMeasurement(node);
@@ -588,8 +588,8 @@ function validateMeasurement(node, validateNode = null) {
 
 /**
  * Validates a product defined in the form.
- * @param {!Node} node A node containing a reaction product.
- * @param {?Node=} validateNode The target div for validation results.
+ * @param {!jQuery} node A node containing a reaction product.
+ * @param {?jQuery=} validateNode The target div for validation results.
  */
 function validateProduct(node, validateNode = null) {
   const product = unloadProduct(node);

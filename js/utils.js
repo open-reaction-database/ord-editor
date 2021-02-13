@@ -415,7 +415,7 @@ function selectText(node) {
  * Determines if the text entered in a float input is valid by detecting any
  * characters besides 0-9, a single period to signify a decimal, and a
  * leading hyphen. Also supports scientific notation with either 'e' or 'E'.
- * @param {!Node} node
+ * @param {!jQuery} node
  */
 function checkFloat(node) {
   const stringValue = $(node).text().trim();
@@ -431,7 +431,7 @@ function checkFloat(node) {
 /**
  * Determines if the text entered in an integer input is valid by forbidding
  * any characters besides 0-9 and a leading hyphen.
- * @param {!Node} node
+ * @param {!jQuery} node
  */
 function checkInteger(node) {
   const stringValue = $(node).text().trim();
@@ -485,7 +485,7 @@ function addChangeHandler(node, handler) {
  * @param {!Message} message The proto to validate.
  * @param {string} messageTypeString The message type.
  * @param {!jQuery} node Parent node for the unloaded message.
- * @param {?Node} validateNode Target div for validation output.
+ * @param {?jQuery} validateNode Target div for validation output.
  *
  * NOTE(kearnes): serializeBinary is not defined in the base class.
  * TODO(kearnes): Annotate `errors` and `warnings` properties on response.
@@ -558,7 +558,7 @@ function validate(message, messageTypeString, node, validateNode) {
 
 /**
  * Toggles the visibility of the 'validate' button for a given node.
- * @param {!Node} node
+ * @param {!jQuery} node
  * @param {string} target Destination class for the validation message(s).
  */
 function toggleValidateMessage(node, target) {
@@ -718,7 +718,7 @@ function writeMetric(prefix, proto, node = null) {
 /**
  * Prompts the user to upload a file and sets the target node text with its
  * contents.
- * @param {!Node} identifierNode The node to update with the file contents.
+ * @param {!jQuery} identifierNode The node to update with the file contents.
  * @param {string} valueClass The class containing `identifierNode`.
  */
 function setTextFromFile(identifierNode, valueClass) {
@@ -767,7 +767,7 @@ function getSelectorText(node) {
 
 /**
  * Sets the value of a three-way popup (true/false/unspecified).
- * @param {!Node} node A node containing a three-way selector.
+ * @param {!jQuery} node A node containing a three-way selector.
  * @param {boolean|null} value The value to select.
  */
 function setOptionalBool(node, value) {

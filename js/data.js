@@ -33,8 +33,8 @@ let radioGroupCounter = 0;
 
 /**
  * Adds a new Data section to the form.
- * @param {!Node} parentNode Parent node.
- * @return {!Node} The newly added node for the Data record.
+ * @param {!jQuery} parentNode Parent node.
+ * @return {!jQuery} The newly added node for the Data record.
  */
 function addData(parentNode) {
   const target = parentNode.children('fieldset').first();
@@ -62,7 +62,7 @@ function addData(parentNode) {
 
 /**
  * Populates an existing Data section in the form.
- * @param {!Node} node Root node.
+ * @param {!jQuery} node Root node.
  * @param {?Data} data
  */
 function loadData(node, data) {
@@ -118,7 +118,7 @@ function loadData(node, data) {
 
 /**
  * Fetches a Data section from the form.
- * @param {!Node} node Root node of the Data section to fetch.
+ * @param {!jQuery} node Root node of the Data section to fetch.
  * @return {!Data}
  */
 function unloadData(node) {

@@ -54,7 +54,7 @@ function load(temperature) {
 /**
  * Adds and populates a temperature measurement section in the form.
  * @param {!TemperatureConditions.Measurement} measurement
- * @param {!Node} node The target div.
+ * @param {!jQuery} node The target div.
  */
 function loadMeasurement(measurement, node) {
   const type = measurement.getType();
@@ -103,7 +103,7 @@ function unload() {
 
 /**
  * Fetches a temperature measurement from the form.
- * @param {!Node} node The div of the measurement to fetch.
+ * @param {!jQuery} node The div of the measurement to fetch.
  * @return {!TemperatureConditions.Measurement}
  */
 function unloadMeasurement(node) {
@@ -127,7 +127,7 @@ function unloadMeasurement(node) {
 
 /**
  * Adds a temperature measurement section to the form.
- * @return {!Node} The node of the new measurement div.
+ * @return {!jQuery} The node of the new measurement div.
  */
 function addMeasurement() {
   return utils.addSlowly(
@@ -136,8 +136,8 @@ function addMeasurement() {
 
 /**
  * Validates temperature conditions defined in the form.
- * @param {!Node} node The node containing the temperature conditions div.
- * @param {?Node=} validateNode The target div for validation results.
+ * @param {!jQuery} node The node containing the temperature conditions div.
+ * @param {?jQuery=} validateNode The target div for validation results.
  */
 function validateTemperature(node, validateNode = null) {
   const temperature = unload();

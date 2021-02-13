@@ -204,7 +204,7 @@ function unloadVessel() {
 
 /**
  * Adds a new vessel preparation section to the form.
- * @return {!Node} The node of the newly added div.
+ * @return {!jQuery} The node of the newly added div.
  */
 function addVesselPreparation() {
   return utils.addSlowly(
@@ -213,7 +213,7 @@ function addVesselPreparation() {
 
 /**
  * Adds a new vessel attachment section to the form.
- * @return {!Node} The node of the newly added div.
+ * @return {!jQuery} The node of the newly added div.
  */
 function addVesselAttachment() {
   return utils.addSlowly(
@@ -222,8 +222,8 @@ function addVesselAttachment() {
 
 /**
  * Validates the reaction setup defined in the form.
- * @param {!Node} node The node containing the reaction setup div.
- * @param {?Node=} validateNode The target div for validation results.
+ * @param {!jQuery} node The node containing the reaction setup div.
+ * @param {?jQuery=} validateNode The target div for validation results.
  */
 function validateSetup(node, validateNode = null) {
   const setup = unload();

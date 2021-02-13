@@ -101,7 +101,7 @@ function putAll(dirName) {
 /**
  * Looks up the bytesValue of the given uploader and sends back it as a
  * download.
- * @param {!Node} uploader A `.data_uploader` div.
+ * @param {!jQuery} uploader A `.data_uploader` div.
  */
 function retrieve(uploader) {
   const token = uploader.attr('data-token');
@@ -122,7 +122,7 @@ function retrieve(uploader) {
 
 /**
  * Configures the behavior of an uploader.
- * @param {!Node} node A `.data_uploader` div.
+ * @param {!jQuery} node A `.data_uploader` div.
  */
 function initialize(node) {
   $('.data_uploader_chooser_file', node).on('input', (event) => {
@@ -137,7 +137,7 @@ function initialize(node) {
 
 /**
  * Loads a token and filename into an uploader.
- * @param {!Node} node A `.data_uploader` div.
+ * @param {!jQuery} node A `.data_uploader` div.
  * @param {!Uint8Array} bytesValue File content as bytes.
  */
 function load(node, bytesValue) {
@@ -151,7 +151,7 @@ function load(node, bytesValue) {
 
 /**
  * Retrieves the stored bytes from an uploader.
- * @param {!Node} node A `.data_uploader` div.
+ * @param {!jQuery} node A `.data_uploader` div.
  * @returns {!Uint8Array}
  */
 function unload(node) {
