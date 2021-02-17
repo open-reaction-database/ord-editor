@@ -16,6 +16,16 @@
 
 goog.module('ord.provenance');
 goog.module.declareLegacyNamespace();
+
+const asserts = goog.require('goog.asserts');
+
+const utils = goog.require('ord.utils');
+
+const DateTime = goog.require('proto.ord.DateTime');
+const Person = goog.require('proto.ord.Person');
+const ReactionProvenance = goog.require('proto.ord.ReactionProvenance');
+const RecordEvent = goog.require('proto.ord.RecordEvent');
+
 exports = {
   load,
   unload,
@@ -23,15 +33,10 @@ exports = {
   validateProvenance
 };
 
-goog.require('ord.utils');
-goog.require('proto.ord.DateTime');
-goog.require('proto.ord.Person');
-goog.require('proto.ord.ReactionProvenance');
-goog.require('proto.ord.RecordEvent');
 
 /**
  * Adds and populates the provenance section in the form.
- * @param {!proto.ord.ReactionProvenance} provenance
+ * @param {!ReactionProvenance} provenance
  */
 function load(provenance) {
   const experimenter = provenance.getExperimenter();
@@ -48,11 +53,7 @@ function load(provenance) {
   $('#provenance_doi').text(provenance.getDoi());
   $('#provenance_patent').text(provenance.getPatent());
   $('#provenance_url').text(provenance.getPublicationUrl());
-
-  const created = provenance.getRecordCreated();
-  if (created) {
-    loadRecordEvent($('#provenance_created'), created);
-  }
+  loadRecordEvent($('#provenance_created'), provenance.getRecordCreated());
   provenance.getRecordModifiedList().forEach(modified => {
     const node = addModification();
     loadRecordEvent(node, modified);
@@ -61,27 +62,30 @@ function load(provenance) {
 
 /**
  * Adds and populates a record event section in the form.
- * @param {!Node} node The target div.
- * @param {!proto.ord.RecordEvent} record
+ * @param {!jQuery} node The target div.
+ * @param {?RecordEvent} record
  */
 function loadRecordEvent(node, record) {
+  if (!record) {
+    return;
+  }
   const time = record.getTime();
   if (time) {
     $('.provenance_time', node).text(time.getValue());
   }
-  const person = record.getPerson();
-  if (person) {
-    loadPerson(node, record.getPerson());
-  }
+  loadPerson(node, record.getPerson());
   $('.provenance_details', node).text(record.getDetails());
 }
 
 /**
  * Adds and populates a person section in the form.
- * @param {!Node} node The target div.
- * @param {!proto.ord.Person} person
+ * @param {!jQuery} node The target div.
+ * @param {?Person} person
  */
 function loadPerson(node, person) {
+  if (!person) {
+    return;
+  }
   $('.provenance_username', node).text(person.getUsername());
   $('.provenance_name', node).text(person.getName());
   $('.provenance_orcid', node).text(person.getOrcid());
@@ -91,40 +95,41 @@ function loadPerson(node, person) {
 
 /**
  * Fetches reaction provenance as defined in the form.
- * @return {!proto.ord.ReactionProvenance}
+ * @return {!ReactionProvenance}
  */
 function unload() {
-  const provenance = new proto.ord.ReactionProvenance();
+  const provenance = new ReactionProvenance();
 
   const experimenter = unloadPerson($('#provenance_experimenter'));
-  if (!ord.utils.isEmptyMessage(experimenter)) {
+  if (!utils.isEmptyMessage(experimenter)) {
     provenance.setExperimenter(experimenter);
   }
 
-  provenance.setCity($('#provenance_city').text());
+  provenance.setCity(asserts.assertString($('#provenance_city').text()));
 
-  const start = new proto.ord.DateTime();
-  start.setValue($('#provenance_start').text());
-  if (!ord.utils.isEmptyMessage(start)) {
+  const start = new DateTime();
+  start.setValue(asserts.assertString($('#provenance_start').text()));
+  if (!utils.isEmptyMessage(start)) {
     provenance.setExperimentStart(start);
   }
 
-  provenance.setDoi($('#provenance_doi').text());
-  provenance.setPatent($('#provenance_patent').text());
-  provenance.setPublicationUrl($('#provenance_url').text());
+  provenance.setDoi(asserts.assertString($('#provenance_doi').text()));
+  provenance.setPatent(asserts.assertString($('#provenance_patent').text()));
+  provenance.setPublicationUrl(
+      asserts.assertString($('#provenance_url').text()));
 
   const created = unloadRecordEvent($('#provenance_created'));
-  if (!ord.utils.isEmptyMessage(created)) {
+  if (!utils.isEmptyMessage(created)) {
     provenance.setRecordCreated(created);
   }
 
   const modifieds = [];
-  $('.provenance_modified', '#provenance_modifieds')
+  $('.provenance_modified', $('#provenance_modifieds'))
       .each(function(index, node) {
         node = $(node);
-        if (!ord.utils.isTemplateOrUndoBuffer(node)) {
+        if (!utils.isTemplateOrUndoBuffer(node)) {
           const modified = unloadRecordEvent(node);
-          if (!ord.utils.isEmptyMessage(modified)) {
+          if (!utils.isEmptyMessage(modified)) {
             modifieds.push(modified);
           }
         }
@@ -135,55 +140,58 @@ function unload() {
 
 /**
  * Fetches a record event as defined in the form.
- * @param {!Node} node Parent node containing the record event.
- * @return {!proto.ord.RecordEvent}
+ * @param {!jQuery} node Parent node containing the record event.
+ * @return {!RecordEvent}
  */
 function unloadRecordEvent(node) {
-  const created = new proto.ord.RecordEvent();
-  const createdTime = new proto.ord.DateTime();
-  createdTime.setValue($('.provenance_time', node).text());
-  if (!ord.utils.isEmptyMessage(createdTime)) {
+  const created = new RecordEvent();
+  const createdTime = new DateTime();
+  createdTime.setValue(
+      asserts.assertString($('.provenance_time', node).text()));
+  if (!utils.isEmptyMessage(createdTime)) {
     created.setTime(createdTime);
   }
   const createdPerson = unloadPerson(node);
-  if (!ord.utils.isEmptyMessage(createdPerson)) {
+  if (!utils.isEmptyMessage(createdPerson)) {
     created.setPerson(createdPerson);
   }
-  const createdDetails = $('.provenance_details', node).text();
-  created.setDetails(createdDetails);
+  created.setDetails(
+      asserts.assertString($('.provenance_details', node).text()));
   return created;
 }
 
 /**
  * Fetches a person message as defined in the form.
- * @param {!Node} node Parent node containing the person message.
- * @return {!proto.ord.Person}
+ * @param {!jQuery} node Parent node containing the person message.
+ * @return {!Person}
  */
 function unloadPerson(node) {
-  const person = new proto.ord.Person();
-  person.setUsername($('.provenance_username', node).text());
-  person.setName($('.provenance_name', node).text());
-  person.setOrcid($('.provenance_orcid', node).text());
-  person.setOrganization($('.provenance_organization', node).text());
-  person.setEmail($('.provenance_email', node).text());
+  const person = new Person();
+  person.setUsername(
+      asserts.assertString($('.provenance_username', node).text()));
+  person.setName(asserts.assertString($('.provenance_name', node).text()));
+  person.setOrcid(asserts.assertString($('.provenance_orcid', node).text()));
+  person.setOrganization(
+      asserts.assertString($('.provenance_organization', node).text()));
+  person.setEmail(asserts.assertString($('.provenance_email', node).text()));
   return person;
 }
 
 /**
  * Adds a record_modified section to the form.
- * @return {!Node} The div containing the new event.
+ * @return {!jQuery} The div containing the new event.
  */
 function addModification() {
-  return ord.utils.addSlowly(
-      '#provenance_modified_template', '#provenance_modifieds');
+  return utils.addSlowly(
+      '#provenance_modified_template', $('#provenance_modifieds'));
 }
 
 /**
  * Validates the reaction provenence defined in the form.
- * @param {!Node} node The node containing reaction provenance information.
- * @param {?Node=} validateNode The target div for validation results.
+ * @param {!jQuery} node The node containing reaction provenance information.
+ * @param {?jQuery=} validateNode The target div for validation results.
  */
 function validateProvenance(node, validateNode = null) {
   const provenance = unload();
-  ord.utils.validate(provenance, 'ReactionProvenance', node, validateNode);
+  utils.validate(provenance, 'ReactionProvenance', node, validateNode);
 }

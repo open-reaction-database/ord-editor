@@ -16,6 +16,30 @@
 
 goog.module('ord.reaction');
 goog.module.declareLegacyNamespace();
+
+const asserts = goog.require('goog.asserts');
+
+const conditions = goog.require('ord.conditions');
+const electro = goog.require('ord.electro');
+const flows = goog.require('ord.flows');
+const identifiers = goog.require('ord.identifiers');
+const illumination = goog.require('ord.illumination');
+const inputs = goog.require('ord.inputs');
+const notes = goog.require('ord.notes');
+const observations = goog.require('ord.observations');
+const outcomes = goog.require('ord.outcomes');
+const pressure = goog.require('ord.pressure');
+const provenance = goog.require('ord.provenance');
+const setups = goog.require('ord.setups');
+const stirring = goog.require('ord.stirring');
+const temperature = goog.require('ord.temperature');
+const uploads = goog.require('ord.uploads');
+const utils = goog.require('ord.utils');
+const workups = goog.require('ord.workups');
+
+const Dataset = goog.require('proto.ord.Dataset');
+const Reaction = goog.require('proto.ord.Reaction');
+
 exports = {
   commit,
   downloadReaction,
@@ -25,62 +49,46 @@ exports = {
   validateReaction,
 };
 
-goog.require('ord.conditions');
-goog.require('ord.electro');
-goog.require('ord.flows');
-goog.require('ord.identifiers');
-goog.require('ord.illumination');
-goog.require('ord.inputs');
-goog.require('ord.notes');
-goog.require('ord.observations');
-goog.require('ord.outcomes');
-goog.require('ord.pressure');
-goog.require('ord.provenance');
-goog.require('ord.setups');
-goog.require('ord.stirring');
-goog.require('ord.temperature');
-goog.require('ord.uploads');
-goog.require('ord.utils');
-goog.require('ord.workups');
-goog.require('proto.ord.Reaction');
-
-const session = ord.utils.session;
+const session = utils.session;
 
 /**
  * Initializes the form.
- * @param {!proto.ord.Reaction} reaction Reaction proto to load.
+ * @param {!Reaction} reaction Reaction proto to load.
+ *
+ * TODO(kearnes): Many undefined properties here.
+ * @suppress {missingProperties}
  */
 function init(reaction) {
   // Initialize all the template popup menus.
-  $('.selector').each((index, node) => ord.utils.initSelector($(node)));
-  $('.optional_bool')
-      .each((index, node) => ord.utils.initOptionalBool($(node)));
+  $('.selector').each((index, node) => utils.initSelector($(node)));
+  $('.optional_bool').each((index, node) => utils.initOptionalBool($(node)));
   // Enable all the editable text fields.
   $('.edittext').attr('contentEditable', 'true');
   // Initialize all the validators.
-  $('.validate').each((index, node) => ord.utils.initValidateNode($(node)));
+  $('.validate').each((index, node) => utils.initValidateNode($(node)));
   // Initialize validation handlers that don't go in "add" methods.
   initValidateHandlers();
   // Initailize tooltips.
   $('[data-toggle=\'tooltip\']').tooltip();
   // Prevent tooltip pop-ups from blurring.
   // (see github.com/twbs/bootstrap/issues/22610)
+  /** @suppress {undefinedVars} */
   Popper.Defaults.modifiers.computeStyle.gpuAcceleration = false;
   // Show "save" on modifications.
-  ord.utils.listen('body');
+  utils.listen($('body'));
   // Load Ketcher content into an element with attribute role="application".
   document.getElementById('ketcher-iframe').contentWindow.ketcher.initKetcher();
   // Initialize the UI with the Reaction.
   loadReaction(reaction);
-  ord.utils.clean();
+  utils.clean();
   // Initialize the collaped/uncollapsed state of the fieldset groups.
-  $('.collapse').each((index, node) => ord.utils.initCollapse($(node)));
+  $('.collapse').each((index, node) => utils.initCollapse($(node)));
   // Trigger reaction-level validation.
   validateReaction();
   // Initialize autosave being on.
-  ord.utils.toggleAutosave();
+  utils.toggleAutosave();
   // Signal to tests that the DOM is initialized.
-  ord.utils.ready();
+  utils.ready();
 }
 
 /**
@@ -92,7 +100,8 @@ async function initFromDataset(fileName, index) {
   session.fileName = fileName;
   session.index = index;
   // Fetch the Dataset containing the Reaction proto.
-  session.dataset = await ord.utils.getDataset(fileName);
+  session.dataset = await utils.getDataset(fileName);
+  asserts.assertInstanceof(session.dataset, Dataset);  // Type hint.
   const reaction = session.dataset.getReactionsList()[index];
   init(reaction);
 }
@@ -102,7 +111,8 @@ async function initFromDataset(fileName, index) {
  * @param {string} reactionId
  */
 async function initFromReactionId(reactionId) {
-  const reaction = await ord.utils.getReactionById(reactionId);
+  const reaction = await utils.getReactionById(reactionId);
+  asserts.assertInstanceof(reaction, Reaction);  // Type hint.
   // NOTE(kearnes): Without this next line, `reaction` will be
   // partial/incomplete, and I have no idea why.
   console.log(reaction.toObject());
@@ -112,7 +122,7 @@ async function initFromReactionId(reactionId) {
 
 /**
  * Updates the visual summary of the current reaction.
- * @param {!proto.ord.Reaction} reaction
+ * @param {!Reaction} reaction
  */
 function renderReaction(reaction) {
   const xhr = new XMLHttpRequest();
@@ -120,8 +130,9 @@ function renderReaction(reaction) {
   const binary = reaction.serializeBinary();
   xhr.responseType = 'json';
   xhr.onload = function() {
-    const html_block = xhr.response;
-    $('#reaction_render').html(html_block);
+    if (xhr.response !== null) {
+      $('#reaction_render').html(asserts.assertString(xhr.response));
+    }
   };
   xhr.send(binary);
 }
@@ -133,7 +144,7 @@ function validateReaction() {
   const node = $('#sections');
   const validateNode = $('#reaction_validate');
   const reaction = unloadReaction();
-  ord.utils.validate(reaction, 'Reaction', node, validateNode);
+  utils.validate(reaction, 'Reaction', node, validateNode);
   // Trigger all submessages to validate.
   $('.validate_button:visible:not(#reaction_validate_button)').trigger('click');
   // Render reaction as an HTML block.
@@ -152,7 +163,7 @@ function downloadReaction() {
     // Make the browser write the file.
     const url = URL.createObjectURL(new Blob([xhr.response]));
     const link = document.createElement('a');
-    link.href = url;
+    link.setAttribute('href', url);
     link.setAttribute('download', 'reaction.pbtxt');
     document.body.appendChild(link);
     link.click();
@@ -162,47 +173,47 @@ function downloadReaction() {
 
 /**
  * Adds and populates the form with the given reaction.
- * @param {!proto.ord.Reaction} reaction
+ * @param {!Reaction} reaction
  */
 function loadReaction(reaction) {
-  const identifiers = reaction.getIdentifiersList();
-  ord.identifiers.load(identifiers);
-  const inputs = reaction.getInputsMap();
+  const identifiersList = reaction.getIdentifiersList();
+  identifiers.load(identifiersList);
+  const inputsMap = reaction.getInputsMap();
   // Reactions start with an input by default.
-  if (inputs.arr_.length) {
-    ord.inputs.load(inputs);
+  if (inputsMap.getLength()) {
+    inputs.load(inputsMap);
   } else {
-    ord.inputs.add('#inputs');
+    inputs.add($('#inputs'));
   }
-  const setup = reaction.getSetup();
-  if (setup) {
-    ord.setups.load(setup);
+  const setupMessage = reaction.getSetup();
+  if (setupMessage) {
+    setups.load(setupMessage);
   }
-  const conditions = reaction.getConditions();
-  if (conditions) {
-    ord.conditions.load(conditions);
+  const conditionsMessage = reaction.getConditions();
+  if (conditionsMessage) {
+    conditions.load(conditionsMessage);
   }
-  const notes = reaction.getNotes();
-  if (notes) {
-    ord.notes.load(notes);
+  const notesMessage = reaction.getNotes();
+  if (notesMessage) {
+    notes.load(notesMessage);
   }
-  const observations = reaction.getObservationsList();
-  ord.observations.load(observations);
+  const observationsList = reaction.getObservationsList();
+  observations.load(observationsList);
 
-  const workups = reaction.getWorkupsList();
-  ord.workups.load(workups);
+  const workupsList = reaction.getWorkupsList();
+  workups.load(workupsList);
 
-  const outcomes = reaction.getOutcomesList();
+  const outcomesList = reaction.getOutcomesList();
   // Reactions start with an outcome by default.
-  if (outcomes.length) {
-    ord.outcomes.load(outcomes);
+  if (outcomesList.length) {
+    outcomes.load(outcomesList);
   } else {
-    ord.outcomes.add();
+    outcomes.add();
   }
 
-  const provenance = reaction.getProvenance();
-  if (provenance) {
-    ord.provenance.load(provenance);
+  const provenanceMessage = reaction.getProvenance();
+  if (provenanceMessage) {
+    provenance.load(provenanceMessage);
   }
   $('#reaction_id').text(reaction.getReactionId());
 
@@ -210,55 +221,55 @@ function loadReaction(reaction) {
   $('.floattext').each(function() {
     const node = $(this);
     if (node.text() !== '') {
-      node.text(ord.utils.prepareFloat(parseFloat(node.text())));
+      node.text(utils.prepareFloat(parseFloat(node.text())));
     }
   });
 }
 
 /**
  * Fetches the current reaction from the form.
- * @return {!proto.ord.Reaction}
+ * @return {!Reaction}
  */
 function unloadReaction() {
-  const reaction = new proto.ord.Reaction();
-  const identifiers = ord.identifiers.unload();
-  reaction.setIdentifiersList(identifiers);
+  const reaction = new Reaction();
+  const identifiersList = identifiers.unload();
+  reaction.setIdentifiersList(identifiersList);
 
-  const inputs = reaction.getInputsMap();
+  const inputsMap = reaction.getInputsMap();
   // isEmptyMessage check occurs in inputs.unload.
-  ord.inputs.unload(inputs);
+  inputs.unload(inputsMap);
 
-  const setup = ord.setups.unload();
-  if (!ord.utils.isEmptyMessage(setup)) {
-    reaction.setSetup(setup);
+  const setupMessage = setups.unload();
+  if (!utils.isEmptyMessage(setupMessage)) {
+    reaction.setSetup(setupMessage);
   }
 
-  const conditions = ord.conditions.unload();
-  if (!ord.utils.isEmptyMessage(conditions)) {
-    reaction.setConditions(conditions);
+  const conditionsMessage = conditions.unload();
+  if (!utils.isEmptyMessage(conditionsMessage)) {
+    reaction.setConditions(conditionsMessage);
   }
 
-  const notes = ord.notes.unload();
-  if (!ord.utils.isEmptyMessage(notes)) {
-    reaction.setNotes(notes);
+  const notesMessage = notes.unload();
+  if (!utils.isEmptyMessage(notesMessage)) {
+    reaction.setNotes(notesMessage);
   }
 
-  const observations = ord.observations.unload();
-  reaction.setObservationsList(observations);
+  const observationsList = observations.unload();
+  reaction.setObservationsList(observationsList);
 
-  const workups = ord.workups.unload();
-  reaction.setWorkupsList(workups);
+  const workupsList = workups.unload();
+  reaction.setWorkupsList(workupsList);
 
-  const outcomes = ord.outcomes.unload();
-  reaction.setOutcomesList(outcomes);
+  const outcomesList = outcomes.unload();
+  reaction.setOutcomesList(outcomesList);
 
-  const provenance = ord.provenance.unload();
-  if (!ord.utils.isEmptyMessage(provenance)) {
-    reaction.setProvenance(provenance);
+  const provenanceMessage = provenance.unload();
+  if (!utils.isEmptyMessage(provenanceMessage)) {
+    reaction.setProvenance(provenanceMessage);
   }
 
   // Setter does nothing when passed an empty string.
-  reaction.setReactionId($('#reaction_id').text());
+  reaction.setReactionId(asserts.assertString($('#reaction_id').text()));
   return reaction;
 }
 
@@ -271,62 +282,62 @@ function unloadReaction() {
 function initValidateHandlers() {
   // For setup
   const setupNode = $('#section_setup');
-  ord.utils.addChangeHandler(setupNode, () => {
-    ord.setups.validateSetup(setupNode);
+  utils.addChangeHandler(setupNode, () => {
+    setups.validateSetup(setupNode);
   });
 
   // For conditions
   const conditionNode = $('#section_conditions');
-  ord.utils.addChangeHandler(conditionNode, () => {
-    ord.conditions.validateConditions(conditionNode);
+  utils.addChangeHandler(conditionNode, () => {
+    conditions.validateConditions(conditionNode);
   });
 
   // For temperature
   const temperatureNode = $('#section_conditions_temperature');
-  ord.utils.addChangeHandler(temperatureNode, () => {
-    ord.temperature.validateTemperature(temperatureNode);
+  utils.addChangeHandler(temperatureNode, () => {
+    temperature.validateTemperature(temperatureNode);
   });
 
   // For pressure
   const pressureNode = $('#section_conditions_pressure');
-  ord.utils.addChangeHandler(pressureNode, () => {
-    ord.pressure.validatePressure(pressureNode);
+  utils.addChangeHandler(pressureNode, () => {
+    pressure.validatePressure(pressureNode);
   });
 
   // For stirring
   const stirringNode = $('#section_conditions_stirring');
-  ord.utils.addChangeHandler(stirringNode, () => {
-    ord.stirring.validateStirring(stirringNode);
+  utils.addChangeHandler(stirringNode, () => {
+    stirring.validateStirring(stirringNode);
   });
 
   // For illumination
   const illuminationNode = $('#section_conditions_illumination');
-  ord.utils.addChangeHandler(illuminationNode, () => {
-    ord.illumination.validateIllumination(illuminationNode);
+  utils.addChangeHandler(illuminationNode, () => {
+    illumination.validateIllumination(illuminationNode);
   });
 
   // For electro
   const electroNode = $('#section_conditions_electro');
-  ord.utils.addChangeHandler(electroNode, () => {
-    ord.electro.validateElectro(electroNode);
+  utils.addChangeHandler(electroNode, () => {
+    electro.validateElectro(electroNode);
   });
 
   // For flow
   const flowNode = $('#section_conditions_flow');
-  ord.utils.addChangeHandler(flowNode, () => {
-    ord.flows.validateFlow(flowNode);
+  utils.addChangeHandler(flowNode, () => {
+    flows.validateFlow(flowNode);
   });
 
   // For notes
   const notesNode = $('#section_notes');
-  ord.utils.addChangeHandler(notesNode, () => {
-    ord.notes.validateNotes(notesNode);
+  utils.addChangeHandler(notesNode, () => {
+    notes.validateNotes(notesNode);
   });
 
   // For provenance
   const provenanceNode = $('#section_provenance');
-  ord.utils.addChangeHandler(provenanceNode, () => {
-    ord.provenance.validateProvenance(provenanceNode);
+  utils.addChangeHandler(provenanceNode, () => {
+    provenance.validateProvenance(provenanceNode);
   });
 }
 
@@ -339,8 +350,10 @@ function commit() {
     return;
   }
   const reaction = unloadReaction();
+  asserts.assertInstanceof(session.dataset, Dataset);  // Type hint.
   const reactions = session.dataset.getReactionsList();
-  reactions[session.index] = reaction;
-  ord.utils.putDataset(session.fileName, session.dataset);
-  ord.uploads.putAll(session.fileName);
+  reactions[asserts.assertNumber(session.index)] = reaction;
+  const fileName = asserts.assertString(session.fileName);
+  utils.putDataset(fileName, session.dataset);
+  uploads.putAll(fileName);
 }

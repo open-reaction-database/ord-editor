@@ -16,31 +16,40 @@
 
 goog.module('ord.stirring');
 goog.module.declareLegacyNamespace();
+
+const asserts = goog.require('goog.asserts');
+
+const utils = goog.require('ord.utils');
+
+const StirringConditions = goog.require('proto.ord.StirringConditions');
+const StirringMethod = goog.require('proto.ord.StirringConditions.StirringMethod');
+const StirringMethodType = goog.require('proto.ord.StirringConditions.StirringMethod.StirringMethodType');
+const StirringRate = goog.require('proto.ord.StirringConditions.StirringRate');
+const StirringRateType = goog.require('proto.ord.StirringConditions.StirringRate.StirringRateType');
+
 exports = {
   load,
   unload,
   validateStirring
 };
 
-goog.require('ord.utils');
-goog.require('proto.ord.StirringConditions');
 
 /**
  * Adds and populates the stirring conditions section in the form.
- * @param {!proto.ord.StirringConditions} stirring
+ * @param {!StirringConditions} stirring
  */
 function load(stirring) {
   const method = stirring.getMethod();
   if (method) {
-    ord.utils.setSelector($('#stirring_method_type'), method.getType());
+    utils.setSelector($('#stirring_method_type'), method.getType());
     $('#stirring_method_details').text(method.getDetails());
   }
   const rate = stirring.getRate();
   if (rate) {
-    ord.utils.setSelector($('#stirring_rate_type'), rate.getType());
+    utils.setSelector($('#stirring_rate_type'), rate.getType());
     $('#stirring_rate_details').text(rate.getDetails());
     const rpm = rate.getRpm();
-    if (rpm != 0) {
+    if (rpm !== 0) {
       $('#stirring_rpm').text(rpm);
     }
   }
@@ -48,26 +57,28 @@ function load(stirring) {
 
 /**
  * Fetches the stirring conditions from the form.
- * @return {!proto.ord.StirringConditions}
+ * @return {!StirringConditions}
  */
 function unload() {
-  const stirring = new proto.ord.StirringConditions();
+  const stirring = new StirringConditions();
 
-  const method = new proto.ord.StirringConditions.StirringMethod();
-  method.setType(ord.utils.getSelector($('#stirring_method_type')));
-  method.setDetails($('#stirring_method_details').text());
-  if (!ord.utils.isEmptyMessage(method)) {
+  const method = new StirringMethod();
+  const methodType = utils.getSelectorText($('#stirring_method_type')[0]);
+  method.setType(StirringMethodType[methodType]);
+  method.setDetails(asserts.assertString($('#stirring_method_details').text()));
+  if (!utils.isEmptyMessage(method)) {
     stirring.setMethod(method);
   }
 
-  const rate = new proto.ord.StirringConditions.StirringRate();
-  rate.setType(ord.utils.getSelector($('#stirring_rate_type')));
-  rate.setDetails($('#stirring_rate_details').text());
+  const rate = new StirringRate();
+  const rateType = utils.getSelectorText($('#stirring_rate_type')[0]);
+  rate.setType(StirringRateType[rateType]);
+  rate.setDetails(asserts.assertString($('#stirring_rate_details').text()));
   const rpm = parseFloat($('#stirring_rpm').text());
   if (!isNaN(rpm)) {
     rate.setRpm(rpm);
   }
-  if (!ord.utils.isEmptyMessage(rate)) {
+  if (!utils.isEmptyMessage(rate)) {
     stirring.setRate(rate);
   }
   return stirring;
@@ -75,10 +86,10 @@ function unload() {
 
 /**
  * Validates the stirring conditions defined in the form.
- * @param {!Node} node The div containing the stirring conditions.
- * @param {?Node=} validateNode The target div for validation results.
+ * @param {!jQuery} node The div containing the stirring conditions.
+ * @param {?jQuery=} validateNode The target div for validation results.
  */
 function validateStirring(node, validateNode = null) {
   const stirring = unload();
-  ord.utils.validate(stirring, 'StirringConditions', node, validateNode);
+  utils.validate(stirring, 'StirringConditions', node, validateNode);
 }

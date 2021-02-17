@@ -1,6 +1,10 @@
 # https://github.com/google/closure-library/releases/
 closure = closure-library-20200517
 
+# jQuery externs
+# https://raw.githubusercontent.com/google/closure-compiler/master/contrib/externs/jquery-3.3.js
+jquery = externs/jquery-3.3.js
+
 # https://github.com/protocolbuffers/protobuf/releases
 protobuf = protobuf-3.14.0
 
@@ -16,8 +20,6 @@ all : prep py js
 prep :
 	# Ensure output directories exist.
 	mkdir -p gen/js/ord gen/js/proto/ord
-	# Prevent Closure from compiling test code.
-	rm -rf $(protobuf)/js/binary/*test* $(protobuf)/js/*test* $(protobuf)/js/experimental
 
 js : gen/js/proto/ord/dataset.js \
 	   gen/js/proto/ord/reaction.js \
@@ -28,25 +30,41 @@ py : ../ord-schema/build/lib/ord_schema/proto/dataset_pb2.py \
 	   ../ord-schema/build/lib/ord_schema/proto/reaction_pb2.py
 
 gen/js/ord/dataset.js : js/dataset.js gen/js/proto/ord/dataset.js
-	$(closure)/closure/bin/build/closurebuilder.py \
-	  --root=$(closure) \
-	  --root=$(protobuf)/js \
-	  --root=gen/js/proto/ord \
-	  --root=js \
-	  --namespace=ord.dataset \
-	  --output_mode=script \
-	  --output_file=gen/js/ord/dataset.js \
+	java -jar node_modules/google-closure-compiler-java/compiler.jar \
+	  js/*.js \
+	  gen/js/proto/ord/*.js \
+	  $(protobuf)/js/*.js \
+	  $(protobuf)/js/binary/*.js \
+	  $(closure)/closure/goog/*.js \
+	  $(closure)/closure/goog/*/*.js \
+	  $(closure)/closure/goog/labs/*/*.js \
+	  --externs=$(jquery) \
+	  --entry_point=ord.dataset \
+	  --js_output_file=gen/js/ord/dataset.js \
+	  --dependency_mode=PRUNE \
+	  --jscomp_error="*" \
+	  --hide_warnings_for=$(closure) \
+	  --hide_warnings_for=$(protobuf) \
+	  --hide_warnings_for=gen/js/proto/ord \
 	  || (rm -f gen/js/ord/dataset.js && false)
 
 gen/js/ord/reaction.js : js/*.js gen/js/proto/ord/reaction.js
-	$(closure)/closure/bin/build/closurebuilder.py \
-	  --root=$(closure) \
-	  --root=$(protobuf)/js \
-	  --root=gen/js/proto/ord \
-	  --root=js \
-	  --namespace=ord.reaction \
-	  --output_mode=script \
-	  --output_file=gen/js/ord/reaction.js \
+	java -jar node_modules/google-closure-compiler-java/compiler.jar \
+	  js/*.js \
+	  gen/js/proto/ord/*.js \
+  	  $(protobuf)/js/*.js \
+  	  $(protobuf)/js/binary/*.js \
+	  $(closure)/closure/goog/*.js \
+	  $(closure)/closure/goog/*/*.js \
+	  $(closure)/closure/goog/labs/*/*.js \
+	  --externs=$(jquery) \
+	  --entry_point=ord.reaction \
+	  --js_output_file=gen/js/ord/reaction.js \
+	  --dependency_mode=PRUNE \
+	  --jscomp_error="*" \
+	  --hide_warnings_for=$(closure) \
+	  --hide_warnings_for=$(protobuf) \
+	  --hide_warnings_for=gen/js/proto/ord \
 	  || (rm -f gen/js/ord/reaction.js && false)
 
 gen/js/proto/ord/%.js : ../ord-schema/ord_schema/proto/%.proto

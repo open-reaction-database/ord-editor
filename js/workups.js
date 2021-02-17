@@ -16,6 +16,28 @@
 
 goog.module('ord.workups');
 goog.module.declareLegacyNamespace();
+
+const asserts = goog.require('goog.asserts');
+
+const amounts = goog.require('ord.amounts');
+const inputs = goog.require('ord.inputs');
+const utils = goog.require('ord.utils');
+
+const ReactionWorkup = goog.require('proto.ord.ReactionWorkup');
+const WorkupType = goog.require('proto.ord.ReactionWorkup.WorkupType');
+const StirringConditions = goog.require('proto.ord.StirringConditions');
+const StirringMethod = goog.require('proto.ord.StirringConditions.StirringMethod');
+const StirringMethodType = goog.require('proto.ord.StirringConditions.StirringMethod.StirringMethodType');
+const StirringRate = goog.require('proto.ord.StirringConditions.StirringRate');
+const StirringRateType = goog.require('proto.ord.StirringConditions.StirringRate.StirringRateType');
+const Temperature = goog.require('proto.ord.Temperature');
+const TemperatureConditions = goog.require('proto.ord.TemperatureConditions');
+const Measurement = goog.require('proto.ord.TemperatureConditions.Measurement');
+const MeasurementType = goog.require('proto.ord.TemperatureConditions.Measurement.MeasurementType');
+const TemperatureControl = goog.require('proto.ord.TemperatureConditions.TemperatureControl');
+const TemperatureControlType = goog.require('proto.ord.TemperatureConditions.TemperatureControl.TemperatureControlType');
+const Time = goog.require('proto.ord.Time');
+
 exports = {
   load,
   unload,
@@ -24,15 +46,9 @@ exports = {
   validateWorkup
 };
 
-goog.require('ord.amounts');
-goog.require('ord.inputs');
-goog.require('ord.utils');
-goog.require('proto.ord.ReactionWorkup');
-
-
 /**
  * Adds and populates the reaction workup sections in the form.
- * @param {!Array<!proto.ord.ReactionWorkup>} workups
+ * @param {!Array<!ReactionWorkup>} workups
  */
 function load(workups) {
   workups.forEach(workup => loadWorkup(workup));
@@ -40,36 +56,34 @@ function load(workups) {
 
 /**
  * Adds and populates a reaction workup section in the form.
- * @param {!proto.ord.ReactionWorkup} workup
+ * @param {!ReactionWorkup} workup
  */
 function loadWorkup(workup) {
   const node = add();
-  ord.utils.setSelector($('.workup_type', node), workup.getType());
+  utils.setSelector($('.workup_type', node), workup.getType());
   $('.workup_details', node).text(workup.getDetails());
   const duration = workup.getDuration();
   if (duration) {
-    ord.utils.writeMetric('.workup_duration', duration, node);
+    utils.writeMetric('.workup_duration', duration, node);
   }
 
   const input = workup.getInput();
-  if (input) {
-    ord.inputs.loadInputUnnamed($('.workup_input', node), input);
-  }
+  inputs.loadInputUnnamed($('.workup_input', node), input);
 
   const amount = workup.getAmount();
-  ord.amounts.load(node, amount);
+  amounts.load(node, amount);
 
   const temperature = workup.getTemperature();
   if (temperature) {
     const control = temperature.getControl();
     if (control) {
-      ord.utils.setSelector(
+      utils.setSelector(
           $('.workup_temperature_control_type', node), control.getType());
       $('.workup_temperature_details', node).text(control.getDetails());
     }
     const setpoint = temperature.getSetpoint();
     if (setpoint) {
-      ord.utils.writeMetric('.workup_temperature_setpoint', setpoint, node);
+      utils.writeMetric('.workup_temperature_setpoint', setpoint, node);
     }
 
     temperature.getMeasurementsList().forEach(
@@ -82,17 +96,16 @@ function loadWorkup(workup) {
   if (stirring) {
     const method = stirring.getMethod();
     if (method) {
-      ord.utils.setSelector(
+      utils.setSelector(
           $('.workup_stirring_method_type', node), method.getType());
       $('.workup_stirring_method_details', node).text(method.getDetails());
     }
     const rate = stirring.getRate();
     if (rate) {
-      ord.utils.setSelector(
-          $('.workup_stirring_rate_type', node), rate.getType());
+      utils.setSelector($('.workup_stirring_rate_type', node), rate.getType());
       $('.workup_stirring_rate_details', node).text(rate.getDetails());
       const rpm = rate.getRpm();
-      if (rpm != 0) {
+      if (rpm !== 0) {
         $('.workup_stirring_rate_rpm', node).text(rpm);
       }
     }
@@ -100,45 +113,45 @@ function loadWorkup(workup) {
   if (workup.hasTargetPh()) {
     $('.workup_target_ph', node).text(workup.getTargetPh());
   }
-  ord.utils.setOptionalBool(
+  utils.setOptionalBool(
       $('.workup_automated', node),
       workup.hasIsAutomated() ? workup.getIsAutomated() : null);
 }
 
 /**
  * Loads a measurement into the given node in a workup.
- * @param {!Node} workupNode The div corresponding to the workup whose fields
+ * @param {!jQuery} workupNode The div corresponding to the workup whose fields
  *     should be updated.
- * @param {!proto.ord.TemperatureConditions.Measurement} measurement
+ * @param {!TemperatureConditions.Measurement} measurement
  */
 function loadMeasurement(workupNode, measurement) {
   const node = addMeasurement(workupNode);
-  ord.utils.setSelector(
+  utils.setSelector(
       $('.workup_temperature_measurement_type', node), measurement.getType());
   $('.workup_temperature_measurement_details', node)
       .text(measurement.getDetails());
   const time = measurement.getTime();
   if (time) {
-    ord.utils.writeMetric('.workup_temperature_measurement_time', time, node);
+    utils.writeMetric('.workup_temperature_measurement_time', time, node);
   }
   const temperature = measurement.getTemperature();
   if (temperature) {
-    ord.utils.writeMetric(
+    utils.writeMetric(
         '.workup_temperature_measurement_temperature', temperature, node);
   }
 }
 
 /**
  * Fetches a list of workups defined in the form.
- * @return {!Array<!proto.ord.ReactionWorkup>} workups
+ * @return {!Array<!ReactionWorkup>} workups
  */
 function unload() {
   const workups = [];
   $('.workup').each(function(index, node) {
     node = $(node);
-    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
+    if (!utils.isTemplateOrUndoBuffer(node)) {
       const workup = unloadWorkup(node);
-      if (!ord.utils.isEmptyMessage(workup)) {
+      if (!utils.isEmptyMessage(workup)) {
         workups.push(workup);
       }
     }
@@ -148,45 +161,45 @@ function unload() {
 
 /**
  * Fetches a single workup from the form.
- * @param {!Node} node The div corresponding to the workup to fetch.
- * @return {!proto.ord.ReactionWorkup}
+ * @param {!jQuery} node The div corresponding to the workup to fetch.
+ * @return {!ReactionWorkup}
  */
 function unloadWorkup(node) {
-  const workup = new proto.ord.ReactionWorkup();
+  const workup = new ReactionWorkup();
+  const workupType = utils.getSelectorText($('.workup_type', node)[0]);
+  workup.setType(WorkupType[workupType]);
+  workup.setDetails(asserts.assertString($('.workup_details', node).text()));
 
-  workup.setType(ord.utils.getSelector($('.workup_type', node)));
-
-  workup.setDetails($('.workup_details', node).text());
-
-  const duration =
-      ord.utils.readMetric('.workup_duration', new proto.ord.Time(), node);
-  if (!ord.utils.isEmptyMessage(duration)) {
+  const duration = utils.readMetric('.workup_duration', new Time(), node);
+  if (!utils.isEmptyMessage(duration)) {
     workup.setDuration(duration);
   }
 
-  const input = ord.inputs.unloadInputUnnamed(node);
-  if (!ord.utils.isEmptyMessage(input)) {
+  const input = inputs.unloadInputUnnamed(node);
+  if (!utils.isEmptyMessage(input)) {
     workup.setInput(input);
   }
 
-  const amount = ord.amounts.unload($('.workup_amount', node));
-  if (!ord.utils.isEmptyMessage(amount)) {
+  const amount = amounts.unload($('.workup_amount', node));
+  if (!utils.isEmptyMessage(amount)) {
     workup.setAmount(amount);
   }
 
-  const control = new proto.ord.TemperatureConditions.TemperatureControl();
-  control.setType(
-      ord.utils.getSelector($('.workup_temperature_control_type', node)));
-  control.setDetails($('.workup_temperature_details', node).text());
+  const control = new TemperatureControl();
+  const temperatureControlType =
+      utils.getSelectorText($('.workup_temperature_control_type', node)[0]);
+  control.setType(TemperatureControlType[temperatureControlType]);
+  control.setDetails(
+      asserts.assertString($('.workup_temperature_details', node).text()));
 
-  const temperature = new proto.ord.TemperatureConditions();
-  if (!ord.utils.isEmptyMessage(control)) {
+  const temperature = new TemperatureConditions();
+  if (!utils.isEmptyMessage(control)) {
     temperature.setControl(control);
   }
 
-  const setpoint = ord.utils.readMetric(
-      '.workup_temperature_setpoint', new proto.ord.Temperature(), node);
-  if (!ord.utils.isEmptyMessage(setpoint)) {
+  const setpoint =
+      utils.readMetric('.workup_temperature_setpoint', new Temperature(), node);
+  if (!utils.isEmptyMessage(setpoint)) {
     temperature.setSetpoint(setpoint);
   }
 
@@ -197,40 +210,45 @@ function unloadWorkup(node) {
     if (!measurementNode.attr('id')) {
       // Not a template.
       const measurement = unloadMeasurement(measurementNode);
-      if (!ord.utils.isEmptyMessage(measurement)) {
+      if (!utils.isEmptyMessage(measurement)) {
         measurements.push(measurement);
       }
     }
   });
   temperature.setMeasurementsList(measurements);
-  if (!ord.utils.isEmptyMessage(temperature)) {
+  if (!utils.isEmptyMessage(temperature)) {
     workup.setTemperature(temperature);
   }
+  workup.setKeepPhase(
+      asserts.assertString($('.workup_keep_phase', node).text()));
 
-  workup.setKeepPhase($('.workup_keep_phase', node).text());
+  const stirring = new StirringConditions();
 
-  const stirring = new proto.ord.StirringConditions();
-
-  const method = new proto.ord.StirringConditions.StirringMethod();
-  method.setType(
-      ord.utils.getSelector($('.workup_stirring_method_type', node)));
-  method.setDetails($('.workup_stirring_method_details').text());
-  if (!ord.utils.isEmptyMessage(method)) {
+  const method = new StirringMethod();
+  const stirringMethodType =
+      utils.getSelectorText($('.workup_stirring_method_type', node)[0]);
+  method.setType(StirringMethodType[stirringMethodType]);
+  method.setDetails(
+      asserts.assertString($('.workup_stirring_method_details').text()));
+  if (!utils.isEmptyMessage(method)) {
     stirring.setMethod(method);
   }
 
-  const rate = new proto.ord.StirringConditions.StirringRate();
-  rate.setType(ord.utils.getSelector($('.workup_stirring_rate_type', node)));
-  rate.setDetails($('.workup_stirring_rate_details').text());
+  const rate = new StirringRate();
+  const stirringRateType =
+      utils.getSelectorText($('.workup_stirring_rate_type', node)[0]);
+  rate.setType(StirringRateType[stirringRateType]);
+  rate.setDetails(
+      asserts.assertString($('.workup_stirring_rate_details').text()));
   const rpm = parseFloat($('.workup_stirring_rate_rpm', node).text());
   if (!isNaN(rpm)) {
     rate.setRpm(rpm);
   }
-  if (!ord.utils.isEmptyMessage(rate)) {
+  if (!utils.isEmptyMessage(rate)) {
     stirring.setRate(rate);
   }
 
-  if (!ord.utils.isEmptyMessage(stirring)) {
+  if (!utils.isEmptyMessage(stirring)) {
     workup.setStirring(stirring);
   }
 
@@ -238,31 +256,33 @@ function unloadWorkup(node) {
   if (!isNaN(targetPh)) {
     workup.setTargetPh(targetPh);
   }
-  workup.setIsAutomated(
-      ord.utils.getOptionalBool($('.workup_automated', node)));
+  const isAutomated = utils.getOptionalBool($('.workup_automated', node));
+  if (isAutomated !== null) {
+    workup.setIsAutomated(isAutomated);
+  }
   return workup;
 }
 
 /**
  * Fetches a single workup temperature measurement from the form.
- * @param {!Node} node The div corresponding to the measurement to fetch.
- * @return {!proto.ord.TemperatureConditions.Measurement}
+ * @param {!jQuery} node The div corresponding to the measurement to fetch.
+ * @return {!TemperatureConditions.Measurement}
  */
 function unloadMeasurement(node) {
-  const measurement = new proto.ord.TemperatureConditions.Measurement();
-  measurement.setType(
-      ord.utils.getSelector($('.workup_temperature_measurement_type', node)));
-  measurement.setDetails(
-      $('.workup_temperature_measurement_details', node).text());
-  const time = ord.utils.readMetric(
-      '.workup_temperature_measurement_time', new proto.ord.Time(), node);
-  if (!ord.utils.isEmptyMessage(time)) {
+  const measurement = new Measurement();
+  const measurementType =
+      utils.getSelectorText($('.workup_temperature_measurement_type', node)[0]);
+  measurement.setType(MeasurementType[measurementType]);
+  measurement.setDetails(asserts.assertString(
+      $('.workup_temperature_measurement_details', node).text()));
+  const time = utils.readMetric(
+      '.workup_temperature_measurement_time', new Time(), node);
+  if (!utils.isEmptyMessage(time)) {
     measurement.setTime(time);
   }
-  const temperature = ord.utils.readMetric(
-      '.workup_temperature_measurement_temperature',
-      new proto.ord.Temperature(), node);
-  if (!ord.utils.isEmptyMessage(temperature)) {
+  const temperature = utils.readMetric(
+      '.workup_temperature_measurement_temperature', new Temperature(), node);
+  if (!utils.isEmptyMessage(temperature)) {
     measurement.setTemperature(temperature);
   }
   return measurement;
@@ -270,13 +290,13 @@ function unloadMeasurement(node) {
 
 /**
  * Adds a new reaction workup section to the form.
- * @return {!Node} The newly added parent node for the reaction workup.
+ * @return {!jQuery} The newly added parent node for the reaction workup.
  */
 function add() {
-  const workupNode = ord.utils.addSlowly('#workup_template', '#workups');
+  const workupNode = utils.addSlowly('#workup_template', $('#workups'));
   const inputNode = $('.workup_input', workupNode);
   // The template for ReactionWorkup.input is taken from Reaction.inputs.
-  const workupInputNode = ord.inputs.add(inputNode, ['workup_input']);
+  const workupInputNode = inputs.add(inputNode, ['workup_input']);
   // Adjust heading sizes. Start with the smallest so we don't adjust more than
   // once.
   // TODO(kearnes): This does not affect input components added later.
@@ -295,10 +315,10 @@ function add() {
   // Unlike Reaction.inputs, this ReactionInput is not repeated.
   $('.remove', inputNode).hide();
 
-  ord.amounts.init(workupNode);
+  amounts.init(workupNode);
 
   // Add live validation handling.
-  ord.utils.addChangeHandler(workupNode, () => {
+  utils.addChangeHandler(workupNode, () => {
     validateWorkup(workupNode);
   });
 
@@ -307,21 +327,22 @@ function add() {
 
 /**
  * Adds a new measurement section to the current workup in the form.
- * @param {!Node} node The workup div where the new measurement should be added.
- * @return {!Node} The node of the new measurement div.
+ * @param {!jQuery} node The workup div where the new measurement should be
+ *     added.
+ * @return {!jQuery} The node of the new measurement div.
  */
 function addMeasurement(node) {
-  return ord.utils.addSlowly(
+  return utils.addSlowly(
       '#workup_temperature_measurement_template',
       $('.workup_temperature_measurements', node));
 }
 
 /**
  * Validates a workup as defined in the form.
- * @param {!Node} node The div containing to the workup in the form.
- * @param {?Node=} validateNode The target div for validation results.
+ * @param {!jQuery} node The div containing to the workup in the form.
+ * @param {?jQuery=} validateNode The target div for validation results.
  */
 function validateWorkup(node, validateNode = null) {
   const workup = unloadWorkup(node);
-  ord.utils.validate(workup, 'ReactionWorkup', node, validateNode);
+  utils.validate(workup, 'ReactionWorkup', node, validateNode);
 }

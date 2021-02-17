@@ -16,11 +16,15 @@
 
 goog.module('ord.uploads');
 goog.module.declareLegacyNamespace();
+
+const asserts = goog.require('goog.asserts');
+
 exports = {
-  putAll,
-  retrieve,
+  getFile,
   initialize,
   load,
+  putAll,
+  retrieve,
   unload
 };
 
@@ -100,17 +104,17 @@ function putAll(dirName) {
 /**
  * Looks up the bytesValue of the given uploader and sends back it as a
  * download.
- * @param {!Node} uploader A `.data_uploader` div.
+ * @param {!jQuery} uploader A `.data_uploader` div.
  */
 function retrieve(uploader) {
-  const token = uploader.attr('data-token');
+  const token = asserts.assertString(uploader.attr('data-token'));
   const xhr = new XMLHttpRequest();
   xhr.open('POST', '/dataset/proto/download/' + token);
   xhr.onload = () => {
     // Make the browser write the file.
     const url = URL.createObjectURL(new Blob([xhr.response]));
     const link = document.createElement('a');
-    link.href = url;
+    link.setAttribute('href', url);
     link.setAttribute('download', token);
     document.body.appendChild(link);
     link.click();
@@ -121,7 +125,7 @@ function retrieve(uploader) {
 
 /**
  * Configures the behavior of an uploader.
- * @param {!Node} node A `.data_uploader` div.
+ * @param {!jQuery} node A `.data_uploader` div.
  */
 function initialize(node) {
   $('.data_uploader_chooser_file', node).on('input', (event) => {
@@ -136,7 +140,7 @@ function initialize(node) {
 
 /**
  * Loads a token and filename into an uploader.
- * @param {!Node} node A `.data_uploader` div.
+ * @param {!jQuery} node A `.data_uploader` div.
  * @param {!Uint8Array} bytesValue File content as bytes.
  */
 function load(node, bytesValue) {
@@ -150,11 +154,12 @@ function load(node, bytesValue) {
 
 /**
  * Retrieves the stored bytes from an uploader.
- * @param {!Node} node A `.data_uploader` div.
+ * @param {!jQuery} node A `.data_uploader` div.
  * @returns {!Uint8Array}
  */
 function unload(node) {
-  const token = $('.data_uploader', node).attr('data-token');
+  const token =
+      asserts.assertString($('.data_uploader', node).attr('data-token'));
   const bytesValue = unstashUpload(token);
   if (bytesValue) {
     // This is just a round-trip for bytesValue.

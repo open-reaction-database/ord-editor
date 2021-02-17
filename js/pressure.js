@@ -16,6 +16,21 @@
 
 goog.module('ord.pressure');
 goog.module.declareLegacyNamespace();
+
+const asserts = goog.require('goog.asserts');
+
+const utils = goog.require('ord.utils');
+
+const Pressure = goog.require('proto.ord.Pressure');
+const PressureConditions = goog.require('proto.ord.PressureConditions');
+const Atmosphere = goog.require('proto.ord.PressureConditions.Atmosphere');
+const AtmosphereType = goog.require('proto.ord.PressureConditions.Atmosphere.AtmosphereType');
+const Measurement = goog.require('proto.ord.PressureConditions.Measurement');
+const MeasurementType = goog.require('proto.ord.PressureConditions.Measurement.MeasurementType');
+const PressureControl = goog.require('proto.ord.PressureConditions.PressureControl');
+const PressureControlType = goog.require('proto.ord.PressureConditions.PressureControl.PressureControlType');
+const Time = goog.require('proto.ord.Time');
+
 exports = {
   load,
   unload,
@@ -23,20 +38,15 @@ exports = {
   validatePressure
 };
 
-goog.require('ord.utils');
-goog.require('proto.ord.Pressure');
-goog.require('proto.ord.PressureConditions');
-goog.require('proto.ord.PressureConditions.Measurement');
-goog.require('proto.ord.Time');
 
 /**
  * Adds and populates the pressure conditions section in the form.
- * @param {!proto.ord.PressureConditions} pressure
+ * @param {!PressureConditions} pressure
  */
 function load(pressure) {
   const control = pressure.getControl();
   if (control) {
-    ord.utils.setSelector($('#pressure_control_type'), control.getType());
+    utils.setSelector($('#pressure_control_type'), control.getType());
     $('#pressure_control_details').text(control.getDetails());
   }
   const measurements = pressure.getMeasurementsList();
@@ -45,65 +55,69 @@ function load(pressure) {
     loadMeasurement(measurement, node);
   });
   const setpoint = pressure.getSetpoint();
-  ord.utils.writeMetric('#pressure_setpoint', setpoint);
+  utils.writeMetric('#pressure_setpoint', setpoint);
 
   const atmosphere = pressure.getAtmosphere();
   if (atmosphere) {
-    ord.utils.setSelector($('#pressure_atmosphere_type'), atmosphere.getType());
+    utils.setSelector($('#pressure_atmosphere_type'), atmosphere.getType());
     $('#pressure_atmosphere_details').text(atmosphere.getDetails());
   }
 }
 
 /**
  * Adds and populates a pressure measurement section in the form.
- * @param {!proto.ord.PressureConditions.Measurement} measurement
- * @param {!Node} node The target div.
+ * @param {!PressureConditions.Measurement} measurement
+ * @param {!jQuery} node The target div.
  */
 function loadMeasurement(measurement, node) {
   const type = measurement.getType();
-  ord.utils.setSelector($('.pressure_measurement_type', node), type);
+  utils.setSelector($('.pressure_measurement_type', node), type);
   $('.pressure_measurement_details', node).text(measurement.getDetails());
 
   const pressure = measurement.getPressure();
-  ord.utils.writeMetric('.pressure_measurement_pressure', pressure, node);
+  utils.writeMetric('.pressure_measurement_pressure', pressure, node);
 
   const time = measurement.getTime();
-  ord.utils.writeMetric('.pressure_measurement_time', time, node);
+  utils.writeMetric('.pressure_measurement_time', time, node);
 }
 
 /**
  * Fetches pressure conditions from the form.
- * @return {!proto.ord.PressureConditions}
+ * @return {!PressureConditions}
  */
 function unload() {
-  const pressure = new proto.ord.PressureConditions();
+  const pressure = new PressureConditions();
 
-  const control = new proto.ord.PressureConditions.PressureControl();
-  control.setType(ord.utils.getSelector($('#pressure_control_type')));
-  control.setDetails($('#pressure_control_details').text());
-  if (!ord.utils.isEmptyMessage(control)) {
+  const control = new PressureControl();
+  const controlType = utils.getSelectorText($('#pressure_control_type')[0]);
+  control.setType(PressureControlType[controlType]);
+  control.setDetails(
+      asserts.assertString($('#pressure_control_details').text()));
+  if (!utils.isEmptyMessage(control)) {
     pressure.setControl(control);
   }
 
-  const setpoint =
-      ord.utils.readMetric('#pressure_setpoint', new proto.ord.Pressure());
-  if (!ord.utils.isEmptyMessage(setpoint)) {
+  const setpoint = utils.readMetric('#pressure_setpoint', new Pressure());
+  if (!utils.isEmptyMessage(setpoint)) {
     pressure.setSetpoint(setpoint);
   }
 
-  const atmosphere = new proto.ord.PressureConditions.Atmosphere();
-  atmosphere.setType(ord.utils.getSelector('#pressure_atmosphere_type'));
-  atmosphere.setDetails($('#pressure_atmosphere_details').text());
-  if (!ord.utils.isEmptyMessage(atmosphere)) {
+  const atmosphere = new Atmosphere();
+  const atmosphereType =
+      utils.getSelectorText($('#pressure_atmosphere_type')[0]);
+  atmosphere.setType(AtmosphereType[atmosphereType]);
+  atmosphere.setDetails(
+      asserts.assertString($('#pressure_atmosphere_details').text()));
+  if (!utils.isEmptyMessage(atmosphere)) {
     pressure.setAtmosphere(atmosphere);
   }
 
   const measurements = [];
   $('.pressure_measurement').each(function(index, node) {
     node = $(node);
-    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
+    if (!utils.isTemplateOrUndoBuffer(node)) {
       const measurement = unloadMeasurement(node);
-      if (!ord.utils.isEmptyMessage(measurement)) {
+      if (!utils.isEmptyMessage(measurement)) {
         measurements.push(measurement);
       }
     }
@@ -115,23 +129,23 @@ function unload() {
 
 /**
  * Fetches a pressure measurement from the form.
- * @param {!Node} node The div of the measurement to fetch.
- * @return {!proto.ord.PressureConditions.Measurement}
+ * @param {!jQuery} node The div of the measurement to fetch.
+ * @return {!PressureConditions.Measurement}
  */
 function unloadMeasurement(node) {
-  const measurement = new proto.ord.PressureConditions.Measurement();
-  const type = ord.utils.getSelector($('.pressure_measurement_type', node));
-  measurement.setType(type);
-  const details = $('.pressure_measurement_details', node).text();
-  measurement.setDetails(details);
-  const pressure = ord.utils.readMetric(
-      '.pressure_measurement_pressure', new proto.ord.Pressure(), node);
-  if (!ord.utils.isEmptyMessage(pressure)) {
+  const measurement = new Measurement();
+  const measurementType =
+      utils.getSelectorText($('.pressure_measurement_type', node)[0]);
+  measurement.setType(MeasurementType[measurementType]);
+  measurement.setDetails(
+      asserts.assertString($('.pressure_measurement_details', node).text()));
+  const pressure =
+      utils.readMetric('.pressure_measurement_pressure', new Pressure(), node);
+  if (!utils.isEmptyMessage(pressure)) {
     measurement.setPressure(pressure);
   }
-  const time = ord.utils.readMetric(
-      '.pressure_measurement_time', new proto.ord.Time(), node);
-  if (!ord.utils.isEmptyMessage(time)) {
+  const time = utils.readMetric('.pressure_measurement_time', new Time(), node);
+  if (!utils.isEmptyMessage(time)) {
     measurement.setTime(time);
   }
 
@@ -140,19 +154,19 @@ function unloadMeasurement(node) {
 
 /**
  * Adds a pressure measurement section to the form.
- * @return {!Node} The node of the new measurement div.
+ * @return {!jQuery} The node of the new measurement div.
  */
 function addMeasurement() {
-  return ord.utils.addSlowly(
-      '#pressure_measurement_template', '#pressure_measurements');
+  return utils.addSlowly(
+      '#pressure_measurement_template', $('#pressure_measurements'));
 }
 
 /**
  * Validates pressure conditions defined in the form.
- * @param {!Node} node The node containing the pressure conditions div.
- * @param {?Node=} validateNode The target div for validation results.
+ * @param {!jQuery} node The node containing the pressure conditions div.
+ * @param {?jQuery=} validateNode The target div for validation results.
  */
 function validatePressure(node, validateNode = null) {
   const pressure = unload();
-  ord.utils.validate(pressure, 'PressureConditions', node, validateNode);
+  utils.validate(pressure, 'PressureConditions', node, validateNode);
 }

@@ -16,19 +16,25 @@
 
 goog.module('ord.identifiers');
 goog.module.declareLegacyNamespace();
+
+const asserts = goog.require('goog.asserts');
+
+const uploads = goog.require('ord.uploads');
+const utils = goog.require('ord.utils');
+
+const ReactionIdentifier = goog.require('proto.ord.ReactionIdentifier');
+const IdentifierType = goog.require('proto.ord.ReactionIdentifier.IdentifierType');
+
 exports = {
   load,
   unload,
   add
 };
 
-goog.require('ord.uploads');
-goog.require('ord.utils');
-goog.require('proto.ord.ReactionIdentifier');
 
 /**
  * Adds and populates the reaction identifier sections in the form.
- * @param {!Array<!proto.ord.ReactionIdentifier>} identifiers
+ * @param {!Array<!ReactionIdentifier>} identifiers
  */
 function load(identifiers) {
   identifiers.forEach(identifier => loadIdentifier(identifier));
@@ -39,27 +45,27 @@ function load(identifiers) {
 
 /**
  * Adds and populates a single reaction identifier section in the form.
- * @param {!proto.ord.ReactionIdentifier} identifier
+ * @param {!ReactionIdentifier} identifier
  */
 function loadIdentifier(identifier) {
   const node = add();
   const value = identifier.getValue();
   $('.reaction_identifier_value', node).text(value);
-  ord.utils.setSelector(node, identifier.getType());
+  utils.setSelector(node, identifier.getType());
   $('.reaction_identifier_details', node).text(identifier.getDetails());
 }
 
 /**
  * Fetches the reaction identifiers defined in the form.
- * @return {!Array<!proto.ord.ReactionIdentifiers>}
+ * @return {!Array<!ReactionIdentifier>}
  */
 function unload() {
   const identifiers = [];
   $('.reaction_identifier').each(function(index, node) {
     node = $(node);
-    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
+    if (!utils.isTemplateOrUndoBuffer(node)) {
       const identifier = unloadIdentifier(node);
-      if (!ord.utils.isEmptyMessage(identifier)) {
+      if (!utils.isEmptyMessage(identifier)) {
         identifiers.push(identifier);
       }
     }
@@ -69,38 +75,32 @@ function unload() {
 
 /**
  * Fetches a single reaction identifier defined in the form.
- * @param {!Node} node Root node for the identifier.
- * @return {!proto.ord.ReactionIdentifier}
+ * @param {!jQuery} node Root node for the identifier.
+ * @return {!ReactionIdentifier}
  */
 function unloadIdentifier(node) {
-  const identifier = new proto.ord.ReactionIdentifier();
+  const identifier = new ReactionIdentifier();
 
-  const value = $('.reaction_identifier_value', node).text();
-  if (value) {
-    identifier.setValue(value);
-  }
+  identifier.setValue(
+      asserts.assertString($('.reaction_identifier_value', node).text()));
 
-  const type = ord.utils.getSelector(node);
-  if (type) {
-    identifier.setType(type);
-  }
-  const details = $('.reaction_identifier_details', node).text();
-  if (details) {
-    identifier.setDetails(details);
-  }
+  const type = utils.getSelectorText(node[0]);
+  identifier.setType(IdentifierType[type]);
+  identifier.setDetails(
+      asserts.assertString($('.reaction_identifier_details', node).text()));
   return identifier;
 }
 
 /**
  * Adds a reaction identifier section to the form.
- * @return {!Node} The newly added parent node for the identifier.
+ * @return {!jQuery} The newly added parent node for the identifier.
  */
 function add() {
   const node =
-      ord.utils.addSlowly('#reaction_identifier_template', '#identifiers');
+      utils.addSlowly('#reaction_identifier_template', $('#identifiers'));
 
   const uploadButton = $('.reaction_identifier_upload', node);
-  uploadButton.change(function() {
+  uploadButton.on('change', function() {
     if ($(this).is(':checked')) {
       $('.uploader', node).show();
       $('.reaction_identifier_value', node).hide();
@@ -110,6 +110,6 @@ function add() {
       $('.reaction_identifier_value', node).show();
     }
   });
-  ord.uploads.initialize(node);
+  uploads.initialize(node);
   return node;
 }

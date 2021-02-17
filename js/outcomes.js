@@ -16,6 +16,23 @@
 
 goog.module('ord.outcomes');
 goog.module.declareLegacyNamespace();
+
+const asserts = goog.require('goog.asserts');
+
+const JspbMap = goog.requireType('jspb.Map');
+
+const data = goog.require('ord.data');
+const products = goog.require('ord.products');
+const utils = goog.require('ord.utils');
+
+const Analysis = goog.require('proto.ord.Analysis');
+const AnalysisType = goog.require('proto.ord.Analysis.AnalysisType');
+const Data = goog.require('proto.ord.Data');
+const DateTime = goog.require('proto.ord.DateTime');
+const Percentage = goog.require('proto.ord.Percentage');
+const ReactionOutcome = goog.require('proto.ord.ReactionOutcome');
+const Time = goog.require('proto.ord.Time');
+
 exports = {
   load,
   unload,
@@ -26,17 +43,10 @@ exports = {
   validateAnalysis
 };
 
-goog.require('ord.data');
-goog.require('ord.products');
-goog.require('ord.utils');
-goog.require('proto.ord.ReactionOutcome');
-
-// Freely create radio button groups by generating new input names.
-let radioGroupCounter = 0;
 
 /**
  * Adds and populates the reaction outcome sections in the form.
- * @param {!Array<!proto.ord.ReactionOutcome>} outcomes
+ * @param {!Array<!ReactionOutcome>} outcomes
  */
 function load(outcomes) {
   outcomes.forEach(outcome => loadOutcome(outcome));
@@ -44,53 +54,49 @@ function load(outcomes) {
 
 /**
  * Adds and populates a reaction outcome section in the form.
- * @param outcome
+ * @param {!ReactionOutcome} outcome
  */
 function loadOutcome(outcome) {
   const node = add();
 
   const time = outcome.getReactionTime();
   if (time != null) {
-    ord.utils.writeMetric('.outcome_time', time, node);
+    utils.writeMetric('.outcome_time', time, node);
   }
   const conversion = outcome.getConversion();
   if (conversion) {
-    ord.utils.writeMetric('.outcome_conversion', outcome.getConversion(), node);
+    utils.writeMetric('.outcome_conversion', outcome.getConversion(), node);
   }
 
-  const analyses = outcome.getAnalysesMap();
-  const names = analyses.stringKeys_();
-  names.forEach(function(name) {
-    const analysis = analyses.get(name);
+  const analysesMap = outcome.getAnalysesMap();
+  analysesMap.forEach(function(analysis, name) {
     loadAnalysis(node, name, analysis);
   });
 
-  const products = outcome.getProductsList();
-  ord.products.load(node, products);
+  const productsList = outcome.getProductsList();
+  products.load(node, productsList);
 }
 
 /**
  * Adds and populates a reaction analysis section in the form.
- * @param {!Node} outcomeNode Parent reaction outcome node.
+ * @param {!jQuery} outcomeNode Parent reaction outcome node.
  * @param {string} name The name of this analysis.
- * @param {!proto.ord.Analysis} analysis
+ * @param {!Analysis} analysis
  */
 function loadAnalysis(outcomeNode, name, analysis) {
   const node = addAnalysis(outcomeNode);
 
   $('.outcome_analysis_name', node).text(name).trigger('input');
 
-  ord.utils.setSelector($('.outcome_analysis_type', node), analysis.getType());
+  utils.setSelector($('.outcome_analysis_type', node), analysis.getType());
   const chmoId = analysis.getChmoId();
-  if (chmoId != 0) {
+  if (chmoId !== 0) {
     $('.outcome_analysis_chmo_id', node).text(analysis.getChmoId());
   }
   $('.outcome_analysis_details', node).text(analysis.getDetails());
 
   const dataMap = analysis.getDataMap();
-  const dataNames = dataMap.stringKeys_();
-  dataNames.forEach(function(name) {
-    const data = dataMap.get(name);
+  dataMap.forEach(function(data, name) {
     const dataNode = addData(node);
     loadData(dataNode, name, data);
   });
@@ -101,7 +107,7 @@ function loadAnalysis(outcomeNode, name, analysis) {
   if (calibrated) {
     $('.outcome_analysis_calibrated', node).text(calibrated.getValue());
   }
-  ord.utils.setOptionalBool(
+  utils.setOptionalBool(
       $('.outcome_analysis_is_of_isolated_species', node),
       analysis.hasIsOfIsolatedSpecies() ? analysis.getIsOfIsolatedSpecies() :
                                           null);
@@ -109,26 +115,26 @@ function loadAnalysis(outcomeNode, name, analysis) {
 
 /**
  * Adds and populates a data section in a reaction analysis.
- * @param {!Node} node Parent reaction analysis node.
+ * @param {!jQuery} node Parent reaction analysis node.
  * @param {string} name The name of this Data record.
- * @param {!proto.ord.Data} data
+ * @param {!Data} dataMessage
  */
-function loadData(node, name, data) {
+function loadData(node, name, dataMessage) {
   $('.outcome_data_name', node).text(name);
-  ord.data.loadData(node, data);
+  data.loadData(node, dataMessage);
 }
 
 /**
  * Fetches the reaction outcomes defined in the form.
- * @return {!Array<!proto.ord.ReactionOutcome>}
+ * @return {!Array<!ReactionOutcome>}
  */
 function unload() {
   const outcomes = [];
   $('.outcome').each(function(index, node) {
     node = $(node);
-    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
+    if (!utils.isTemplateOrUndoBuffer(node)) {
       const outcome = unloadOutcome(node);
-      if (!ord.utils.isEmptyMessage(outcome)) {
+      if (!utils.isEmptyMessage(outcome)) {
         outcomes.push(outcome);
       }
     }
@@ -138,32 +144,31 @@ function unload() {
 
 /**
  * Fetches a reaction outcome defined in the form.
- * @param {!Node} node Root node for the reaction outcome.
- * @return {!proto.ord.ReactionOutcome}
+ * @param {!jQuery} node Root node for the reaction outcome.
+ * @return {!ReactionOutcome}
  */
 function unloadOutcome(node) {
-  const outcome = new proto.ord.ReactionOutcome();
+  const outcome = new ReactionOutcome();
 
-  const time =
-      ord.utils.readMetric('.outcome_time', new proto.ord.Time(), node);
-  if (!ord.utils.isEmptyMessage(time)) {
+  const time = utils.readMetric('.outcome_time', new Time(), node);
+  if (!utils.isEmptyMessage(time)) {
     outcome.setReactionTime(time);
   }
 
-  const conversion = ord.utils.readMetric(
-      '.outcome_conversion', new proto.ord.Percentage(), node);
-  if (!ord.utils.isEmptyMessage(conversion)) {
+  const conversion =
+      utils.readMetric('.outcome_conversion', new Percentage(), node);
+  if (!utils.isEmptyMessage(conversion)) {
     outcome.setConversion(conversion);
   }
 
-  const products = ord.products.unload(node);
-  outcome.setProductsList(products);
+  const productsList = products.unload(node);
+  outcome.setProductsList(productsList);
 
-  const analyses = outcome.getAnalysesMap();
+  const analysesMap = outcome.getAnalysesMap();
   $('.outcome_analysis', node).each(function(index, node) {
     node = $(node);
-    if (!ord.utils.isTemplateOrUndoBuffer(node)) {
-      unloadAnalysis(node, analyses);
+    if (!utils.isTemplateOrUndoBuffer(node)) {
+      unloadAnalysis(node, analysesMap);
     }
   });
   return outcome;
@@ -171,18 +176,21 @@ function unloadOutcome(node) {
 
 /**
  * Fetches a reaction analysis defined in the form.
- * @param {!Node} analysisNode Root node for the reaction analysis.
- * @return {!proto.ord.Analysis}
+ * @param {!jQuery} analysisNode Root node for the reaction analysis.
+ * @return {!Analysis}
  */
 function unloadAnalysisSingle(analysisNode) {
-  const analysis = new proto.ord.Analysis();
-  analysis.setType(
-      ord.utils.getSelector($('.outcome_analysis_type', analysisNode)));
-  const chmoId = $('.outcome_analysis_chmo_id', analysisNode).text();
+  const analysis = new Analysis();
+  const analysisType =
+      utils.getSelectorText($('.outcome_analysis_type', analysisNode)[0]);
+  analysis.setType(AnalysisType[analysisType]);
+  const chmoId =
+      parseInt($('.outcome_analysis_chmo_id', analysisNode).text(), 10);
   if (!isNaN(chmoId)) {
     analysis.setChmoId(chmoId);
   }
-  analysis.setDetails($('.outcome_analysis_details', analysisNode).text());
+  analysis.setDetails(asserts.assertString(
+      $('.outcome_analysis_details', analysisNode).text()));
 
   const dataMap = analysis.getDataMap();
   $('.outcome_data', analysisNode).each(function(index, dataNode) {
@@ -191,53 +199,57 @@ function unloadAnalysisSingle(analysisNode) {
       unloadData(dataNode, dataMap);
     }
   });
-  analysis.setInstrumentManufacturer(
-      $('.outcome_analysis_manufacturer', analysisNode).text());
-  const calibrated = new proto.ord.DateTime();
-  calibrated.setValue($('.outcome_analysis_calibrated', analysisNode).text());
-  if (!ord.utils.isEmptyMessage(calibrated)) {
+  analysis.setInstrumentManufacturer(asserts.assertString(
+      $('.outcome_analysis_manufacturer', analysisNode).text()));
+  const calibrated = new DateTime();
+  calibrated.setValue(asserts.assertString(
+      $('.outcome_analysis_calibrated', analysisNode).text()));
+  if (!utils.isEmptyMessage(calibrated)) {
     analysis.setInstrumentLastCalibrated(calibrated);
   }
-  analysis.setIsOfIsolatedSpecies(ord.utils.getOptionalBool(
-      $('.outcome_analysis_is_of_isolated_species', analysisNode)));
+  const isOfIsolatedSpecies = utils.getOptionalBool(
+      $('.outcome_analysis_is_of_isolated_species', analysisNode));
+  if (isOfIsolatedSpecies !== null) {
+    analysis.setIsOfIsolatedSpecies(isOfIsolatedSpecies);
+  }
 
   return analysis;
 }
 
 /**
  * Fetches a reaction analysis defined in the form and adds it to `analyses`.
- * @param {!Node} analysisNode Root node for the reaction analysis.
- * @param {!jspb.Map<string, !proto.ord.Analysis>} analyses
+ * @param {!jQuery} analysisNode Root node for the reaction analysis.
+ * @param {!JspbMap<string, !Analysis>} analyses
  */
 function unloadAnalysis(analysisNode, analyses) {
   const analysis = unloadAnalysisSingle(analysisNode);
   const name = $('.outcome_analysis_name', analysisNode).text();
-  if (name || !ord.utils.isEmptyMessage(analysis)) {
-    analyses.set(name, analysis);
+  if (name || !utils.isEmptyMessage(analysis)) {
+    analyses.set(asserts.assertString(name), analysis);
   }
 }
 
 /**
  * Fetches a data record defined in the form and adds it to `dataMap`.
- * @param {!Node} node Root node for the Data record.
- * @param {!jspb.Map<string, !proto.ord.Data>} dataMap
+ * @param {!jQuery} node Root node for the Data record.
+ * @param {!JspbMap<string, !Data>} dataMap
  */
 function unloadData(node, dataMap) {
   const name = $('.outcome_data_name', node).text();
-  const data = ord.data.unloadData(node);
-  if (name || !ord.utils.isEmptyMessage(data)) {
-    dataMap.set(name, data);
+  const dataMessage = data.unloadData(node);
+  if (name || !utils.isEmptyMessage(dataMessage)) {
+    dataMap.set(asserts.assertString(name), dataMessage);
   }
 }
 
 /**
  * Adds a reaction outcome section to the form.
- * @return {!Node} The newly added parent node for the reaction outcome.
+ * @return {!jQuery} The newly added parent node for the reaction outcome.
  */
 function add() {
-  const node = ord.utils.addSlowly('#outcome_template', '#outcomes');
+  const node = utils.addSlowly('#outcome_template', $('#outcomes'));
   // Add live validation handling.
-  ord.utils.addChangeHandler(node, () => {
+  utils.addChangeHandler(node, () => {
     validateOutcome(node);
   });
   return node;
@@ -245,11 +257,11 @@ function add() {
 
 /**
  * Adds a reaction analysis section to the form.
- * @param {!Node} node Parent reaction outcome node.
- * @return {!Node} The newly added parent node for the reaction analysis.
+ * @param {!jQuery} node Parent reaction outcome node.
+ * @return {!jQuery} The newly added parent node for the reaction analysis.
  */
 function addAnalysis(node) {
-  const analysisNode = ord.utils.addSlowly(
+  const analysisNode = utils.addSlowly(
       '#outcome_analysis_template', $('.outcome_analyses', node));
 
   // Handle name changes.
@@ -265,7 +277,7 @@ function addAnalysis(node) {
     if (old_name) {
       // If any selector had this value selected, reset it.
       $('.analysis_key_selector', node).each(function() {
-        if ($(this).val() == old_name) {
+        if ($(this).val() === old_name) {
           $(this).val('');
         }
       });
@@ -282,7 +294,7 @@ function addAnalysis(node) {
   });
 
   // Add live validation handling.
-  ord.utils.addChangeHandler(analysisNode, () => {
+  utils.addChangeHandler(analysisNode, () => {
     validateAnalysis(analysisNode);
   });
   return analysisNode;
@@ -290,32 +302,32 @@ function addAnalysis(node) {
 
 /**
  * Adds a new data section to the form.
- * @param {!Node} node Parent reaction outcome node.
- * @return {!Node} The newly added parent node for the Data record.
+ * @param {!jQuery} node Parent reaction outcome node.
+ * @return {!jQuery} The newly added parent node for the Data record.
  */
 function addData(node) {
-  const processNode = ord.utils.addSlowly(
+  const processNode = utils.addSlowly(
       '#outcome_data_template', $('.outcome_data_repeated', node));
-  ord.data.addData(processNode);
+  data.addData(processNode);
   return processNode;
 }
 
 /**
  * Validates a reaction outcome defined in the form.
- * @param {!Node} node Root node for the reaction outcome.
- * @param {?Node=} validateNode The target node for validation results.
+ * @param {!jQuery} node Root node for the reaction outcome.
+ * @param {?jQuery=} validateNode The target node for validation results.
  */
 function validateOutcome(node, validateNode = null) {
   const outcome = unloadOutcome(node);
-  ord.utils.validate(outcome, 'ReactionOutcome', node, validateNode);
+  utils.validate(outcome, 'ReactionOutcome', node, validateNode);
 }
 
 /**
  * Validates a reaction analysis defined in the form.
- * @param {!Node} node Root node for the reaction analysis.
- * @param {?Node=} validateNode The target node for validation results.
+ * @param {!jQuery} node Root node for the reaction analysis.
+ * @param {?jQuery=} validateNode The target node for validation results.
  */
 function validateAnalysis(node, validateNode = null) {
   const analysis = unloadAnalysisSingle(node);
-  ord.utils.validate(analysis, 'Analysis', node, validateNode);
+  utils.validate(analysis, 'Analysis', node, validateNode);
 }
