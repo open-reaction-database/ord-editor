@@ -125,7 +125,7 @@ function retrieve(uploader) {
 
 /**
  * Configures the behavior of an uploader.
- * @param {!jQuery} node A `.data_uploader` div.
+ * @param {!jQuery} node A `.data` div.
  */
 function initialize(node) {
   $('.data_uploader_chooser_file', node).on('input', (event) => {
@@ -135,6 +135,10 @@ function initialize(node) {
     const token = newFile(file);
     $('.data_uploader', node).attr('data-token', token);
     $('.data_uploader_file_retrieve', node).hide();
+    // Set the file extension as the data format.
+    const parts = file.name.split('.');
+    parts.shift();
+    $('.data_format', node).text(parts.join('.'));
   });
 }
 
