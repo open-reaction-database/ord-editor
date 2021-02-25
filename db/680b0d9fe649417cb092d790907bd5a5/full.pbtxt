@@ -128,10 +128,8 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: ROUND_BOTTOM_FLASK
-        details: "25"
-      }
+      type: ROUND_BOTTOM_FLASK
+      details: "25"
       material {
         type: POLYPROPYLENE
         details: "26"
@@ -221,10 +219,8 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: OVERHEAD_MIXER
-        details: "54"
-      }
+      type: OVERHEAD_MIXER
+      details: "54"
       rate {
         type: MEDIUM
         details: "55"
@@ -232,10 +228,8 @@ reactions {
       }
     }
     illumination {
-      type {
-        type: DEUTERIUM_LAMP
-        details: "57"
-      }
+      type: DEUTERIUM_LAMP
+      details: "57"
       peak_wavelength {
         value: 58.0
         precision: 59.0
@@ -249,10 +243,8 @@ reactions {
       }
     }
     electrochemistry {
-      electrochemistry_type {
-        type: CONSTANT_VOLTAGE
-        details: "63"
-      }
+      type: CONSTANT_VOLTAGE
+      details: "63"
       current {
         value: 64.0
         precision: 65.0
@@ -276,10 +268,8 @@ reactions {
       }
     }
     flow {
-      flow_type {
-        type: PLUG_FLOW_REACTOR
-        details: "73"
-      }
+      type: PLUG_FLOW_REACTOR
+      details: "73"
       pump_type: "74"
       tubing {
         type: COPPER
@@ -292,7 +282,7 @@ reactions {
       }
     }
     reflux: true
-    pH: 78.0
+    ph: 78.0
     conditions_are_dynamic: false
     details: "79"
   }
@@ -391,10 +381,8 @@ reactions {
     }
     keep_phase: "88"
     stirring {
-      method {
-        type: OVERHEAD_MIXER
-        details: "110"
-      }
+      type: OVERHEAD_MIXER
+      details: "110"
       rate {
         type: HIGH
         details: "111"
