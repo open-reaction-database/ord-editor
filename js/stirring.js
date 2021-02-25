@@ -22,8 +22,7 @@ const asserts = goog.require('goog.asserts');
 const utils = goog.require('ord.utils');
 
 const StirringConditions = goog.require('proto.ord.StirringConditions');
-const StirringMethod = goog.require('proto.ord.StirringConditions.StirringMethod');
-const StirringMethodType = goog.require('proto.ord.StirringConditions.StirringMethod.StirringMethodType');
+const StirringMethodType = goog.require('proto.ord.StirringConditions.StirringMethodType');
 const StirringRate = goog.require('proto.ord.StirringConditions.StirringRate');
 const StirringRateType = goog.require('proto.ord.StirringConditions.StirringRate.StirringRateType');
 
@@ -39,11 +38,8 @@ exports = {
  * @param {!StirringConditions} stirring
  */
 function load(stirring) {
-  const method = stirring.getMethod();
-  if (method) {
-    utils.setSelector($('#stirring_method_type'), method.getType());
-    $('#stirring_method_details').text(method.getDetails());
-  }
+  utils.setSelector($('#stirring_method_type'), stirring.getType());
+  $('#stirring_method_details').text(stirring.getDetails());
   const rate = stirring.getRate();
   if (rate) {
     utils.setSelector($('#stirring_rate_type'), rate.getType());
@@ -61,14 +57,10 @@ function load(stirring) {
  */
 function unload() {
   const stirring = new StirringConditions();
-
-  const method = new StirringMethod();
   const methodType = utils.getSelectorText($('#stirring_method_type')[0]);
-  method.setType(StirringMethodType[methodType]);
-  method.setDetails(asserts.assertString($('#stirring_method_details').text()));
-  if (!utils.isEmptyMessage(method)) {
-    stirring.setMethod(method);
-  }
+  stirring.setType(StirringMethodType[methodType]);
+  stirring.setDetails(
+      asserts.assertString($('#stirring_method_details').text()));
 
   const rate = new StirringRate();
   const rateType = utils.getSelectorText($('#stirring_rate_type')[0]);

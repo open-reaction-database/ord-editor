@@ -26,8 +26,7 @@ const utils = goog.require('ord.utils');
 const ReactionWorkup = goog.require('proto.ord.ReactionWorkup');
 const WorkupType = goog.require('proto.ord.ReactionWorkup.WorkupType');
 const StirringConditions = goog.require('proto.ord.StirringConditions');
-const StirringMethod = goog.require('proto.ord.StirringConditions.StirringMethod');
-const StirringMethodType = goog.require('proto.ord.StirringConditions.StirringMethod.StirringMethodType');
+const StirringMethodType = goog.require('proto.ord.StirringConditions.StirringMethodType');
 const StirringRate = goog.require('proto.ord.StirringConditions.StirringRate');
 const StirringRateType = goog.require('proto.ord.StirringConditions.StirringRate.StirringRateType');
 const Temperature = goog.require('proto.ord.Temperature');
@@ -94,12 +93,9 @@ function loadWorkup(workup) {
 
   const stirring = workup.getStirring();
   if (stirring) {
-    const method = stirring.getMethod();
-    if (method) {
-      utils.setSelector(
-          $('.workup_stirring_method_type', node), method.getType());
-      $('.workup_stirring_method_details', node).text(method.getDetails());
-    }
+    utils.setSelector(
+        $('.workup_stirring_method_type', node), stirring.getType());
+    $('.workup_stirring_method_details', node).text(stirring.getDetails());
     const rate = stirring.getRate();
     if (rate) {
       utils.setSelector($('.workup_stirring_rate_type', node), rate.getType());
@@ -223,16 +219,11 @@ function unloadWorkup(node) {
       asserts.assertString($('.workup_keep_phase', node).text()));
 
   const stirring = new StirringConditions();
-
-  const method = new StirringMethod();
   const stirringMethodType =
       utils.getSelectorText($('.workup_stirring_method_type', node)[0]);
-  method.setType(StirringMethodType[stirringMethodType]);
-  method.setDetails(
+  stirring.setType(StirringMethodType[stirringMethodType]);
+  stirring.setDetails(
       asserts.assertString($('.workup_stirring_method_details').text()));
-  if (!utils.isEmptyMessage(method)) {
-    stirring.setMethod(method);
-  }
 
   const rate = new StirringRate();
   const stirringRateType =

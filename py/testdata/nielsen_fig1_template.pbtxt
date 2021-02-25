@@ -97,9 +97,7 @@ inputs {
 }
 setup {
   vessel {
-    type {
-      type: VIAL
-    }
+    type: VIAL
     material {
       type: GLASS
     }
@@ -133,9 +131,7 @@ conditions {
     }
   }
   stirring {
-    method {
-      type: STIR_BAR
-    }
+    type: STIR_BAR
     rate {
       type: HIGH
       rpm: 600

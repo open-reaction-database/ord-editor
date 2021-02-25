@@ -350,7 +350,7 @@ limitations under the License.
           <span class="validate" onclick="ord.setups.validateSetup($(this).closest('#section_setup'))"></span>
         </legend>
         <table class="message">
-          <tr><td>vessel</td><td><div id="setup_vessel_type" class="selector" data-proto="VesselType_VesselTypeEnum"></div>
+          <tr><td>vessel</td><td><div id="setup_vessel_type" class="selector" data-proto="Vessel_VesselType"></div>
                                                details <div id="setup_vessel_details" class="edittext"></td></tr>
           <tr><td>material</td><td><div id="setup_vessel_material" class="selector" data-proto="VesselMaterial_VesselMaterialType"></div>
                                                  details <div id="setup_vessel_material_details" class="edittext"></div></td></tr>
@@ -497,7 +497,7 @@ limitations under the License.
             <span class="validate" onclick="ord.stirring.validateStirring($(this).closest('#section_conditions_stirring'))"></span>
           </legend>
           <table class="message">
-            <tr><td>method</td><td><div id="stirring_method_type" class="selector" data-proto="StirringConditions_StirringMethod_StirringMethodType"></div>
+            <tr><td>method</td><td><div id="stirring_method_type" class="selector" data-proto="StirringConditions_StirringMethodType"></div>
                                                  details <div id="stirring_method_details" class="edittext"></div></td></tr>
             <tr><td>rate</td><td><div id="stirring_rate_type" class="selector" data-proto="StirringConditions_StirringRate_StirringRateType"></div>
                                                  details <div id="stirring_rate_details" class="edittext"></div></td></tr>
@@ -511,7 +511,7 @@ limitations under the License.
             <span class="validate" onclick="ord.illumination.validateIllumination($(this).closest('#section_conditions_illumination'))"></span>
           </legend>
           <table class="message">
-            <tr><td>type</td><td><div id="illumination_type" class="selector" data-proto="IlluminationConditions_IlluminationType_IlluminationTypeEnum"></div>
+            <tr><td>type</td><td><div id="illumination_type" class="selector" data-proto="IlluminationConditions_IlluminationType"></div>
                                                 details<div id="illumination_details" class="edittext"></div></td></tr>
             <tr><td>wavelength</td><td><div id="illumination_wavelength_value" class="edittext shorttext floattext"></div>
                                                      <div id="illumination_wavelength_units" class="selector" data-proto="Wavelength_WavelengthUnit"></div>
@@ -529,7 +529,7 @@ limitations under the License.
             <span class="validate" onclick="ord.electro.validateElectro($(this).closest('#section_conditions_electro'))"></span>
           </legend>
           <table class="message">
-            <tr><td>type</td><td><div id="electro_type" class="selector" data-proto="ElectrochemistryConditions_ElectrochemistryType_ElectrochemistryTypeEnum"></div>
+            <tr><td>type</td><td><div id="electro_type" class="selector" data-proto="ElectrochemistryConditions_ElectrochemistryType"></div>
                                                details <div id="electro_details" class="edittext"></div></td></tr>
             <tr><td>current</td><td><div id="electro_current_value" class="edittext shorttext floattext"></div>
                                                   <div id="electro_current_units" class="selector" data-proto="Current_CurrentUnit"></div>
@@ -580,10 +580,10 @@ limitations under the License.
             <span class="validate" onclick="ord.flows.validateFlow($(this).closest('#section_conditions_flow'))"></span>
           </legend>
           <table class="message">
-            <tr><td>type</td><td><div id="flow_type" class="selector" data-proto="FlowConditions_FlowType_FlowTypeEnum"></div>
+            <tr><td>type</td><td><div id="flow_type" class="selector" data-proto="FlowConditions_FlowType"></div>
                                                details <div id="flow_details" class="edittext"></div></td></tr>
             <tr><td>pump</td><td><div id="flow_pump" class="edittext"></div></td></tr>
-            <tr><td>tubing</td><td><div id="flow_tubing_type" class="selector" data-proto="FlowConditions_Tubing_TubingMaterialType"></div>
+            <tr><td>tubing</td><td><div id="flow_tubing_type" class="selector" data-proto="FlowConditions_Tubing_TubingType"></div>
                                                  details <div id="flow_tubing_details" class="edittext"></div></td></tr>
             <tr><td>diameter</td><td><div id="flow_tubing_value" class="edittext shorttext floattext"></div>
                                                 <div id="flow_tubing_units" class="selector" data-proto="Length_LengthUnit"></div>
@@ -726,7 +726,7 @@ limitations under the License.
                 <span class="h4">Stirring</span>
               </legend>
               <table class="message">
-                <tr><td>method</td><td><div class="workup_stirring_method_type selector" data-proto="StirringConditions_StirringMethod_StirringMethodType"></div>
+                <tr><td>method</td><td><div class="workup_stirring_method_type selector" data-proto="StirringConditions_StirringMethodType"></div>
                                                      details <div class="workup_stirring_method_details edittext"></div></td></tr>
                 <tr><td>rate</td><td><div class="workup_stirring_rate_type selector" data-proto="StirringConditions_StirringRate_StirringRateType"></div>
                                                    details <div class="workup_stirring_rate_details edittext"></div></td></tr>
@@ -1096,6 +1096,7 @@ limitations under the License.
                 </td></tr>
                 <tr><td>username</td><td><div class="provenance_username edittext"></div></td></tr>
                 <tr><td>name</td><td><div class="provenance_name edittext"></div></td></tr>
+                <tr><td>email</td><td><div class="provenance_email edittext"></div></td></tr>
                 <tr><td>orcid</td><td><div class="provenance_orcid edittext"></div></td></tr>
                 <tr><td>organization</td><td><div class="provenance_organization edittext"></div></td></tr>
                 <tr><td>details</td><td><div class="provenance_details edittext"></div></td></tr>

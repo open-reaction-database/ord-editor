@@ -66,7 +66,7 @@ RUN npm install google-closure-compiler
 WORKDIR ..
 RUN git clone https://github.com/Open-Reaction-Database/ord-schema.git
 WORKDIR ord-schema
-ARG ORD_SCHEMA_TAG=v0.2.10
+ARG ORD_SCHEMA_TAG=v0.3.0
 RUN git fetch --tags && git checkout "${ORD_SCHEMA_TAG}"
 RUN pip install -r requirements.txt
 RUN python setup.py install
