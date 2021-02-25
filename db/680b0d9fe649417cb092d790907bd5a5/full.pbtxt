@@ -626,6 +626,7 @@ reactions {
         name: "160"
         orcid: "161"
         organization: "162"
+        email: "foo@example.com"
       }
       details: "163"
     }
