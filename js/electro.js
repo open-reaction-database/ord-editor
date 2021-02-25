@@ -26,7 +26,6 @@ const ElectrochemistryConditions = goog.require('proto.ord.ElectrochemistryCondi
 const ElectrochemistryCell = goog.require('proto.ord.ElectrochemistryConditions.ElectrochemistryCell');
 const ElectrochemistryCellType = goog.require('proto.ord.ElectrochemistryConditions.ElectrochemistryCell.ElectrochemistryCellType');
 const ElectrochemistryType = goog.require('proto.ord.ElectrochemistryConditions.ElectrochemistryType');
-const ElectrochemistryTypeEnum = goog.require('proto.ord.ElectrochemistryConditions.ElectrochemistryType.ElectrochemistryTypeEnum');
 const Measurement = goog.require('proto.ord.ElectrochemistryConditions.Measurement');
 const Length = goog.require('proto.ord.Length');
 const Time = goog.require('proto.ord.Time');
@@ -47,11 +46,8 @@ let radioGroupCounter = 0;
  * @param {!ElectrochemistryConditions} electro
  */
 function load(electro) {
-  const type = electro.getElectrochemistryType();
-  if (type) {
-    utils.setSelector($('#electro_type'), type.getType());
-    $('#electro_details').text(type.getDetails());
-  }
+  utils.setSelector($('#electro_type'), electro.getType());
+  $('#electro_details').text(electro.getDetails());
   utils.writeMetric('#electro_current', electro.getCurrent());
   utils.writeMetric('#electro_voltage', electro.getVoltage());
   $('#electro_anode').text(electro.getAnodeMaterial());
@@ -101,14 +97,9 @@ function loadMeasurement(node, measurement) {
  */
 function unload() {
   const electro = new ElectrochemistryConditions();
-
-  const type = new ElectrochemistryType();
   const typeEnum = utils.getSelectorText($('#electro_type')[0]);
-  type.setType(ElectrochemistryTypeEnum[typeEnum]);
-  type.setDetails(asserts.assertString($('#electro_details').text()));
-  if (!utils.isEmptyMessage(type)) {
-    electro.setElectrochemistryType(type);
-  }
+  electro.setType(ElectrochemistryType[typeEnum]);
+  electro.setDetails(asserts.assertString($('#electro_details').text()));
 
   const current = utils.readMetric('#electro_current', new Current());
   if (!utils.isEmptyMessage(current)) {

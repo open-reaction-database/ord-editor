@@ -23,7 +23,6 @@ const utils = goog.require('ord.utils');
 
 const IlluminationConditions = goog.require('proto.ord.IlluminationConditions');
 const IlluminationType = goog.require('proto.ord.IlluminationConditions.IlluminationType');
-const IlluminationTypeEnum = goog.require('proto.ord.IlluminationConditions.IlluminationType.IlluminationTypeEnum');
 const Length = goog.require('proto.ord.Length');
 const Wavelength = goog.require('proto.ord.Wavelength');
 
@@ -39,11 +38,8 @@ exports = {
  * @param {!IlluminationConditions} illumination
  */
 function load(illumination) {
-  const type = illumination.getType();
-  if (type) {
-    utils.setSelector($('#illumination_type'), type.getType());
-    $('#illumination_details').text(type.getDetails());
-  }
+  utils.setSelector($('#illumination_type'), illumination.getType());
+  $('#illumination_details').text(illumination.getDetails());
   const wavelength = illumination.getPeakWavelength();
   utils.writeMetric('#illumination_wavelength', wavelength);
   $('#illumination_color').text(illumination.getColor());
@@ -57,14 +53,10 @@ function load(illumination) {
  */
 function unload() {
   const illumination = new IlluminationConditions();
-
-  const type = new IlluminationType();
   const illuminationType = utils.getSelectorText($('#illumination_type')[0]);
-  type.setType(IlluminationTypeEnum[illuminationType]);
-  type.setDetails(asserts.assertString($('#illumination_details').text()));
-  if (!utils.isEmptyMessage(type)) {
-    illumination.setType(type);
-  }
+  illumination.setType(IlluminationType[illuminationType]);
+  illumination.setDetails(
+      asserts.assertString($('#illumination_details').text()));
 
   const wavelength =
       utils.readMetric('#illumination_wavelength', new Wavelength());
