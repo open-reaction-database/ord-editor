@@ -112,9 +112,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -143,9 +141,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -239,6 +235,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.245899"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -354,9 +360,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -385,9 +389,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -481,6 +483,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.249899"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -596,9 +608,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -627,9 +637,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -723,6 +731,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.254085"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -838,9 +856,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -869,9 +885,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -966,6 +980,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.258032"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -1084,9 +1108,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -1115,9 +1137,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -1211,6 +1231,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.262162"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -1330,9 +1360,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -1361,9 +1389,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -1457,6 +1483,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.266469"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -1576,9 +1612,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -1607,9 +1641,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -1704,6 +1736,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.270803"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -1822,9 +1864,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -1853,9 +1893,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -1950,6 +1988,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.274847"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -2064,9 +2112,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -2095,9 +2141,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -2192,6 +2236,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.278830"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -2306,9 +2360,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -2337,9 +2389,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -2434,6 +2484,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.282863"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -2548,9 +2608,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -2579,9 +2637,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -2675,6 +2731,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.286833"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -2790,9 +2856,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -2821,9 +2885,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -2917,6 +2979,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.290854"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -3032,9 +3104,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -3063,9 +3133,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -3160,6 +3228,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.294960"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -3274,9 +3352,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -3305,9 +3381,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -3402,6 +3476,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.298928"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -3516,9 +3600,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -3547,9 +3629,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -3644,6 +3724,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.302968"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -3758,9 +3848,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -3789,9 +3877,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -3886,6 +3972,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.306919"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -4003,9 +4099,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -4034,9 +4128,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -4130,6 +4222,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.310923"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -4248,9 +4350,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -4279,9 +4379,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -4376,6 +4474,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.316503"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -4493,9 +4601,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -4524,9 +4630,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -4621,6 +4725,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.320895"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -4738,9 +4852,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -4769,9 +4881,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -4866,6 +4976,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.325299"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -4980,9 +5100,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -5011,9 +5129,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -5107,6 +5223,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.329278"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -5222,9 +5348,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -5253,9 +5377,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -5349,6 +5471,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.333190"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -5464,9 +5596,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -5495,9 +5625,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -5591,6 +5719,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.337095"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -5706,9 +5844,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -5737,9 +5873,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -5834,6 +5968,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.341069"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -5952,9 +6096,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -5983,9 +6125,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -6079,6 +6219,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.345169"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -6198,9 +6348,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -6229,9 +6377,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -6326,6 +6472,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.349194"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -6444,9 +6600,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -6475,9 +6629,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -6572,6 +6724,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.353191"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -6690,9 +6852,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -6721,9 +6881,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -6818,6 +6976,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.357188"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -6932,9 +7100,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -6963,9 +7129,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -7060,6 +7224,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.361157"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -7174,9 +7348,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -7205,9 +7377,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -7302,6 +7472,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.365343"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -7416,9 +7596,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -7447,9 +7625,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -7543,6 +7719,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.369696"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -7658,9 +7844,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -7689,9 +7873,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -7786,6 +7968,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.373659"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -7900,9 +8092,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -7931,9 +8121,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -8028,6 +8216,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.377617"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -8142,9 +8340,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -8173,9 +8369,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -8269,6 +8463,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.381830"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -8384,9 +8588,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -8415,9 +8617,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -8511,6 +8711,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.385764"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -8626,9 +8836,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -8657,9 +8865,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -8754,6 +8960,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.389744"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -8871,9 +9087,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -8902,9 +9116,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -8999,6 +9211,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.393724"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -9116,9 +9338,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -9147,9 +9367,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -9244,6 +9462,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.397694"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -9361,9 +9589,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -9392,9 +9618,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -9488,6 +9712,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.401717"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -9606,9 +9840,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -9637,9 +9869,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -9734,6 +9964,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.405790"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -9848,9 +10088,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -9879,9 +10117,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -9975,6 +10211,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.410414"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -10090,9 +10336,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -10121,9 +10365,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -10217,6 +10459,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.414374"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -10332,9 +10584,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -10363,9 +10613,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -10459,6 +10707,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.418727"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -10574,9 +10832,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -10605,9 +10861,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -10701,6 +10955,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.422676"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -10820,9 +11084,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -10851,9 +11113,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -10947,6 +11207,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.426729"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -11066,9 +11336,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -11097,9 +11365,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -11194,6 +11460,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.430744"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -11312,9 +11588,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -11343,9 +11617,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -11439,6 +11711,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.434821"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -11558,9 +11840,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -11589,9 +11869,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -11685,6 +11963,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.438823"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -11800,9 +12088,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -11831,9 +12117,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -11928,6 +12212,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.442755"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -12042,9 +12336,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -12073,9 +12365,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -12170,6 +12460,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.446690"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -12284,9 +12584,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -12315,9 +12613,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -12412,6 +12708,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.450623"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -12526,9 +12832,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -12557,9 +12861,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -12653,6 +12955,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.455010"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -12768,9 +13080,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -12799,9 +13109,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -12896,6 +13204,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.459040"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -13010,9 +13328,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -13041,9 +13357,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -13137,6 +13451,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.463214"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -13252,9 +13576,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -13283,9 +13605,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -13379,6 +13699,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.467177"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -13494,9 +13824,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -13525,9 +13853,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -13622,6 +13948,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.471269"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -13739,9 +14075,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -13770,9 +14104,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -13867,6 +14199,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.475288"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -13984,9 +14326,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -14015,9 +14355,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -14112,6 +14450,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.479500"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -14229,9 +14577,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -14260,9 +14606,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -14357,6 +14701,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.483753"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -14474,9 +14828,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -14505,9 +14857,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -14602,6 +14952,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.487781"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -14716,9 +15076,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -14747,9 +15105,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -14844,6 +15200,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.491671"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -14958,9 +15324,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -14989,9 +15353,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -15085,6 +15447,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.495640"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -15200,9 +15572,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -15231,9 +15601,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -15328,6 +15696,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.499537"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -15442,9 +15820,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -15473,9 +15849,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -15570,6 +15944,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.503436"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -15688,9 +16072,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -15719,9 +16101,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -15816,6 +16196,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.507406"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -15934,9 +16324,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -15965,9 +16353,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -16061,6 +16447,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.511365"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -16180,9 +16576,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -16211,9 +16605,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -16307,6 +16699,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.515456"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -16426,9 +16828,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -16457,9 +16857,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -16553,6 +16951,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.519712"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -16668,9 +17076,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -16699,9 +17105,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -16796,6 +17200,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.523777"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -16910,9 +17324,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -16941,9 +17353,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -17038,6 +17448,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.527724"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -17152,9 +17572,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -17183,9 +17601,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -17280,6 +17696,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.531670"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -17394,9 +17820,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -17425,9 +17849,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -17522,6 +17944,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.535649"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -17636,9 +18068,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -17667,9 +18097,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -17763,6 +18191,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.539944"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -17878,9 +18316,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -17909,9 +18345,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -18005,6 +18439,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.544456"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -18120,9 +18564,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -18151,9 +18593,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -18248,6 +18688,16 @@ reactions {
         email: "ccoley@mit.edu"
       }
     }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.550566"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
+    }
   }
 }
 reactions {
@@ -18362,9 +18812,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -18393,9 +18841,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -18489,6 +18935,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.554992"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -18607,9 +19063,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -18638,9 +19092,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -18734,6 +19186,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.560390"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -18852,9 +19314,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -18883,9 +19343,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -18979,6 +19437,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.565305"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -19097,9 +19565,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -19128,9 +19594,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -19224,6 +19688,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.569890"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }
@@ -19342,9 +19816,7 @@ reactions {
   }
   setup {
     vessel {
-      type {
-        type: VIAL
-      }
+      type: VIAL
       material {
         type: GLASS
       }
@@ -19373,9 +19845,7 @@ reactions {
       }
     }
     stirring {
-      method {
-        type: STIR_BAR
-      }
+      type: STIR_BAR
       rate {
         type: HIGH
         rpm: 600
@@ -19469,6 +19939,16 @@ reactions {
         organization: "MIT"
         email: "ccoley@mit.edu"
       }
+    }
+    record_modified {
+      time {
+        value: "2021-02-25 09:11:43.574303"
+      }
+      person {
+        username: "skearnes"
+        email: "kearnes@google.com"
+      }
+      details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
 }

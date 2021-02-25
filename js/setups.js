@@ -32,8 +32,7 @@ const VesselMaterial = goog.require('proto.ord.VesselMaterial');
 const VesselMaterialType = goog.require('proto.ord.VesselMaterial.VesselMaterialType');
 const VesselPreparation = goog.require('proto.ord.VesselPreparation');
 const VesselPreparationType = goog.require('proto.ord.VesselPreparation.VesselPreparationType');
-const VesselType = goog.require('proto.ord.VesselType');
-const VesselTypeEnum = goog.require('proto.ord.VesselType.VesselTypeEnum');
+const VesselType = goog.require('proto.ord.Vessel.VesselType');
 const Volume = goog.require('proto.ord.Volume');
 
 exports = {
@@ -86,11 +85,8 @@ function loadVessel(vessel) {
   if (!vessel) {
     return;
   }
-  const type = vessel.getType();
-  if (type) {
-    utils.setSelector($('#setup_vessel_type'), type.getType());
-    $('#setup_vessel_details').text(type.getDetails());
-  }
+  utils.setSelector($('#setup_vessel_type'), vessel.getType());
+  $('#setup_vessel_details').text(vessel.getDetails());
   const material = vessel.getMaterial();
   if (material) {
     utils.setSelector($('#setup_vessel_material'), material.getType());
@@ -158,14 +154,9 @@ function unload() {
  */
 function unloadVessel() {
   const vessel = new Vessel();
-
-  const type = new VesselType();
   const vesselType = utils.getSelectorText($('#setup_vessel_type')[0]);
-  type.setType(VesselTypeEnum[vesselType]);
-  type.setDetails(asserts.assertString($('#setup_vessel_details').text()));
-  if (!utils.isEmptyMessage(type)) {
-    vessel.setType(type);
-  }
+  vessel.setType(VesselType[vesselType]);
+  vessel.setDetails(asserts.assertString($('#setup_vessel_details').text()));
 
   const material = new VesselMaterial();
   const materialType = utils.getSelectorText($('#setup_vessel_material')[0]);
