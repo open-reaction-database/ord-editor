@@ -30,13 +30,12 @@ FROM continuumio/miniconda3
 # https://github.com/geerlingguy/ansible-role-java/issues/64#issuecomment-597132394
 RUN mkdir /usr/share/man/man1/
 RUN apt-get update \
- && apt-get install -y build-essential default-jre procps unzip \
+ && apt-get install -y build-essential default-jre npm procps unzip \
  && apt-get clean
 
 RUN conda install -c rdkit \
     flask \
     gunicorn \
-    nodejs \
     python=3.7 \
     rdkit \
  && conda clean -afy
