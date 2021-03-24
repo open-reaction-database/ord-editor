@@ -160,7 +160,6 @@ limitations under the License.
         const right = document.createTextNode(after);
 
         const parent = position.node.parentNode;
-
         parent.insertBefore(left, position.node);
         parent.insertBefore(middle, position.node);
         parent.insertBefore(right, position.node);
@@ -175,13 +174,6 @@ limitations under the License.
         span.replaceWith(content);
         pre.normalize();
       }
-
-      let range;
-      let text;
-      let offset;
-      let poz;
-      let interval;
-      let value;
 
       // Return the position of a span assocaited with the given position.
       function findSpan(position) {
