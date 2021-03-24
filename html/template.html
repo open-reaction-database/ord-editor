@@ -154,6 +154,7 @@ limitations under the License.
         const middle = document.createElement("span");
         middle.innerText = macro;
         middle.dataset.value = value.text();
+        middle.contentEditable = "true";
         middle.style.color = "red";
 
         const after = position.content.slice(value.end, position.content.length);
@@ -175,15 +176,13 @@ limitations under the License.
         pre.normalize();
       }
 
-      // Return the position of a span assocaited with the given position.
-      function findSpan(position) {
-        if (position.node.parentNode.tagName == "SPAN") {
-          // The position is in a span.
-          return position;
-        }
+      function isSpan(position) {
+        return (position.node.parentNode.tagName == "SPAN");
+      }
+
+      function getSpanAfter(position) {
         const line = position.line().text();
         if (line.endsWith(": ")) {
-          // The position precedes a span on the same line.
           return new Position(position.node.nextSibling.lastChild, 0);
         }
         return null;
@@ -203,13 +202,19 @@ limitations under the License.
           offset = range.startOffset;
         }
         if (text) {
-          const position = new Position(text, offset);
-          const span = findSpan(position);
-          if (span) {
-            unmacrotize(span);
-          } else {
-            macrotize(position);
+          let position = new Position(text, offset);
+          if (isSpan(position)) {
+            // They clicked on a span. Allow its macro to be edited.
+            return;
           }
+          const span = getSpanAfter(position);
+          if (span) {
+            // They click on a line adjacent to a span. Unmacrotize the span.
+            unmacrotize(span);
+            return;
+          }
+          // They clicked on a line with no span. Macrotize the value.
+          macrotize(position);
         }
       }
 
