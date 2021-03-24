@@ -25,134 +25,199 @@ limitations under the License.
       <pre id="text"/>
     </div>
     <script>
-      /* Global data, the pbtxt content uploaded by the user. */
-      let text;
 
-      /* Return the line start and end bounding the given location. */
-      function getLineBounds(offset) {
-        let start = offset;
-        while ((start >= 0) && (text[start] != "\n")) {
+      /* A location in pbtxt specified by a text node and a character position. */
+      function Position(node, offset) {
+          this.node = node;
+          this.offset = offset;
+          this.content = node.textContent;
+      }
+
+      /* Return the Interval bounding the line of text at this position. */
+      Position.prototype.line = function () {
+        let start = this.offset;
+        while ((start >= 0) && (this.content[start] != "\n")) {
           start--;
         }
         start += 1;
-        let end = offset;
-        while ((end < text.length) && (text[end] != "\n")) {
+        let end = this.offset;
+        while ((end < this.content.length) && (this.content[end] != "\n")) {
           end++;
         }
-        return [start, end];
+        return new Interval(this.node, start, end);
       }
 
-      /* Return the line of text at the offset. */
-      function getLine(offset) {
-        const bounds = getLineBounds(offset);
-        return text.slice(bounds[0], bounds[1]);
+      /* An line of pbtxt specified by a text node and two character positions. */
+      function Interval(node, start, end) {
+        this.node = node;
+        this.start = start;
+        this.end = end;
+        this.content = node.textContent;
       }
 
-      /* Return the start and end of the value part of a line, or null. */
-      function getValueBounds(offset) {
-        const bounds = getLineBounds(offset);
-        const line = text.slice(bounds[0], bounds[1]);
-        const pattern = /: (.*)$/;
-        const colon = line.search(pattern);
-        if (colon < 0) {
-          return null;
-        }
-        return [bounds[0] + colon + 2, bounds[1]];
+      /** The text bounded by this Interval. */
+      Interval.prototype.text = function () {
+        return this.content.slice(this.start, this.end);
       }
 
-      /* Return the indent level of a line. Assumes two spaces per indent. */
-      function getIndent(offset) {
-        const bounds = getLineBounds(offset);
-        let pointer = bounds[0];
-        while (text[pointer] == " ") {
-          pointer++;
-        }
-        return (pointer - bounds[0]) / 2;
-      }
-
-      /* Return the start and end of the preceding line, or null. */
-      function getPreviousLine(offset) {
-        let bounds = getLineBounds(offset);
-        if (bounds[0] == 0) {
-          return null;
-        }
-        return getLineBounds(bounds[0] - 2);
-      }
-
-      /* Return the bounds of the first preceding line of lesser indent. */
-      function getParent(offset) {
-        let bounds = getLineBounds(offset);
-        const indent = getIndent(bounds[0]);
-        if (indent == 0) {
-          return null;
-        }
-        bounds = getPreviousLine(bounds[0]);
-        let outdent = getIndent(bounds[0]);
-        while (outdent >= indent) {
-          bounds = getPreviousLine(bounds[0]);
-          outdent = getIndent(bounds[0]);
-        }
-        return bounds;
-      }
-
-      /* Return the field name on the given line, or null. */
-      function getTag(offset) {
+      /* Return the text of the field name on this line, or null. */
+      Interval.prototype.keyName = function () {
         const pattern = /^\s*(\w+)[ :].*/;
-        const line = getLine(offset);
-        const match = line.match(pattern);
+        const match = this.text().match(pattern);
         if (match == null) {
           return null;
         }
         return match[1];
       }
 
-      /* Return the sequence of tags leading to the given line. */
-      function getPath(offset) {
+      /* Return the interval of the value on this line, or null. */
+      Interval.prototype.value = function () {
+        const line = this.text();
+        const pattern = /: (.*)$/;
+        const colon = line.search(pattern);
+        if (colon < 0) {
+          return null;
+        }
+        return new Interval(this.node, this.start + colon + 2, this.end);
+      }
+
+      /* Return the indent level of a line. Assumes two spaces per indent. */
+      function getIndent(interval) {
+        let pointer = interval.start;
+        const content = interval.content;
+        while (content[pointer] == " ") {
+          pointer++;
+        }
+        return (pointer - interval.start) / 2;
+      }
+
+      /* Return the Interval of the preceding line, or null. */
+      function getPreviousLine(interval) {
+        if (interval.start == 0) {
+          return null;
+        }
+        if (interval.start > 1) {
+          // The current line is preceded by more text.
+          const position = new Position(interval.node, interval.start - 2);
+          return position.line();
+        } else {
+          // The current line is preceded by a span.
+          const span = interval.node.previousSibling;
+          const previous = span.previousSibling;
+          return new Position(previous, previous.length - 1).line();
+        }
+      }
+
+      /* Return the bounds of the first preceding line of lesser indent. */
+      function getParent(interval) {
+        const indent = getIndent(interval);
+        if (indent == 0) {
+          return null;
+        }
+        interval = getPreviousLine(interval);
+        let outdent = getIndent(interval);
+        while (outdent >= indent) {
+          interval = getPreviousLine(interval);
+          outdent = getIndent(interval);
+        }
+        return interval;
+      }
+
+      /* Return the sequence of field names leading to the given line. */
+      function getPath(interval) {
         const tags = [];
-        let bounds = getLineBounds(offset);
-        while (bounds != null) {
-          const tag = getTag(bounds[0]);
+        while (interval != null) {
+          const tag = interval.keyName();
           tags.push(tag);
-          bounds = getParent(bounds[0]);
+          interval = getParent(interval);
         }
         return tags.reverse();
       }
 
-      /* In the "text" global, replace the value on the line with a macro. */
-      function macrotize(offset) {
-        const bounds = getValueBounds(offset);
-        if (bounds == null) {
-          return;
-        }
-        const path = getPath(bounds[0]);
+      /* Split up the text at this position and insert a span around the value. */
+      function macrotize(position) {
+        const interval = position.line();
+        const path = getPath(interval);
         let macro = "$" + path.join("_") + "$";
 
-        const value = text.slice(bounds[0], bounds[1]);
-        if (value.search('"') >= 0) {
+        // const value = interval.value();
+        value = interval.value();
+        if (value == null) {
+          return;
+        }
+        if (value.text().search('"') >= 0) {
           macro = '"' + macro + '"';
         }
-        text = text.slice(0, bounds[0]) + macro + text.slice(bounds[1]);
+        const before = position.content.slice(0, value.start);
+        const left = document.createTextNode(before);
+
+        const middle = document.createElement("span");
+        middle.innerText = macro;
+        middle.dataset.value = value.text();
+        middle.style.color = "red";
+
+        const after = position.content.slice(value.end, position.content.length);
+        const right = document.createTextNode(after);
+
+        const parent = position.node.parentNode;
+
+        parent.insertBefore(left, position.node);
+        parent.insertBefore(middle, position.node);
+        parent.insertBefore(right, position.node);
+
+        position.node.remove();
+      }
+
+      /* Reverse the effects of macrotize(). */
+      function unmacrotize(position) {
+        const span = position.node.parentNode;
+        const content = span.dataset.value;
+        span.replaceWith(content);
+        pre.normalize();
+      }
+
+      let range;
+      let text;
+      let offset;
+      let poz;
+      let interval;
+      let value;
+
+      // Return the position of a span assocaited with the given position.
+      function findSpan(position) {
+        if (position.node.parentNode.tagName == "SPAN") {
+          // The position is in a span.
+          return position;
+        }
+        const line = position.line().text();
+        if (line.endsWith(": ")) {
+          // The position precedes a span on the same line.
+          return new Position(position.node.nextSibling.lastChild, 0);
+        }
+        return null;
       }
 
       /* Replace the text at the event with a template macro. */
       function templatize(e) {
-        let textNode;
-        let offset;
         if (document.caretPositionFromPoint) {
           // Firefox, Safari
-          const range = document.caretPositionFromPoint(e.clientX, e.clientY);
-          textNode = range.offsetNode;
+          range = document.caretPositionFromPoint(e.clientX, e.clientY);
+          text = range.offsetNode;
           offset = range.offset;
         } else if (document.caretRangeFromPoint) {
           // Chrome, Edge, Opera, Safari
-          const range = document.caretRangeFromPoint(e.clientX, e.clientY);
-          textNode = range.startContainer;
+          range = document.caretRangeFromPoint(e.clientX, e.clientY);
+          text = range.startContainer;
           offset = range.startOffset;
         }
-        if (textNode && textNode.nodeType == 3) {
-          // Modifies the "text" global.
-          macrotize(offset);
-          textNode.textContent = text;
+        if (text) {
+          const position = new Position(text, offset);
+          const span = findSpan(position);
+          if (span) {
+            unmacrotize(span);
+          } else {
+            macrotize(position);
+          }
         }
       }
 
