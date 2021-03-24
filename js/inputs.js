@@ -258,7 +258,7 @@ function unloadInputUnnamed(node) {
  * @return {!jQuery} The newly added parent node for the reaction input.
  */
 function add(root, classes = null) {
-  const node = utils.addSlowly('#input_template', root);
+  const node = utils.addSlowly('#input_template', $(root));
   if (Array.isArray(classes) && classes.length) {
     node.addClass(classes);
   }
