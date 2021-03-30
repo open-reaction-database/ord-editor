@@ -16,38 +16,44 @@
 
 goog.module('ord.notes');
 goog.module.declareLegacyNamespace();
+
+const asserts = goog.require('goog.asserts');
+
+const utils = goog.require('ord.utils');
+
+const ReactionNotes = goog.require('proto.ord.ReactionNotes');
+
 exports = {
   load,
   unload,
   validateNotes
 };
 
-goog.require('proto.ord.ReactionNotes');
 
 /**
  * Adds and populates the reaction nodes section in the form.
- * @param {!proto.ord.ReactionNotes} notes
+ * @param {!ReactionNotes} notes
  */
 function load(notes) {
-  ord.reaction.setOptionalBool(
+  utils.setOptionalBool(
       $('#notes_heterogeneous'),
       notes.hasIsHeterogeneous() ? notes.getIsHeterogeneous() : null);
-  ord.reaction.setOptionalBool(
+  utils.setOptionalBool(
       $('#notes_precipitate'),
       notes.hasFormsPrecipitate() ? notes.getFormsPrecipitate() : null);
-  ord.reaction.setOptionalBool(
+  utils.setOptionalBool(
       $('#notes_exothermic'),
       notes.hasIsExothermic() ? notes.getIsExothermic() : null);
-  ord.reaction.setOptionalBool(
+  utils.setOptionalBool(
       $('#notes_offgas'), notes.hasOffgasses() ? notes.getOffgasses() : null);
-  ord.reaction.setOptionalBool(
+  utils.setOptionalBool(
       $('#notes_moisture'),
       notes.hasIsSensitiveToMoisture() ? notes.getIsSensitiveToMoisture() :
                                          null);
-  ord.reaction.setOptionalBool(
+  utils.setOptionalBool(
       $('#notes_oxygen'),
       notes.hasIsSensitiveToOxygen() ? notes.getIsSensitiveToOxygen() : null);
-  ord.reaction.setOptionalBool(
+  utils.setOptionalBool(
       $('#notes_light'),
       notes.hasIsSensitiveToLight() ? notes.getIsSensitiveToLight() : null);
   $('#notes_safety').text(notes.getSafetyNotes());
@@ -56,32 +62,49 @@ function load(notes) {
 
 /**
  * Fetches the reaction notes defined in the form.
- * @return {!proto.ord.ReactionNotes}
+ * @return {!ReactionNotes}
  */
 function unload() {
-  const notes = new proto.ord.ReactionNotes();
-  notes.setIsHeterogeneous(
-      ord.reaction.getOptionalBool($('#notes_heterogeneous')));
-  notes.setFormsPrecipitate(
-      ord.reaction.getOptionalBool($('#notes_precipitate')));
-  notes.setIsExothermic(ord.reaction.getOptionalBool($('#notes_exothermic')));
-  notes.setOffgasses(ord.reaction.getOptionalBool($('#notes_offgas')));
-  notes.setIsSensitiveToMoisture(
-      ord.reaction.getOptionalBool($('#notes_moisture')));
-  notes.setIsSensitiveToOxygen(
-      ord.reaction.getOptionalBool($('#notes_oxygen')));
-  notes.setIsSensitiveToLight(ord.reaction.getOptionalBool($('#notes_light')));
-  notes.setSafetyNotes($('#notes_safety').text());
-  notes.setProcedureDetails($('#notes_details').text());
+  const notes = new ReactionNotes();
+  const isHeterogeneous = utils.getOptionalBool($('#notes_heterogeneous'));
+  if (isHeterogeneous !== null) {
+    notes.setIsHeterogeneous(isHeterogeneous);
+  }
+  const formsPrecipitate = utils.getOptionalBool($('#notes_precipitate'));
+  if (formsPrecipitate !== null) {
+    notes.setFormsPrecipitate(formsPrecipitate);
+  }
+  const isExothermic = utils.getOptionalBool($('#notes_exothermic'));
+  if (isExothermic !== null) {
+    notes.setIsExothermic(isExothermic);
+  }
+  const offgasses = utils.getOptionalBool($('#notes_offgas'));
+  if (offgasses !== null) {
+    notes.setOffgasses(offgasses);
+  }
+  const isSensitiveToMoisture = utils.getOptionalBool($('#notes_moisture'));
+  if (isSensitiveToMoisture !== null) {
+    notes.setIsSensitiveToMoisture(isSensitiveToMoisture);
+  }
+  const isSensitiveToOxygen = utils.getOptionalBool($('#notes_oxygen'));
+  if (isSensitiveToOxygen !== null) {
+    notes.setIsSensitiveToOxygen(isSensitiveToOxygen);
+  }
+  const isSensitiveToLight = utils.getOptionalBool($('#notes_light'));
+  if (isSensitiveToLight !== null) {
+    notes.setIsSensitiveToLight(isSensitiveToLight);
+  }
+  notes.setSafetyNotes(asserts.assertString($('#notes_safety').text()));
+  notes.setProcedureDetails(asserts.assertString($('#notes_details').text()));
   return notes;
 }
 
 /**
  * Validates the reaction notes defined in the form.
- * @param {!Node} node Root node for the reaction notes.
- * @param {?Node} validateNode Target node for validation results.
+ * @param {!jQuery} node Root node for the reaction notes.
+ * @param {?jQuery=} validateNode Target node for validation results.
  */
-function validateNotes(node, validateNode) {
+function validateNotes(node, validateNode = null) {
   const notes = unload();
-  ord.reaction.validate(notes, 'ReactionNotes', node, validateNode);
+  utils.validate(notes, 'ReactionNotes', node, validateNode);
 }

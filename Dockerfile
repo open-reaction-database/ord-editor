@@ -30,13 +30,12 @@ FROM continuumio/miniconda3
 # https://github.com/geerlingguy/ansible-role-java/issues/64#issuecomment-597132394
 RUN mkdir /usr/share/man/man1/
 RUN apt-get update \
- && apt-get install -y build-essential default-jre procps unzip \
+ && apt-get install -y build-essential default-jre npm procps unzip \
  && apt-get clean
 
 RUN conda install -c rdkit \
     flask \
     gunicorn \
-    nodejs \
     python=3.7 \
     rdkit \
  && conda clean -afy
@@ -57,15 +56,16 @@ RUN wget https://github.com/google/closure-library/archive/v20200517.tar.gz \
 RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.14.0/protobuf-js-3.14.0.tar.gz \
  && tar -xzf protobuf-js-3.14.0.tar.gz \
  && rm protobuf-js-3.14.0.tar.gz
-
-# Dependencies for testing.
+RUN wget https://raw.githubusercontent.com/google/closure-compiler/master/contrib/externs/jquery-3.3.js \
+ && mkdir -p externs \
+ && mv jquery-3.3.js externs
 RUN npm install google-closure-compiler
 
 # Install ord-schema.
 WORKDIR ..
 RUN git clone https://github.com/Open-Reaction-Database/ord-schema.git
 WORKDIR ord-schema
-ARG ORD_SCHEMA_TAG=v0.2.3
+ARG ORD_SCHEMA_TAG=v0.3.0
 RUN git fetch --tags && git checkout "${ORD_SCHEMA_TAG}"
 RUN pip install -r requirements.txt
 RUN python setup.py install
@@ -77,7 +77,6 @@ RUN pip install -r requirements.txt
 
 # COPY the local state.
 COPY Makefile schema.sql ./
-COPY actions/ actions/
 COPY css/ css/
 COPY db/ db/
 COPY html/ html/

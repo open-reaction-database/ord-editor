@@ -19,15 +19,27 @@ on: [pull_request, push]
 env:
   # See https://dev.to/dtinth/caching-docker-builds-in-github-actions-which-approach-is-the-fastest-a-research-18ei.
   CACHE_TARGET: "docker.pkg.github.com/open-reaction-database/ord-editor/editor-cache"
+  ORD_SCHEMA_TAG: v0.3.0
 
 jobs:
   test_editor:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
+    - uses: actions/checkout@v2
       with:
-        python-version: '3.x'
+        repository: "Open-Reaction-Database/ord-schema"
+        ref: ${{ env.ORD_SCHEMA_TAG }}
+        path: ord-schema
+    - uses: s-weigand/setup-conda@v1
+      with:
+        python-version: 3.7
+    - name: Install ord-schema
+      run: |
+        cd "${GITHUB_WORKSPACE}/ord-schema"
+        pip install -r requirements.txt
+        conda install -c rdkit rdkit
+        python setup.py install
     - uses: actions/setup-node@v1
     - name: Setup docker cache
       run: |
@@ -46,4 +58,8 @@ jobs:
         docker tag openreactiondatabase/ord-editor "${CACHE_TARGET}"
         docker push "${CACHE_TARGET}"
       # NOTE(kearnes): Actions in forks cannot update the cache.
-      if: ${{ ! github.event.pull_request.head.repo.fork }}
+      if: >-
+        (github.event_name == 'pull_request' &&
+         !github.event.pull_request.head.repo.fork) ||
+        (github.event_name == 'push' &&
+         !github.event.repository.fork)

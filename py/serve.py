@@ -14,6 +14,7 @@
 """A web editor for Open Reaction Database structures."""
 
 import base64
+import binascii
 import collections
 import contextlib
 import difflib
@@ -28,6 +29,7 @@ import uuid
 
 import flask
 import github
+import google.protobuf.message
 from google.protobuf import text_format
 import psycopg2
 import psycopg2.sql
@@ -75,11 +77,10 @@ def show_root():
 
 @app.route('/datasets')
 def show_datasets():
-    """Lists all the user's pbtxts in the datasets table."""
+    """Lists all the user's datasets in the datasets table."""
     names = []
     with flask.g.db.cursor() as cursor:
-        query = psycopg2.sql.SQL(
-            'SELECT dataset_name FROM datasets WHERE user_id=%s')
+        query = psycopg2.sql.SQL('SELECT name FROM datasets WHERE user_id=%s')
         cursor.execute(query, [flask.g.user_id])
         for row in cursor:
             names.append(row[0])
@@ -116,14 +117,21 @@ def show_dataset(name):
 
 
 @app.route('/dataset/<name>/download')
-def download_dataset(name):
-    """Returns a pbtxt from the datasets table as an attachment."""
-    pbtxt = get_pbtxt(name)
-    data = io.BytesIO(pbtxt.encode('utf8'))
+@app.route('/dataset/<name>/download/<kind>')
+def download_dataset(name, kind='pb'):
+    """Returns a pb or pbtxt from the datasets table as an attachment."""
+    dataset = get_dataset(name)
+    data = None
+    if kind == 'pb':
+        data = io.BytesIO(dataset.SerializeToString(deterministic=True))
+    elif kind == 'pbtxt':
+        data = io.BytesIO(text_format.MessageToBytes(dataset))
+    else:
+        flask.abort(flask.make_response(f'unsupported format: {kind}', 406))
     return flask.send_file(data,
                            mimetype='application/protobuf',
                            as_attachment=True,
-                           attachment_filename=f'{name}.pbtxt')
+                           attachment_filename=f'{name}.{kind}')
 
 
 @app.route('/dataset/<name>/upload', methods=['POST'])
@@ -133,13 +141,15 @@ def upload_dataset(name):
         response = flask.make_response(f'dataset already exists: {name}', 409)
         flask.abort(response)
     try:
+        try:
+            dataset = dataset_pb2.Dataset.FromString(flask.request.get_data())
+        except (google.protobuf.message.DecodeError, TypeError):
+            dataset = dataset_pb2.Dataset()
+            text_format.Parse(flask.request.get_data(as_text=True), dataset)
+        user_id = flask.g.user_id
         with flask.g.db.cursor() as cursor:
             query = psycopg2.sql.SQL('INSERT INTO datasets VALUES (%s, %s, %s)')
-            pbtxt = flask.request.get_data().decode('utf-8')
-            dataset = dataset_pb2.Dataset()
-            text_format.Parse(pbtxt, dataset)  # Validate.
-            user_id = flask.g.user_id
-            cursor.execute(query, [user_id, name, pbtxt])
+            cursor.execute(query, [user_id, name, serialize_for_db(dataset)])
             flask.g.db.commit()
         return 'ok'
     except Exception as error:  # pylint: disable=broad-except
@@ -165,7 +175,7 @@ def delete_dataset(name):
     """Removes a Dataset."""
     with flask.g.db.cursor() as cursor:
         query = psycopg2.sql.SQL(
-            'DELETE FROM datasets WHERE user_id=%s AND dataset_name=%s')
+            'DELETE FROM datasets WHERE user_id=%s AND name=%s')
         user_id = flask.g.user_id
         cursor.execute(query, [user_id, name])
         flask.g.db.commit()
@@ -569,8 +579,7 @@ def show_submissions():
         return flask.redirect('/')
     pull_requests = collections.defaultdict(list)
     with flask.g.db.cursor() as cursor:
-        query = psycopg2.sql.SQL(
-            'SELECT dataset_name FROM datasets WHERE user_id=%s')
+        query = psycopg2.sql.SQL('SELECT name FROM datasets WHERE user_id=%s')
         cursor.execute(query, [REVIEWER])
         for row in cursor:
             name = row[0]
@@ -599,17 +608,24 @@ def sync_reviews():
         # First reset all datasets under review.
         query = psycopg2.sql.SQL('DELETE FROM datasets WHERE user_id=%s')
         cursor.execute(query, [REVIEWER])
-        # Then import all pbtxts from open PR's.
+        # Then import all datasets from open PR's.
         for pr in repo.get_pulls():
             for remote in pr.get_files():
-                if not remote.filename.endswith('.pbtxt'):
+                response = requests.get(remote.raw_url)
+                if remote.filename.endswith('.pbtxt'):
+                    dataset = dataset_pb2.Dataset()
+                    text_format.Parse(response.text, dataset)
+                elif remote.filename.endswith('.pb'):
+                    dataset = dataset_pb2.Dataset.FromString(response.content)
+                else:
                     continue
-                pbtxt = requests.get(remote.raw_url).text
                 name = 'PR_%d ___%s___ %s' % (pr.number, pr.title,
                                               remote.filename[:-6])
                 query = psycopg2.sql.SQL(
                     'INSERT INTO datasets VALUES (%s, %s, %s)')
-                cursor.execute(query, [user_id, name, pbtxt])
+                cursor.execute(
+                    query,
+                    [user_id, name, serialize_for_db(dataset)])
     flask.g.db.commit()
     return flask.redirect('/review')
 
@@ -627,22 +643,15 @@ def prevent_caching(response):
 
 
 def get_dataset(name):
-    """Reads a pbtxt proto from the datasets table and parses it."""
-    pbtxt = get_pbtxt(name)
-    dataset = dataset_pb2.Dataset()
-    text_format.Parse(pbtxt, dataset)
-    return dataset
-
-
-def get_pbtxt(name):
-    """Reads a pbtxt proto from the datasets."""
+    """Reads a serialized proto from the datasets table and parses it."""
     with flask.g.db.cursor() as cursor:
         query = psycopg2.sql.SQL(
-            'SELECT pbtxt FROM datasets WHERE user_id=%s AND dataset_name=%s')
+            'SELECT serialized FROM datasets WHERE user_id=%s AND name=%s')
         cursor.execute(query, [flask.g.user_id, name])
         if cursor.rowcount == 0:
             flask.abort(404)
-        return cursor.fetchone()[0]
+        serialized = binascii.unhexlify(cursor.fetchone()[0].tobytes())
+        return dataset_pb2.Dataset.FromString(serialized)
 
 
 def put_dataset(name, dataset):
@@ -650,10 +659,10 @@ def put_dataset(name, dataset):
     with flask.g.db.cursor() as cursor:
         query = psycopg2.sql.SQL(
             'INSERT INTO datasets VALUES (%s, %s, %s) '
-            'ON CONFLICT (user_id, dataset_name) DO UPDATE SET pbtxt=%s')
+            'ON CONFLICT (user_id, name) DO UPDATE SET serialized=%s')
         user_id = flask.g.user_id
-        pbtxt = text_format.MessageToString(dataset, as_utf8=True)
-        cursor.execute(query, [user_id, name, pbtxt, pbtxt])
+        serialized = serialize_for_db(dataset)
+        cursor.execute(query, [user_id, name, serialized, serialized])
         flask.g.db.commit()
 
 
@@ -665,7 +674,7 @@ def lock(file_name):
     through browser file uploads and so must be merged with Dataset protos on
     the server. The file uploads and the Dataset proto arrive asynchronously in
     concurrent connections. Locks ensure that only one request at a time
-    accesses a Datset's .pbtxt file.
+    accesses a Datset's .pb file.
 
     Args:
         file_name: Name of the file to pass to the fcntl system call.
@@ -756,7 +765,7 @@ def get_path(file_name, suffix=''):
 
     Args:
         file_name: Text filename.
-        suffix: Text filename suffix. Defaults to '.pbtxt'.
+        suffix: Text filename suffix. Defaults to ''.
 
     Returns:
         Path to the requested file.
@@ -768,7 +777,7 @@ def exists_dataset(name):
     """True if a dataset with the given name is defined for the current user."""
     with flask.g.db.cursor() as cursor:
         query = psycopg2.sql.SQL(
-            'SELECT 1 FROM datasets WHERE user_id=%s AND dataset_name=%s')
+            'SELECT 1 FROM datasets WHERE user_id=%s AND name=%s')
         user_id = flask.g.user_id
         cursor.execute(query, [user_id, name])
         return cursor.rowcount > 0
@@ -965,3 +974,8 @@ def logout():
     response = flask.redirect('/login')
     response.set_cookie('Access-Token', '', expires=0)
     return response
+
+
+def serialize_for_db(dataset):
+    """Serializes a Dataset for input into postgres."""
+    return dataset.SerializeToString(deterministic=True).hex()

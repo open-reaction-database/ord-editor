@@ -22,13 +22,17 @@ exports = {
   add
 };
 
-goog.require('ord.amounts');
-goog.require('proto.ord.CrudeComponent');
+const asserts = goog.require('goog.asserts');
+
+const amounts = goog.require('ord.amounts');
+const utils = goog.require('ord.utils');
+
+const CrudeComponent = goog.require('proto.ord.CrudeComponent');
 
 /**
  * Adds and populates the crude components of a reaction input.
- * @param {!Node} node Root node for the parent reaction input.
- * @param {!Array<!proto.ord.CrudeComponent>} crudes
+ * @param {!jQuery} node Root node for the parent reaction input.
+ * @param {!Array<!CrudeComponent>} crudes
  */
 function load(node, crudes) {
   crudes.forEach(crude => loadCrude(node, crude));
@@ -36,8 +40,8 @@ function load(node, crudes) {
 
 /**
  * Adds and populates a single crude component section in the form.
- * @param {!Node} root Root node for the parent reaction input.
- * @param {!proto.ord.CrudeComponent} crude
+ * @param {!jQuery} root Root node for the parent reaction input.
+ * @param {!CrudeComponent} crude
  */
 function loadCrude(root, crude) {
   const node = add(root);
@@ -46,20 +50,20 @@ function loadCrude(root, crude) {
   $('.crude_reaction', node).text(reactionId);
 
   const workup = crude.hasIncludesWorkup() ? crude.getIncludesWorkup() : null;
-  ord.reaction.setOptionalBool($('.crude_includes_workup', node), workup);
+  utils.setOptionalBool($('.crude_includes_workup', node), workup);
 
   const derived =
       crude.hasHasDerivedAmount() ? crude.getHasDerivedAmount() : null;
-  ord.reaction.setOptionalBool($('.crude_has_derived', node), derived);
+  utils.setOptionalBool($('.crude_has_derived', node), derived);
 
   const amount = crude.getAmount();
-  ord.amounts.load(node, amount);
+  amounts.load(node, amount);
 }
 
 /**
  * Fetches the crude components defined for a reaction input in the form.
- * @param {!Node} node Root node for the parent reaction input.
- * @return {!Array<!proto.ord.CrudeComponent>}
+ * @param {!jQuery} node Root node for the parent reaction input.
+ * @return {!Array<!CrudeComponent>}
  */
 function unload(node) {
   const crudes = [];
@@ -68,7 +72,7 @@ function unload(node) {
     if (!crudeNode.attr('id')) {
       // Not a template.
       const crude = unloadCrude(crudeNode);
-      if (!ord.reaction.isEmptyMessage(crude)) {
+      if (!utils.isEmptyMessage(crude)) {
         crudes.push(crude);
       }
     }
@@ -78,24 +82,27 @@ function unload(node) {
 
 /**
  * Fetches a single crude component defined in the form.
- * @param {!Node} node Root node for the crude component.
- * @return {!proto.ord.CrudeComponent}
+ * @param {!jQuery} node Root node for the crude component.
+ * @return {!CrudeComponent}
  */
 function unloadCrude(node) {
-  const crude = new proto.ord.CrudeComponent();
+  const crude = new CrudeComponent();
 
   const reactionId = $('.crude_reaction', node).text();
-  crude.setReactionId(reactionId);
+  crude.setReactionId(asserts.assertString(reactionId));
 
-  const workup =
-      ord.reaction.getOptionalBool($('.crude_includes_workup', node));
-  crude.setIncludesWorkup(workup);
+  const workup = utils.getOptionalBool($('.crude_includes_workup', node));
+  if (workup !== null) {
+    crude.setIncludesWorkup(workup);
+  }
 
-  const derived = ord.reaction.getOptionalBool($('.crude_has_derived', node));
-  crude.setHasDerivedAmount(derived);
+  const derived = utils.getOptionalBool($('.crude_has_derived', node));
+  if (derived !== null) {
+    crude.setHasDerivedAmount(derived);
+  }
 
-  const amount = ord.amounts.unload(node);
-  if (!ord.reaction.isEmptyMessage(amount)) {
+  const amount = amounts.unload(node);
+  if (!utils.isEmptyMessage(amount)) {
     crude.setAmount(amount);
   }
 
@@ -104,11 +111,11 @@ function unloadCrude(node) {
 
 /**
  * Adds a crude component section to the given reaction input.
- * @param {!Node} root Root node for the parent reaction input.
- * @return {!Node} The newly added root node for the crude component.
+ * @param {!jQuery} root Root node for the parent reaction input.
+ * @return {!jQuery} The newly added root node for the crude component.
  */
 function add(root) {
-  const node = ord.reaction.addSlowly('#crude_template', $('.crudes', root));
-  ord.amounts.init(node);
+  const node = utils.addSlowly('#crude_template', $('.crudes', root));
+  amounts.init(node);
   return node;
 }

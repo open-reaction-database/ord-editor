@@ -18,22 +18,41 @@ goog.module('ord.enums');
 goog.module.declareLegacyNamespace();
 
 // Proto enums are referenced by reflection from "data-proto" HTML attributes.
+/** @suppress {extraRequire} */
 goog.require('proto.ord.ReactionRole.ReactionRoleType');
+/** @suppress {extraRequire} */
 goog.require('proto.ord.CompoundIdentifier.IdentifierType');
+/** @suppress {extraRequire} */
 goog.require('proto.ord.CompoundPreparation.PreparationType');
-goog.require('proto.ord.ElectrochemistryConditions.ElectrochemistryType.ElectrochemistryTypeEnum');
-goog.require('proto.ord.FlowConditions.FlowType.FlowTypeEnum');
-goog.require('proto.ord.IlluminationConditions.IlluminationType.IlluminationTypeEnum');
+/** @suppress {extraRequire} */
+goog.require('proto.ord.ElectrochemistryConditions.ElectrochemistryType');
+/** @suppress {extraRequire} */
+goog.require('proto.ord.FlowConditions.FlowType');
+/** @suppress {extraRequire} */
+goog.require('proto.ord.IlluminationConditions.IlluminationType');
+/** @suppress {extraRequire} */
 goog.require('proto.ord.PressureConditions.Atmosphere.AtmosphereType');
+/** @suppress {extraRequire} */
 goog.require('proto.ord.PressureConditions.Measurement.MeasurementType');
+/** @suppress {extraRequire} */
 goog.require('proto.ord.PressureConditions.PressureControl.PressureControlType');
+/** @suppress {extraRequire} */
 goog.require('proto.ord.ReactionIdentifier.IdentifierType');
+/** @suppress {extraRequire} */
 goog.require('proto.ord.ReactionInput.AdditionSpeed.AdditionSpeedType');
-goog.require('proto.ord.StirringConditions.StirringMethod.StirringMethodType');
+/** @suppress {extraRequire} */
+goog.require('proto.ord.StirringConditions.StirringMethodType');
+/** @suppress {extraRequire} */
 goog.require('proto.ord.StirringConditions.StirringRate.StirringRateType');
+/** @suppress {extraRequire} */
 goog.require('proto.ord.TemperatureConditions.Measurement.MeasurementType');
+/** @suppress {extraRequire} */
 goog.require('proto.ord.TemperatureConditions.TemperatureControl.TemperatureControlType');
+/** @suppress {extraRequire} */
+goog.require('proto.ord.Vessel.VesselType');
+/** @suppress {extraRequire} */
 goog.require('proto.ord.VesselAttachment.VesselAttachmentType');
+/** @suppress {extraRequire} */
 goog.require('proto.ord.VesselMaterial.VesselMaterialType');
+/** @suppress {extraRequire} */
 goog.require('proto.ord.VesselPreparation.VesselPreparationType');
-goog.require('proto.ord.VesselType.VesselTypeEnum');

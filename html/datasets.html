@@ -15,6 +15,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <html>
+  <head>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-166779764-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-166779764-1');
+  </script>
   <style>
     body {
       padding: 48px;
@@ -113,6 +122,7 @@ limitations under the License.
       {# See https://forum.jquery.com/topic/vertical-tabs-entirely-clickable#14737000005362369 #}
       .ui-tabs .ui-tabs-nav .ui-tabs-anchor { width: 100%; box-sizing: border-box; }
   </style>
+  </head>
   <body>
     <div id="identity">
       <div style="display: flex;"><img src="{{ user_avatar }}">{{ user_name }}</div>
@@ -171,7 +181,7 @@ limitations under the License.
             <div style="padding-bottom: 10px">
               You can use a Reaction template to enumerate a Dataset based on a spreadsheet
               of values. For more information, see the
-              <a href="https://docs.open-reaction-database.org/">documentation</a>.
+              <a href="https://docs.open-reaction-database.org/en/latest/guides/templates.html">documentation</a>.
             </div>
             <div style="padding-bottom: 10px"><table>
               <tr>

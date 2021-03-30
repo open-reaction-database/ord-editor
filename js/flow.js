@@ -16,59 +16,62 @@
 
 goog.module('ord.flows');
 goog.module.declareLegacyNamespace();
+
+const asserts = goog.require('goog.asserts');
+
+const utils = goog.require('ord.utils');
+
+const FlowConditions = goog.require('proto.ord.FlowConditions');
+const FlowType = goog.require('proto.ord.FlowConditions.FlowType');
+const Tubing = goog.require('proto.ord.FlowConditions.Tubing');
+const TubingType = goog.require('proto.ord.FlowConditions.Tubing.TubingType');
+const Length = goog.require('proto.ord.Length');
+
+
+
 exports = {
   load,
   unload,
   validateFlow
 };
 
-goog.require('proto.ord.FlowConditions');
-goog.require('proto.ord.FlowConditions.Tubing');
-
 /**
  * Adds and populates the flow conditions section in the form.
- * @param {!proto.ord.FlowConditions} flow
+ * @param {!FlowConditions} flow
  */
 function load(flow) {
-  const type = flow.getFlowType();
-  if (type) {
-    ord.reaction.setSelector($('#flow_type'), type.getType());
-    $('#flow_details').text(type.getDetails());
-  }
+  utils.setSelector($('#flow_type'), flow.getType());
+  $('#flow_details').text(flow.getDetails());
   $('#flow_pump').text(flow.getPumpType());
 
   const tubing = flow.getTubing();
-  ord.reaction.setSelector($('#flow_tubing_type'), tubing.getType());
+  utils.setSelector($('#flow_tubing_type'), tubing.getType());
   $('#flow_tubing_details').text(tubing.getDetails());
-  ord.reaction.writeMetric('#flow_tubing', tubing.getDiameter());
+  utils.writeMetric('#flow_tubing', tubing.getDiameter());
 }
 
 /**
  * Fetches the flow conditions defined in the form.
- * @return {!proto.ord.FlowConditions}
+ * @return {!FlowConditions}
  */
 function unload() {
-  const flow = new proto.ord.FlowConditions();
+  const flow = new FlowConditions();
+  const flowType = utils.getSelectorText($('#flow_type')[0]);
+  flow.setType(FlowType[flowType]);
+  flow.setDetails(asserts.assertString($('#flow_details').text()));
 
-  const type = new proto.ord.FlowConditions.FlowType();
-  type.setType(ord.reaction.getSelector('#flow_type'));
-  type.setDetails($('#flow_details').text());
-  if (!ord.reaction.isEmptyMessage(type)) {
-    flow.setFlowType(type);
-  }
+  flow.setPumpType(asserts.assertString($('#flow_pump').text()));
 
-  flow.setPumpType($('#flow_pump').text());
-
-  const tubing = new proto.ord.FlowConditions.Tubing();
-  tubing.setType(ord.reaction.getSelector('#flow_tubing_type'));
-  tubing.setDetails($('#flow_tubing_details').text());
-  const diameter =
-      ord.reaction.readMetric('#flow_tubing', new proto.ord.Length());
-  if (!ord.reaction.isEmptyMessage(diameter)) {
+  const tubing = new Tubing();
+  const tubingType = utils.getSelectorText($('#flow_tubing_type')[0]);
+  tubing.setType(TubingType[tubingType]);
+  tubing.setDetails(asserts.assertString($('#flow_tubing_details').text()));
+  const diameter = utils.readMetric('#flow_tubing', new Length());
+  if (!utils.isEmptyMessage(diameter)) {
     tubing.setDiameter(diameter);
   }
 
-  if (!ord.reaction.isEmptyMessage(tubing)) {
+  if (!utils.isEmptyMessage(tubing)) {
     flow.setTubing(tubing);
   }
   return flow;
@@ -76,10 +79,10 @@ function unload() {
 
 /**
  * Validates the flow conditions defined in the form.
- * @param {!Node} node Root node for the flow conditions.
- * @param {?Node} validateNode Target node for validation results.
+ * @param {!jQuery} node Root node for the flow conditions.
+ * @param {?jQuery=} validateNode Target node for validation results.
  */
-function validateFlow(node, validateNode) {
+function validateFlow(node, validateNode = null) {
   const flow = unload();
-  ord.reaction.validate(flow, 'FlowConditions', node, validateNode);
+  utils.validate(flow, 'FlowConditions', node, validateNode);
 }

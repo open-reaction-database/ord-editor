@@ -16,56 +16,56 @@
 
 goog.module('ord.illumination');
 goog.module.declareLegacyNamespace();
+
+const asserts = goog.require('goog.asserts');
+
+const utils = goog.require('ord.utils');
+
+const IlluminationConditions = goog.require('proto.ord.IlluminationConditions');
+const IlluminationType = goog.require('proto.ord.IlluminationConditions.IlluminationType');
+const Length = goog.require('proto.ord.Length');
+const Wavelength = goog.require('proto.ord.Wavelength');
+
 exports = {
   load,
   unload,
   validateIllumination
 };
 
-goog.require('proto.ord.IlluminationConditions');
-goog.require('proto.ord.Length');
-goog.require('proto.ord.Wavelength');
 
 /**
  * Adds and populates the illumination conditions section in the form.
- * @param {!proto.ord.IlluminationConditions} illumination
+ * @param {!IlluminationConditions} illumination
  */
 function load(illumination) {
-  const type = illumination.getType();
-  if (type) {
-    ord.reaction.setSelector($('#illumination_type'), type.getType());
-    $('#illumination_details').text(type.getDetails());
-  }
+  utils.setSelector($('#illumination_type'), illumination.getType());
+  $('#illumination_details').text(illumination.getDetails());
   const wavelength = illumination.getPeakWavelength();
-  ord.reaction.writeMetric('#illumination_wavelength', wavelength);
+  utils.writeMetric('#illumination_wavelength', wavelength);
   $('#illumination_color').text(illumination.getColor());
   const distance = illumination.getDistanceToVessel();
-  ord.reaction.writeMetric('#illumination_distance', distance);
+  utils.writeMetric('#illumination_distance', distance);
 }
 
 /**
  * Fetches the illumination conditions defined in the form.
- * @return {!proto.ord.IlluminationConditions}
+ * @return {!IlluminationConditions}
  */
 function unload() {
-  const illumination = new proto.ord.IlluminationConditions();
+  const illumination = new IlluminationConditions();
+  const illuminationType = utils.getSelectorText($('#illumination_type')[0]);
+  illumination.setType(IlluminationType[illuminationType]);
+  illumination.setDetails(
+      asserts.assertString($('#illumination_details').text()));
 
-  const type = new proto.ord.IlluminationConditions.IlluminationType();
-  type.setType(ord.reaction.getSelector($('#illumination_type')));
-  type.setDetails($('#illumination_details').text());
-  if (!ord.reaction.isEmptyMessage(type)) {
-    illumination.setType(type);
-  }
-
-  const wavelength = ord.reaction.readMetric(
-      '#illumination_wavelength', new proto.ord.Wavelength());
-  if (!ord.reaction.isEmptyMessage(wavelength)) {
+  const wavelength =
+      utils.readMetric('#illumination_wavelength', new Wavelength());
+  if (!utils.isEmptyMessage(wavelength)) {
     illumination.setPeakWavelength(wavelength);
   }
-  illumination.setColor($('#illumination_color').text());
-  const distance =
-      ord.reaction.readMetric('#illumination_distance', new proto.ord.Length());
-  if (!ord.reaction.isEmptyMessage(distance)) {
+  illumination.setColor(asserts.assertString($('#illumination_color').text()));
+  const distance = utils.readMetric('#illumination_distance', new Length());
+  if (!utils.isEmptyMessage(distance)) {
     illumination.setDistanceToVessel(distance);
   }
   return illumination;
@@ -73,11 +73,10 @@ function unload() {
 
 /**
  * Validates the illumination conditions defined in the form.
- * @param {!Node} node Root node for the illumination conditions.
- * @param {?Node} validateNode Target node for validation results.
+ * @param {!jQuery} node Root node for the illumination conditions.
+ * @param {?jQuery=} validateNode Target node for validation results.
  */
-function validateIllumination(node, validateNode) {
+function validateIllumination(node, validateNode = null) {
   const illumination = unload();
-  ord.reaction.validate(
-      illumination, 'IlluminationConditions', node, validateNode);
+  utils.validate(illumination, 'IlluminationConditions', node, validateNode);
 }

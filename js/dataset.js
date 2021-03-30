@@ -27,7 +27,12 @@ exports = {
   freeze
 };
 
-goog.require('proto.ord.Dataset');
+const asserts = goog.require('goog.asserts');
+
+const utils = goog.require('ord.utils');
+
+const Dataset = goog.require('proto.ord.Dataset');
+const Reaction = goog.require('proto.ord.Reaction');
 
 const session = {
   fileName: null,
@@ -47,7 +52,7 @@ function init(fileName) {
 
 /**
  * Adds change handlers to a newly added reaction or reaction ID node.
- * @param {!Node} node Root node for the reaction or reaction ID.
+ * @param {!jQuery} node Root node for the reaction or reaction ID.
  */
 function listenDirty(node) {
   $('.edittext', node).on('input', dirty);
@@ -65,8 +70,9 @@ function dirty() {
  * Hides the 'save' button.
  */
 function clean() {
-  $('#save').css('visibility', 'hidden');
-  $('#save').text('save');
+  const matcher = $('#save');
+  matcher.css('visibility', 'hidden');
+  matcher.text('save');
 }
 
 /**
@@ -81,7 +87,7 @@ function commit() {
     xhr.open(
         'POST', '/dataset/proto/write/' + session.fileName, true /* async */);
     const binary = dataset.serializeBinary();
-    xhr.onload = function(event) {
+    xhr.onload = function() {
       clean();
       resolve('saved');
     };
@@ -91,16 +97,17 @@ function commit() {
 
 /**
  * Downloads the current dataset.
+ * @param {string} kind Serialization format; one of 'pb' or 'pbtxt'.
  */
-function download() {
+function download(kind) {
   const xhr = new XMLHttpRequest();
-  xhr.open('GET', '/dataset/' + session.fileName + '/download');
+  xhr.open('GET', '/dataset/' + session.fileName + '/download/' + kind);
   xhr.onload = () => {
     // Make the browser write the file.
     const url = URL.createObjectURL(new Blob([xhr.response]));
     const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', session.fileName + '.pbtxt');
+    link.setAttribute('href', url);
+    link.setAttribute('download', session.fileName + '.' + kind);
     document.body.appendChild(link);
     link.click();
   };
@@ -121,8 +128,9 @@ function getDataset(fileName, listener) {
   xhr.open('GET', '/dataset/proto/read/' + session.fileName, true /* async */);
   xhr.responseType = 'arraybuffer';
   xhr.onload = () => {
+    asserts.assertInstanceof(xhr.response, ArrayBuffer);  // Type hint.
     const bytes = new Uint8Array(xhr.response);
-    const dataset = proto.ord.Dataset.deserializeBinary(bytes);
+    const dataset = Dataset.deserializeBinary(bytes);
     session.dataset = dataset;
     listener(dataset);
   };
@@ -131,7 +139,7 @@ function getDataset(fileName, listener) {
 
 /**
  * Loads a dataset into the editor.
- * @param {!proto.ord.Dataset} dataset
+ * @param {!Dataset} dataset
  */
 function loadDataset(dataset) {
   $('#name').text(dataset.getName());
@@ -149,7 +157,7 @@ function loadDataset(dataset) {
 
 /**
  * Loads a list of reactions into the editor.
- * @param {!Array<!proto.ord.Reaction>} reactions
+ * @param {!Array<!Reaction>} reactions
  */
 function loadReactions(reactions) {
   for (let i = 0; i < reactions.length; i++) {
@@ -161,7 +169,7 @@ function loadReactions(reactions) {
 /**
  * Loads a single reaction into the editor.
  * @param {number} index The index of the new reaction.
- * @param {!proto.ord.Reaction} reaction
+ * @param {!Reaction} reaction
  */
 function loadReaction(index, reaction) {
   const node = addReaction(index);
@@ -188,17 +196,18 @@ function loadReactionId(reactionId) {
 
 /**
  * Fetches the current dataset.
- * @return {!proto.ord.Dataset}
+ * @return {!Dataset}
  */
 function unloadDataset() {
   const dataset = session.dataset;
-  dataset.setName($('#name').text());
-  dataset.setDescription($('#description').text());
-  dataset.setDatasetId($('#dataset_id').text());
+
+  dataset.setName(asserts.assertString($('#name').text()));
+  dataset.setDescription(asserts.assertString($('#description').text()));
+  dataset.setDatasetId(asserts.assertString($('#dataset_id').text()));
   const reactionIds = [];
   $('.other_reaction_id').each(function(index, node) {
     node = $(node);
-    if (!ord.reaction.isTemplateOrUndoBuffer(node)) {
+    if (!utils.isTemplateOrUndoBuffer(node)) {
       reactionIds.push($('.other_reaction_id_text', node).text());
     }
   });
@@ -210,7 +219,7 @@ function unloadDataset() {
 /**
  * Adds a new reaction to the current dataset.
  * @param {number} index The index of the new reaction.
- * @return {!Node} The newly added root node for the reaction.
+ * @return {!jQuery} The newly added root node for the reaction.
  */
 function addReaction(index) {
   const node = $('#reaction_template').clone();
@@ -228,7 +237,7 @@ function addReaction(index) {
 
 /**
  * Adds a new reaction ID to the current dataset.
- * @return {!Node} The newly added root node for the reaction ID.
+ * @return {!jQuery} The newly added root node for the reaction ID.
  */
 function addReactionId() {
   const node = $('#other_reaction_id_template').clone();
@@ -253,21 +262,21 @@ async function newReaction() {
 
 /**
  * Deletes a Reaction after triggering 'save'.
- * @param {!Node} button The node of the 'remove' button.
+ * @param {!jQuery} button The node of the 'remove' button.
  */
 async function deleteReaction(button) {
   if ($('#save').css('visibility') === 'visible') {
     await commit();
   }
   const node = $(button).closest('.reaction');
-  const index = parseInt($('a', node).text());
+  const index = parseInt($('a', node).text(), 10);
   window.location.href =
       '/dataset/' + session.fileName + '/delete/reaction/' + index;
 }
 
 /**
  * Deletes a Reaction ID.
- * @param {!Node} button The node of the 'remove' button.
+ * @param {!jQuery} button The node of the 'remove' button.
  */
 function removeReactionId(button) {
   removeSlowly(button, '.other_reaction_id');
@@ -275,7 +284,7 @@ function removeReactionId(button) {
 
 /**
  * Deletes an element matching `pattern`.
- * @param {!Node} button The node of the 'remove' button.
+ * @param {!jQuery} button The node of the 'remove' button.
  * @param {string} pattern The element pattern to match.
  */
 function removeSlowly(button, pattern) {

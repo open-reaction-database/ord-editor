@@ -22,105 +22,113 @@ exports = {
   validateConditions
 };
 
-goog.require('ord.electro');
-goog.require('ord.flows');
-goog.require('ord.illumination');
-goog.require('ord.pressure');
-goog.require('ord.stirring');
-goog.require('ord.temperature');
-goog.require('proto.ord.ReactionConditions');
+const asserts = goog.require('goog.asserts');
+
+const electro = goog.require('ord.electro');
+const flows = goog.require('ord.flows');
+const illumination = goog.require('ord.illumination');
+const pressure = goog.require('ord.pressure');
+const stirring = goog.require('ord.stirring');
+const temperature = goog.require('ord.temperature');
+const utils = goog.require('ord.utils');
+
+const ReactionConditions = goog.require('proto.ord.ReactionConditions');
 
 /**
  * Adds and populates the reaction conditions in the form.
- * @param {!proto.ord.ReactionConditions} conditions
+ * @param {!ReactionConditions} conditions
  */
 function load(conditions) {
-  const temperature = conditions.getTemperature();
-  if (temperature) {
-    ord.temperature.load(temperature);
+  const temperatureMessage = conditions.getTemperature();
+  if (temperatureMessage) {
+    temperature.load(temperatureMessage);
   }
-  const pressure = conditions.getPressure();
-  if (pressure) {
-    ord.pressure.load(pressure);
+  const pressureMessage = conditions.getPressure();
+  if (pressureMessage) {
+    pressure.load(pressureMessage);
   }
-  const stirring = conditions.getStirring();
-  if (stirring) {
-    ord.stirring.load(stirring);
+  const stirringMessage = conditions.getStirring();
+  if (stirringMessage) {
+    stirring.load(stirringMessage);
   }
-  const illumination = conditions.getIllumination();
-  if (illumination) {
-    ord.illumination.load(illumination);
+  const illuminationMessage = conditions.getIllumination();
+  if (illuminationMessage) {
+    illumination.load(illuminationMessage);
   }
-  const electro = conditions.getElectrochemistry();
-  if (electro) {
-    ord.electro.load(electro);
+  const electroMessage = conditions.getElectrochemistry();
+  if (electroMessage) {
+    electro.load(electroMessage);
   }
-  const flow = conditions.getFlow();
-  if (flow) {
-    ord.flows.load(flow);
+  const flowMessage = conditions.getFlow();
+  if (flowMessage) {
+    flows.load(flowMessage);
   }
   const reflux = conditions.hasReflux() ? conditions.getReflux() : null;
-  ord.reaction.setOptionalBool($('#condition_reflux'), reflux);
+  utils.setOptionalBool($('#condition_reflux'), reflux);
   if (conditions.hasPh()) {
     $('#condition_ph').text(conditions.getPh());
   }
   const dynamic = conditions.hasConditionsAreDynamic() ?
       conditions.getConditionsAreDynamic() :
       null;
-  ord.reaction.setOptionalBool($('#condition_dynamic'), dynamic);
+  utils.setOptionalBool($('#condition_dynamic'), dynamic);
   $('#condition_details').text(conditions.getDetails());
 }
 
 /**
  * Fetches the reaction conditions from the form.
- * @return {!proto.ord.ReactionConditions}
+ * @return {!ReactionConditions}
  */
 function unload() {
-  const conditions = new proto.ord.ReactionConditions();
-  const temperature = ord.temperature.unload();
-  if (!ord.reaction.isEmptyMessage(temperature)) {
-    conditions.setTemperature(temperature);
+  const conditions = new ReactionConditions();
+  const temperatureMessage = temperature.unload();
+  if (!utils.isEmptyMessage(temperatureMessage)) {
+    conditions.setTemperature(temperatureMessage);
   }
-  const pressure = ord.pressure.unload();
-  if (!ord.reaction.isEmptyMessage(pressure)) {
-    conditions.setPressure(pressure);
+  const pressureMessage = pressure.unload();
+  if (!utils.isEmptyMessage(pressureMessage)) {
+    conditions.setPressure(pressureMessage);
   }
-  const stirring = ord.stirring.unload();
-  if (!ord.reaction.isEmptyMessage(stirring)) {
-    conditions.setStirring(stirring);
+  const stirringMessage = stirring.unload();
+  if (!utils.isEmptyMessage(stirringMessage)) {
+    conditions.setStirring(stirringMessage);
   }
-  const illumination = ord.illumination.unload();
-  if (!ord.reaction.isEmptyMessage(illumination)) {
-    conditions.setIllumination(illumination);
+  const illuminationMessage = illumination.unload();
+  if (!utils.isEmptyMessage(illuminationMessage)) {
+    conditions.setIllumination(illuminationMessage);
   }
-  const electro = ord.electro.unload();
-  if (!ord.reaction.isEmptyMessage(electro)) {
-    conditions.setElectrochemistry(electro);
+  const electroMessage = electro.unload();
+  if (!utils.isEmptyMessage(electroMessage)) {
+    conditions.setElectrochemistry(electroMessage);
   }
-  const flow = ord.flows.unload();
-  if (!ord.reaction.isEmptyMessage(flow)) {
-    conditions.setFlow(flow);
+  const flowMessage = flows.unload();
+  if (!utils.isEmptyMessage(flowMessage)) {
+    conditions.setFlow(flowMessage);
   }
 
-  const reflux = ord.reaction.getOptionalBool($('#condition_reflux'));
-  conditions.setReflux(reflux);
+  const reflux = utils.getOptionalBool($('#condition_reflux'));
+  if (reflux !== null) {
+    conditions.setReflux(reflux);
+  }
   const ph = parseFloat($('#condition_ph').text());
   if (!isNaN(ph)) {
     conditions.setPh(ph);
   }
-  const dynamic = ord.reaction.getOptionalBool($('#condition_dynamic'));
-  conditions.setConditionsAreDynamic(dynamic);
+  const dynamic = utils.getOptionalBool($('#condition_dynamic'));
+  if (dynamic !== null) {
+    conditions.setConditionsAreDynamic(dynamic);
+  }
   const details = $('#condition_details').text();
-  conditions.setDetails(details);
+  conditions.setDetails(asserts.assertString(details));
   return conditions;
 }
 
 /**
  * Validates the reaction conditions defined in the form.
- * @param {!Node} node Root node for the reaction conditions.
- * @param {?Node} validateNode Target node for validation results.
+ * @param {!jQuery} node Root node for the reaction conditions.
+ * @param {?jQuery=} validateNode Target node for validation results.
  */
-function validateConditions(node, validateNode) {
+function validateConditions(node, validateNode = null) {
   const condition = unload();
-  ord.reaction.validate(condition, 'ReactionConditions', node, validateNode);
+  utils.validate(condition, 'ReactionConditions', node, validateNode);
 }

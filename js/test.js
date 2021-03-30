@@ -46,10 +46,10 @@ const puppeteer = require('puppeteer');
     await page.waitFor('body[ready=true]');
     const testResult = await page.evaluate(function(url) {
       const reaction = ord.reaction.unloadReaction();
-      const session = ord.reaction.session;
+      const session = ord.utils.session;
       const reactions = session.dataset.getReactionsList();
       reactions[session.index] = reaction;
-      return ord.reaction.compareDataset(session.fileName, session.dataset)
+      return ord.utils.compareDataset(session.fileName, session.dataset)
           .then(() => {
             console.log('PASS', url);
             return 0;
@@ -63,7 +63,7 @@ const puppeteer = require('puppeteer');
     // Report results of testing to environment (shell, Git CI, etc.)
     // If _any_ test fails (i.e. testResult 1), then the entire process must
     // fail too. We still run all tests though, for convenience's sake.
-    if (testResult == 1) {
+    if (testResult === 1) {
       process.exitCode = 1;
     }
   }
@@ -100,7 +100,7 @@ const puppeteer = require('puppeteer');
     // Report results of testing to environment (shell, Git CI, etc.)
     // If _any_ test fails (i.e. testResult 1), then the entire process must
     // fail too. We still run all tests though, for convenience's sake.
-    if (testResult == 1) {
+    if (testResult === 1) {
       process.exitCode = 1;
     }
   }
