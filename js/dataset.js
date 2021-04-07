@@ -100,18 +100,11 @@ function commit() {
  * @param {string} kind Serialization format; one of 'pb' or 'pbtxt'.
  */
 function download(kind) {
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', '/dataset/' + session.fileName + '/download/' + kind);
-  xhr.onload = () => {
-    // Make the browser write the file.
-    const url = URL.createObjectURL(new Blob([xhr.response]));
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', session.fileName + '.' + kind);
-    document.body.appendChild(link);
-    link.click();
-  };
-  xhr.send();
+  const url = '/dataset/' + session.fileName + '/download/' + kind;
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  document.body.appendChild(link);
+  link.click();
 }
 
 /**
