@@ -19,11 +19,12 @@ limitations under the License.
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
     <script src="/js/reaction.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
     <link rel="stylesheet" href="/css/reaction.css">
     <link rel="stylesheet" href="/css/ketcher-bootstrap.css">
     <title>
@@ -49,7 +50,7 @@ limitations under the License.
           </div>
         </div>
         <script>
-          $('#login').click(() => {
+          $('#login').on('click', () => {
             location.href = "https://github.com/login/oauth/authorize?client_id={{ client_id }}";
           });
         </script>
@@ -59,12 +60,12 @@ limitations under the License.
       <div>Reaction ID <div id="reaction_id" class="edittext longtext"></div></div>
       <div id="header_buttons">
         <div id="download" onclick="ord.reaction.commit(); ord.reaction.downloadReaction();">download</div>
-        <div class="add" onclick="location.href='/dataset/{{ name }}/clone/{{ index }}';">+ clone</div>
-        <div id="delete" class="remove" style="float: none;" onclick="location.href='/dataset/{{ name }}/delete/reaction/{{ index }}';">delete</div>
+        <button type="button" class="add" onclick="location.href='/dataset/{{ name }}/clone/{{ index }}';">+ clone</button>
+        <button type="button" class="remove" id="delete" style="float: none;" onclick="location.href='/dataset/{{ name }}/delete/reaction/{{ index }}';">delete</button>
         <span>|</span>
-        <div id="save" onclick="ord.reaction.commit();" style="visibility: hidden;">save</div>
-        <span id="reaction_validate" class="validate" onclick="ord.reaction.validateReaction()"></span>
-        <span id="toggle_autosave" onclick="ord.utils.toggleAutosave()"></span>
+        <button type="button" id="save" onclick="ord.reaction.commit();" style="visibility: hidden;">save</button>
+        <button type="button" class="validate" id="reaction_validate" onclick="ord.reaction.validateReaction()"></button>
+        <button type="button" id="toggle_autosave" onclick="ord.utils.toggleAutosave()"></button>
       </div>
     </div>
 
@@ -97,7 +98,7 @@ limitations under the License.
           </span>
         </legend>
         <div id="identifiers"></div>
-        <div onclick="ord.identifiers.add();" class="add">+ add identifier</div>
+        <button type="button" class="add" onclick="ord.identifiers.add();">+ add identifier</button>
       </fieldset>
 
       <fieldset id="section_inputs" class="section s2">
@@ -115,19 +116,19 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h3">Input</span>
-                  <div onclick="ord.utils.removeSlowly(this, '.input');" class="remove">remove</div>
-                  <span class="validate" onclick="ord.inputs.validateInput($(this).closest('.input'))"></span>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.input');">remove</button>
+                  <button type="button" class="validate" onclick="ord.inputs.validateInput($(this).closest('.input'))"></button>
                </legend>
                 <div>
                   <span class="input_name_label">name </span><span class="input_name edittext"></span>
                 </div>
                 <div>
                   <div class="components"></div>
-                  <div onclick="ord.compounds.add($(this).closest('.input'));" class="add">+ add component</div>
+                  <button type="button" class="add" onclick="ord.compounds.add($(this).closest('.input'));">+ add component</button>
                 </div>
                 <div>
                   <div class="crudes"></div>
-                  <div onclick="ord.crudes.add($(this).closest('.input'));" class="add">+ add crude component</div>
+                  <button type="button" class="add" onclick="ord.crudes.add($(this).closest('.input'));">+ add crude component</button>
                 </div>
                 <fieldset class="s4">
                   <legend>
@@ -194,8 +195,8 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h4">Component</span>
-                  <div onclick="ord.utils.removeSlowly(this, '.component');" class="remove">remove</div>
-                  <span class="validate" onclick="ord.compounds.validateCompound($(this).closest('.component'))"></span>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.component');">remove</button>
+                  <button type="button" class="validate"  onclick="ord.compounds.validateCompound($(this).closest('.component'))"></button>
                 </legend>
                 <table class="component_role_limiting">
                   <tr><td>reaction role</td><td><div class="component_reaction_role selector" data-proto="ReactionRole_ReactionRoleType"></div></td></tr>
@@ -213,10 +214,10 @@ limitations under the License.
                   <div class="component_rendering" style="text-align: center;"></div>
                   <div class="identifiers"></div>
                   <!-- Shortcuts for name resolving & drawing -->
-                  <div onclick="ord.compounds.drawIdentifier($(this).closest('.component'));" class="add"><span class="far fa-edit" aria-hidden="true"></span> draw compound</div>
-                  <div onclick="ord.compounds.addNameIdentifier($(this).closest('.component'));" class="add"><span class="fa fa-search" aria-hidden="true"></span> look up name</div>
+                  <button type="button" class="add" onclick="ord.compounds.drawIdentifier($(this).closest('.component'));"><span class="far fa-edit" aria-hidden="true"></span> draw compound</button>
+                  <button type="button" class="add" onclick="ord.compounds.addNameIdentifier($(this).closest('.component'));"><span class="fa fa-search" aria-hidden="true"></span> look up name</button>
                   <!-- End shortcuts -->
-                  <div onclick="ord.compounds.addIdentifier($(this).closest('.component'));" class="add">+ add identifier</div>
+                  <button type="button" class="add" onclick="ord.compounds.addIdentifier($(this).closest('.component'));">+ add identifier</button>
                 </fieldset>
                 <fieldset class="amount s5">
                   <legend>
@@ -241,7 +242,7 @@ limitations under the License.
                     <span class="h5">Preparations</span>
                   </legend>
                   <div class="preparations"></div>
-                  <div onclick="ord.compounds.addPreparation($(this).closest('.component'));" class="add">+ add preparation</div>
+                  <button type="button" class="add" onclick="ord.compounds.addPreparation($(this).closest('.component'));">+ add preparation</button>
                 </fieldset>
                 <fieldset class="source s5">
                   <legend>
@@ -263,7 +264,7 @@ limitations under the License.
                     </span>
                   </legend>
                   <div class="features"></div>
-                  <div onclick="ord.compounds.addFeature($(this).closest('.component'));" class="add">+ add feature</div>
+                  <button type="button" class="add" onclick="ord.compounds.addFeature($(this).closest('.component'));">+ add feature</button>
                 </fieldset>
               </fieldset>
             </div>
@@ -273,7 +274,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h5">Feature</span>
-                  <div onclick="ord.utils.removeSlowly(this, '.feature');" class="remove">remove</div>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.feature');">remove</button>
                 </legend>
                 <table class="message">
                   <tr><td>name</td><td><div class="feature_name edittext"></div></td></tr>
@@ -287,7 +288,7 @@ limitations under the License.
                   <td>value</td>
                   <td>
                     <div class="component_identifier_value edittext longtext"></div>
-                    <span class="fa fa-upload text_upload" aria-hidden="true" style="cursor:pointer;" onclick="ord.utils.setTextFromFile($(this).closest('.component_identifier'), 'component_identifier_value');"></span>
+                    <button type="button" class="fa fa-upload text_upload" aria-hidden="true" style="cursor:pointer;" onclick="ord.utils.setTextFromFile($(this).closest('.component_identifier'), 'component_identifier_value');"></button>
                   </td>
                 </tr>
                 <tr>
@@ -298,7 +299,7 @@ limitations under the License.
                   <td>details</td>
                   <td>
                     <div class="component_identifier_details edittext longtext"></div>
-                    <div onclick="ord.utils.removeSlowly(this, '.component_identifier');" class="remove">remove</div>
+                    <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.component_identifier');">remove</button>
                   </td>
                 </tr>
               </table>
@@ -309,7 +310,7 @@ limitations under the License.
               details <div class="component_compound_preparation_details edittext"></div>
               <span class="component_compound_preparation_reaction_id">reaction ID</span>
               <div class="component_compound_preparation_reaction component_compound_preparation_reaction_id edittext"></div>
-              <div onclick="ord.utils.removeSlowly(this, '.component_preparation');" class="remove">remove</div>
+              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.component_preparation');">remove</button>
             </div>
 
             <div id="crude_template" class="crude" style="display: none;">
@@ -317,7 +318,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h4">Crude Component</span>
-                  <div onclick="ord.utils.removeSlowly(this, '.crude');" class="remove">remove</div>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.crude');">remove</button>
                   <span data-toggle="tooltip" data-placement="right" title="Crude components use non-isolated material from another reaction as input. The reaction ID must correspond to another reaction in this same dataset.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
                     </span>
@@ -345,9 +346,8 @@ limitations under the License.
             </div>
 
           </div>
-
-          <div onclick="ord.inputs.add($('#inputs'));" class="add">+ add input</div>
-          <div onclick="ord.inputs.addInputByString($('#inputs'));" class="add"><span class="fa fa-search" aria-hidden="true"></span> resolve text</div>
+              <button type="button" class="add" onclick="ord.inputs.add($('#inputs'));">+ add input</button>
+              <button type="button" class="add" onclick="ord.inputs.addInputByString($('#inputs'));"><span class="fa fa-search" aria-hidden="true"></span> resolve text</button>
       </fieldset>
 
       <fieldset id="section_setup" class="section s2">
@@ -355,7 +355,7 @@ limitations under the License.
         <legend>
           <span class="collapse"></span>
           <span class="h2">Setup</span>
-          <span class="validate" onclick="ord.setups.validateSetup($(this).closest('#section_setup'))"></span>
+          <button type="button" class="validate" onclick="ord.setups.validateSetup($(this).closest('#section_setup'))"></button>
         </legend>
         <table class="message">
           <tr><td>vessel</td><td><div id="setup_vessel_type" class="selector" data-proto="Vessel_VesselType"></div>
@@ -380,10 +380,10 @@ limitations under the License.
             <div id="setup_vessel_preparation_template" class="setup_vessel_preparation" style="display: none;">
               preparation<div class="setup_vessel_preparation_type selector" data-proto="VesselPreparation_VesselPreparationType"></div>
               details <div class="setup_vessel_preparation_details edittext"></div>
-              <div onclick="ord.utils.removeSlowly(this, '.setup_vessel_preparation');" class="remove">remove</div>
+              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.setup_vessel_preparation');">remove</button>
             </div>
           </div>
-          <div onclick="ord.setups.addVesselPreparation();" class="add">+ add preparation</div>
+          <button type="button" class="add" onclick="ord.setups.addVesselPreparation();">+ add preparation</button>
         </fieldset>
         <fieldset class="s3">
           <legend>
@@ -394,10 +394,10 @@ limitations under the License.
             <div id="setup_vessel_attachment_template" class="setup_vessel_attachment" style="display: none;">
               attachment<div class="setup_vessel_attachment_type selector" data-proto="VesselAttachment_VesselAttachmentType"></div>
               details <div class="setup_vessel_attachment_details edittext"></div>
-              <div onclick="ord.utils.removeSlowly(this, '.setup_vessel_attachment');" class="remove">remove</div>
+              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.setup_vessel_attachment');">remove</button>
             </div>
           </div>
-          <div onclick="ord.setups.addVesselAttachment();" class="add">+ add attachment</div>
+          <button type="button" class="add" onclick="ord.setups.addVesselAttachment();">+ add attachment</button>
         </fieldset>
         <div id="setup_codes">
           <div id="setup_code_template" class="setup_code" style="display: none;">
@@ -405,7 +405,7 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h3">Automation code</span>
-                <div onclick="ord.utils.removeSlowly(this, '.setup_code');" class="remove">remove</div>
+                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.setup_code');">remove</button>
                 <span data-toggle="tooltip" data-placement="right" title="Details of the exact automation procedure required to perform the reaction.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
                 </span>
@@ -416,20 +416,20 @@ limitations under the License.
             </fieldset>
           </div>
         </div>
-        <div onclick="ord.codes.addCode();" class="add">+ add automation code</div>
+        <button type="button" class="add" onclick="ord.codes.addCode();">+ add automation code</button>
       </fieldset>
 
       <fieldset id="section_conditions" class="section s2">
         <legend>
           <span class="collapse"></span>
           <span class="h2">Conditions</span>
-          <span class="validate" onclick="ord.conditions.validateConditions($('#section_conditions'))"></span>
+          <button type="button" class="validate"  onclick="ord.conditions.validateConditions($('#section_conditions'))"></button>
         </legend>
         <fieldset id="section_conditions_temperature" class="s3">
           <legend>
             <span class="collapse"></span>
             <span class="h3">Temperature</span>
-            <span class="validate" onclick="ord.temperature.validateTemperature($(this).closest('#section_conditions_temperature'))"></span>
+            <button type="button" class="validate"  onclick="ord.temperature.validateTemperature($(this).closest('#section_conditions_temperature'))"></button>
           </legend>
           <table class="message">
             <tr><td>control</td><td><div id="temperature_control" class="selector" data-proto="TemperatureConditions_TemperatureControl_TemperatureControlType"></div>
@@ -445,7 +445,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h4">Measurement</span>
-                  <div onclick="ord.utils.removeSlowly(this, '.temperature_measurement');" class="remove">remove</div>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.temperature_measurement');">remove</button>
                 </legend>
                 <table class="message">
                   <tr><td>type</td><td><div class="temperature_measurement_type selector" data-proto="TemperatureConditions_Measurement_MeasurementType"></div></td></tr>
@@ -462,13 +462,13 @@ limitations under the License.
               </fieldset>
             </div>
           </div>
-          <div onclick="ord.temperature.addMeasurement();" class="add">+ add measurement</div>
+          <button type="button" class="add" onclick="ord.temperature.addMeasurement();">+ add measurement</button>
         </fieldset>
         <fieldset id="section_conditions_pressure" class="s3">
           <legend>
             <span class="collapse"></span>
             <span class="h3">Pressure</span>
-            <span class="validate" onclick="ord.pressure.validatePressure($(this).closest('#section_conditions_pressure'))"></span>
+            <button type="button" class="validate"  onclick="ord.pressure.validatePressure($(this).closest('#section_conditions_pressure'))"></button>
           </legend>
             <table class="message">
               <tr><td>control</td><td><div id="pressure_control_type" class="selector" data-proto="PressureConditions_PressureControl_PressureControlType"></div>
@@ -486,7 +486,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h4">Measurement</span>
-                  <div onclick="ord.utils.removeSlowly(this, '.pressure_measurement');" class="remove">remove</div>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.pressure_measurement');">remove</button>
                 </legend>
                 <table class="message">
                   <tr><td>type</td><td><div class="pressure_measurement_type selector" data-proto="PressureConditions_Measurement_MeasurementType"></div></td></tr>
@@ -503,13 +503,13 @@ limitations under the License.
               </fieldset>
             </div>
           </div>
-          <div onclick="ord.pressure.addMeasurement();" class="add">+ add measurement</div>
+          <button type="button" class="add" onclick="ord.pressure.addMeasurement();">+ add measurement</button>
         </fieldset>
         <fieldset id="section_conditions_stirring" class="s3">
           <legend>
             <span class="collapse"></span>
             <span class="h3">Stirring</span>
-            <span class="validate" onclick="ord.stirring.validateStirring($(this).closest('#section_conditions_stirring'))"></span>
+            <button type="button" class="validate"  onclick="ord.stirring.validateStirring($(this).closest('#section_conditions_stirring'))"></button>
           </legend>
           <table class="message">
             <tr><td>method</td><td><div id="stirring_method_type" class="selector" data-proto="StirringConditions_StirringMethodType"></div>
@@ -523,7 +523,7 @@ limitations under the License.
           <legend>
             <span class="collapse starts_collapsed"></span>
             <span class="h3">Illumination</span>
-            <span class="validate" onclick="ord.illumination.validateIllumination($(this).closest('#section_conditions_illumination'))"></span>
+            <button type="button" class="validate"  onclick="ord.illumination.validateIllumination($(this).closest('#section_conditions_illumination'))"></button>
           </legend>
           <table class="message">
             <tr><td>type</td><td><div id="illumination_type" class="selector" data-proto="IlluminationConditions_IlluminationType"></div>
@@ -543,7 +543,7 @@ limitations under the License.
           <legend>
             <span class="collapse starts_collapsed"></span>
             <span class="h3">Electrochemistry</span>
-            <span class="validate" onclick="ord.electro.validateElectro($(this).closest('#section_conditions_electro'))"></span>
+            <button type="button" class="validate"  onclick="ord.electro.validateElectro($(this).closest('#section_conditions_electro'))"></button>
           </legend>
           <table class="message">
             <tr><td>type</td><td><div id="electro_type" class="selector" data-proto="ElectrochemistryConditions_ElectrochemistryType"></div>
@@ -571,7 +571,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h4">Measurement</span>
-                  <div onclick="ord.utils.removeSlowly(this, '.electro_measurement');" class="remove">remove</div>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.electro_measurement');">remove</button>
                 </legend>
                 <input type="radio" class="electro_measurement_current" value="current" checked> current
                 <input type="radio" class="electro_measurement_voltage" value="voltage"> voltage
@@ -594,13 +594,13 @@ limitations under the License.
               </fieldset>
             </div>
           </div>
-          <div onclick="ord.electro.addMeasurement();" class="add">+ add measurement</div>
+          <button type="button" class="add" onclick="ord.electro.addMeasurement();">+ add measurement</button>
         </fieldset>
         <fieldset id="section_conditions_flow" class="s3">
           <legend>
             <span class="collapse starts_collapsed"></span>
             <span class="h3">Flow</span>
-            <span class="validate" onclick="ord.flows.validateFlow($(this).closest('#section_conditions_flow'))"></span>
+            <button type="button" class="validate"  onclick="ord.flows.validateFlow($(this).closest('#section_conditions_flow'))"></button>
           </legend>
           <table class="message">
             <tr><td>type</td><td><div id="flow_type" class="selector" data-proto="FlowConditions_FlowType"></div>
@@ -634,7 +634,7 @@ limitations under the License.
         <legend>
           <span class="collapse"></span>
           <span class="h2">Notes</span>
-          <span class="validate" onclick="ord.notes.validateNotes($('#section_notes'))"></span>
+          <button type="button" class="validate"  onclick="ord.notes.validateNotes($('#section_notes'))"></button>
         </legend>
         <table class="message">
           <tr><td>is heterogeneous</td><td><div id="notes_heterogeneous" class="optional_bool"></div></td></tr>
@@ -663,8 +663,8 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h3">Observation</span>
-                <div onclick="ord.utils.removeSlowly(this, '.observation');" class="remove">remove</div>
-                <span class="validate" onclick="ord.observations.validateObservation($(this).closest('.observation'))"></span>
+                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.observation');">remove</button>
+                <button type="button" class="validate" onclick="ord.observations.validateObservation($(this).closest('.observation'))"></button>
               </legend>
               <table class="message">
                 <tr><td>time</td><td><div class="observation_time_value edittext shorttext floattext"></div>
@@ -676,7 +676,7 @@ limitations under the License.
             </fieldset>
           </div>
         </div>
-        <div onclick="ord.observations.add();" class="add">+ add observation</div>
+        <button type="button" class="add" onclick="ord.observations.add();">+ add observation</button>
       </fieldset>
 
       <fieldset id="section_workups" class="section s2">
@@ -693,8 +693,8 @@ limitations under the License.
             <legend>
               <span class="collapse"></span>
               <span class="h3">Workup</span>
-              <div onclick="ord.utils.removeSlowly(this, '.workup');" class="remove">remove</div>
-              <span class="validate" onclick="ord.workups.validateWorkup($(this).closest('.workup'))"></span>
+              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.workup');">remove</button>
+              <button type="button" class="validate"  onclick="ord.workups.validateWorkup($(this).closest('.workup'))"></button>
             </legend>
             <table class="message">
               <tr><td>type</td><td><div class="workup_type selector" data-proto="ReactionWorkup_WorkupType"></div></td></tr>
@@ -748,7 +748,7 @@ limitations under the License.
               </legend>
               <div class="workup_temperature_measurements">
               </div>
-              <div onclick="ord.workups.addMeasurement($(this).closest('.workup'));" class="add">+ add measurement</div>
+              <button type="button" class="add" onclick="ord.workups.addMeasurement($(this).closest('.workup'));">+ add measurement</button>
             </fieldset>
             <fieldset class="s4">
               <legend>
@@ -771,7 +771,7 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h5">Temperature measurement</span>
-                <div onclick="ord.utils.removeSlowly(this, '.workup_temperature_measurement');" class="remove">remove</div>
+                <button type="button" class="remove"  onclick="ord.utils.removeSlowly(this, '.workup_temperature_measurement');">remove</button>
               </legend>
               <table class="message">
                 <tr><td>type</td><td><div class="workup_temperature_measurement_type selector" data-proto="TemperatureConditions_Measurement_MeasurementType"></div></td></tr>
@@ -789,7 +789,7 @@ limitations under the License.
           </div>
 
         </div>
-        <div onclick="ord.workups.add();" class="add">+ add workup</div>
+        <button type="button" class="add" onclick="ord.workups.add();">+ add workup</button>
       </fieldset>
 
       <fieldset id="section_outcomes" class="section s2">
@@ -808,8 +808,8 @@ limitations under the License.
             <legend>
               <span class="collapse"></span>
               <span class="h3">Outcome</span>
-              <div onclick="ord.utils.removeSlowly(this, '.outcome');" class="remove">remove</div>
-              <span class="validate" onclick="ord.outcomes.validateOutcome($(this).closest('.outcome'))"></span>
+              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome');">remove</button>
+              <button type="button" class="validate"  onclick="ord.outcomes.validateOutcome($(this).closest('.outcome'))"></button>
             </legend>
             <table class="message">
               <tr><td>time
@@ -829,10 +829,10 @@ limitations under the License.
             </table>
 
               <div class="outcome_analyses"></div>
-              <div onclick="ord.outcomes.addAnalysis($(this).closest('.outcome'));" class="add">+ add analysis</div>
+              <button type="button" class="add" onclick="ord.outcomes.addAnalysis($(this).closest('.outcome'));">+ add analysis</button>
 
               <div class="outcome_products"></div>
-              <div onclick="ord.products.add($(this).closest('.outcome'));" class="add">+ add product</div>
+              <button type="button" class="add" onclick="ord.products.add($(this).closest('.outcome'));">+ add product</button>
 
           </fieldset>
           </div>
@@ -842,8 +842,8 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h4">Product</span>
-                <div onclick="ord.utils.removeSlowly(this, '.outcome_product');" class="remove">remove</div>
-                <span class="validate" onclick="ord.products.validateProduct($(this).closest('.outcome_product'))"></span>
+                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome_product');">remove</button>
+                <button type="button" class="validate"  onclick="ord.products.validateProduct($(this).closest('.outcome_product'))"></button>
               </legend>
               <table class="message">
               <tr><td>reaction role</td><td><div class="component_reaction_role selector" data-proto="ReactionRole_ReactionRoleType"></div></td></tr>
@@ -869,10 +869,10 @@ limitations under the License.
               <div class="component_rendering" style="text-align: center;"></div>
               <div class="identifiers product_compound_identifiers"></div>
               <!-- Shortcuts for name resolving & drawing -->
-              <div onclick="ord.compounds.drawIdentifier($(this).closest('.outcome_product'));" class="add"><span class="far fa-edit" aria-hidden="true"></span> draw compound</div>
-              <div onclick="ord.compounds.addNameIdentifier($(this).closest('.outcome_product'));" class="add"><span class="fa fa-search" aria-hidden="true"></span> look up name</div>
+              <button type="button" class="add" onclick="ord.compounds.drawIdentifier($(this).closest('.outcome_product'));"><span class="far fa-edit" aria-hidden="true"></span> draw compound</button>
+              <button type="button" class="add" onclick="ord.compounds.addNameIdentifier($(this).closest('.outcome_product'));"><span class="fa fa-search" aria-hidden="true"></span> look up name</button>
               <!-- End shortcuts -->
-              <div onclick="ord.compounds.addIdentifier($(this).closest('.outcome_product'));" class="add">+ add identifier</div>
+              <button type="button" class="add" onclick="ord.compounds.addIdentifier($(this).closest('.outcome_product'));">+ add identifier</button>
             </fieldset>
 
             <div id="product_measurement_template" class="product_measurement" style="display: none;">
@@ -880,8 +880,8 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h6">Product Measurement</span>
-                  <div onclick="ord.utils.removeSlowly(this, '.product_measurement');" class="remove">remove</div>
-                  <span class="validate" onclick="ord.products.validateMeasurement($(this).closest('.product_measurement'))"></span>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.product_measurement');">remove</button>
+                  <button type="button" class="validate" onclick="ord.products.validateMeasurement($(this).closest('.product_measurement'))"></button>
                 </legend>
                 <table class="message product_measurement_value_type">
                   <tr>
@@ -984,7 +984,7 @@ limitations under the License.
               </legend>
               <div>
                 <div class="product_measurement_repeated"></div>
-                <div onclick="ord.products.addMeasurement($(this).closest('.outcome_product'));" class="add">+ add measurement</div>
+                <button type="button" class="add" onclick="ord.products.addMeasurement($(this).closest('.outcome_product'));">+ add measurement</button>
               </div>
             </fieldset>
 
@@ -1011,7 +1011,7 @@ limitations under the License.
                 </span>
               </legend>
               <div class="features"></div>
-              <div onclick="ord.compounds.addFeature($(this).closest('.outcome_product'));" class="add">+ add feature</div>
+              <button type="button" class="add" onclick="ord.compounds.addFeature($(this).closest('.outcome_product'));">+ add feature</button>
             </fieldset>
             </fieldset>
           </div>
@@ -1021,8 +1021,8 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h4">Analysis</span>
-                <div onclick="ord.utils.removeSlowly(this, '.outcome_analysis');" class="remove">remove</div>
-                <span class="validate" onclick="ord.outcomes.validateAnalysis($(this).closest('.outcome_analysis'))" ></span>
+                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome_analysis');">remove</button>
+                <button type="button" class="validate"  onclick="ord.outcomes.validateAnalysis($(this).closest('.outcome_analysis'))" ></button>
               </legend>
               <table class="message">
                 <tr><td>name</td><td><div class="outcome_analysis_name edittext"></div></td></tr>
@@ -1041,7 +1041,7 @@ limitations under the License.
               <div>
                 <div class="outcome_data_repeated">
                 </div>
-                <div onclick="ord.outcomes.addData($(this).closest('.outcome_analysis'));" class="add">+ add data</div>
+                <button type="button" class="add" onclick="ord.outcomes.addData($(this).closest('.outcome_analysis'));">+ add data</button>
               </div>
 
             </fieldset>
@@ -1053,7 +1053,7 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h5">Analytical data</span>
-                <div onclick="ord.utils.removeSlowly(this, '.outcome_data');" class="remove">remove</div>
+                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome_data');">remove</button>
               </legend>
               <table class="message">
                 <tr><td>name</td><td><div class="outcome_data_name edittext"></div></td></tr>
@@ -1062,7 +1062,7 @@ limitations under the License.
           </div>
 
         </div>
-        <div onclick="ord.outcomes.add();" class="add">+ add outcome</div>
+        <button type="button" class="add" onclick="ord.outcomes.add();">+ add outcome</button>
       </fieldset>
 
       <fieldset id="section_provenance" class="section s2">
@@ -1072,7 +1072,7 @@ limitations under the License.
           <span data-toggle="tooltip" data-placement="right" title="Additional metadata about how this reaction was performed and originally reported.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
           </span>
-          <span class="validate" onclick="ord.provenance.validateProvenance($('#section_provenance'))"></span>
+          <button type="button" class="validate" onclick="ord.provenance.validateProvenance($('#section_provenance'))"></button>
         </legend>
         <div id="provenance_experimenter">
           <table class="message">
@@ -1117,7 +1117,7 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h3">Record modification</span>
-                <div onclick="ord.utils.removeSlowly(this, '.provenance_modified');" class="remove">remove</div>
+                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.provenance_modified');">remove</button>
                 <span data-toggle="tooltip" data-placement="right" title="Details about subsequent modifications to this reaction record.">
                 <span class="fa fa-question-circle" aria-hidden="true"></span>
               </span>
@@ -1137,7 +1137,7 @@ limitations under the License.
             </fieldset>
           </div>
         </div>
-        <div onclick="ord.provenance.addModification();" class="add">+ add modification</div>
+        <button type="button" class="add" onclick="ord.provenance.addModification();">+ add modification</button>
       </fieldset>
     </div>
 
@@ -1175,7 +1175,7 @@ limitations under the License.
           <td>value</td>
           <td>
             <div class="reaction_identifier_value edittext longtext"></div>
-            <span class="fa fa-upload text_upload" aria-hidden="true" style="cursor:pointer;" onclick="ord.utils.setTextFromFile($(this).closest('.reaction_identifier'), 'reaction_identifier_value');"></span>
+            <button type="button" class="fa fa-upload text_upload" aria-hidden="true" style="cursor:pointer;" onclick="ord.utils.setTextFromFile($(this).closest('.reaction_identifier'), 'reaction_identifier_value');"></button>
           </td>
         </tr>
         <tr>
@@ -1186,7 +1186,7 @@ limitations under the License.
           <td>details</td>
           <td>
             <div class="reaction_identifier_details edittext"></div>
-            <div class="remove" onclick="ord.utils.removeSlowly(this, '.reaction_identifier');">remove</div>
+            <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.reaction_identifier');">remove</button>
           </td>
         </tr>
       </table>
@@ -1202,7 +1202,7 @@ limitations under the License.
             <input class="data_uploader_chooser_file data_uploader_text" type="file">
             <div class="data_uploader_chooser_button data_uploader_text">Choose...</div>
             <div class="data_uploader_file_name data_uploader_text"></div>
-            <div class="data_uploader_file_retrieve data_uploader_text" onclick="ord.uploads.retrieve($(this).closest('.data_uploader'));" style="display: none;">retrieve</div>
+            <button type="button" class="data_uploader_file_retrieve data_uploader_text" onclick="ord.uploads.retrieve($(this).closest('.data_uploader'));" style="display: none;">retrieve</button>
           </div>
         </td>
       </tr>
@@ -1220,7 +1220,7 @@ limitations under the License.
       </table>
     </div>
 
-    <div id="undo_template" class="undo" style="display: none;" onclick="ord.utils.undoSlowly();">undo</div>
+    <button type="button" id="undo_template" class="undo" style="display: none;" onclick="ord.utils.undoSlowly();">undo</button>
 
     <script>
         document.body.onload = async function () {
