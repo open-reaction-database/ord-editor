@@ -19,14 +19,17 @@ body {
 #sections {
   margin-left: 168px;
 }
-#top_buttons {
-  text-align: center;
-}
 .edittext, .selector, .optional_bool, .analysis_key_selector {
   padding: 2px;
   margin: 2px;
   display: inline-block;
   height: 20px;
+}
+button {
+  font-size: medium;
+  border-radius: 6px;
+  border: 1px solid black;
+  vertical-align: middle;
 }
 .edittext {
   width: 200px;
@@ -149,12 +152,6 @@ fieldset {
   opacity: 0;
   position: absolute;
   width: 100px;
-}
-.data_uploader_chooser_button {
-  width: 99px;
-}
-.data_uploader_chooser_button, .data_uploader_file_retrieve {
-  text-align: center;
 }
 .data_uploader_file_name {
   min-width: 99px;

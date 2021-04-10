@@ -346,21 +346,11 @@ function initCollapse(node) {
  * Sets up a validator div (button, status indicator, error list, etc.) by
  * inserting contents into a div in reaction.html.
  * @param {!jQuery} oldNode Target node for the new validation elements.
- *
- * TODO(kearnes): .attr expects a function, not a string.
- * @suppress {checkTypes}
  */
 function initValidateNode(oldNode) {
-  let newNode = $('#validate_template').clone();
-  // Add attributes necessary for validation functions:
-  // Convert the placeholder onclick method into the button's onclick method.
-  $('.validate_button', newNode).attr('onclick', oldNode.attr('onclick'));
-  oldNode.removeAttr('onclick');
-  // Add an id to the button.
-  if (oldNode.attr('id')) {
-    $('.validate_button', newNode).attr('id', oldNode.attr('id') + '_button');
-  }
-  oldNode.append(newNode.children());
+  oldNode.text('validate');
+  const newNode = $('#validate_template').clone();
+  oldNode.parent().append(newNode.children());
 }
 
 /**
@@ -498,7 +488,7 @@ function validate(message, messageTypeString, node, validateNode) {
   xhr.open('POST', '/dataset/proto/validate/' + messageTypeString);
   const binary = message.serializeBinary();
   if (!validateNode) {
-    validateNode = $('.validate', node).first()[0];
+    validateNode = $('.validate', node).first();
   }
   xhr.responseType = 'json';
   xhr.onload = function() {
@@ -510,8 +500,8 @@ function validate(message, messageTypeString, node, validateNode) {
       const invalidName = $(this).attr('class').split(' ')[0];
       errors.push('Value for ' + invalidName + ' is invalid');
     });
-    const statusNode = $('.validate_status', validateNode);
-    const messageNode = $('.validate_message', validateNode);
+    const statusNode = validateNode.siblings('.validate_status');
+    const messageNode = validateNode.siblings('.validate_message');
     statusNode.removeClass('fa-check');
     statusNode.removeClass('fa-exclamation-triangle');
     statusNode.css('backgroundColor', undefined);
@@ -535,8 +525,8 @@ function validate(message, messageTypeString, node, validateNode) {
       messageNode.css('backgroundColor', '');
       messageNode.css('visibility', 'hidden');
     }
-    const warningStatusNode = $('.validate_warning_status', validateNode);
-    const warningMessageNode = $('.validate_warning_message', validateNode);
+    const warningStatusNode = validateNode.siblings('.validate_warning_status');
+    const warningMessageNode = validateNode.siblings('.validate_warning_message');
     if (warnings.length) {
       warningStatusNode.show();
       warningStatusNode.text(' ' + warnings.length);
@@ -559,17 +549,15 @@ function validate(message, messageTypeString, node, validateNode) {
 
 /**
  * Toggles the visibility of the 'validate' button for a given node.
- * @param {!jQuery} node
- * @param {string} target Destination class for the validation message(s).
+ * @param {!jQuery} target
  */
-function toggleValidateMessage(node, target) {
-  let messageNode = $(target, node);
-  switch (messageNode.css('visibility')) {
+function toggleValidateMessage(target) {
+  switch (target.css('visibility')) {
     case 'visible':
-      messageNode.css('visibility', 'hidden');
+      target.css('visibility', 'hidden');
       break;
     case 'hidden':
-      messageNode.css('visibility', 'visible');
+      target.css('visibility', 'visible');
       break;
   }
 }

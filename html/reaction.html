@@ -56,16 +56,16 @@ limitations under the License.
         </script>
         {% endif %}
       </div>
-      <div id="dataset_context" style="font-weight: bold;"><a href="/dataset/{{ name }}">{{ name }}</a>: {{ index }}</div>
-      <div>Reaction ID <div id="reaction_id" class="edittext longtext"></div></div>
+      <div id="dataset_context" style="font-weight: bold;"><a href="/dataset/{{ name }}">{{ name }}</a></div>
+      <div>Reaction ID <div id="reaction_id">{{ reaction_id }}</div></div>
       <div id="header_buttons">
         <div id="download" onclick="ord.reaction.commit(); ord.reaction.downloadReaction();">download</div>
-        <button type="button" class="add" onclick="location.href='/dataset/{{ name }}/clone/{{ index }}';">+ clone</button>
+        <button type="button" class="add" onclick="location.href='/dataset/{{ name }}/clone/{{ index }}';">clone</button>
         <button type="button" class="remove" id="delete" style="float: none;" onclick="location.href='/dataset/{{ name }}/delete/reaction/{{ index }}';">delete</button>
         <span>|</span>
         <button type="button" id="save" onclick="ord.reaction.commit();" style="visibility: hidden;">save</button>
-        <button type="button" class="validate" id="reaction_validate" onclick="ord.reaction.validateReaction()"></button>
         <button type="button" id="toggle_autosave" onclick="ord.utils.toggleAutosave()"></button>
+        <button type="button" class="validate" id="reaction_validate" onclick="ord.reaction.validateReaction()"></button>
       </div>
     </div>
 
@@ -196,7 +196,7 @@ limitations under the License.
                   <span class="collapse"></span>
                   <span class="h4">Component</span>
                   <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.component');">remove</button>
-                  <button type="button" class="validate"  onclick="ord.compounds.validateCompound($(this).closest('.component'))"></button>
+                  <button type="button" class="validate" onclick="ord.compounds.validateCompound($(this).closest('.component'))"></button>
                 </legend>
                 <table class="component_role_limiting">
                   <tr><td>reaction role</td><td><div class="component_reaction_role selector" data-proto="ReactionRole_ReactionRoleType"></div></td></tr>
@@ -1159,14 +1159,11 @@ limitations under the License.
       </div>
     </div>
 
-    <span id="validate_template" style="display: none">
-      <button type="button" class="validate_button" aria-hidden="true">validate</button>
-      <span class="validate_status-message">
-        <span onmouseenter="ord.utils.toggleValidateMessage($(this).closest('.validate'), '.validate_message')" onmouseleave="ord.utils.toggleValidateMessage($(this).closest('.validate'), '.validate_message')" class="validate_status">unvalidated</span>
-        <span onmouseenter="ord.utils.toggleValidateMessage($(this).closest('.validate'), '.validate_warning_message')" onmouseleave="ord.utils.toggleValidateMessage($(this).closest('.validate'), '.validate_warning_message')" class="validate_warning_status fa fa-bell"></span>
-        <span class="validate_message"></span>
-        <span class="validate_warning_message"></span>
-      </span>
+    <span id="validate_template" class="validate_status-message" style="display: none">
+      <span onmouseenter="ord.utils.toggleValidateMessage($(this).siblings('.validate_message'))" onmouseleave="ord.utils.toggleValidateMessage($(this).siblings('.validate_message'))" class="validate_status">unvalidated</span>
+      <span onmouseenter="ord.utils.toggleValidateMessage($(this).siblings('.validate_warning_message'))" onmouseleave="ord.utils.toggleValidateMessage($(this).siblings('.validate_warning_message'))" class="validate_warning_status fa fa-bell"></span>
+      <span class="validate_message"></span>
+      <span class="validate_warning_message"></span>
     </span>
 
     <div id="reaction_identifier_template" class="reaction_identifier" style="display: none;">

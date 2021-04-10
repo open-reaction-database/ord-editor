@@ -142,7 +142,7 @@ function validateReaction() {
   const reaction = unloadReaction();
   utils.validate(reaction, 'Reaction', node, validateNode);
   // Trigger all submessages to validate.
-  $('.validate_button:visible:not(#reaction_validate_button)').trigger('click');
+  $('.validate:visible:not(#reaction_validate)').trigger('click');
   // Render reaction as an HTML block.
   renderReaction(reaction);
 }
