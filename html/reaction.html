@@ -1160,7 +1160,7 @@ limitations under the License.
     </div>
 
     <span id="validate_template" style="display: none">
-      <span class="validate_button" aria-hidden="true">validate</span>
+      <button type="button" class="validate_button" aria-hidden="true">validate</button>
       <span class="validate_status-message">
         <span onmouseenter="ord.utils.toggleValidateMessage($(this).closest('.validate'), '.validate_message')" onmouseleave="ord.utils.toggleValidateMessage($(this).closest('.validate'), '.validate_message')" class="validate_status">unvalidated</span>
         <span onmouseenter="ord.utils.toggleValidateMessage($(this).closest('.validate'), '.validate_warning_message')" onmouseleave="ord.utils.toggleValidateMessage($(this).closest('.validate'), '.validate_warning_message')" class="validate_warning_status fa fa-bell"></span>
@@ -1200,7 +1200,7 @@ limitations under the License.
           <div class="data_text edittext"></div>
           <div class="data_uploader" data-token="" style="display: none;">
             <input class="data_uploader_chooser_file data_uploader_text" type="file">
-            <div class="data_uploader_chooser_button data_uploader_text">Choose...</div>
+            <button type="button" class="data_uploader_chooser_button data_uploader_text">Choose...</button>
             <div class="data_uploader_file_name data_uploader_text"></div>
             <button type="button" class="data_uploader_file_retrieve data_uploader_text" onclick="ord.uploads.retrieve($(this).closest('.data_uploader'));" style="display: none;">retrieve</button>
           </div>

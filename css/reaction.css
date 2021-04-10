@@ -15,7 +15,6 @@
  */
 body {
   padding: 100px 20px 20px;
-  font-family: Roboto;
 }
 #sections {
   margin-left: 168px;
@@ -59,33 +58,17 @@ body {
 .invalid {
   border: 2px solid red;
 }
-.add, #save, #download, .remove, .undo, #delete, .collapse, .validate_button, .validate_status, .validate_message, .validate_warning_status, .validate_warning_message, #toggle_autosave, .tooltip > .tooltip-inner {
+.collapse, .validate_status, .validate_message, .validate_warning_status, .validate_warning_message, .tooltip > .tooltip-inner {
   padding: 2px 4px;
   margin: 2px;
   display: inline-block;
   border-radius: 8px;
-}
-.add, #save, #download, .remove, .undo, #delete, .collapse, .validate_button {
-  cursor: pointer;
-}
-.add {
-  background-color: lightgreen;
-  margin-top: 12px;
-}
-#save, #download {
-  background-color: lightgray;
-}
-.remove, .undo, #delete {
-  background-color: pink;
 }
 .validate, .validate_status-message {
   display: inline-block;
 }
 .validate_status-message {
   padding-left: 4px;
-}
-.validate_button {
-  background-color: lightblue;
 }
 .validate_status, .validate_warning_status {
   background-color: lightgray;
@@ -170,9 +153,6 @@ fieldset {
 .data_uploader_chooser_button {
   width: 99px;
 }
-.data_uploader_chooser_file, .data_uploader_chooser_button {
-  cursor: pointer;
-}
 .data_uploader_chooser_button, .data_uploader_file_retrieve {
   text-align: center;
 }
@@ -234,21 +214,6 @@ fieldset {
 }
 #login:hover {
   border-color: black;
-}
-table.message td:first-child {
-  text-align: right;
-}
-.h2 {
-  font-size: 1.9em;
-}
-.h3 {
-  font-size: 1.6em;
-}
-.h4 {
-  font-size: 1.3em;
-}
-.h5 {
-  font-size: 1.1em;
 }
 .s2 {
   border: none;

@@ -70,10 +70,6 @@ function init(reaction) {
   initValidateHandlers();
   // Initailize tooltips.
   $('[data-toggle=\'tooltip\']').tooltip();
-  // Prevent tooltip pop-ups from blurring.
-  // (see github.com/twbs/bootstrap/issues/22610)
-  /** @suppress {undefinedVars} */
-  Popper.Defaults.modifiers.computeStyle.gpuAcceleration = false;
   // Show "save" on modifications.
   utils.listen($('body'));
   // Load Ketcher content into an element with attribute role="application".
