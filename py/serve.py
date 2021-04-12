@@ -250,19 +250,6 @@ def show_reaction_id(reaction_id):
                                  freeze=True)
 
 
-# @app.route('/reaction/id/<reaction_id>/proto')
-# def fetch_reaction_id(reaction_id):
-#     """Returns a serialized Reaction with the given ID."""
-#     client = ord_client.OrdClient()
-#     try:
-#         reaction = client.fetch_reaction(reaction_id)
-#         response = flask.make_response(reaction.SerializeToString())
-#         response.headers.set('Content-Type', 'application/protobuf')
-#         return response
-#     except AssertionError as error:
-#         flask.abort(flask.make_response(str(error), 404))
-
-
 @app.route('/reaction/download', methods=['POST'])
 def download_reaction():
     """Returns a pbtxt file parsed from POST data as an attachment."""
@@ -279,7 +266,8 @@ def download_reaction():
 def new_reaction(name):
     """Adds a new Reaction to the named Dataset and redirects to it."""
     dataset = get_dataset(name)
-    dataset.reactions.add()
+    reaction = dataset.reactions.add()
+    reaction.reaction_id = f'ord-{uuid.uuid4().hex}'
     put_dataset(name, dataset)
     return flask.redirect('/dataset/%s' % name)
 
@@ -410,6 +398,9 @@ def validate_reaction(message_name):
     """Receives a serialized Reaction protobuf and runs validations."""
     message = message_helpers.create_message(message_name)
     message.ParseFromString(flask.request.get_data())
+    if message == type(message)():
+        # Do not try to validate empty messages.
+        return json.dumps({'errors': [], 'warnings': []})
     options = validations.ValidationOptions(require_provenance=True)
     output = validations.validate_message(message,
                                           raise_on_error=False,

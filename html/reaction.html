@@ -57,17 +57,15 @@ limitations under the License.
         {% endif %}
       </div>
       <div id="dataset_context" style="font-weight: bold;"><a href="/dataset/{{ name }}">{{ name }}</a></div>
-      <div>Reaction ID <div id="reaction_id">{{ reaction_id }}</div></div>
+      <div>Reaction ID <div id="reaction_id"></div></div>
       <div id="header_buttons">
-        <div id="download" onclick="ord.reaction.commit(); ord.reaction.downloadReaction();">download</div>
+        <button type="button" id="download" onclick="ord.reaction.commit(); ord.reaction.downloadReaction();">download</button>
         <button type="button" class="add" onclick="location.href='/dataset/{{ name }}/clone/{{ index }}';">clone</button>
         <button type="button" class="remove" id="delete" style="float: none;" onclick="location.href='/dataset/{{ name }}/delete/reaction/{{ index }}';"><i class="far fa-trash-alt"></i></button>
-        <span>|</span>
         <button type="button" id="save" onclick="ord.reaction.commit();" style="visibility: hidden;">save</button>
         <button type="button" id="toggle_autosave" onclick="ord.utils.toggleAutosave()"></button>
-        <div class="validate" id="reaction_validate">
-          <button type="button" onclick="ord.reaction.validateReaction()">validate</button>
-        </div>
+        <button type="button" onclick="ord.reaction.validateReaction()">validate</button>
+        <div class="validate" id="reaction_validate"></div>
       </div>
     </div>
 
@@ -93,7 +91,7 @@ limitations under the License.
 
       <fieldset id="section_identifiers" class="section s2">
         <legend>
-          <span class="collapse"></span>
+          <span class="collapse show"></span>
           <span class="h2">Identifiers</span>
           <span data-toggle="tooltip" data-placement="right" title="Reaction identifiers define descriptions of the overall reaction.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
@@ -105,7 +103,7 @@ limitations under the License.
 
       <fieldset id="section_inputs" class="section s2">
         <legend>
-          <span class="collapse"></span>
+          <span class="collapse show"></span>
           <span class="h2">Inputs</span>
           <span data-toggle="tooltip" data-placement="right" title="Reaction inputs include every chemical added to the reaction vessel.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
@@ -116,7 +114,7 @@ limitations under the License.
             <div id="input_template" class="section input" style="display: none;">
               <fieldset class="s3">
                 <legend>
-                  <span class="collapse"></span>
+                  <span class="collapse show"></span>
                   <span class="h3">Input</span>
                   <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.input');"><i class="far fa-trash-alt"></i></button>
                   <div class="validate"></div>
@@ -134,7 +132,7 @@ limitations under the License.
                 </div>
                 <fieldset class="s4">
                   <legend>
-                    <span class="collapse"></span>
+                    <span class="collapse show"></span>
                     <span class="h4">Addition information</span>
                   </legend>
                   <table class="message">
@@ -177,7 +175,7 @@ limitations under the License.
                 </fieldset>
                 <fieldset class="s4">
                   <legend>
-                    <span class="collapse starts_collapsed"></span>
+                    <span class="collapse show starts_collapsed"></span>
                     <span class="h4">Flow rate</span>
                     <span data-toggle="tooltip" data-placement="right" title="Infusion rate when running reactions in continuous flow.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
@@ -195,18 +193,18 @@ limitations under the License.
             <div id="component_template" class="component" style="display: none;">
               <fieldset class="s4">
                 <legend>
-                  <span class="collapse"></span>
+                  <span class="collapse show"></span>
                   <span class="h4">Component</span>
                   <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.component');"><i class="far fa-trash-alt"></i></button>
                   <div class="validate"></div>
                 </legend>
                 <table class="component_role_limiting">
                   <tr><td>reaction role</td><td><div class="component_reaction_role selector" data-proto="ReactionRole_ReactionRoleType"></div></td></tr>
-                  <tr class="limiting_reactant"><td>limiting reactant?</td><td><div class="component_limiting optional_bool"></div></td></tr>
+                  <tr class="limiting_reactant"><td>limiting reactant</td><td><div class="component_limiting optional_bool"></div></td></tr>
                 </table>
                 <fieldset class="s5">
                   <legend>
-                    <span class="collapse"></span>
+                    <span class="collapse show"></span>
                     <span class="h5">Identifiers</span>
                     <span data-toggle="tooltip" data-placement="right" title="Compound identifiers should be structural (e.g., SMILES) whenever possible.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
@@ -223,14 +221,14 @@ limitations under the License.
                 </fieldset>
                 <fieldset class="amount s5">
                   <legend>
-                    <span class="collapse"></span>
+                    <span class="collapse show"></span>
                     <span class="h5">Amount</span>
                   </legend>
                   <div>
                     <input type="radio" class="amount_mass" value="mass" checked> mass
                     <input type="radio" class="amount_moles" value="moles"> moles
                     <input type="radio" class="amount_volume" value="volume"> volume
-                    <span class="includes_solutes">includes solutes?</span> <div class="includes_solutes optional_bool"></div>
+                    <span class="includes_solutes">includes solutes</span> <div class="includes_solutes optional_bool"></div>
                     <span style="padding-left:25px">value</span> <div class="amount_value edittext shorttext floattext"></div>
                     ± <div class="amount_precision edittext shorttext floattext"></div>
                     <div class="amount_units_mass selector" data-proto="Mass_MassUnit"></div>
@@ -240,7 +238,7 @@ limitations under the License.
                 </fieldset>
                 <fieldset class="preparations_fieldset s5">
                   <legend>
-                    <span class="collapse"></span>
+                    <span class="collapse show"></span>
                     <span class="h5">Preparations</span>
                   </legend>
                   <div class="preparations"></div>
@@ -248,7 +246,7 @@ limitations under the License.
                 </fieldset>
                 <fieldset class="source s5">
                   <legend>
-                    <span class="collapse starts_collapsed"></span>
+                    <span class="collapse show starts_collapsed"></span>
                     <span class="h5">Source</span>
                   </legend>
                   <table class="message">
@@ -259,7 +257,7 @@ limitations under the License.
                 </fieldset>
                 <fieldset class="s5">
                   <legend>
-                    <span class="collapse"></span>
+                    <span class="collapse show"></span>
                     <span class="h5">Features</span>
                     <span data-toggle="tooltip" data-placement="right" title="Additional chemical features (e.g., calculated descriptors) that are important to associate with this compound.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
@@ -274,7 +272,7 @@ limitations under the License.
             <div id="feature_template" class="feature" style="display: none;">
               <fieldset class="s5">
                 <legend>
-                  <span class="collapse"></span>
+                  <span class="collapse show"></span>
                   <span class="h5">Feature</span>
                   <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.feature');"><i class="far fa-trash-alt"></i></button>
                 </legend>
@@ -285,6 +283,8 @@ limitations under the License.
             </div>
 
             <div id="component_identifier_template" class="component_identifier" style="display: none; padding-bottom:10px">
+              <span class="h3">Identifier</span>
+              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.component_identifier');"><i class="far fa-trash-alt"></i></button>
               <table class="message">
                 <tr>
                   <td>value</td>
@@ -301,7 +301,6 @@ limitations under the License.
                   <td>details</td>
                   <td>
                     <div class="component_identifier_details edittext longtext"></div>
-                    <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.component_identifier');"><i class="far fa-trash-alt"></i></button>
                   </td>
                 </tr>
               </table>
@@ -318,7 +317,7 @@ limitations under the License.
             <div id="crude_template" class="crude" style="display: none;">
               <fieldset class="s4">
                 <legend>
-                  <span class="collapse"></span>
+                  <span class="collapse show"></span>
                   <span class="h4">Crude Component</span>
                   <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.crude');"><i class="far fa-trash-alt"></i></button>
                   <span data-toggle="tooltip" data-placement="right" title="Crude components use non-isolated material from another reaction as input. The reaction ID must correspond to another reaction in this same dataset.">
@@ -327,12 +326,12 @@ limitations under the License.
                 </legend>
                 <table class="message">
                   <tr><td>reaction ID</td><td><div class="crude_reaction edittext"></div></td></tr>
-                  <tr><td>includes workup?</td><td><div class="crude_includes_workup optional_bool"></div></td></tr>
-                  <tr><td>has derived amount?</td><td><div class="crude_has_derived optional_bool"></div></td></tr>
+                  <tr><td>includes workup</td><td><div class="crude_includes_workup optional_bool"></div></td></tr>
+                  <tr><td>has derived amount</td><td><div class="crude_has_derived optional_bool"></div></td></tr>
                 </table>
                 <fieldset class="amount s5">
                   <legend>
-                    <span class="collapse"></span>
+                    <span class="collapse show"></span>
                     <span class="h5">Amount</span>
                   </legend>
                   <div>
@@ -355,7 +354,7 @@ limitations under the License.
       <fieldset id="section_setup" class="section s2">
 
         <legend>
-          <span class="collapse"></span>
+          <span class="collapse show"></span>
           <span class="h2">Setup</span>
           <div class="validate"></div>
         </legend>
@@ -375,7 +374,7 @@ limitations under the License.
         </table>
         <fieldset class="s3">
           <legend>
-            <span class="collapse"></span>
+            <span class="collapse show"></span>
             <span class="h3">Vessel Preparation</span>
           </legend>
           <div id="setup_vessel_preparations">
@@ -389,7 +388,7 @@ limitations under the License.
         </fieldset>
         <fieldset class="s3">
           <legend>
-            <span class="collapse"></span>
+            <span class="collapse show"></span>
             <span class="h3">Vessel Attachments</span>
           </legend>
           <div id="setup_vessel_attachments">
@@ -405,7 +404,7 @@ limitations under the License.
           <div id="setup_code_template" class="setup_code" style="display: none;">
             <fieldset class="s3">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h3">Automation code</span>
                 <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.setup_code');"><i class="far fa-trash-alt"></i></button>
                 <span data-toggle="tooltip" data-placement="right" title="Details of the exact automation procedure required to perform the reaction.">
@@ -423,13 +422,13 @@ limitations under the License.
 
       <fieldset id="section_conditions" class="section s2">
         <legend>
-          <span class="collapse"></span>
+          <span class="collapse show"></span>
           <span class="h2">Conditions</span>
           <div class="validate"></div>
         </legend>
         <fieldset id="section_conditions_temperature" class="s3">
           <legend>
-            <span class="collapse"></span>
+            <span class="collapse show"></span>
             <span class="h3">Temperature</span>
             <div class="validate"></div>
           </legend>
@@ -445,7 +444,7 @@ limitations under the License.
             <div id="temperature_measurement_template" class="temperature_measurement" style="display: none;">
               <fieldset class="s4">
                 <legend>
-                  <span class="collapse"></span>
+                  <span class="collapse show"></span>
                   <span class="h4">Measurement</span>
                   <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.temperature_measurement');"><i class="far fa-trash-alt"></i></button>
                 </legend>
@@ -468,7 +467,7 @@ limitations under the License.
         </fieldset>
         <fieldset id="section_conditions_pressure" class="s3">
           <legend>
-            <span class="collapse"></span>
+            <span class="collapse show"></span>
             <span class="h3">Pressure</span>
             <div class="validate"></div>
           </legend>
@@ -486,7 +485,7 @@ limitations under the License.
             <div id="pressure_measurement_template" class="pressure_measurement" style="display: none;">
               <fieldset class="s4">
                 <legend>
-                  <span class="collapse"></span>
+                  <span class="collapse show"></span>
                   <span class="h4">Measurement</span>
                   <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.pressure_measurement');"><i class="far fa-trash-alt"></i></button>
                 </legend>
@@ -509,7 +508,7 @@ limitations under the License.
         </fieldset>
         <fieldset id="section_conditions_stirring" class="s3">
           <legend>
-            <span class="collapse"></span>
+            <span class="collapse show"></span>
             <span class="h3">Stirring</span>
             <div class="validate"></div>
           </legend>
@@ -523,7 +522,7 @@ limitations under the License.
         </fieldset>
         <fieldset id="section_conditions_illumination" class="s3">
           <legend>
-            <span class="collapse starts_collapsed"></span>
+            <span class="collapse show starts_collapsed"></span>
             <span class="h3">Illumination</span>
             <div class="validate"></div>
           </legend>
@@ -543,7 +542,7 @@ limitations under the License.
         </fieldset>
         <fieldset id="section_conditions_electro" class="s3">
           <legend>
-            <span class="collapse starts_collapsed"></span>
+            <span class="collapse show starts_collapsed"></span>
             <span class="h3">Electrochemistry</span>
             <div class="validate"></div>
           </legend>
@@ -571,7 +570,7 @@ limitations under the License.
             <div id="electro_measurement_template" class="electro_measurement" style="display: none;">
               <fieldset class="s4">
                 <legend>
-                  <span class="collapse"></span>
+                  <span class="collapse show"></span>
                   <span class="h4">Measurement</span>
                   <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.electro_measurement');"><i class="far fa-trash-alt"></i></button>
                 </legend>
@@ -600,7 +599,7 @@ limitations under the License.
         </fieldset>
         <fieldset id="section_conditions_flow" class="s3">
           <legend>
-            <span class="collapse starts_collapsed"></span>
+            <span class="collapse show starts_collapsed"></span>
             <span class="h3">Flow</span>
             <div class="validate"></div>
           </legend>
@@ -634,7 +633,7 @@ limitations under the License.
 
       <fieldset id="section_notes" class="section s2">
         <legend>
-          <span class="collapse"></span>
+          <span class="collapse show"></span>
           <span class="h2">Notes</span>
           <div class="validate"></div>
         </legend>
@@ -653,7 +652,7 @@ limitations under the License.
 
       <fieldset id="section_observations" class="section s2">
         <legend>
-          <span class="collapse"></span>
+          <span class="collapse show"></span>
           <span class="h2">Observations</span>
           <span data-toggle="tooltip" data-placement="right" title="Observations are time-stamped comments, images, etc. that are recorded during the reaction.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
@@ -663,7 +662,7 @@ limitations under the License.
           <div id="observation_template" class="observation" style="display: none;">
             <fieldset class="s3">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h3">Observation</span>
                 <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.observation');"><i class="far fa-trash-alt"></i></button>
                 <div class="validate"></div>
@@ -683,7 +682,7 @@ limitations under the License.
 
       <fieldset id="section_workups" class="section s2">
         <legend>
-          <span class="collapse"></span>
+          <span class="collapse show"></span>
           <span class="h2">Workups</span>
           <span data-toggle="tooltip" data-placement="right" title="Workup steps refer to any additions, purifications, or other operations after the 'reaction' stage prior to analysis.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
@@ -693,7 +692,7 @@ limitations under the License.
           <div id="workup_template" class="workup" style="display: none;">
           <fieldset class="s3">
             <legend>
-              <span class="collapse"></span>
+              <span class="collapse show"></span>
               <span class="h3">Workup</span>
               <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.workup');"><i class="far fa-trash-alt"></i></button>
               <div class="validate"></div>
@@ -714,7 +713,7 @@ limitations under the License.
             </div>
             <fieldset class="workup_amount s4">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h4">Aliquot amount</span>
                 <span data-toggle="tooltip" data-placement="right" title="The portion sampled from a reaction or mixture when the workup type is ALIQUOT. For ADDITION workup types, amounts should be described in each input component's amount field.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
@@ -771,7 +770,7 @@ limitations under the License.
           <div id="workup_temperature_measurement_template" class="workup_temperature_measurement" style="display: none;">
             <fieldset class="s5">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h5">Temperature measurement</span>
                 <button type="button" class="remove"  onclick="ord.utils.removeSlowly(this, '.workup_temperature_measurement');"><i class="far fa-trash-alt"></i></button>
               </legend>
@@ -796,7 +795,7 @@ limitations under the License.
 
       <fieldset id="section_outcomes" class="section s2">
         <legend>
-          <span class="collapse"></span>
+          <span class="collapse show"></span>
           <span class="h2">Outcomes</span>
           <span data-toggle="tooltip" data-placement="right" title="Outcomes record time-stamped analyses and, optionally, product characterization.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
@@ -808,7 +807,7 @@ limitations under the License.
           <div id="outcome_template" class="outcome" style="display: none;">
             <fieldset class="s3">
             <legend>
-              <span class="collapse"></span>
+              <span class="collapse show"></span>
               <span class="h3">Outcome</span>
               <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome');"><i class="far fa-trash-alt"></i></button>
               <div class="validate"></div>
@@ -842,7 +841,7 @@ limitations under the License.
           <div id="outcome_product_template" class="outcome_product" style="display: none;">
             <fieldset class="s4">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h4">Product</span>
                 <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome_product');"><i class="far fa-trash-alt"></i></button>
                 <div class="validate"></div>
@@ -850,7 +849,7 @@ limitations under the License.
               <table class="message">
               <tr><td>reaction role</td><td><div class="component_reaction_role selector" data-proto="ReactionRole_ReactionRoleType"></div></td></tr>
               <tr class="is_desired_product">
-                <td>desired product?
+                <td>desired product
                   <span data-toggle="tooltip" data-placement="right" title="Whether this is the desired product.">
                     <span class="fa fa-question-circle" aria-hidden="true"></span>
                   </span>
@@ -861,7 +860,7 @@ limitations under the License.
 
             <fieldset class="s5">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h5">Identifiers</span>
                 <span data-toggle="tooltip" data-placement="right" title="Compound identifiers should be structural (e.g., SMILES) whenever possible.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
@@ -880,7 +879,7 @@ limitations under the License.
             <div id="product_measurement_template" class="product_measurement" style="display: none;">
               <fieldset class="s6">
                 <legend>
-                  <span class="collapse"></span>
+                  <span class="collapse show"></span>
                   <span class="h6">Product Measurement</span>
                   <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.product_measurement');"><i class="far fa-trash-alt"></i></button>
                   <div class="validate"></div>
@@ -919,15 +918,15 @@ limitations under the License.
                   </tr>
                   </tbody>
                   <tr>
-                    <td class="product_measurement_section">uses internal standard?</td>
+                    <td class="product_measurement_section">uses internal standard</td>
                     <td class="product_measurement_section"><div class="product_measurement_uses_internal_standard optional_bool"></div></td>
                   </tr>
-                  <tr><td>is normalized?
+                  <tr><td>is normalized
                     <span data-toggle="tooltip" data-placement="right" title="Whether the reported measurement has already been normalized to the internal standard, if an internal standard was used.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
                     </span>
                   </td><td><div class="product_measurement_is_normalized optional_bool"></div></td></tr>
-                  <tr><td>uses authentic standard?</td><td><div class="product_measurement_uses_authentic_standard optional_bool"></div></td></tr>
+                  <tr><td>uses authentic standard</td><td><div class="product_measurement_uses_authentic_standard optional_bool"></div></td></tr>
                   <tr class="retention_time">
                     <td class="product_measurement_section">retention time</td>
                     <td class="product_measurement_section">
@@ -978,7 +977,7 @@ limitations under the License.
 
             <fieldset class="s5">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h5">Measurements</span>
                 <span data-toggle="tooltip" data-placement="right" title="Each ProductMeasurement describes a connection between this product and an Analysis. This includes information about how the identity of the product was confirmed. It also contains quantitative standardized performance metrics like quantitative yield as well as unstandardized (and unnormalized) metrics like an integrated UV peak area.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
@@ -992,7 +991,7 @@ limitations under the License.
 
             <fieldset class="s5">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h5">Isolated product characteristics</span>
               </legend>
               <div class="outcome_product_isolated_characteristics">
@@ -1006,7 +1005,7 @@ limitations under the License.
 
             <fieldset class="s5">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h5">Features</span>
                 <span data-toggle="tooltip" data-placement="right" title="Additional chemical features (e.g., calculated descriptors) that are important to associate with this compound.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
@@ -1021,7 +1020,7 @@ limitations under the License.
           <div id="outcome_analysis_template" class="outcome_analysis" style="display: none;">
             <fieldset class="s4">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h4">Analysis</span>
                 <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome_analysis');"><i class="far fa-trash-alt"></i></button>
                 <div class="validate"></div>
@@ -1033,7 +1032,7 @@ limitations under the License.
                 <tr><td>chmo_id</td><td><div class="outcome_analysis_chmo_id edittext"></div></td></tr>
                 <tr><td>instrument manufacturer</td><td><div class="outcome_analysis_manufacturer edittext"></div></td></tr>
                 <tr><td>instrument calibration date</td><td><div class="outcome_analysis_calibrated edittext"></div></td></tr>
-                <tr><td>is of isolated species?
+                <tr><td>is of isolated species
                   <span data-toggle="tooltip" data-placement="right" title="Whether this analysis is intended to be of an isolated species. If false or unspecified, the assumption is that it is of a crude product mixture (or a partially worked-up product mixture).">
                     <span class="fa fa-question-circle" aria-hidden="true"></span>
                   </span>
@@ -1053,7 +1052,7 @@ limitations under the License.
           <div id="outcome_data_template" class="outcome_data" style="display: none;">
             <fieldset class="s5">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h5">Analytical data</span>
                 <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome_data');"><i class="far fa-trash-alt"></i></button>
               </legend>
@@ -1069,7 +1068,7 @@ limitations under the License.
 
       <fieldset id="section_provenance" class="section s2">
         <legend>
-          <span class="collapse"></span>
+          <span class="collapse show"></span>
           <span class="h2">Provenance</span>
           <span data-toggle="tooltip" data-placement="right" title="Additional metadata about how this reaction was performed and originally reported.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
@@ -1093,7 +1092,7 @@ limitations under the License.
         <div id="provenance_created">
           <fieldset class="s3">
             <legend>
-              <span class="collapse"></span>
+              <span class="collapse show"></span>
               <span class="h3">Record creation</span>
               <span data-toggle="tooltip" data-placement="right" title="Details about the original creation of this reaction record.">
                 <span class="fa fa-question-circle" aria-hidden="true"></span>
@@ -1117,7 +1116,7 @@ limitations under the License.
           <div id="provenance_modified_template" class="provenance_modified" style="display: none;">
             <fieldset class="s3">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h3">Record modification</span>
                 <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.provenance_modified');"><i class="far fa-trash-alt"></i></button>
                 <span data-toggle="tooltip" data-placement="right" title="Details about subsequent modifications to this reaction record.">
@@ -1161,14 +1160,16 @@ limitations under the License.
       </div>
     </div>
 
-    <span id="validate_template" class="validate_status-message" style="display: none">
+    <div id="validate_template" class="validate_details" style="display: none;">
       <span onmouseenter="ord.utils.toggleValidateMessage($(this).siblings('.validate_message'))" onmouseleave="ord.utils.toggleValidateMessage($(this).siblings('.validate_message'))" class="validate_status fa fa-exclamation-triangle">unvalidated</span>
       <span onmouseenter="ord.utils.toggleValidateMessage($(this).siblings('.validate_warning_message'))" onmouseleave="ord.utils.toggleValidateMessage($(this).siblings('.validate_warning_message'))" class="validate_warning_status fa fa-bell"></span>
       <span class="validate_message"></span>
       <span class="validate_warning_message"></span>
-    </span>
+    </div>
 
     <div id="reaction_identifier_template" class="reaction_identifier" style="display: none;">
+      <span class="h3">Identifier</span>
+      <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.reaction_identifier');"><i class="far fa-trash-alt"></i></button>
       <table class="message">
         <tr>
           <td>value</td>
@@ -1185,7 +1186,6 @@ limitations under the License.
           <td>details</td>
           <td>
             <div class="reaction_identifier_details edittext"></div>
-            <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.reaction_identifier');"><i class="far fa-trash-alt"></i></button>
           </td>
         </tr>
       </table>

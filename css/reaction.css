@@ -67,10 +67,12 @@ button {
   display: inline-block;
   border-radius: 8px;
 }
-.validate, .validate_status-message {
+.validate, .validate_details {
   display: inline-block;
+  font-size: medium;
+  vertical-align: middle;
 }
-.validate_status-message {
+.validate_details {
   padding-left: 4px;
 }
 .validate_status, .validate_warning_status {
@@ -236,4 +238,12 @@ fieldset {
 }
 .product_measurement_section {
   padding-top: 20px;
+}
+#reaction_id {
+  display: inline-block;
+  font-family: monospace;
+  font-size: large;
+}
+.spacer {
+  width: 10px;
 }
