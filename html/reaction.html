@@ -65,7 +65,9 @@ limitations under the License.
         <span>|</span>
         <button type="button" id="save" onclick="ord.reaction.commit();" style="visibility: hidden;">save</button>
         <button type="button" id="toggle_autosave" onclick="ord.utils.toggleAutosave()"></button>
-        <button type="button" class="validate" id="reaction_validate" onclick="ord.reaction.validateReaction()"></button>
+        <div class="validate" id="reaction_validate">
+          <button type="button" onclick="ord.reaction.validateReaction()">validate</button>
+        </div>
       </div>
     </div>
 
@@ -117,7 +119,7 @@ limitations under the License.
                   <span class="collapse"></span>
                   <span class="h3">Input</span>
                   <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.input');"><i class="far fa-trash-alt"></i></button>
-                  <button type="button" class="validate" onclick="ord.inputs.validateInput($(this).closest('.input'))"></button>
+                  <div class="validate"></div>
                </legend>
                 <div>
                   <span class="input_name_label">name </span><span class="input_name edittext"></span>
@@ -196,7 +198,7 @@ limitations under the License.
                   <span class="collapse"></span>
                   <span class="h4">Component</span>
                   <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.component');"><i class="far fa-trash-alt"></i></button>
-                  <button type="button" class="validate" onclick="ord.compounds.validateCompound($(this).closest('.component'))"></button>
+                  <div class="validate"></div>
                 </legend>
                 <table class="component_role_limiting">
                   <tr><td>reaction role</td><td><div class="component_reaction_role selector" data-proto="ReactionRole_ReactionRoleType"></div></td></tr>
@@ -355,7 +357,7 @@ limitations under the License.
         <legend>
           <span class="collapse"></span>
           <span class="h2">Setup</span>
-          <button type="button" class="validate" onclick="ord.setups.validateSetup($(this).closest('#section_setup'))"></button>
+          <div class="validate"></div>
         </legend>
         <table class="message">
           <tr><td>vessel</td><td><div id="setup_vessel_type" class="selector" data-proto="Vessel_VesselType"></div>
@@ -423,13 +425,13 @@ limitations under the License.
         <legend>
           <span class="collapse"></span>
           <span class="h2">Conditions</span>
-          <button type="button" class="validate"  onclick="ord.conditions.validateConditions($('#section_conditions'))"></button>
+          <div class="validate"></div>
         </legend>
         <fieldset id="section_conditions_temperature" class="s3">
           <legend>
             <span class="collapse"></span>
             <span class="h3">Temperature</span>
-            <button type="button" class="validate"  onclick="ord.temperature.validateTemperature($(this).closest('#section_conditions_temperature'))"></button>
+            <div class="validate"></div>
           </legend>
           <table class="message">
             <tr><td>control</td><td><div id="temperature_control" class="selector" data-proto="TemperatureConditions_TemperatureControl_TemperatureControlType"></div>
@@ -468,7 +470,7 @@ limitations under the License.
           <legend>
             <span class="collapse"></span>
             <span class="h3">Pressure</span>
-            <button type="button" class="validate"  onclick="ord.pressure.validatePressure($(this).closest('#section_conditions_pressure'))"></button>
+            <div class="validate"></div>
           </legend>
             <table class="message">
               <tr><td>control</td><td><div id="pressure_control_type" class="selector" data-proto="PressureConditions_PressureControl_PressureControlType"></div>
@@ -509,7 +511,7 @@ limitations under the License.
           <legend>
             <span class="collapse"></span>
             <span class="h3">Stirring</span>
-            <button type="button" class="validate"  onclick="ord.stirring.validateStirring($(this).closest('#section_conditions_stirring'))"></button>
+            <div class="validate"></div>
           </legend>
           <table class="message">
             <tr><td>method</td><td><div id="stirring_method_type" class="selector" data-proto="StirringConditions_StirringMethodType"></div>
@@ -523,7 +525,7 @@ limitations under the License.
           <legend>
             <span class="collapse starts_collapsed"></span>
             <span class="h3">Illumination</span>
-            <button type="button" class="validate"  onclick="ord.illumination.validateIllumination($(this).closest('#section_conditions_illumination'))"></button>
+            <div class="validate"></div>
           </legend>
           <table class="message">
             <tr><td>type</td><td><div id="illumination_type" class="selector" data-proto="IlluminationConditions_IlluminationType"></div>
@@ -543,7 +545,7 @@ limitations under the License.
           <legend>
             <span class="collapse starts_collapsed"></span>
             <span class="h3">Electrochemistry</span>
-            <button type="button" class="validate"  onclick="ord.electro.validateElectro($(this).closest('#section_conditions_electro'))"></button>
+            <div class="validate"></div>
           </legend>
           <table class="message">
             <tr><td>type</td><td><div id="electro_type" class="selector" data-proto="ElectrochemistryConditions_ElectrochemistryType"></div>
@@ -600,7 +602,7 @@ limitations under the License.
           <legend>
             <span class="collapse starts_collapsed"></span>
             <span class="h3">Flow</span>
-            <button type="button" class="validate"  onclick="ord.flows.validateFlow($(this).closest('#section_conditions_flow'))"></button>
+            <div class="validate"></div>
           </legend>
           <table class="message">
             <tr><td>type</td><td><div id="flow_type" class="selector" data-proto="FlowConditions_FlowType"></div>
@@ -634,7 +636,7 @@ limitations under the License.
         <legend>
           <span class="collapse"></span>
           <span class="h2">Notes</span>
-          <button type="button" class="validate"  onclick="ord.notes.validateNotes($('#section_notes'))"></button>
+          <div class="validate"></div>
         </legend>
         <table class="message">
           <tr><td>is heterogeneous</td><td><div id="notes_heterogeneous" class="optional_bool"></div></td></tr>
@@ -664,7 +666,7 @@ limitations under the License.
                 <span class="collapse"></span>
                 <span class="h3">Observation</span>
                 <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.observation');"><i class="far fa-trash-alt"></i></button>
-                <button type="button" class="validate" onclick="ord.observations.validateObservation($(this).closest('.observation'))"></button>
+                <div class="validate"></div>
               </legend>
               <table class="message">
                 <tr><td>time</td><td><div class="observation_time_value edittext shorttext floattext"></div>
@@ -694,7 +696,7 @@ limitations under the License.
               <span class="collapse"></span>
               <span class="h3">Workup</span>
               <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.workup');"><i class="far fa-trash-alt"></i></button>
-              <button type="button" class="validate"  onclick="ord.workups.validateWorkup($(this).closest('.workup'))"></button>
+              <div class="validate"></div>
             </legend>
             <table class="message">
               <tr><td>type</td><td><div class="workup_type selector" data-proto="ReactionWorkup_WorkupType"></div></td></tr>
@@ -809,7 +811,7 @@ limitations under the License.
               <span class="collapse"></span>
               <span class="h3">Outcome</span>
               <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome');"><i class="far fa-trash-alt"></i></button>
-              <button type="button" class="validate"  onclick="ord.outcomes.validateOutcome($(this).closest('.outcome'))"></button>
+              <div class="validate"></div>
             </legend>
             <table class="message">
               <tr><td>time
@@ -843,7 +845,7 @@ limitations under the License.
                 <span class="collapse"></span>
                 <span class="h4">Product</span>
                 <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome_product');"><i class="far fa-trash-alt"></i></button>
-                <button type="button" class="validate"  onclick="ord.products.validateProduct($(this).closest('.outcome_product'))"></button>
+                <div class="validate"></div>
               </legend>
               <table class="message">
               <tr><td>reaction role</td><td><div class="component_reaction_role selector" data-proto="ReactionRole_ReactionRoleType"></div></td></tr>
@@ -881,7 +883,7 @@ limitations under the License.
                   <span class="collapse"></span>
                   <span class="h6">Product Measurement</span>
                   <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.product_measurement');"><i class="far fa-trash-alt"></i></button>
-                  <button type="button" class="validate" onclick="ord.products.validateMeasurement($(this).closest('.product_measurement'))"></button>
+                  <div class="validate"></div>
                 </legend>
                 <table class="message product_measurement_value_type">
                   <tr>
@@ -1022,7 +1024,7 @@ limitations under the License.
                 <span class="collapse"></span>
                 <span class="h4">Analysis</span>
                 <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome_analysis');"><i class="far fa-trash-alt"></i></button>
-                <button type="button" class="validate"  onclick="ord.outcomes.validateAnalysis($(this).closest('.outcome_analysis'))" ></button>
+                <div class="validate"></div>
               </legend>
               <table class="message">
                 <tr><td>name</td><td><div class="outcome_analysis_name edittext"></div></td></tr>
@@ -1072,7 +1074,7 @@ limitations under the License.
           <span data-toggle="tooltip" data-placement="right" title="Additional metadata about how this reaction was performed and originally reported.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
           </span>
-          <button type="button" class="validate" onclick="ord.provenance.validateProvenance($('#section_provenance'))"></button>
+          <div class="validate"></div>
         </legend>
         <div id="provenance_experimenter">
           <table class="message">

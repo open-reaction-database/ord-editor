@@ -348,9 +348,8 @@ function initCollapse(node) {
  * @param {!jQuery} oldNode Target node for the new validation elements.
  */
 function initValidateNode(oldNode) {
-  oldNode.text('validate');
   const newNode = $('#validate_template').clone();
-  oldNode.parent().append(newNode.children());
+  oldNode.append(newNode.children());
 }
 
 /**
@@ -468,6 +467,8 @@ function addChangeHandler(node, handler) {
   node.on('change', '.selector, .optional_bool, input', handler);
   // For add buttons
   node.on('click', '.add', handler);
+  // For validate divs.
+  node.on('click', '.validate', handler);
 }
 
 /**
@@ -500,8 +501,8 @@ function validate(message, messageTypeString, node, validateNode) {
       const invalidName = $(this).attr('class').split(' ')[0];
       errors.push('Value for ' + invalidName + ' is invalid');
     });
-    const statusNode = validateNode.siblings('.validate_status');
-    const messageNode = validateNode.siblings('.validate_message');
+    const statusNode = $('.validate_status', validateNode);
+    const messageNode = $('.validate_message', validateNode);
     statusNode.removeClass('fa-check');
     statusNode.removeClass('fa-exclamation-triangle');
     statusNode.css('backgroundColor', undefined);
@@ -525,8 +526,8 @@ function validate(message, messageTypeString, node, validateNode) {
       messageNode.css('backgroundColor', '');
       messageNode.css('visibility', 'hidden');
     }
-    const warningStatusNode = validateNode.siblings('.validate_warning_status');
-    const warningMessageNode = validateNode.siblings('.validate_warning_message');
+    const warningStatusNode = $('.validate_warning_status', validateNode);
+    const warningMessageNode = $('.validate_warning_message', validateNode);
     if (warnings.length) {
       warningStatusNode.show();
       warningStatusNode.text(' ' + warnings.length);
