@@ -61,7 +61,7 @@ limitations under the License.
       <div id="header_buttons">
         <div id="download" onclick="ord.reaction.commit(); ord.reaction.downloadReaction();">download</div>
         <button type="button" class="add" onclick="location.href='/dataset/{{ name }}/clone/{{ index }}';">clone</button>
-        <button type="button" class="remove" id="delete" style="float: none;" onclick="location.href='/dataset/{{ name }}/delete/reaction/{{ index }}';">delete</button>
+        <button type="button" class="remove" id="delete" style="float: none;" onclick="location.href='/dataset/{{ name }}/delete/reaction/{{ index }}';"><i class="far fa-trash-alt"></i></button>
         <span>|</span>
         <button type="button" id="save" onclick="ord.reaction.commit();" style="visibility: hidden;">save</button>
         <button type="button" id="toggle_autosave" onclick="ord.utils.toggleAutosave()"></button>
@@ -116,7 +116,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h3">Input</span>
-                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.input');">remove</button>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.input');"><i class="far fa-trash-alt"></i></button>
                   <button type="button" class="validate" onclick="ord.inputs.validateInput($(this).closest('.input'))"></button>
                </legend>
                 <div>
@@ -195,7 +195,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h4">Component</span>
-                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.component');">remove</button>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.component');"><i class="far fa-trash-alt"></i></button>
                   <button type="button" class="validate" onclick="ord.compounds.validateCompound($(this).closest('.component'))"></button>
                 </legend>
                 <table class="component_role_limiting">
@@ -274,7 +274,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h5">Feature</span>
-                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.feature');">remove</button>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.feature');"><i class="far fa-trash-alt"></i></button>
                 </legend>
                 <table class="message">
                   <tr><td>name</td><td><div class="feature_name edittext"></div></td></tr>
@@ -299,7 +299,7 @@ limitations under the License.
                   <td>details</td>
                   <td>
                     <div class="component_identifier_details edittext longtext"></div>
-                    <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.component_identifier');">remove</button>
+                    <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.component_identifier');"><i class="far fa-trash-alt"></i></button>
                   </td>
                 </tr>
               </table>
@@ -310,7 +310,7 @@ limitations under the License.
               details <div class="component_compound_preparation_details edittext"></div>
               <span class="component_compound_preparation_reaction_id">reaction ID</span>
               <div class="component_compound_preparation_reaction component_compound_preparation_reaction_id edittext"></div>
-              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.component_preparation');">remove</button>
+              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.component_preparation');"><i class="far fa-trash-alt"></i></button>
             </div>
 
             <div id="crude_template" class="crude" style="display: none;">
@@ -318,7 +318,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h4">Crude Component</span>
-                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.crude');">remove</button>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.crude');"><i class="far fa-trash-alt"></i></button>
                   <span data-toggle="tooltip" data-placement="right" title="Crude components use non-isolated material from another reaction as input. The reaction ID must correspond to another reaction in this same dataset.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
                     </span>
@@ -380,7 +380,7 @@ limitations under the License.
             <div id="setup_vessel_preparation_template" class="setup_vessel_preparation" style="display: none;">
               preparation<div class="setup_vessel_preparation_type selector" data-proto="VesselPreparation_VesselPreparationType"></div>
               details <div class="setup_vessel_preparation_details edittext"></div>
-              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.setup_vessel_preparation');">remove</button>
+              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.setup_vessel_preparation');"><i class="far fa-trash-alt"></i></button>
             </div>
           </div>
           <button type="button" class="add" onclick="ord.setups.addVesselPreparation();">+ add preparation</button>
@@ -394,7 +394,7 @@ limitations under the License.
             <div id="setup_vessel_attachment_template" class="setup_vessel_attachment" style="display: none;">
               attachment<div class="setup_vessel_attachment_type selector" data-proto="VesselAttachment_VesselAttachmentType"></div>
               details <div class="setup_vessel_attachment_details edittext"></div>
-              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.setup_vessel_attachment');">remove</button>
+              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.setup_vessel_attachment');"><i class="far fa-trash-alt"></i></button>
             </div>
           </div>
           <button type="button" class="add" onclick="ord.setups.addVesselAttachment();">+ add attachment</button>
@@ -405,7 +405,7 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h3">Automation code</span>
-                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.setup_code');">remove</button>
+                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.setup_code');"><i class="far fa-trash-alt"></i></button>
                 <span data-toggle="tooltip" data-placement="right" title="Details of the exact automation procedure required to perform the reaction.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
                 </span>
@@ -445,7 +445,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h4">Measurement</span>
-                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.temperature_measurement');">remove</button>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.temperature_measurement');"><i class="far fa-trash-alt"></i></button>
                 </legend>
                 <table class="message">
                   <tr><td>type</td><td><div class="temperature_measurement_type selector" data-proto="TemperatureConditions_Measurement_MeasurementType"></div></td></tr>
@@ -486,7 +486,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h4">Measurement</span>
-                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.pressure_measurement');">remove</button>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.pressure_measurement');"><i class="far fa-trash-alt"></i></button>
                 </legend>
                 <table class="message">
                   <tr><td>type</td><td><div class="pressure_measurement_type selector" data-proto="PressureConditions_Measurement_MeasurementType"></div></td></tr>
@@ -571,7 +571,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h4">Measurement</span>
-                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.electro_measurement');">remove</button>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.electro_measurement');"><i class="far fa-trash-alt"></i></button>
                 </legend>
                 <input type="radio" class="electro_measurement_current" value="current" checked> current
                 <input type="radio" class="electro_measurement_voltage" value="voltage"> voltage
@@ -663,7 +663,7 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h3">Observation</span>
-                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.observation');">remove</button>
+                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.observation');"><i class="far fa-trash-alt"></i></button>
                 <button type="button" class="validate" onclick="ord.observations.validateObservation($(this).closest('.observation'))"></button>
               </legend>
               <table class="message">
@@ -693,7 +693,7 @@ limitations under the License.
             <legend>
               <span class="collapse"></span>
               <span class="h3">Workup</span>
-              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.workup');">remove</button>
+              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.workup');"><i class="far fa-trash-alt"></i></button>
               <button type="button" class="validate"  onclick="ord.workups.validateWorkup($(this).closest('.workup'))"></button>
             </legend>
             <table class="message">
@@ -771,7 +771,7 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h5">Temperature measurement</span>
-                <button type="button" class="remove"  onclick="ord.utils.removeSlowly(this, '.workup_temperature_measurement');">remove</button>
+                <button type="button" class="remove"  onclick="ord.utils.removeSlowly(this, '.workup_temperature_measurement');"><i class="far fa-trash-alt"></i></button>
               </legend>
               <table class="message">
                 <tr><td>type</td><td><div class="workup_temperature_measurement_type selector" data-proto="TemperatureConditions_Measurement_MeasurementType"></div></td></tr>
@@ -808,7 +808,7 @@ limitations under the License.
             <legend>
               <span class="collapse"></span>
               <span class="h3">Outcome</span>
-              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome');">remove</button>
+              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome');"><i class="far fa-trash-alt"></i></button>
               <button type="button" class="validate"  onclick="ord.outcomes.validateOutcome($(this).closest('.outcome'))"></button>
             </legend>
             <table class="message">
@@ -842,7 +842,7 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h4">Product</span>
-                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome_product');">remove</button>
+                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome_product');"><i class="far fa-trash-alt"></i></button>
                 <button type="button" class="validate"  onclick="ord.products.validateProduct($(this).closest('.outcome_product'))"></button>
               </legend>
               <table class="message">
@@ -880,7 +880,7 @@ limitations under the License.
                 <legend>
                   <span class="collapse"></span>
                   <span class="h6">Product Measurement</span>
-                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.product_measurement');">remove</button>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.product_measurement');"><i class="far fa-trash-alt"></i></button>
                   <button type="button" class="validate" onclick="ord.products.validateMeasurement($(this).closest('.product_measurement'))"></button>
                 </legend>
                 <table class="message product_measurement_value_type">
@@ -1021,7 +1021,7 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h4">Analysis</span>
-                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome_analysis');">remove</button>
+                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome_analysis');"><i class="far fa-trash-alt"></i></button>
                 <button type="button" class="validate"  onclick="ord.outcomes.validateAnalysis($(this).closest('.outcome_analysis'))" ></button>
               </legend>
               <table class="message">
@@ -1053,7 +1053,7 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h5">Analytical data</span>
-                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome_data');">remove</button>
+                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome_data');"><i class="far fa-trash-alt"></i></button>
               </legend>
               <table class="message">
                 <tr><td>name</td><td><div class="outcome_data_name edittext"></div></td></tr>
@@ -1117,7 +1117,7 @@ limitations under the License.
               <legend>
                 <span class="collapse"></span>
                 <span class="h3">Record modification</span>
-                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.provenance_modified');">remove</button>
+                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.provenance_modified');"><i class="far fa-trash-alt"></i></button>
                 <span data-toggle="tooltip" data-placement="right" title="Details about subsequent modifications to this reaction record.">
                 <span class="fa fa-question-circle" aria-hidden="true"></span>
               </span>
@@ -1183,7 +1183,7 @@ limitations under the License.
           <td>details</td>
           <td>
             <div class="reaction_identifier_details edittext"></div>
-            <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.reaction_identifier');">remove</button>
+            <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.reaction_identifier');"><i class="far fa-trash-alt"></i></button>
           </td>
         </tr>
       </table>
