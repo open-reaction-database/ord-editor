@@ -82,6 +82,13 @@ button {
   visibility: hidden;
   max-width: 500px;
 }
+.validate_status {
+  color: red;
+  display: none;
+}
+.validate_message {
+  background-color: pink;
+}
 .validate_warning_status {
   color: yellow;
   display: none;

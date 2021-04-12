@@ -503,14 +503,10 @@ function validate(message, messageTypeString, node, validateNode) {
     });
     const statusNode = $('.validate_status', validateNode);
     const messageNode = $('.validate_message', validateNode);
-    statusNode.removeClass('fa-check');
-    statusNode.removeClass('fa-exclamation-triangle');
-    statusNode.css('backgroundColor', undefined);
-    statusNode.text('');
     if (errors.length) {
-      statusNode.addClass('fa fa-exclamation-triangle');
-      statusNode.css('color', 'red');
+      statusNode.show();
       statusNode.text(' ' + errors.length);
+      messageNode.show();
       messageNode.html('<ul></ul>');
       for (let index = 0; index < errors.length; index++) {
         const error = errors[index];
@@ -518,13 +514,10 @@ function validate(message, messageTypeString, node, validateNode) {
         errorNode.text(error);
         $('ul', messageNode).append(errorNode);
       }
-      messageNode.css('backgroundColor', 'pink');
     } else {
-      statusNode.addClass('fa fa-check');
-      statusNode.css('color', 'green');
+      statusNode.hide();
       messageNode.html('');
-      messageNode.css('backgroundColor', '');
-      messageNode.css('visibility', 'hidden');
+      messageNode.hide();
     }
     const warningStatusNode = $('.validate_warning_status', validateNode);
     const warningMessageNode = $('.validate_warning_message', validateNode);
