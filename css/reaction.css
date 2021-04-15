@@ -18,6 +18,7 @@ body {
 }
 #sections {
   margin-left: 168px;
+  width: 800px;
 }
 .edittext, .selector, .optional_bool, .analysis_key_selector {
   padding: 2px;
@@ -106,6 +107,14 @@ button {
 }
 fieldset {
   margin-top: 24px;
+  margin-inline-start: 2px;
+  margin-inline-end: 2px;
+  padding-block-start: 0.35em;
+  padding-inline-start: 0.75em;
+  padding-inline-end: 0.75em;
+  padding-block-end: 0.625em;
+  min-inline-size: min-content;
+  border-width: 2px;
 }
 #header {
   background: white;
@@ -226,15 +235,15 @@ fieldset {
 }
 .s3 {
   border-style: none none none solid;
-  border-color: lightgray;
+  border-color: #e6e6e6;
 }
 .s4 {
   border-style: none none none solid;
-  border-color: gray;
+  border-color: #d6d6d6;
 }
 .s5 {
-  border-style: solid none none solid;
-  border-color: black;
+  border-style: none none none solid;
+  border-color: #c6c6c6;
 }
 .product_measurement_section {
   padding-top: 20px;

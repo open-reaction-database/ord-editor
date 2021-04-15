@@ -152,6 +152,8 @@ function clickSave() {
   if (saveButton.css('visibility') === 'visible' &&
       saveButton.text() === 'save') {
     saveButton.trigger('click');
+    // Validate on autosave.
+    $('#reaction_validate').trigger('click');
   }
 }
 

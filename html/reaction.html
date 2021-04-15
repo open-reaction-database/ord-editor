@@ -28,11 +28,7 @@ limitations under the License.
     <link rel="stylesheet" href="/css/reaction.css">
     <link rel="stylesheet" href="/css/ketcher-bootstrap.css">
     <title>
-    {% if reaction_id %}
-        {{ reaction_id }}
-    {% else %}
-        {{ name }}:{{ index }}
-    {% endif %}
+    {{ reaction_id }}
     </title>
   </head>
 
@@ -56,8 +52,19 @@ limitations under the License.
         </script>
         {% endif %}
       </div>
-      <div id="dataset_context" style="font-weight: bold;"><a href="/dataset/{{ name }}">{{ name }}</a></div>
-      <div>Reaction ID <div id="reaction_id"></div></div>
+      <nav id="breadcrumbs" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="/">Home</a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="/dataset/{{ name }}">{{ name }}</a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <span id="reaction_id"></span>
+          </li>
+        </ol>
+      </nav>
       <div id="header_buttons">
         <button type="button" id="download" onclick="ord.reaction.commit(); ord.reaction.downloadReaction();">download</button>
         <button type="button" class="add" onclick="location.href='/dataset/{{ name }}/clone/{{ index }}';">clone</button>
@@ -372,6 +379,24 @@ limitations under the License.
           <tr><td>environment</td><td><div id="setup_environment_type" class="selector" data-proto="ReactionSetup_ReactionEnvironment_ReactionEnvironmentType"></div>
                                                     details <div id="setup_environment_details" class="edittext"></div></td></tr>
         </table>
+        <div id="setup_codes">
+          <div id="setup_code_template" class="setup_code" style="display: none;">
+            <fieldset class="s3">
+              <legend>
+                <span class="collapse show"></span>
+                <span class="h3">Automation code</span>
+                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.setup_code');"><i class="far fa-trash-alt"></i></button>
+                <span data-toggle="tooltip" data-placement="right" title="Details of the exact automation procedure required to perform the reaction.">
+                  <span class="fa fa-question-circle" aria-hidden="true"></span>
+                </span>
+              </legend>
+              <table class="message">
+                <tr><td>name</td><td><div class="setup_code_name edittext"></div></td></tr>
+              </table>
+            </fieldset>
+          </div>
+        </div>
+        <button type="button" class="add" onclick="ord.codes.addCode();">+ add automation code</button>
         <fieldset class="s3">
           <legend>
             <span class="collapse show"></span>
@@ -400,24 +425,6 @@ limitations under the License.
           </div>
           <button type="button" class="add" onclick="ord.setups.addVesselAttachment();">+ add attachment</button>
         </fieldset>
-        <div id="setup_codes">
-          <div id="setup_code_template" class="setup_code" style="display: none;">
-            <fieldset class="s3">
-              <legend>
-                <span class="collapse show"></span>
-                <span class="h3">Automation code</span>
-                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.setup_code');"><i class="far fa-trash-alt"></i></button>
-                <span data-toggle="tooltip" data-placement="right" title="Details of the exact automation procedure required to perform the reaction.">
-                  <span class="fa fa-question-circle" aria-hidden="true"></span>
-                </span>
-              </legend>
-              <table class="message">
-                <tr><td>name</td><td><div class="setup_code_name edittext"></div></td></tr>
-              </table>
-            </fieldset>
-          </div>
-        </div>
-        <button type="button" class="add" onclick="ord.codes.addCode();">+ add automation code</button>
       </fieldset>
 
       <fieldset id="section_conditions" class="section s2">
