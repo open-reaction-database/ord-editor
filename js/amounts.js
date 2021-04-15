@@ -32,31 +32,70 @@ const MolesUnit = goog.require('proto.ord.Moles.MolesUnit');
 const Volume = goog.require('proto.ord.Volume');
 const VolumeUnit = goog.require('proto.ord.Volume.VolumeUnit');
 
-// Freely create radio button groups by generating new input names.
-let radioGroupCounter = 0;
-
 /**
- * Initializes the radio buttons and selectors for an Amount section.
+ * Initializes the selector for an Amount section.
  * @param {!jQuery} node The parent div containing the Amount section.
  */
 function init(node) {
-  const amountButtons = $('.amount input', node);
-  amountButtons.attr('name', 'amount_' + radioGroupCounter++);
-  amountButtons.on('change', function() {
-    $('.amount .selector', node).hide();
-    if (this.value === 'mass') {
-      $('.amount_units_mass', node).show();
-      $('.includes_solutes', node).hide();
+  const select = $('select.amount_units', node);
+  select.append('<option value="UNSPECIFIED" selected>UNSPECIFIED</option>');
+  if (select.hasClass('mass')) {
+    select.append('<option disabled>-- Mass --</option>');
+    for (let key in MassUnit) {
+      if (key === 'UNSPECIFIED') {
+        continue;
+      }
+      const option = $('<option>').text(key);
+      option.attr('value', key);
+      select.append(option);
     }
-    if (this.value === 'moles') {
-      $('.amount_units_moles', node).show();
-      $('.includes_solutes', node).hide();
+  }
+  if (select.hasClass('moles')) {
+    select.append('<option disabled>-- Moles --</option>');
+    for (let key in MolesUnit) {
+      if (key === 'UNSPECIFIED') {
+        continue;
+      }
+      const option = $('<option>').text(key);
+      option.attr('value', key);
+      select.append(option);
     }
-    if (this.value === 'volume') {
-      $('.amount_units_volume', node).show();
+  }
+  if (select.hasClass('volume')) {
+    select.append('<option disabled>-- Volume --</option>');
+    for (let key in VolumeUnit) {
+      if (key === 'UNSPECIFIED') {
+        continue;
+      }
+      const option = $('<option>').text(key);
+      option.attr('value', key);
+      select.append(option);
+    }
+  }
+  select.on('change', function() {
+    const value = utils.getSelectorText($(this)[0]);
+    if (VolumeUnit[value]) {
       $('.includes_solutes', node).show().css('display', 'inline-block');
+    } else {
+      $('.includes_solutes', node).hide();
     }
   });
+}
+
+/**
+ * Finds the first enum entry with the given value (see
+ * https://stackoverflow.com/a/4286926).
+ * @param {*} units Proto enum.
+ * @param {number} value The value to find.
+ * @returns {string|null}
+ */
+function enumFromValue(units, value) {
+  for (let key in units) {
+    if (units[key] === value) {
+      return key;
+    }
+  }
+  return null;
 }
 
 /**
@@ -70,48 +109,40 @@ function load(node, amount) {
     return;
   }
   const amountNode = $('.amount', node).first();
-  $('.amount_units_mass', node).hide();
-  $('.amount_units_moles', node).hide();
-  $('.amount_units_volume', node).hide();
+  const select = $('select.amount_units', amountNode);
   $('.includes_solutes', node).hide();
   if (amount.hasMass()) {
-    $('input[value=\'mass\']', amountNode).trigger('click');
-    if (amount.getMass().hasValue()) {
-      $('.amount_value', node).text(amount.getMass().getValue());
+    const mass = amount.getMass();
+    if (mass.hasValue()) {
+      $('.amount_value', node).text(mass.getValue());
     }
-    if (amount.getMass().hasPrecision()) {
-      $('.amount_precision', node).text(amount.getMass().getPrecision());
+    if (mass.hasPrecision()) {
+      $('.amount_precision', node).text(mass.getPrecision());
     }
-    $('.amount_units_mass', node).show();
-    utils.setSelector(
-        $('.amount_units_mass', amountNode), amount.getMass().getUnits());
+    select.val(enumFromValue(MassUnit, mass.getUnits()));
   } else if (amount.hasMoles()) {
-    $('input[value=\'moles\']', amountNode).trigger('click');
-    if (amount.getMoles().hasValue()) {
-      $('.amount_value', node).text(amount.getMoles().getValue());
+    const moles = amount.getMoles();
+    if (moles.hasValue()) {
+      $('.amount_value', node).text(moles.getValue());
     }
-    if (amount.getMoles().hasPrecision()) {
-      $('.amount_precision', node).text(amount.getMoles().getPrecision());
+    if (moles.hasPrecision()) {
+      $('.amount_precision', node).text(moles.getPrecision());
     }
-    $('.amount_units_moles', node).show();
-    utils.setSelector(
-        $('.amount_units_moles', amountNode), amount.getMoles().getUnits());
+    select.val(enumFromValue(MolesUnit, moles.getUnits()));
   } else if (amount.hasVolume()) {
-    $('input[value=\'volume\']', amountNode).trigger('click');
-    if (amount.getVolume().hasValue()) {
-      $('.amount_value', node).text(amount.getVolume().getValue());
+    const volume = amount.getVolume();
+    if (volume.hasValue()) {
+      $('.amount_value', node).text(volume.getValue());
     }
-    if (amount.getVolume().hasPrecision()) {
-      $('.amount_precision', node).text(amount.getVolume().getPrecision());
+    if (volume.hasPrecision()) {
+      $('.amount_precision', node).text(volume.getPrecision());
     }
-    $('.amount_units_volume', node).show();
+    select.val(enumFromValue(VolumeUnit, volume.getUnits()));
     $('.includes_solutes', node).show().css('display', 'inline-block');
     const solutes = amount.hasVolumeIncludesSolutes() ?
         amount.getVolumeIncludesSolutes() :
         null;
     utils.setOptionalBool($('.includes_solutes.optional_bool', node), solutes);
-    utils.setSelector(
-        $('.amount_units_volume', amountNode), amount.getVolume().getUnits());
   }
 }
 
@@ -125,15 +156,45 @@ function unload(node) {
   // NOTE(kearnes): Take the closest amount section; there may be others
   // nested deeper (e.g. in ProductMeasurement fields under a ReactionProduct).
   node = $('.amount', node).first();
-  const mass = unloadMass(node);
-  const moles = unloadMoles(node);
-  const volume = unloadVolume(node);
-  if (!utils.isEmptyMessage(mass)) {
-    amount.setMass(mass);
-  } else if (!utils.isEmptyMessage(moles)) {
-    amount.setMoles(moles);
-  } else if (!utils.isEmptyMessage(volume)) {
-    amount.setVolume(volume);
+  const value = parseFloat($('.amount_value', node).text());
+  const precision = parseFloat($('.amount_precision', node).text());
+  const units = $('.amount_units', node).val();
+  if (MassUnit[units]) {
+    const message = new Mass();
+    if (!isNaN(value)) {
+      message.setValue(value);
+    }
+    if (!isNaN(precision)) {
+      message.setPrecision(precision);
+    }
+    message.setUnits(MassUnit[units]);
+    if (!utils.isEmptyMessage(message)) {
+      amount.setMass(message);
+    }
+  } else if (MolesUnit[units]) {
+    const message = new Moles();
+    if (!isNaN(value)) {
+      message.setValue(value);
+    }
+    if (!isNaN(precision)) {
+      message.setPrecision(precision);
+    }
+    message.setUnits(MolesUnit[units]);
+    if (!utils.isEmptyMessage(message)) {
+      amount.setMoles(message);
+    }
+  } else if (VolumeUnit[units]) {
+    const message = new Volume();
+    if (!isNaN(value)) {
+      message.setValue(value);
+    }
+    if (!isNaN(precision)) {
+      message.setPrecision(precision);
+    }
+    message.setUnits(VolumeUnit[units]);
+    if (!utils.isEmptyMessage(message)) {
+      amount.setVolume(message);
+    }
     const solutes =
         utils.getOptionalBool($('.includes_solutes.optional_bool', node));
     if (solutes !== null) {
@@ -141,76 +202,4 @@ function unload(node) {
     }
   }
   return amount;
-}
-
-/**
- * Reads and returns a mass amount of a compound as defined in the form.
- * @param {!jQuery} node The div corresponding to the compound whose mass fields
- *     should be read from the form.
- * @return {!Mass}
- */
-function unloadMass(node) {
-  const mass = new Mass();
-  if (!$('.amount_mass', node).is(':checked')) {
-    return mass;
-  }
-  const value = parseFloat($('.amount_value', node).text());
-  if (!isNaN(value)) {
-    mass.setValue(value);
-  }
-  const units = utils.getSelectorText($('.amount_units_mass', node)[0]);
-  mass.setUnits(MassUnit[units]);
-  const precision = parseFloat($('.amount_precision', node).text());
-  if (!isNaN(precision)) {
-    mass.setPrecision(precision);
-  }
-  return mass;
-}
-
-/**
- * Reads and returns a molar amount of a compound as defined in the form.
- * @param {!jQuery} node The div corresponding to the compound whose moles
- *     fields should be read from the form.
- * @return {!Moles}
- */
-function unloadMoles(node) {
-  const moles = new Moles();
-  if (!$('.amount_moles', node).is(':checked')) {
-    return moles;
-  }
-  const value = parseFloat($('.amount_value', node).text());
-  if (!isNaN(value)) {
-    moles.setValue(value);
-  }
-  const units = utils.getSelectorText($('.amount_units_moles', node)[0]);
-  moles.setUnits(MolesUnit[units]);
-  const precision = parseFloat($('.amount_precision', node).text());
-  if (!isNaN(precision)) {
-    moles.setPrecision(precision);
-  }
-  return moles;
-}
-
-/**
- * Reads and returns a volumetric amount of a compound as defined in the form.
- * @param {!jQuery} node The div corresponding to the compound whose volume
- *     fields should be read from the form.
- * @return {!Volume}
- */
-function unloadVolume(node) {
-  const volume = new Volume();
-  if (!$('.amount_volume', node).is(':checked')) {
-    return volume;
-  }
-  const value = parseFloat($('.amount_value', node).text());
-  if (!isNaN(value)) {
-    volume.setValue(value);
-  }
-  const units = utils.getSelectorText($('.amount_units_volume', node)[0]);
-  volume.setUnits(VolumeUnit[units]);
-  const precision = parseFloat($('.amount_precision', node).text());
-  if (!isNaN(precision)) {
-    volume.setPrecision(precision);
-  }
-  return volume;
 }

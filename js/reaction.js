@@ -76,7 +76,11 @@ function init(reaction) {
   document.getElementById('ketcher-iframe').contentWindow.ketcher.initKetcher();
   // Initialize the UI with the Reaction.
   loadReaction(reaction);
-  $('#reaction_id').text(reaction.getReactionId());
+  let reactionId = reaction.getReactionId();
+  if (!reactionId) {
+    reactionId = 'Reaction ' + session.index;
+  }
+  $('#reaction_id').text(reactionId);
   utils.clean();
   // Initialize the collaped/uncollapsed state of the fieldset groups.
   $('.collapse').each((index, node) => utils.initCollapse($(node)));
