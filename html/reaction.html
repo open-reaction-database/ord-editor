@@ -97,7 +97,7 @@ limitations under the License.
           </button>
         </legend>
         <div id="identifiers"></div>
-        <button type="button" class="add" onclick="ord.identifiers.add();">+ add identifier</button>
+        <button type="button" class="add" onclick="ord.identifiers.add();"><span class="fas fa-plus" aria-hidden="true"></span> add identifier</button>
       </fieldset>
 
       <fieldset id="section_inputs" class="section s2">
@@ -121,11 +121,11 @@ limitations under the License.
                </legend>
                 <div>
                   <div class="components"></div>
-                  <button type="button" class="add" onclick="ord.compounds.add($(this).closest('.input'));">+ add component</button>
+                  <button type="button" class="add" onclick="ord.compounds.add($(this).closest('.input'));"><span class="fas fa-plus" aria-hidden="true"></span> add component</button>
                 </div>
                 <div>
                   <div class="crudes"></div>
-                  <button type="button" class="add" onclick="ord.crudes.add($(this).closest('.input'));">+ add crude component</button>
+                  <button type="button" class="add" onclick="ord.crudes.add($(this).closest('.input'));"><span class="fas fa-plus" aria-hidden="true"></span> add crude component</button>
                 </div>
                 <fieldset class="s4">
                   <legend>
@@ -222,7 +222,7 @@ limitations under the License.
                   <button type="button" class="add" onclick="ord.compounds.drawIdentifier($(this).closest('.component'));"><span class="far fa-edit" aria-hidden="true"></span> draw compound</button>
                   <button type="button" class="add" onclick="ord.compounds.addNameIdentifier($(this).closest('.component'));"><span class="fa fa-search" aria-hidden="true"></span> look up name</button>
                   <!-- End shortcuts -->
-                  <button type="button" class="add" onclick="ord.compounds.addIdentifier($(this).closest('.component'));">+ add identifier</button>
+                  <button type="button" class="add" onclick="ord.compounds.addIdentifier($(this).closest('.component'));"><span class="fas fa-plus" aria-hidden="true"></span> add identifier</button>
                 </fieldset>
                 <fieldset class="preparations_fieldset s5">
                   <legend>
@@ -230,7 +230,7 @@ limitations under the License.
                     <span class="h5">Preparations</span>
                   </legend>
                   <div class="preparations"></div>
-                  <button type="button" class="add" onclick="ord.compounds.addPreparation($(this).closest('.component'));">+ add preparation</button>
+                  <button type="button" class="add" onclick="ord.compounds.addPreparation($(this).closest('.component'));"><span class="fas fa-plus" aria-hidden="true"></span> add preparation</button>
                 </fieldset>
                 <fieldset class="source s5">
                   <legend>
@@ -252,7 +252,7 @@ limitations under the License.
                     </button>
                   </legend>
                   <div class="features"></div>
-                  <button type="button" class="add" onclick="ord.compounds.addFeature($(this).closest('.component'));">+ add feature</button>
+                  <button type="button" class="add" onclick="ord.compounds.addFeature($(this).closest('.component'));"><span class="fas fa-plus" aria-hidden="true"></span> add feature</button>
                 </fieldset>
               </fieldset>
             </div>
@@ -269,7 +269,7 @@ limitations under the License.
             </div>
 
             <div id="component_identifier_template" class="component_identifier" style="display: none; padding-bottom:10px">
-              <span class="h3">Identifier</span>
+              <span class="h6">Identifier</span>
               <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.component_identifier');"><i class="far fa-trash-alt"></i></button>
               <table class="message">
                 <tr>
@@ -327,7 +327,7 @@ limitations under the License.
             </div>
 
           </div>
-              <button type="button" class="add" onclick="ord.inputs.add($('#inputs'));">+ add input</button>
+              <button type="button" class="add" onclick="ord.inputs.add($('#inputs'));"><span class="fas fa-plus" aria-hidden="true"></span> add input</button>
               <button type="button" class="add" onclick="ord.inputs.addInputByString($('#inputs'));"><span class="fa fa-search" aria-hidden="true"></span> resolve text</button>
       </fieldset>
 
@@ -367,7 +367,7 @@ limitations under the License.
             </fieldset>
           </div>
         </div>
-        <button type="button" class="add" onclick="ord.codes.addCode();">+ add automation code</button>
+        <button type="button" class="add" onclick="ord.codes.addCode();"><span class="fas fa-plus" aria-hidden="true"></span> add automation code</button>
         <fieldset class="s3">
           <legend>
             <span class="collapse show"></span>
@@ -380,7 +380,7 @@ limitations under the License.
               <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.setup_vessel_preparation');"><i class="far fa-trash-alt"></i></button>
             </div>
           </div>
-          <button type="button" class="add" onclick="ord.setups.addVesselPreparation();">+ add preparation</button>
+          <button type="button" class="add" onclick="ord.setups.addVesselPreparation();"><span class="fas fa-plus" aria-hidden="true"></span> add preparation</button>
         </fieldset>
         <fieldset class="s3">
           <legend>
@@ -394,7 +394,7 @@ limitations under the License.
               <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.setup_vessel_attachment');"><i class="far fa-trash-alt"></i></button>
             </div>
           </div>
-          <button type="button" class="add" onclick="ord.setups.addVesselAttachment();">+ add attachment</button>
+          <button type="button" class="add" onclick="ord.setups.addVesselAttachment();"><span class="fas fa-plus" aria-hidden="true"></span> add attachment</button>
         </fieldset>
       </fieldset>
 
@@ -455,7 +455,7 @@ limitations under the License.
               </fieldset>
             </div>
           </div>
-          <button type="button" class="add" onclick="ord.temperature.addMeasurement();">+ add measurement</button>
+          <button type="button" class="add" onclick="ord.temperature.addMeasurement();"><span class="fas fa-plus" aria-hidden="true"></span> add measurement</button>
         </fieldset>
         <fieldset id="section_conditions_pressure" class="s3">
           <legend>
@@ -496,7 +496,7 @@ limitations under the License.
               </fieldset>
             </div>
           </div>
-          <button type="button" class="add" onclick="ord.pressure.addMeasurement();">+ add measurement</button>
+          <button type="button" class="add" onclick="ord.pressure.addMeasurement();"><span class="fas fa-plus" aria-hidden="true"></span> add measurement</button>
         </fieldset>
         <fieldset id="section_conditions_stirring" class="s3">
           <legend>
@@ -587,7 +587,7 @@ limitations under the License.
               </fieldset>
             </div>
           </div>
-          <button type="button" class="add" onclick="ord.electro.addMeasurement();">+ add measurement</button>
+          <button type="button" class="add" onclick="ord.electro.addMeasurement();"><span class="fas fa-plus" aria-hidden="true"></span> add measurement</button>
         </fieldset>
         <fieldset id="section_conditions_flow" class="s3">
           <legend>
@@ -655,7 +655,7 @@ limitations under the License.
             </fieldset>
           </div>
         </div>
-        <button type="button" class="add" onclick="ord.observations.add();">+ add observation</button>
+        <button type="button" class="add" onclick="ord.observations.add();"><span class="fas fa-plus" aria-hidden="true"></span> add observation</button>
       </fieldset>
 
       <fieldset id="section_workups" class="section s2">
@@ -718,7 +718,7 @@ limitations under the License.
               </legend>
               <div class="workup_temperature_measurements">
               </div>
-              <button type="button" class="add" onclick="ord.workups.addMeasurement($(this).closest('.workup'));">+ add measurement</button>
+              <button type="button" class="add" onclick="ord.workups.addMeasurement($(this).closest('.workup'));"><span class="fas fa-plus" aria-hidden="true"></span> add measurement</button>
             </fieldset>
             <fieldset class="s4">
               <legend>
@@ -759,7 +759,7 @@ limitations under the License.
           </div>
 
         </div>
-        <button type="button" class="add" onclick="ord.workups.add();">+ add workup</button>
+        <button type="button" class="add" onclick="ord.workups.add();"><span class="fas fa-plus" aria-hidden="true"></span> add workup</button>
       </fieldset>
 
       <fieldset id="section_outcomes" class="section s2">
@@ -799,10 +799,10 @@ limitations under the License.
             </table>
 
               <div class="outcome_analyses"></div>
-              <button type="button" class="add" onclick="ord.outcomes.addAnalysis($(this).closest('.outcome'));">+ add analysis</button>
+              <button type="button" class="add" onclick="ord.outcomes.addAnalysis($(this).closest('.outcome'));"><span class="fas fa-plus" aria-hidden="true"></span> add analysis</button>
 
               <div class="outcome_products"></div>
-              <button type="button" class="add" onclick="ord.products.add($(this).closest('.outcome'));">+ add product</button>
+              <button type="button" class="add" onclick="ord.products.add($(this).closest('.outcome'));"><span class="fas fa-plus" aria-hidden="true"></span> add product</button>
 
           </fieldset>
           </div>
@@ -842,7 +842,7 @@ limitations under the License.
               <button type="button" class="add" onclick="ord.compounds.drawIdentifier($(this).closest('.outcome_product'));"><span class="far fa-edit" aria-hidden="true"></span> draw compound</button>
               <button type="button" class="add" onclick="ord.compounds.addNameIdentifier($(this).closest('.outcome_product'));"><span class="fa fa-search" aria-hidden="true"></span> look up name</button>
               <!-- End shortcuts -->
-              <button type="button" class="add" onclick="ord.compounds.addIdentifier($(this).closest('.outcome_product'));">+ add identifier</button>
+              <button type="button" class="add" onclick="ord.compounds.addIdentifier($(this).closest('.outcome_product'));"><span class="fas fa-plus" aria-hidden="true"></span> add identifier</button>
             </fieldset>
 
             <div id="product_measurement_template" class="product_measurement" style="display: none;">
@@ -954,7 +954,7 @@ limitations under the License.
               </legend>
               <div>
                 <div class="product_measurement_repeated"></div>
-                <button type="button" class="add" onclick="ord.products.addMeasurement($(this).closest('.outcome_product'));">+ add measurement</button>
+                <button type="button" class="add" onclick="ord.products.addMeasurement($(this).closest('.outcome_product'));"><span class="fas fa-plus" aria-hidden="true"></span> add measurement</button>
               </div>
             </fieldset>
 
@@ -981,7 +981,7 @@ limitations under the License.
                 </button>
               </legend>
               <div class="features"></div>
-              <button type="button" class="add" onclick="ord.compounds.addFeature($(this).closest('.outcome_product'));">+ add feature</button>
+              <button type="button" class="add" onclick="ord.compounds.addFeature($(this).closest('.outcome_product'));"><span class="fas fa-plus" aria-hidden="true"></span> add feature</button>
             </fieldset>
             </fieldset>
           </div>
@@ -1011,7 +1011,7 @@ limitations under the License.
               <div>
                 <div class="outcome_data_repeated">
                 </div>
-                <button type="button" class="add" onclick="ord.outcomes.addData($(this).closest('.outcome_analysis'));">+ add data</button>
+                <button type="button" class="add" onclick="ord.outcomes.addData($(this).closest('.outcome_analysis'));"><span class="fas fa-plus" aria-hidden="true"></span> add data</button>
               </div>
 
             </fieldset>
@@ -1030,7 +1030,7 @@ limitations under the License.
           </div>
 
         </div>
-        <button type="button" class="add" onclick="ord.outcomes.add();">+ add outcome</button>
+        <button type="button" class="add" onclick="ord.outcomes.add();"><span class="fas fa-plus" aria-hidden="true"></span> add outcome</button>
       </fieldset>
 
       <fieldset id="section_provenance" class="section s2">
@@ -1105,7 +1105,7 @@ limitations under the License.
             </fieldset>
           </div>
         </div>
-        <button type="button" class="add" onclick="ord.provenance.addModification();">+ add modification</button>
+        <button type="button" class="add" onclick="ord.provenance.addModification();"><span class="fas fa-plus" aria-hidden="true"></span> add modification</button>
       </fieldset>
     </div>
 
@@ -1197,7 +1197,7 @@ limitations under the License.
           {% else %}
           await ord.reaction.initFromDataset('{{ name }}', {{ index }});
           {% endif %}
-          $('.navSection').click(event => {
+          $('.navSection').on('click', event => {
             const section = $(event.target).attr('data-section');
             $('#section_' + section)[0].scrollIntoView({behavior: 'smooth'});
           });
