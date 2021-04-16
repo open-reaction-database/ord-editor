@@ -28,7 +28,7 @@ body {
 }
 button {
   font-size: small;
-  border: none;
+  border: 1px solid black;
   vertical-align: middle;
 }
 .edittext {
@@ -61,7 +61,7 @@ button {
 .invalid {
   border: 2px solid red;
 }
-.collapse, .validate_status, .validate_message, .validate_warning_status, .validate_warning_message {
+.validate_status, .validate_message, .validate_warning_status, .validate_warning_message {
   padding: 2px 4px;
   margin: 2px;
   display: inline-block;
@@ -77,9 +77,11 @@ button {
 }
 .validate_status {
   color: red;
+  display: none;
 }
 .validate_warning_status {
   color: yellow;
+  display: none;
 }
 .validate_message, .validate_warning_message {
   position: absolute;

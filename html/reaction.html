@@ -198,6 +198,14 @@ limitations under the License.
                 <table class="component_role_limiting">
                   <tr><td>reaction role</td><td><div class="component_reaction_role selector" data-proto="ReactionRole_ReactionRoleType"></div></td></tr>
                   <tr class="limiting_reactant"><td>limiting reactant</td><td><div class="component_limiting optional_bool"></div></td></tr>
+                  <tr class="amount">
+                    <td>amount</td>
+                    <td>
+                      <div class="amount_value edittext shorttext floattext"></div>
+                      ± <div class="amount_precision edittext shorttext floattext"></div>
+                      <select class="amount_units mass moles volume"></select>
+                    </td>
+                  </tr>
                 </table>
                 <fieldset class="s5">
                   <legend>
@@ -215,17 +223,6 @@ limitations under the License.
                   <button type="button" class="add" onclick="ord.compounds.addNameIdentifier($(this).closest('.component'));"><span class="fa fa-search" aria-hidden="true"></span> look up name</button>
                   <!-- End shortcuts -->
                   <button type="button" class="add" onclick="ord.compounds.addIdentifier($(this).closest('.component'));">+ add identifier</button>
-                </fieldset>
-                <fieldset class="amount s5">
-                  <legend>
-                    <span class="collapse show"></span>
-                    <span class="h5">Amount</span>
-                  </legend>
-                  <div>
-                    <div class="amount_value edittext shorttext floattext"></div>
-                    ± <div class="amount_precision edittext shorttext floattext"></div>
-                    <select class="amount_units mass moles volume"></select>
-                  </div>
                 </fieldset>
                 <fieldset class="preparations_fieldset s5">
                   <legend>
@@ -317,18 +314,15 @@ limitations under the License.
                   <tr><td>reaction ID</td><td><div class="crude_reaction edittext"></div></td></tr>
                   <tr><td>includes workup</td><td><div class="crude_includes_workup optional_bool"></div></td></tr>
                   <tr><td>has derived amount</td><td><div class="crude_has_derived optional_bool"></div></td></tr>
+                  <tr class="amount">
+                    <td>amount</td>
+                    <td>
+                      <div class="amount_value edittext shorttext floattext"></div>
+                      ± <div class="amount_precision edittext shorttext floattext"></div>
+                      <select class="amount_units mass volume"></select>
+                    </td>
+                  </tr>
                 </table>
-                <fieldset class="amount s5">
-                  <legend>
-                    <span class="collapse show"></span>
-                    <span class="h5">Amount</span>
-                  </legend>
-                  <div>
-                    <div class="amount_value edittext shorttext floattext"></div>
-                    ± <div class="amount_precision edittext shorttext floattext"></div>
-                    <select class="amount mass volume"></select>
-                  </div>
-                </fieldset>
               </fieldset>
             </div>
 
@@ -691,24 +685,18 @@ limitations under the License.
                                                      </td></tr>
               <tr><td>automated</td><td><div class="workup_automated optional_bool"></div></td></tr>
               <tr><td>details</td><td><div class="workup_details edittext"></div></td></tr>
+              <tr class="workup_amount amount">
+                <td>aliquot amount</td>
+                <td>
+                  <div class="amount_value edittext shorttext floattext"></div>
+                  ± <div class="amount_precision edittext shorttext floattext"></div>
+                  <select class="amount_units mass volume"></select>
+                </td>
+              </tr>
             </table>
             <div class="workup_input">
               <!-- Shares ".input_template" with "#inputs" above. -->
             </div>
-            <fieldset class="workup_amount s4">
-              <legend>
-                <span class="collapse show"></span>
-                <span class="h4">Aliquot amount</span>
-                <button class="help" data-toggle="tooltip" data-placement="right" title="The portion sampled from a reaction or mixture when the workup type is ALIQUOT. For ADDITION workup types, amounts should be described in each input component's amount field.">
-                  <span class="fa fa-question-circle" aria-hidden="true"></span>
-                </button>
-                    </legend>
-              <div class="amount">
-                <div class="amount_value edittext shorttext floattext"></div>
-                    ± <div class="amount_precision edittext shorttext floattext"></div>
-                    <select class="amount mass volume"></select>
-              </div>
-            </fieldset>
             <fieldset class="s4">
               <legend>
                 <span class="workup_temperature collapse"></span>

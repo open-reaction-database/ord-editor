@@ -294,12 +294,6 @@ function add() {
   $('.h5', workupInputNode).addClass('h6').removeClass('h5');
   $('.h4', workupInputNode).addClass('h5').removeClass('h4');
   $('.h3', workupInputNode).addClass('h4').removeClass('h3');
-  // Workup inputs start collapsed by default.
-  workupInputNode.find('.collapse').trigger('click');
-  // Temperature conditions and stirring fields also start collapsed.
-  workupNode.find('.workup_temperature').trigger('click');
-  workupNode.find('.workup_temperature_measurements_wrap').trigger('click');
-  workupNode.find('.workup_stirring').trigger('click');
   // Unlike Reaction.inputs, this ReactionInput has no name.
   $('.input_name', inputNode).hide();
   // Unlike Reaction.inputs, this ReactionInput is not repeated.

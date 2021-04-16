@@ -82,8 +82,6 @@ function init(reaction) {
   }
   $('#reaction_id').text(reactionId);
   utils.clean();
-  // Initialize the collaped/uncollapsed state of the fieldset groups.
-  $('.collapse').each((index, node) => utils.initCollapse($(node)));
   // Trigger reaction-level validation.
   validateReaction();
   // Initialize autosave being on.

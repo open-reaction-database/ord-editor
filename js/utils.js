@@ -59,14 +59,12 @@ exports = {
   addChangeHandler,
   addSlowly,
   clean,
-  collapseToggle,  // Used by initCollapse.
   compareDataset,
   getDataset,
   getOptionalBool,
   getReactionById,
   getSelectorText,
   freeze,
-  initCollapse,
   initOptionalBool,
   initSelector,
   initValidateNode,
@@ -252,43 +250,6 @@ function makeUndoable(node) {
 }
 
 /**
- * Toggles the visibility of all siblings of an element, or if a pattern is
- * provided, toggles the visibility of all siblings of the nearest ancestor
- * element matching the pattern.
- * @param {!jQuery} node The element to toggle or use as the search root.
- * @param {string} pattern The pattern to match for finding siblings to toggle.
- */
-function toggleSlowly(node, pattern) {
-  if (pattern) {
-    node = node.closest(pattern);
-  }
-  // 'collapsed' tag is used to hold previously collapsed siblings,
-  // and would be stored as node's next sibling;
-  // the following line checks whether a collapse has occured.
-  if (node.next('collapsed').length !== 0) {
-    // Need to uncollapse.
-    const collapsedNode = node.next('collapsed');
-    collapsedNode.toggle('slow', () => {
-      collapsedNode.children().unwrap();
-    });
-  } else {
-    // Need to collapse.
-    node.siblings().wrapAll('<collapsed>');
-    node.next('collapsed').toggle('slow');
-  }
-}
-
-/**
- * Toggles the collapse of a section in the form.
- * @param {string} button The element to toggle.
- */
-function collapseToggle(button) {
-  const node = $(button);
-  node.toggleClass('fa-chevron-down fa-chevron-right');
-  toggleSlowly(node, 'legend');
-}
-
-/**
  * Adds and populates a <select/> node according to its data-proto type
  * declaration.
  * @param {!jQuery} node A node containing a `data-proto` attribute.
@@ -328,20 +289,6 @@ function initOptionalBool(node) {
     select.append(option);
   }
   node.append(select);
-}
-
-/**
- * Sets up and initializes a collapse button by adding attributes into a div in
- * reaction.html.
- * @param {!jQuery} node Target node for the new button.
- */
-function initCollapse(node) {
-  node.addClass('fa');
-  node.addClass('fa-chevron-down');
-  node.attr('onclick', 'ord.utils.collapseToggle(this)');
-  if (node.hasClass('starts_collapsed')) {
-    node.trigger('click');
-  }
 }
 
 /**
