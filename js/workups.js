@@ -301,7 +301,6 @@ function add() {
   workupNode.find('.workup_temperature_measurements_wrap').trigger('click');
   workupNode.find('.workup_stirring').trigger('click');
   // Unlike Reaction.inputs, this ReactionInput has no name.
-  $('.input_name_label', inputNode).hide();
   $('.input_name', inputNode).hide();
   // Unlike Reaction.inputs, this ReactionInput is not repeated.
   $('.remove', inputNode).hide();
