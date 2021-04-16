@@ -405,7 +405,14 @@ def validate_reaction(message_name):
     output = validations.validate_message(message,
                                           raise_on_error=False,
                                           options=options)
-    return json.dumps({'errors': output.errors, 'warnings': output.warnings})
+    # Strip the message name from the errors to make them more readable.
+    errors = []
+    for error in output.errors:
+        errors.append('.'.join(error.split('.')[1:]))
+    warnings = []
+    for warning in output.warnings:
+        warnings.append('.'.join(warning.split('.')[1:]))
+    return json.dumps({'errors': errors, 'warnings': warnings})
 
 
 @app.route('/resolve/input', methods=['POST'])

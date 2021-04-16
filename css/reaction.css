@@ -62,22 +62,25 @@ button {
 .invalid {
   border: 2px solid red;
 }
-.collapse, .validate_status, .validate_message, .validate_warning_status, .validate_warning_message, .tooltip > .tooltip-inner {
+.collapse, .validate_status, .validate_message, .validate_warning_status, .validate_warning_message {
   padding: 2px 4px;
   margin: 2px;
   display: inline-block;
   border-radius: 8px;
 }
-.validate, .validate_details {
+.validate {
   display: inline-block;
   font-size: medium;
   vertical-align: middle;
 }
-.validate_details {
-  padding-left: 4px;
-}
 .validate_status, .validate_warning_status {
   background-color: lightgray;
+}
+.validate_status {
+  color: red;
+}
+.validate_warning_status {
+  color: yellow;
 }
 .validate_message, .validate_warning_message {
   position: absolute;
@@ -85,16 +88,8 @@ button {
   visibility: hidden;
   max-width: 500px;
 }
-.validate_status {
-  color: red;
-  display: none;
-}
 .validate_message {
   background-color: pink;
-}
-.validate_warning_status {
-  color: yellow;
-  display: none;
 }
 .validate_warning_message {
   background-color: #FAFAD2;

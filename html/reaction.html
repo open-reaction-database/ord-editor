@@ -410,6 +410,20 @@ limitations under the License.
           <span class="h2">Conditions</span>
           <div class="validate"></div>
         </legend>
+        <table class="message">
+          <tr><td>reflux</td><td><div id="condition_reflux" class="optional_bool"></div></td></tr>
+          <tr><td>pH</td><td><div id="condition_ph" class="edittext veryshorttext floattext"></div></td></tr>
+          <tr><td>dynamic conditions
+            <button class="help" data-toggle="tooltip" data-placement="right" title="Whether the reaction conditions cannot be fully described by the fields in this schema/form.">
+              <span class="fa fa-question-circle" aria-hidden="true"></span>
+            </button>
+          </td><td><div id="condition_dynamic" class="optional_bool"></div></td></tr>
+          <tr><td>details
+            <button class="help" data-toggle="tooltip" data-placement="right" title="Elaboration on the aspects of the reaction conditions that cannot be captured by this schema in a structured format.">
+              <span class="fa fa-question-circle" aria-hidden="true"></span>
+            </button>
+          </td><td><div id="condition_details" class="edittext paratext"></div></td></tr>
+        </table>
         <fieldset id="section_conditions_temperature" class="s3">
           <legend>
             <span class="collapse show"></span>
@@ -599,20 +613,6 @@ limitations under the License.
                                                 </td></tr>
           </table>
         </fieldset>
-        <table class="message">
-          <tr><td>reflux</td><td><div id="condition_reflux" class="optional_bool"></div></td></tr>
-          <tr><td>pH</td><td><div id="condition_ph" class="edittext veryshorttext floattext"></div></td></tr>
-          <tr><td>dynamic conditions
-            <button class="help" data-toggle="tooltip" data-placement="right" title="Whether the reaction conditions cannot be fully described by the fields in this schema/form.">
-              <span class="fa fa-question-circle" aria-hidden="true"></span>
-            </button>
-          </td><td><div id="condition_dynamic" class="optional_bool"></div></td></tr>
-          <tr><td>details
-            <button class="help" data-toggle="tooltip" data-placement="right" title="Elaboration on the aspects of the reaction conditions that cannot be captured by this schema in a structured format.">
-              <span class="fa fa-question-circle" aria-hidden="true"></span>
-            </button>
-          </td><td><div id="condition_details" class="edittext paratext"></div></td></tr>
-        </table>
       </fieldset>
 
       <fieldset id="section_notes" class="section s2">
@@ -1140,8 +1140,8 @@ limitations under the License.
     </div>
 
     <div id="validate_template" class="validate_details" style="display: none;">
-      <span onmouseenter="ord.utils.toggleValidateMessage($(this).siblings('.validate_message'))" onmouseleave="ord.utils.toggleValidateMessage($(this).siblings('.validate_message'))" class="validate_status fa fa-exclamation-triangle">unvalidated</span>
-      <span onmouseenter="ord.utils.toggleValidateMessage($(this).siblings('.validate_warning_message'))" onmouseleave="ord.utils.toggleValidateMessage($(this).siblings('.validate_warning_message'))" class="validate_warning_status fa fa-bell"></span>
+      <span onmouseenter="ord.utils.toggleValidateMessage($(this).siblings('.validate_message'))" onmouseleave="ord.utils.toggleValidateMessage($(this).siblings('.validate_message'))" class="validate_status fas fa-exclamation-triangle">unvalidated</span>
+      <span onmouseenter="ord.utils.toggleValidateMessage($(this).siblings('.validate_warning_message'))" onmouseleave="ord.utils.toggleValidateMessage($(this).siblings('.validate_warning_message'))" class="validate_warning_status fas fa-bell"></span>
       <span class="validate_message"></span>
       <span class="validate_warning_message"></span>
     </div>
