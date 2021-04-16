@@ -80,6 +80,7 @@ exports = {
   setOptionalBool,
   setSelector,
   setTextFromFile,
+  showOptionalSection,
   toggleAutosave,
   toggleValidateMessage,
   undoSlowly,
@@ -247,6 +248,16 @@ function makeUndoable(node) {
   button.removeAttr('id');
   node.after(button);
   button.show('slow');
+}
+
+/**
+ * On button click, hides the button and displays an optional input section.
+ * @param {!jQuery} button The button that was clicked.
+ * @param {string} target ID of the target element.
+ */
+function showOptionalSection(button, target) {
+  button.hide();
+  $('#' + target).toggle('slow');
 }
 
 /**

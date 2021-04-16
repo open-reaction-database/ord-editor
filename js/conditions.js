@@ -41,26 +41,32 @@ const ReactionConditions = goog.require('proto.ord.ReactionConditions');
 function load(conditions) {
   const temperatureMessage = conditions.getTemperature();
   if (temperatureMessage) {
+    $('#show_section_conditions_temperature').trigger('click');
     temperature.load(temperatureMessage);
   }
   const pressureMessage = conditions.getPressure();
   if (pressureMessage) {
+    $('#show_section_conditions_pressure').trigger('click');
     pressure.load(pressureMessage);
   }
   const stirringMessage = conditions.getStirring();
   if (stirringMessage) {
+    $('#show_section_conditions_stirring').trigger('click');
     stirring.load(stirringMessage);
   }
   const illuminationMessage = conditions.getIllumination();
   if (illuminationMessage) {
+    $('#show_section_conditions_illumination').trigger('click');
     illumination.load(illuminationMessage);
   }
   const electroMessage = conditions.getElectrochemistry();
   if (electroMessage) {
+    $('#show_section_conditions_electro').trigger('click');
     electro.load(electroMessage);
   }
   const flowMessage = conditions.getFlow();
   if (flowMessage) {
+    $('#show_section_conditions_flow').trigger('click');
     flows.load(flowMessage);
   }
   const reflux = conditions.hasReflux() ? conditions.getReflux() : null;

@@ -457,7 +457,24 @@ limitations under the License.
           </div>
           <button type="button" class="add" onclick="ord.temperature.addMeasurement();"><span class="fas fa-plus" aria-hidden="true"></span> add measurement</button>
         </fieldset>
-        <fieldset id="section_conditions_pressure" class="s3">
+        <fieldset id="section_conditions_stirring" class="s3">
+          <legend>
+            <span class="collapse show"></span>
+            <span class="h3">Stirring</span>
+            <div class="validate"></div>
+          </legend>
+          <table class="message">
+            <tr><td>method</td><td><div id="stirring_method_type" class="selector" data-proto="StirringConditions_StirringMethodType"></div>
+                                                 details <div id="stirring_method_details" class="edittext"></div></td></tr>
+            <tr><td>rate</td><td><div id="stirring_rate_type" class="selector" data-proto="StirringConditions_StirringRate_StirringRateType"></div>
+                                                 details <div id="stirring_rate_details" class="edittext"></div></td></tr>
+            <tr><td>rpm</td><td><div id="stirring_rpm" class="edittext shorttext integertext"></div></td></tr>
+          </table>
+        </fieldset>
+        <button type="button" id="show_section_conditions_pressure" class="optional" onclick="ord.utils.showOptionalSection($(this), 'section_conditions_pressure')">
+          <span class="fas fa-plus" aria-hidden="true"></span> add pressure
+        </button>
+        <fieldset id="section_conditions_pressure" class="s3" style="display: none;">
           <legend>
             <span class="collapse show"></span>
             <span class="h3">Pressure</span>
@@ -498,21 +515,10 @@ limitations under the License.
           </div>
           <button type="button" class="add" onclick="ord.pressure.addMeasurement();"><span class="fas fa-plus" aria-hidden="true"></span> add measurement</button>
         </fieldset>
-        <fieldset id="section_conditions_stirring" class="s3">
-          <legend>
-            <span class="collapse show"></span>
-            <span class="h3">Stirring</span>
-            <div class="validate"></div>
-          </legend>
-          <table class="message">
-            <tr><td>method</td><td><div id="stirring_method_type" class="selector" data-proto="StirringConditions_StirringMethodType"></div>
-                                                 details <div id="stirring_method_details" class="edittext"></div></td></tr>
-            <tr><td>rate</td><td><div id="stirring_rate_type" class="selector" data-proto="StirringConditions_StirringRate_StirringRateType"></div>
-                                                 details <div id="stirring_rate_details" class="edittext"></div></td></tr>
-            <tr><td>rpm</td><td><div id="stirring_rpm" class="edittext shorttext integertext"></div></td></tr>
-          </table>
-        </fieldset>
-        <fieldset id="section_conditions_illumination" class="s3">
+        <button type="button" id="show_section_conditions_illumination" class="optional" onclick="ord.utils.showOptionalSection($(this), 'section_conditions_illumination')">
+          <span class="fas fa-plus" aria-hidden="true"></span> add illumination
+        </button>
+        <fieldset id="section_conditions_illumination" class="s3" style="display: none;">
           <legend>
             <span class="collapse show starts_collapsed"></span>
             <span class="h3">Illumination</span>
@@ -532,7 +538,10 @@ limitations under the License.
             <tr><td>color</td><td><div id="illumination_color" class="edittext"></div></td></tr>
           </table>
         </fieldset>
-        <fieldset id="section_conditions_electro" class="s3">
+        <button type="button" id="show_section_conditions_electro" class="optional" onclick="ord.utils.showOptionalSection($(this), 'section_conditions_electro')">
+          <span class="fas fa-plus" aria-hidden="true"></span> add electrochemistry
+        </button>
+        <fieldset id="section_conditions_electro" class="s3" style="display: none;">
           <legend>
             <span class="collapse show starts_collapsed"></span>
             <span class="h3">Electrochemistry</span>
@@ -589,7 +598,10 @@ limitations under the License.
           </div>
           <button type="button" class="add" onclick="ord.electro.addMeasurement();"><span class="fas fa-plus" aria-hidden="true"></span> add measurement</button>
         </fieldset>
-        <fieldset id="section_conditions_flow" class="s3">
+        <button type="button" id="show_section_conditions_flow" class="optional" onclick="ord.utils.showOptionalSection($(this), 'section_conditions_flow')">
+          <span class="fas fa-plus" aria-hidden="true"></span> add flow
+        </button>
+        <fieldset id="section_conditions_flow" class="s3" style="display: none;">
           <legend>
             <span class="collapse show starts_collapsed"></span>
             <span class="h3">Flow</span>
