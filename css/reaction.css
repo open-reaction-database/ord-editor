@@ -27,9 +27,8 @@ body {
   height: 20px;
 }
 button {
-  font-size: medium;
-  border-radius: 6px;
-  border: 1px solid black;
+  font-size: small;
+  border: none;
   vertical-align: middle;
 }
 .edittext {
@@ -249,4 +248,5 @@ fieldset {
 .remove, .text_upload, .help {
   border: none;
   background-color: unset;
+  font-size: medium;
 }
