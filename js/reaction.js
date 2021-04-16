@@ -68,8 +68,8 @@ function init(reaction) {
   $('.validate').each((index, node) => utils.initValidateNode($(node)));
   // Initialize validation handlers that don't go in "add" methods.
   initValidateHandlers();
-  // Initailize tooltips.
-  $('[data-toggle=\'tooltip\']').tooltip();
+  // Initialize tooltips.
+  $('[data-toggle="tooltip"]').tooltip();
   // Show "save" on modifications.
   utils.listen($('body'));
   // Load Ketcher content into an element with attribute role="application".

@@ -102,9 +102,6 @@ button {
 .spacer {
   height: 24px;
 }
-.tooltip > .tooltip-inner {
-  background-color: lightgray;
-}
 fieldset {
   margin-top: 24px;
   margin-inline-start: 2px;
@@ -161,9 +158,7 @@ fieldset {
 }
 .data_uploader_text {
   display: inline-block;
-  border: solid;
-  border-width: 1px;
-  border-color: #c0c0c0;
+  border: 1px solid #c0c0c0;
   height: 21px;
 }
 .data_uploader_chooser_file {
@@ -255,4 +250,8 @@ fieldset {
 }
 .spacer {
   width: 10px;
+}
+.remove, .text_upload, .help {
+  border: none;
+  background-color: unset;
 }
