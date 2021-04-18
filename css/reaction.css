@@ -117,6 +117,7 @@ fieldset {
 }
 .section {
   scroll-margin-top: 120px;
+  margin-top: 48px;
 }
 #nav {
   margin-top: 10px;
