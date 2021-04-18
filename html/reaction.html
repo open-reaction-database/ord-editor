@@ -63,7 +63,7 @@ limitations under the License.
         <button type="button" class="remove" id="delete" style="float: none;" onclick="location.href='/dataset/{{ name }}/delete/reaction/{{ index }}';"><i class="far fa-trash-alt"></i></button>
         <button type="button" id="save" onclick="ord.reaction.commit();" style="visibility: hidden;">save</button>
         <button type="button" id="toggle_autosave" onclick="ord.utils.toggleAutosave()"></button>
-        <button type="button" onclick="ord.reaction.validateReaction()">validate</button>
+        <button type="button" id="reaction_validate_button" onclick="ord.reaction.validateReaction()">validate</button>
         <div class="validate" id="reaction_validate"></div>
       </div>
     </div>

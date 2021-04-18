@@ -152,7 +152,7 @@ function clickSave() {
       saveButton.text() === 'save') {
     saveButton.trigger('click');
     // Validate on autosave.
-    $('#reaction_validate').trigger('click');
+    $('#reaction_validate_button').trigger('click');
   }
 }
 
