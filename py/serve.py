@@ -393,6 +393,16 @@ def read_upload(token):
                            attachment_filename=token)
 
 
+def _adjust_error(error: str) -> str:
+    """Strips the message name from errors to make them more readable."""
+    location, message = error.split(':')
+    location = '.'.join(location.strip().split('.')[1:])
+    if location:
+        return f'{location}: {message.strip()}'
+    else:
+        return message.strip()
+
+
 @app.route('/dataset/proto/validate/<message_name>', methods=['POST'])
 def validate_reaction(message_name):
     """Receives a serialized Reaction protobuf and runs validations."""
@@ -405,13 +415,8 @@ def validate_reaction(message_name):
     output = validations.validate_message(message,
                                           raise_on_error=False,
                                           options=options)
-    # Strip the message name from the errors to make them more readable.
-    errors = []
-    for error in output.errors:
-        errors.append('.'.join(error.split('.')[1:]))
-    warnings = []
-    for warning in output.warnings:
-        warnings.append('.'.join(warning.split('.')[1:]))
+    errors = list(map(_adjust_error, output.errors))
+    warnings = list(map(_adjust_error, output.warnings))
     return json.dumps({'errors': errors, 'warnings': warnings})
 
 
@@ -425,7 +430,7 @@ def resolve_input():
         response = flask.make_response(bites)
         response.headers.set('Content-Type', 'application/protobuf')
     except (ValueError, KeyError) as error:
-        flask.abort(flask.make_response(str(error), 409))
+        return flask.abort(flask.make_response(str(error), 409))
     return response
 
 
