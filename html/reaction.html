@@ -205,6 +205,8 @@ limitations under the License.
                       ± <div class="amount_precision edittext shorttext floattext"></div>
                       <select class="amount_units mass moles volume"></select>
                     </td>
+                    <td class="amount_includes_solutes_label">includes solutes</td>
+                    <td><div class="amount_includes_solutes optional_bool"></div></td>
                   </tr>
                 </table>
                 <fieldset class="s5">
@@ -697,9 +699,9 @@ limitations under the License.
                                                      </td></tr>
               <tr><td>automated</td><td><div class="workup_automated optional_bool"></div></td></tr>
               <tr><td>details</td><td><div class="workup_details edittext"></div></td></tr>
-              <tr class="workup_amount amount">
+              <tr class="workup_amount">
                 <td>aliquot amount</td>
-                <td>
+                <td class="amount">
                   <div class="amount_value edittext shorttext floattext"></div>
                   ± <div class="amount_precision edittext shorttext floattext"></div>
                   <select class="amount_units mass volume"></select>
@@ -885,7 +887,7 @@ limitations under the License.
                       <div class="product_measurement_value amount_value edittext shorttext"></div>
                       <div class="product_measurement_pm" style="display: inline-block;">±</div>
                       <div class="product_measurement_precision amount_precision edittext shorttext floattext"></div>
-                      <div class="amount_units_mass selector" data-proto="Mass_MassUnit" style="display: none;"></div>
+                      <select class="amount_units mass" style="display: none;"></select>
                     </td>
                   </tr>
                   <tr>

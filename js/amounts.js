@@ -71,15 +71,17 @@ function init(node) {
       option.attr('value', key);
       select.append(option);
     }
+    select.on('change', function() {
+      const value = utils.getSelectorText($('.amount', node)[0]);
+      if (VolumeUnit[value]) {
+        $('.amount_includes_solutes_label', node).show();
+        $('.amount_includes_solutes', node).show();
+      } else {
+        $('.amount_includes_solutes_label', node).hide();
+        $('.amount_includes_solutes', node).hide();
+      }
+    });
   }
-  select.on('change', function() {
-    const value = utils.getSelectorText($(this)[0]);
-    if (VolumeUnit[value]) {
-      $('.includes_solutes', node).show().css('display', 'inline-block');
-    } else {
-      $('.includes_solutes', node).hide();
-    }
-  });
 }
 
 /**
@@ -110,7 +112,7 @@ function load(node, amount) {
   }
   const amountNode = $('.amount', node).first();
   const select = $('select.amount_units', amountNode);
-  $('.includes_solutes', node).hide();
+  $('.amount_includes_solutes', node).hide();
   if (amount.hasMass()) {
     const mass = amount.getMass();
     if (mass.hasValue()) {
@@ -138,11 +140,12 @@ function load(node, amount) {
       $('.amount_precision', node).text(volume.getPrecision());
     }
     select.val(enumFromValue(VolumeUnit, volume.getUnits()));
-    $('.includes_solutes', node).show().css('display', 'inline-block');
+    $('.amount_includes_solutes', node).show().css('display', 'inline-block');
     const solutes = amount.hasVolumeIncludesSolutes() ?
         amount.getVolumeIncludesSolutes() :
         null;
-    utils.setOptionalBool($('.includes_solutes.optional_bool', node), solutes);
+    utils.setOptionalBool(
+        $('.amount_includes_solutes.optional_bool', node), solutes);
   }
 }
 
@@ -195,8 +198,8 @@ function unload(node) {
     if (!utils.isEmptyMessage(message)) {
       amount.setVolume(message);
     }
-    const solutes =
-        utils.getOptionalBool($('.includes_solutes.optional_bool', node));
+    const solutes = utils.getOptionalBool(
+        $('.amount_includes_solutes.optional_bool', node));
     if (solutes !== null) {
       amount.setVolumeIncludesSolutes(solutes);
     }
