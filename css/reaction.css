@@ -255,3 +255,6 @@ fieldset {
   background-color: unset;
   font-size: medium;
 }
+.reaction_identifier_value {
+  width: auto;
+}
