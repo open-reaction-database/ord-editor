@@ -20,7 +20,7 @@ body {
   margin-left: 168px;
   width: 800px;
 }
-.edittext, .selector, .optional_bool {
+.edittext, .selector, .optional_bool, .selector_style {
   padding: 2px;
   margin: 2px;
   display: inline-block;
