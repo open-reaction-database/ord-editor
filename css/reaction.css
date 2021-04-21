@@ -20,7 +20,7 @@ body {
   margin-left: 168px;
   width: 800px;
 }
-.edittext, .selector, .optional_bool, .analysis_key_selector {
+.edittext, .selector, .optional_bool {
   padding: 2px;
   margin: 2px;
   display: inline-block;
@@ -65,22 +65,18 @@ button {
   padding: 2px 4px;
   margin: 2px;
   display: inline-block;
-  border-radius: 8px;
 }
 .validate {
   display: inline-block;
   font-size: medium;
   vertical-align: middle;
 }
-.validate_status, .validate_warning_status {
-  background-color: lightgray;
-}
 .validate_status {
-  color: red;
+  color: #ff4444;
   display: none;
 }
 .validate_warning_status {
-  color: yellow;
+  color: #ffbb33;
   display: none;
 }
 .validate_message, .validate_warning_message {
@@ -121,6 +117,7 @@ fieldset {
 }
 .section {
   scroll-margin-top: 120px;
+  margin-top: 48px;
 }
 #nav {
   margin-top: 10px;
