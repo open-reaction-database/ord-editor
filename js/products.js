@@ -250,6 +250,7 @@ function addMeasurement(node) {
   const measurementNode = utils.addSlowly(
       '#product_measurement_template',
       $('.product_measurement_repeated', node));
+  amounts.init(measurementNode);
   populateAnalysisSelector(
       node, $('.product_measurement_analysis_key', measurementNode));
 
@@ -265,9 +266,9 @@ function addMeasurement(node) {
       $('.product_measurement_precision', measurementNode).show();
     }
     if (this.value === 'mass') {
-      $('.amount_units_mass', measurementNode).show();
+      $('.amount_units', measurementNode).show();
     } else {
-      $('.amount_units_mass', measurementNode).hide();
+      $('.amount_units', measurementNode).hide();
     }
   });
 

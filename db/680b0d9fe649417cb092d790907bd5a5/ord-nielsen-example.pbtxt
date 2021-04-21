@@ -247,6 +247,7 @@ reactions {
       details: "Automatic migration from schema v0.2.15 to v0.3.0"
     }
   }
+  reaction_id: "test"
 }
 reactions {
   identifiers {

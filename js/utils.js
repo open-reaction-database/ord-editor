@@ -167,14 +167,12 @@ function toggleAutosave() {
     session.timers.short =
         setInterval(clickSave, 1000 * 15);  // Save after 15 seconds
     matcher.text('autosave: on');
-    matcher.css('backgroundColor', 'lightgreen');
   } else {
     // Stop the interval timer itself, then remove reference in order to
     // properly later detect that it's stopped.
     clearInterval(session.timers.short);
     session.timers.short = null;
     matcher.text('autosave: off');
-    matcher.css('backgroundColor', 'pink');
   }
 }
 
