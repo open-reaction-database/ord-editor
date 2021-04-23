@@ -82,6 +82,18 @@ limitations under the License.
       <div class="navSection" data-section="provenance">Provenance</div>
     </div>
 
+    <div id="pageLoad" class="modal show" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="spinner-border" role="status" style="width: 100px; height: 100px;">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="sections">
 
       <div id="section_summary" class="section" style="text-align: center">
@@ -1208,6 +1220,8 @@ limitations under the License.
     <script src="/js/reaction.js"></script>
     <script>
         document.body.onload = async function () {
+          const pageLoad = $('#pageLoad');
+          pageLoad.modal('show');
           {% if reaction_id %}
           await ord.reaction.initFromReactionId('{{ reaction_id }}');
           {% else %}
@@ -1221,6 +1235,7 @@ limitations under the License.
           {% if freeze %}
             ord.utils.freeze();
           {% endif %}
+          pageLoad.modal('hide');
           if (location.hash) {
             const section = location.hash.replace('#', '');
             $('#section_' + section)[0].scrollIntoView({behavior: 'smooth'});
