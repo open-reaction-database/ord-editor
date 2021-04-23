@@ -399,8 +399,7 @@ def _adjust_error(error: str) -> str:
     location = '.'.join(location.strip().split('.')[1:])
     if location:
         return f'{location}: {message.strip()}'
-    else:
-        return message.strip()
+    return message.strip()
 
 
 @app.route('/dataset/proto/validate/<message_name>', methods=['POST'])
