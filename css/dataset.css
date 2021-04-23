@@ -1,0 +1,82 @@
+body {
+    padding: 100px 20px 20px;
+    width: 968px;
+}
+
+#header {
+  background: white;
+  border: black 1px;
+  border-style: none none solid none;
+  padding: 10px 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+#name, #description, .edittext, .reaction_id {
+    display: inline-block;
+}
+
+.edittext {
+    width: 200px;
+    height: auto;
+    min-height: 20px;
+    padding: 2px;
+    margin: 2px;
+    border: 1px solid #c0c0c0;
+}
+
+.longtext {
+    width: 400px;
+}
+
+.paratext {
+    height: 100px;
+}
+
+button {
+  font-size: small;
+  border: 1px solid black;
+  vertical-align: middle;
+}
+
+.remove {
+  border: none;
+  background-color: unset;
+  font-size: medium;
+}
+
+.add {
+    margin-top: 12px;
+}
+
+.reaction_list {
+    margin-top: 16px;
+}
+
+#identity {
+    float: right;
+    align-items: center;
+}
+
+#identity img {
+    height: 24px;
+    width: 24px;
+    margin-right: 8px;
+    border-radius: 12px;
+}
+
+#login {
+    padding: 10px;
+    border-style: solid;
+    border-color: lightgray;
+    border-radius: 30px;
+    cursor: pointer;
+    width: fit-content;
+    display: flex;
+}
+
+#login:hover {
+    border-color: black;
+}

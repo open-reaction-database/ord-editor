@@ -155,19 +155,9 @@ function loadDataset(dataset) {
 function loadReactions(reactions) {
   for (let i = 0; i < reactions.length; i++) {
     const reaction = reactions[i];
-    loadReaction(i, reaction);
+    const id = reaction.getReactionId();
+    addReaction(i, id);
   }
-}
-
-/**
- * Loads a single reaction into the editor.
- * @param {number} index The index of the new reaction.
- * @param {!Reaction} reaction
- */
-function loadReaction(index, reaction) {
-  const node = addReaction(index);
-  const id = reaction.getReactionId();
-  $('.reaction_id', node).text(id);
 }
 
 /**
@@ -212,13 +202,18 @@ function unloadDataset() {
 /**
  * Adds a new reaction to the current dataset.
  * @param {number} index The index of the new reaction.
+ * @param {string} reactionId The reaction ID. If empty, use the index.
  * @return {!jQuery} The newly added root node for the reaction.
  */
-function addReaction(index) {
+function addReaction(index, reactionId) {
   const node = $('#reaction_template').clone();
   node.removeAttr('id');
   const anchor = $('.reaction_index', node);
-  anchor.text(index);
+  if (reactionId) {
+    anchor.text(reactionId);
+  } else {
+    anchor.text('Reaction ' + index);
+  }
   anchor.attr('href', '/dataset/' + session.fileName + '/reaction/' + index);
   const root = $('#reactions');
   root.append(node);
