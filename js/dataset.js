@@ -115,7 +115,8 @@ function download(kind) {
 function getDataset(fileName) {
   return new Promise(resolve => {
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', '/dataset/proto/read/' + session.fileName, true /* async */);
+    xhr.open(
+        'GET', '/dataset/proto/read/' + session.fileName, true /* async */);
     xhr.responseType = 'arraybuffer';
     xhr.onload = () => {
       asserts.assertInstanceof(xhr.response, ArrayBuffer);  // Type hint.
