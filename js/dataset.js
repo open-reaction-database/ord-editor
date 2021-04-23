@@ -43,10 +43,10 @@ const session = {
  * Initializes the dataset landing page.
  * @param {string} fileName The filename of the dataset to load.
  */
-function init(fileName) {
+async function init(fileName) {
   session.fileName = fileName;
   $('.edittext').attr('contentEditable', 'true');
-  getDataset(fileName, loadDataset);
+  await getDataset(fileName);
   listenDirty($('#text_fields'));
 }
 
@@ -110,24 +110,23 @@ function download(kind) {
 /**
  * Fetches a dataset from the server.
  * @param {string} fileName The filename of the dataset to fetch.
- * @param {?Function} listener Function used to load the dataset into the
- *     editor.
+ * @return {!Promise}
  */
-function getDataset(fileName, listener) {
-  if (!listener) {
-    return;
-  }
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', '/dataset/proto/read/' + session.fileName, true /* async */);
-  xhr.responseType = 'arraybuffer';
-  xhr.onload = () => {
-    asserts.assertInstanceof(xhr.response, ArrayBuffer);  // Type hint.
-    const bytes = new Uint8Array(xhr.response);
-    const dataset = Dataset.deserializeBinary(bytes);
-    session.dataset = dataset;
-    listener(dataset);
-  };
-  xhr.send();
+function getDataset(fileName) {
+  return new Promise(resolve => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', '/dataset/proto/read/' + session.fileName, true /* async */);
+    xhr.responseType = 'arraybuffer';
+    xhr.onload = () => {
+      asserts.assertInstanceof(xhr.response, ArrayBuffer);  // Type hint.
+      const bytes = new Uint8Array(xhr.response);
+      const dataset = Dataset.deserializeBinary(bytes);
+      session.dataset = dataset;
+      loadDataset(dataset);
+      resolve();
+    };
+    xhr.send();
+  });
 }
 
 /**

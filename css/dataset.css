@@ -3,6 +3,10 @@ body {
     width: 968px;
 }
 
+#pageLoad {
+  text-align: center;
+}
+
 #header {
   background: white;
   border: black 1px;
