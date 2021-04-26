@@ -1,0 +1,87 @@
+body {
+    padding: 48px;
+    padding-top: 16px;
+    font-family: Roboto;
+}
+
+.dataset {
+    padding: 4px 0;
+}
+
+.add, #saving {
+    display: inline-block;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.add {
+    background-color: lightgreen;
+}
+
+#saving {
+    background-color: lightgray;
+}
+
+#uploader, #adder, #enumerator {
+    position: relative;
+    padding: 4px 0;
+}
+
+#chooser, #template_file, #spreadsheet_file {
+    opacity: 0;
+    position: absolute;
+}
+
+#chooser, #template_file, #spreadsheet_file, .add {
+    cursor: pointer;
+    width: 150px;
+    height: 21px;
+}
+
+.tooltip > .tooltip-inner {
+    padding: 2px 4px;
+    margin: 2px;
+    display: inline-block;
+    border-radius: 8px;
+    background-color: lightgray;
+}
+
+#identity {
+    float: right;
+    align-items: center;
+}
+
+#identity img {
+    height: 24px;
+    width: 24px;
+    margin-right: 8px;
+    border-radius: 12px;
+}
+
+#login {
+    padding: 10px;
+    border-style: solid;
+    border-color: lightgray;
+    border-radius: 30px;
+    cursor: pointer;
+    width: fit-content;
+    display: flex;
+}
+
+#login:hover {
+    border-color: black;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    text-align: center;
+    width: 100%;
+}
+
+.error {
+    color: red;
+    font-style: italic;
+    padding-top: 10px;
+}
