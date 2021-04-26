@@ -14,15 +14,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<html lang="en">
+<html>
   <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
-  <script src="/js/reaction.js"></script>
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-166779764-1"></script>
   <script>
@@ -31,7 +24,104 @@ limitations under the License.
     gtag('js', new Date());
     gtag('config', 'UA-166779764-1');
   </script>
-  <title>Open Reaction Database - Interactive Web Editor</title>
+  <style>
+    body {
+      padding: 48px;
+      padding-top: 16px;
+      font-family: Roboto;
+    }
+    .dataset {
+      padding: 4px 0;
+    }
+    .add, #saving {
+      display: inline-block;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .add {
+      background-color: lightgreen;
+		}
+    #saving {
+      background-color: lightgray;
+    }
+    #uploader, #adder, #enumerator {
+      position: relative;
+      padding: 4px 0;
+    }
+    #chooser, #template_file, #spreadsheet_file {
+      opacity: 0;
+      position: absolute;
+    }
+    #chooser, #template_file, #spreadsheet_file, .add {
+      cursor: pointer;
+      width: 150px;
+      height: 21px;
+    }
+    .tooltip > .tooltip-inner {
+      padding: 2px 4px;
+      margin: 2px;
+      display: inline-block;
+      border-radius: 8px;
+      background-color: lightgray;
+    }
+    #identity {
+      float: right;
+      align-items: center;
+    }
+    #identity img {
+      height: 24px;
+      width: 24px;
+      margin-right: 8px;
+      border-radius: 12px;
+    }
+    #login {
+      padding: 10px;
+      border-style: solid;
+      border-color: lightgray;
+      border-radius: 30px;
+      cursor: pointer;
+      width: fit-content;
+      display: flex;
+    }
+    #login:hover {
+      border-color: black;
+    }
+    footer {
+      position: fixed;
+      bottom: 0;
+      text-align: center;
+      width: 100%;
+    }
+    .error {
+      color: red;
+      font-style: italic;
+      padding-top: 10px;
+    }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script>
+      $(function() {
+         $('#tabs').tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
+         $('#tabs li').removeClass('ui-corner-top').addClass('ui-corner-left');
+      });
+  </script>
+  <style>
+      {# See https://jqueryui.com/tabs/#vertical. #}
+      .ui-tabs-vertical { width: 55em; }
+      .ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 12em; }
+      .ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-bottom-width: 1px !important; border-right-width: 0 !important; margin: 0 -1px .2em 0; }
+      .ui-tabs-vertical .ui-tabs-nav li a { display:block; }
+      .ui-tabs-vertical .ui-tabs-nav li .ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; }
+      .ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: right; width: 40em;}
+      {# See https://forum.jquery.com/topic/vertical-tabs-entirely-clickable#14737000005362369 #}
+      .ui-tabs .ui-tabs-nav .ui-tabs-anchor { width: 100%; box-sizing: border-box; }
+  </style>
   </head>
   <body>
     <div id="identity">
