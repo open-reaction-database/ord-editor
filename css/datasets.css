@@ -15,7 +15,7 @@
  */
 
 body {
-    padding: 16px 48px 48px;
+    padding: 20px;
     width: 968px;
 }
 
@@ -89,6 +89,7 @@ body {
 }
 
 footer {
+    background-color: white;
     position: fixed;
     bottom: 0;
     text-align: center;
@@ -98,7 +99,7 @@ footer {
 .error {
     color: red;
     font-style: italic;
-    padding-top: 10px;
+    margin-top: 10px;
 }
 
 .tab-content {
@@ -109,8 +110,18 @@ footer {
     height: max-content;
 }
 
-button:not(.nav-link) {
-  font-size: small;
-  border: 1px solid black;
-  vertical-align: middle;
+input[type=submit] {
+    font-size: small;
+    border: 1px solid black;
+    vertical-align: middle;
+    margin-top: 10px;
+}
+
+input[type=file] {
+    font-size: small;
+    vertical-align: middle;
+}
+
+#help {
+    margin-top: 20px;
 }
