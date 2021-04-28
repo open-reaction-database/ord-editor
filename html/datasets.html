@@ -14,254 +14,187 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<html>
-  <head>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/datasets.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"></script>
+  <script src="/js/reaction.js"></script>
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-166779764-1"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'UA-166779764-1');
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag() {
+          dataLayer.push(arguments);
+      }
+
+      gtag('js', new Date());
+      gtag('config', 'UA-166779764-1');
   </script>
-  <style>
-    body {
-      padding: 48px;
-      padding-top: 16px;
-      font-family: Roboto;
-    }
-    .dataset {
-      padding: 4px 0;
-    }
-    .add, #saving {
-      display: inline-block;
-      border-radius: 8px;
-      cursor: pointer;
-      text-align: center;
-    }
-    .add {
-      background-color: lightgreen;
-		}
-    #saving {
-      background-color: lightgray;
-    }
-    #uploader, #adder, #enumerator {
-      position: relative;
-      padding: 4px 0;
-    }
-    #chooser, #template_file, #spreadsheet_file {
-      opacity: 0;
-      position: absolute;
-    }
-    #chooser, #template_file, #spreadsheet_file, .add {
-      cursor: pointer;
-      width: 150px;
-      height: 21px;
-    }
-    .tooltip > .tooltip-inner {
-      padding: 2px 4px;
-      margin: 2px;
-      display: inline-block;
-      border-radius: 8px;
-      background-color: lightgray;
-    }
-    #identity {
-      float: right;
-      align-items: center;
-    }
-    #identity img {
-      height: 24px;
-      width: 24px;
-      margin-right: 8px;
-      border-radius: 12px;
-    }
-    #login {
-      padding: 10px;
-      border-style: solid;
-      border-color: lightgray;
-      border-radius: 30px;
-      cursor: pointer;
-      width: fit-content;
-      display: flex;
-    }
-    #login:hover {
-      border-color: black;
-    }
-    footer {
-      position: fixed;
-      bottom: 0;
-      text-align: center;
-      width: 100%;
-    }
-    .error {
-      color: red;
-      font-style: italic;
-      padding-top: 10px;
-    }
-  </style>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-  <script>
-      $(function() {
-         $('#tabs').tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
-         $('#tabs li').removeClass('ui-corner-top').addClass('ui-corner-left');
-      });
-  </script>
-  <style>
-      {# See https://jqueryui.com/tabs/#vertical. #}
-      .ui-tabs-vertical { width: 55em; }
-      .ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 12em; }
-      .ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-bottom-width: 1px !important; border-right-width: 0 !important; margin: 0 -1px .2em 0; }
-      .ui-tabs-vertical .ui-tabs-nav li a { display:block; }
-      .ui-tabs-vertical .ui-tabs-nav li .ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; }
-      .ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: right; width: 40em;}
-      {# See https://forum.jquery.com/topic/vertical-tabs-entirely-clickable#14737000005362369 #}
-      .ui-tabs .ui-tabs-nav .ui-tabs-anchor { width: 100%; box-sizing: border-box; }
-  </style>
-  </head>
-  <body>
-    <div id="identity">
-      <div style="display: flex;"><img src="{{ user_avatar }}">{{ user_name }}</div>
-      {% if client_id %}
-      <div style="display: flex;">
-        <div style="padding: 10px; font-size: 16pt"><a href="https://docs.open-reaction-database.org/en/latest/editor.html#guest-mode" target="_blank">Guest Mode</a></div>
-        <div id="login">
-          <img src="https://github.githubassets.com/images/modules/logos_page/Octocat.png">
-          <span>Sign in with GitHub</span>
-        </div>
+  <title>Open Reaction Database - Interactive Editor</title>
+</head>
+<body>
+<div id="identity">
+  <div style="display: flex;"><img src="{{ user_avatar }}">{{ user_name }}</div>
+  {% if client_id %}
+    <div style="display: flex;">
+      <div style="padding: 10px; font-size: 16pt"><a
+          href="https://docs.open-reaction-database.org/en/latest/editor.html#guest-mode" target="_blank">Guest Mode</a>
       </div>
-      <script>
-        $('#login').click(() => {
-          location.href = "https://github.com/login/oauth/authorize?client_id={{ client_id }}";
-        });
-      </script>
-      {% endif %}
+      <div id="login">
+        <img src="https://github.githubassets.com/images/modules/logos_page/Octocat.png">
+        <span>Sign in with GitHub</span>
+      </div>
     </div>
-    <div style="width: 50%; margin: auto; text-align: center;">
-        <img src="https://raw.githubusercontent.com/Open-Reaction-Database/ord-schema/main/logos/logo.svg" height="50px">
-        <h1 style="margin-block-start: 0;">Interactive Editor</h1>
-    </div>
-    <div id="tabs">
-        <ul>
-            <li><a href="#tabs-1">List</a></li>
-            <li><a href="#tabs-2">Create</a></li>
-            <li><a href="#tabs-3">Upload</a></li>
-            <li><a href="#tabs-4">Enumerate</a></li>
-        </ul>
-        <div id="tabs-1">
-            <b><u>Available Datasets</u></b>
-            <br><br>
-            {% for name in names %}
-            <div class="dataset">
-                <a href="/dataset/{{ name }}">{{ name }}</a>
-            </div>
-            {% endfor %}
-        </div>
-        <div id="tabs-2">
-            <div style="padding-bottom: 10px">
-              <label for="create">Dataset name:</label>
-              <input type="text" id="create">
-            </div>
-            <div><input type="submit" id="create_submit" value="Create"></div>
-            <div id="create_error" class="error" style="display: none"></div>
-        </div>
-        <div id="tabs-3">
-            <div style="padding-bottom: 10px">
-              <label for="upload">Dataset filename:</label>
-              <input type="file" id="upload" accept=".pbtxt,.pb">
-            </div>
-            <div><input type="submit" id="upload_submit" value="Upload"></div>
-            <div id="upload_error" class="error" style="display: none"></div>
-        </div>
-        <div id="tabs-4">
-            <div style="padding-bottom: 10px">
-              You can use a Reaction template to enumerate a Dataset based on a spreadsheet
-              of values. For more information, see the
-              <a href="https://docs.open-reaction-database.org/en/latest/guides/templates.html">documentation</a>.
-            </div>
-            <div style="padding-bottom: 10px"><table>
-              <tr>
-                <td style="text-align: right"><label for="template">Template filename:</label></td>
-                <td><input type="file" id="template" accept=".pbtxt"></td>
-              </tr>
-              <tr>
-                <td style="text-align: right"><label for="spreadsheet">Spreadsheet filename:</label></td>
-                <td><input type="file" id="spreadsheet" accept=".csv,.xls,.xlsx"></td>
-              </tr>
-            </table></div>
-            <div><input type="submit" id="enumerate_submit" value="Enumerate"></div>
-            <div id="enumerate_error" class="error" style="display: none"></div>
-            <div style="padding-top: 10px">
-              <b>NOTE:</b> Large dataset enumerations (thousands of reactions) may result in a
-              browser timeout. If this happens, please send an email to <a href="mailto:help@open-reaction-database.org">help@open-reaction-database.org</a>
-              and attach your template and spreadsheet files. Alternatively, you may use the
-              <a href="https://github.com/Open-Reaction-Database/ord-schema/blob/main/ord_schema/scripts/enumerate_dataset.py">programmatic interface</a>
-              to enumerate the dataset locally.
-            </div>
-        </div>
-    </div>
-    <div id="help">
-        <h2>Getting started</h2>
-        <p>Check out the <a href="https://www.youtube.com/playlist?list=PLyoEVAlMb276aRRa4xLNRAzbMPRlNb7VI">tutorial videos</a>:</p>
-        <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/videoseries?list=PLyoEVAlMb276aRRa4xLNRAzbMPRlNb7VI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        <h2>Questions?</h2>
-        <p>
-            Please send questions, comments, or issues to
-            <a href="mailto:help@open-reaction-database.org">help@open-reaction-database.org</a>
-            or create a new issue on the <a href="https://github.com/Open-Reaction-Database/ord-editor/issues">ord-editor GitHub repository</a>.
-        </p>
-    </div>
-    
     <script>
-        $('#create_submit').on('click', event => {
-            const errorNode = $('#create_error');
-            errorNode.hide();
-            const datasetName = $('#create').val();
-            if (datasetName) {
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', '/dataset/' + datasetName + '/new');
-                xhr.onload = function() {
-                    if (xhr.status === 409) {
-                        errorNode.text('Error: Dataset "' + datasetName + '" already exists');
-                        errorNode.show();
-                    } else {
-                        location.reload();
-                    }
-                }
-                xhr.send();
-            }
+        $('#login').on('click', () => {
+            location.href = "https://github.com/login/oauth/authorize?client_id={{ client_id }}";
         });
-      $('#upload_submit').on('click', event => {
+    </script>
+  {% endif %}
+</div>
+<div style="width: 50%; margin: auto; text-align: center;">
+  <img src="https://raw.githubusercontent.com/Open-Reaction-Database/ord-schema/main/logos/logo.svg" height="50px">
+  <h1 style="margin-block-start: 0;">Interactive Editor</h1>
+</div>
+<div class="d-flex align-items-start">
+  <div class="nav flex-column nav-pills me-3" role="tablist">
+    <button type="button" class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-list" role="tab">List
+    </button>
+    <button type="button" class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-create" role="tab">Create</button>
+    <button type="button" class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-upload" role="tab">Upload</button>
+    <button type="button" class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-enumerate" role="tab">Enumerate
+    </button>
+  </div>
+  <div class="tab-content">
+    <div id="tab-list" class="tab-pane fade show active" role="tabpanel">
+      <b><u>Available Datasets</u></b>
+      <br>
+      <ul>
+      {% for name in names %}
+        <li><a href="/dataset/{{ name }}">{{ name }}</a></li>
+      {% endfor %}
+      </ul>
+    </div>
+    <div id="tab-create" class="tab-pane fade" role="tabpanel">
+      <div>
+        <label for="create">Dataset name:</label>
+        <input type="text" id="create">
+      </div>
+      <div><input type="submit" id="create_submit" value="Create"></div>
+      <div id="create_error" class="error" style="display: none"></div>
+    </div>
+    <div id="tab-upload" class="tab-pane fade" role="tabpanel">
+      <div>
+        <label for="upload">Dataset filename:</label>
+        <input type="file" id="upload" accept=".pbtxt,.pb">
+      </div>
+      <div><input type="submit" id="upload_submit" value="Upload"></div>
+      <div id="upload_error" class="error" style="display: none"></div>
+    </div>
+    <div id="tab-enumerate" class="tab-pane fade" role="tabpanel">
+      <div>
+        You can use a Reaction template to enumerate a Dataset based on a spreadsheet
+        of values. For more information, see the
+        <a href="https://docs.open-reaction-database.org/en/latest/guides/templates.html">documentation</a>.
+      </div>
+      <div>
+        <table>
+          <tr>
+            <td><label for="template">Template filename:</label></td>
+            <td><input type="file" id="template" accept=".pbtxt"></td>
+          </tr>
+          <tr>
+            <td><label for="spreadsheet">Spreadsheet filename:</label></td>
+            <td><input type="file" id="spreadsheet" accept=".csv,.xls,.xlsx"></td>
+          </tr>
+        </table>
+      </div>
+      <div><input type="submit" id="enumerate_submit" value="Enumerate"></div>
+      <div id="enumerate_error" class="error" style="display: none"></div>
+      <div>
+        <b>NOTE:</b> Large dataset enumerations (thousands of reactions) may result in a
+        browser timeout. If this happens, please send an email to <a href="mailto:help@open-reaction-database.org">help@open-reaction-database.org</a>
+        and attach your template and spreadsheet files. Alternatively, you may use the
+        <a href="https://github.com/Open-Reaction-Database/ord-schema/blob/main/ord_schema/scripts/enumerate_dataset.py">programmatic
+          interface</a>
+        to enumerate the dataset locally.
+      </div>
+    </div>
+  </div>
+</div>
+<div id="help">
+  <h2>Getting started</h2>
+  <p>Check out the <a href="https://www.youtube.com/playlist?list=PLyoEVAlMb276aRRa4xLNRAzbMPRlNb7VI">tutorial
+    videos</a>:</p>
+  <iframe width="560" height="315"
+          src="https://www.youtube-nocookie.com/embed/videoseries?list=PLyoEVAlMb276aRRa4xLNRAzbMPRlNb7VI"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+  <h2>Questions?</h2>
+  <p>
+    Please send questions, comments, or issues to
+    <a href="mailto:help@open-reaction-database.org">help@open-reaction-database.org</a>
+    or create a new issue on the <a href="https://github.com/Open-Reaction-Database/ord-editor/issues">ord-editor GitHub
+    repository</a>.
+  </p>
+</div>
+
+<script>
+    $('#create_submit').on('click', event => {
+        const errorNode = $('#create_error');
+        errorNode.hide();
+        const datasetName = $('#create').val();
+        if (datasetName) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/dataset/' + datasetName + '/new');
+            xhr.onload = function () {
+                if (xhr.status === 409) {
+                    errorNode.text('Error: Dataset "' + datasetName + '" already exists');
+                    errorNode.show();
+                } else {
+                    location.reload();
+                }
+            }
+            xhr.send();
+        }
+    });
+    $('#upload_submit').on('click', event => {
         const errorNode = $('#upload_error');
         errorNode.hide();
         const file = $('#upload')[0].files[0];
         const reader = new FileReader();
         reader.readAsArrayBuffer(file);
         reader.onload = event => {
-          const xhr = new XMLHttpRequest();
-          xhr.open('POST', '/dataset/' + file.name + '/upload');
-          const payload = event.target.result;
-          xhr.onload = () => {
-              if (xhr.status === 200) {
-                location.reload();
-              } else {
-                errorNode.text('Error: ' + xhr.response);
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/dataset/' + file.name + '/upload');
+            const payload = event.target.result;
+            xhr.onload = () => {
+                if (xhr.status === 200) {
+                    location.reload();
+                } else {
+                    errorNode.text('Error: ' + xhr.response);
+                    errorNode.show();
+                }
+            }
+            // NOTE(kearnes): Attempt to catch timeouts.
+            xhr.onerror = () => {
+                errorNode.text('Error: request failed (possibly due to timeout)');
                 errorNode.show();
-              }
-          }
-          // NOTE(kearnes): Attempt to catch timeouts.
-          xhr.onerror = () => {
-              errorNode.text('Error: request failed (possibly due to timeout)');
-              errorNode.show();
-          }
-          xhr.send(payload);
+            }
+            xhr.send(payload);
         };
-      });
-      $('#enumerate_submit').on('click', event => {
+    });
+    $('#enumerate_submit').on('click', event => {
         const errorNode = $('#enumerate_error');
         errorNode.hide();
         const templateString = $.Deferred();
@@ -283,25 +216,27 @@ limitations under the License.
         }
         spreadsheetReader.readAsDataURL(spreadsheetFile);
 
-        $.when(templateString, spreadsheetData, spreadsheetName).done(function(v1, v2, v3) {
-          const xhr = new XMLHttpRequest();
-          xhr.open('POST', '/dataset/enumerate');
-          xhr.onload = function() {
-            if (xhr.status === 200) {
-              location.reload();
-            } else {
-              errorNode.text('Error: ' + xhr.response);
-              errorNode.show();
+        $.when(templateString, spreadsheetData, spreadsheetName).done(function (v1, v2, v3) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/dataset/enumerate');
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    location.reload();
+                } else {
+                    errorNode.text('Error: ' + xhr.response);
+                    errorNode.show();
+                }
             }
-          }
-          xhr.send(JSON.stringify({'template_string': v1,
-                    'spreadsheet_data': v2,
-                    'spreadsheet_name': v3}));
+            xhr.send(JSON.stringify({
+                'template_string': v1,
+                'spreadsheet_data': v2,
+                'spreadsheet_name': v3
+            }));
         });
-      });
-    </script>
-  <footer style="background: white">
-      <p>&copy; Copyright 2020 Open Reaction Database Project Authors</p>
-  </footer>
-  </body>
+    });
+</script>
+<footer style="background: white">
+  <p>&copy; Copyright 2020 Open Reaction Database Project Authors</p>
+</footer>
+</body>
 </html>

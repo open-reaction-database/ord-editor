@@ -15,9 +15,8 @@
  */
 
 body {
-    padding: 48px;
-    padding-top: 16px;
-    font-family: Roboto;
+    padding: 16px 48px 48px;
+    width: 968px;
 }
 
 .dataset {
@@ -100,4 +99,18 @@ footer {
     color: red;
     font-style: italic;
     padding-top: 10px;
+}
+
+.tab-content {
+    border-left: 1px solid lightgray;
+    padding: 10px;
+    max-width: 800px;
+    width: max-content;
+    height: max-content;
+}
+
+button:not(.nav-link) {
+  font-size: small;
+  border: 1px solid black;
+  vertical-align: middle;
 }
