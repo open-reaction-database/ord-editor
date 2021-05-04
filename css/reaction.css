@@ -15,6 +15,8 @@
  */
 body {
   padding: 100px 20px 20px;
+  width: 968px;
+  margin: auto;
 }
 #pageLoad {
   text-align: center;
