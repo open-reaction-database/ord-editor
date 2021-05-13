@@ -469,7 +469,7 @@ function drawIdentifier(node) {
   };
   xhr.send(binary);
   // Finally, open the ketcher modal.
-  $('#ketcher_modal').modal('toggle');
+  $('#ketcher_modal').modal('show');
   // Define a callback so that when a user is done drawing, the new SMILES
   // string gets saved.
   ketcher.successCallback = function() {

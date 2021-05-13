@@ -140,6 +140,7 @@ function load(node, amount) {
       $('.amount_precision', node).text(volume.getPrecision());
     }
     select.val(enumFromValue(VolumeUnit, volume.getUnits()));
+    $('.amount_includes_solutes_label', node).show().css('display', 'inline-block');
     $('.amount_includes_solutes', node).show().css('display', 'inline-block');
     const solutes = amount.hasVolumeIncludesSolutes() ?
         amount.getVolumeIncludesSolutes() :

@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
+:root {
+    --body-width: 968px;
+}
+
 body {
     padding: 20px;
-    width: 968px;
+    width: var(--body-width);
     margin: auto;
 }
 
@@ -94,7 +98,7 @@ footer {
     position: fixed;
     bottom: 0;
     text-align: center;
-    width: 100%;
+    width: var(--body-width);
 }
 
 .error {
