@@ -302,7 +302,9 @@ function add() {
   amounts.init(workupNode);
 
   // Add live validation handling.
-  utils.addChangeHandler(workupNode, () => { validateWorkup(workupNode); });
+  utils.addChangeHandler(workupNode, () => {
+    validateWorkup(workupNode);
+  });
 
   return workupNode;
 }

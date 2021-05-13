@@ -285,52 +285,63 @@ function unloadReaction() {
 function initValidateHandlers() {
   // For setup
   const setupNode = $('#section_setup');
-  utils.addChangeHandler(setupNode, () => { setups.validateSetup(setupNode); });
+  utils.addChangeHandler(setupNode, () => {
+    setups.validateSetup(setupNode);
+  });
 
   // For conditions
   const conditionNode = $('#section_conditions');
-  utils.addChangeHandler(
-      conditionNode, () => { conditions.validateConditions(conditionNode); });
+  utils.addChangeHandler(conditionNode, () => {
+    conditions.validateConditions(conditionNode);
+  });
 
   // For temperature
   const temperatureNode = $('#section_conditions_temperature');
-  utils.addChangeHandler(
-      temperatureNode,
-      () => { temperature.validateTemperature(temperatureNode); });
+  utils.addChangeHandler(temperatureNode, () => {
+    temperature.validateTemperature(temperatureNode);
+  });
 
   // For pressure
   const pressureNode = $('#section_conditions_pressure');
-  utils.addChangeHandler(
-      pressureNode, () => { pressure.validatePressure(pressureNode); });
+  utils.addChangeHandler(pressureNode, () => {
+    pressure.validatePressure(pressureNode);
+  });
 
   // For stirring
   const stirringNode = $('#section_conditions_stirring');
-  utils.addChangeHandler(
-      stirringNode, () => { stirring.validateStirring(stirringNode); });
+  utils.addChangeHandler(stirringNode, () => {
+    stirring.validateStirring(stirringNode);
+  });
 
   // For illumination
   const illuminationNode = $('#section_conditions_illumination');
-  utils.addChangeHandler(
-      illuminationNode,
-      () => { illumination.validateIllumination(illuminationNode); });
+  utils.addChangeHandler(illuminationNode, () => {
+    illumination.validateIllumination(illuminationNode);
+  });
 
   // For electro
   const electroNode = $('#section_conditions_electro');
-  utils.addChangeHandler(
-      electroNode, () => { electro.validateElectro(electroNode); });
+  utils.addChangeHandler(electroNode, () => {
+    electro.validateElectro(electroNode);
+  });
 
   // For flow
   const flowNode = $('#section_conditions_flow');
-  utils.addChangeHandler(flowNode, () => { flows.validateFlow(flowNode); });
+  utils.addChangeHandler(flowNode, () => {
+    flows.validateFlow(flowNode);
+  });
 
   // For notes
   const notesNode = $('#section_notes');
-  utils.addChangeHandler(notesNode, () => { notes.validateNotes(notesNode); });
+  utils.addChangeHandler(notesNode, () => {
+    notes.validateNotes(notesNode);
+  });
 
   // For provenance
   const provenanceNode = $('#section_provenance');
-  utils.addChangeHandler(
-      provenanceNode, () => { provenance.validateProvenance(provenanceNode); });
+  utils.addChangeHandler(provenanceNode, () => {
+    provenance.validateProvenance(provenanceNode);
+  });
 }
 
 /**

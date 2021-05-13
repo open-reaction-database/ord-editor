@@ -339,7 +339,9 @@ function add(root) {
   amounts.init(node);
 
   // Add live validation handling.
-  utils.addChangeHandler(node, () => { validateCompound(node); });
+  utils.addChangeHandler(node, () => {
+    validateCompound(node);
+  });
 
   return node;
 }
