@@ -42,6 +42,9 @@ button {
   border: 1px solid black;
   vertical-align: middle;
 }
+.button-lg {
+  font-size: medium;
+}
 .edittext {
   width: 200px;
   height: auto;
