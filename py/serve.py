@@ -44,7 +44,7 @@ from ord_schema.proto import reaction_pb2
 from ord_schema.visualization import generate_text
 from ord_schema.visualization import drawing
 
-# pylint: disable=invalid-name,no-member,inconsistent-return-statements
+# pylint: disable=invalid-name,no-member,inconsistent-return-statements,assigning-non-slot
 app = flask.Flask(__name__, template_folder='../html')
 
 # For dataset merges operations like byte-value uploads and enumeration.
