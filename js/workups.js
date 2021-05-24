@@ -21,6 +21,7 @@ const asserts = goog.require('goog.asserts');
 
 const amounts = goog.require('ord.amounts');
 const inputs = goog.require('ord.inputs');
+const temperature = goog.require('ord.temperature');
 const utils = goog.require('ord.utils');
 
 const ReactionWorkup = goog.require('proto.ord.ReactionWorkup');
@@ -33,8 +34,6 @@ const Temperature = goog.require('proto.ord.Temperature');
 const TemperatureConditions = goog.require('proto.ord.TemperatureConditions');
 const Measurement = goog.require('proto.ord.TemperatureConditions.Measurement');
 const MeasurementType = goog.require('proto.ord.TemperatureConditions.Measurement.MeasurementType');
-const TemperatureControl = goog.require('proto.ord.TemperatureConditions.TemperatureControl');
-const TemperatureControlType = goog.require('proto.ord.TemperatureConditions.TemperatureControl.TemperatureControlType');
 const Time = goog.require('proto.ord.Time');
 
 exports = {
@@ -72,21 +71,9 @@ function loadWorkup(workup) {
   const amount = workup.getAmount();
   amounts.load(node, amount);
 
-  const temperature = workup.getTemperature();
-  if (temperature) {
-    const control = temperature.getControl();
-    if (control) {
-      utils.setSelector(
-          $('.workup_temperature_control_type', node), control.getType());
-      $('.workup_temperature_details', node).text(control.getDetails());
-    }
-    const setpoint = temperature.getSetpoint();
-    if (setpoint) {
-      utils.writeMetric('.workup_temperature_setpoint', setpoint, node);
-    }
-
-    temperature.getMeasurementsList().forEach(
-        measurement => loadMeasurement(node, measurement));
+  const temperatureMessage = workup.getTemperature();
+  if (temperatureMessage) {
+    temperature.load(temperatureMessage, node);
   }
 
   $('.workup_keep_phase', node).text(workup.getKeepPhase());
@@ -181,40 +168,11 @@ function unloadWorkup(node) {
     workup.setAmount(amount);
   }
 
-  const control = new TemperatureControl();
-  const temperatureControlType =
-      utils.getSelectorText($('.workup_temperature_control_type', node)[0]);
-  control.setType(TemperatureControlType[temperatureControlType]);
-  control.setDetails(
-      asserts.assertString($('.workup_temperature_details', node).text()));
-
-  const temperature = new TemperatureConditions();
-  if (!utils.isEmptyMessage(control)) {
-    temperature.setControl(control);
+  const temperatureMessage = temperature.unload(node);
+  if (!utils.isEmptyMessage(temperatureMessage)) {
+    workup.setTemperature(temperatureMessage);
   }
 
-  const setpoint =
-      utils.readMetric('.workup_temperature_setpoint', new Temperature(), node);
-  if (!utils.isEmptyMessage(setpoint)) {
-    temperature.setSetpoint(setpoint);
-  }
-
-  const measurements = [];
-  const measurementNodes = $('.workup_temperature_measurement', node);
-  measurementNodes.each(function(index, measurementNode) {
-    measurementNode = $(measurementNode);
-    if (!measurementNode.attr('id')) {
-      // Not a template.
-      const measurement = unloadMeasurement(measurementNode);
-      if (!utils.isEmptyMessage(measurement)) {
-        measurements.push(measurement);
-      }
-    }
-  });
-  temperature.setMeasurementsList(measurements);
-  if (!utils.isEmptyMessage(temperature)) {
-    workup.setTemperature(temperature);
-  }
   workup.setKeepPhase(
       asserts.assertString($('.workup_keep_phase', node).text()));
 

@@ -727,28 +727,22 @@ limitations under the License.
             <div class="workup_input">
               <!-- Shares ".input_template" with "#inputs" above. -->
             </div>
-            <fieldset class="s4">
+            <fieldset class="temperature_conditions s3">
               <legend>
-                <span class="workup_temperature collapse"></span>
-                <span class="h4">Temperature conditions</span>
+                <span class="collapse show"></span>
+                <span class="h4">Temperature</span>
+                <div class="validate"></div>
               </legend>
               <table class="message">
-                <tr><td>control</td><td><div class="workup_temperature_control_type selector" data-proto="TemperatureConditions_TemperatureControl_TemperatureControlType"></div></td></tr>
-                <tr><td>setpoint</td><td><div class="workup_temperature_setpoint_value edittext shorttext floattext"></div>
-                  ± <div class="workup_temperature_setpoint_precision edittext shorttext floattext"></div>
-                                                       <div class="workup_temperature_setpoint_units selector" data-proto="Temperature_TemperatureUnit"></div>
+                <tr><td>control</td><td><div class="temperature_control selector" data-proto="TemperatureConditions_TemperatureControl_TemperatureControlType"></div>
+                                                      details <div class="temperature_control_details edittext"></div></td></tr>
+                <tr><td>setpoint</td><td><div class="temperature_setpoint_value edittext shorttext floattext"></div>
+                                                       ± <div class="temperature_setpoint_precision edittext shorttext floattext"></div>
+                                                       <div class="temperature_setpoint_units selector" data-proto="Temperature_TemperatureUnit"></div>
                                                        </td></tr>
-                <tr><td>details</td><td><div class="workup_temperature_details edittext"></div></td></tr>
               </table>
-            </fieldset>
-            <fieldset class="s4">
-              <legend>
-                <span class="workup_temperature_measurements_wrap collapse"></span>
-                <span class="h4">Temperature measurements</span>
-              </legend>
-              <div class="workup_temperature_measurements">
-              </div>
-              <button type="button" class="add" onclick="ord.workups.addMeasurement($(this).closest('.workup'));"><span class="fas fa-plus" aria-hidden="true"></span> add measurement</button>
+              <div class="temperature_measurements"></div>
+              <button type="button" class="add" onclick="ord.temperature.addMeasurement($(this).closest('.temperature_conditions'));"><span class="fas fa-plus" aria-hidden="true"></span> add measurement</button>
             </fieldset>
             <fieldset class="s4">
               <legend>
@@ -765,29 +759,6 @@ limitations under the License.
             </fieldset>
           </fieldset>
           </div>
-
-          <div id="workup_temperature_measurement_template" class="workup_temperature_measurement" style="display: none;">
-            <fieldset class="s5">
-              <legend>
-                <span class="collapse show"></span>
-                <span class="h5">Temperature measurement</span>
-                <button type="button" class="remove"  onclick="ord.utils.removeSlowly(this, '.workup_temperature_measurement');"><i class="far fa-trash-alt"></i></button>
-              </legend>
-              <table class="message">
-                <tr><td>type</td><td><div class="workup_temperature_measurement_type selector" data-proto="TemperatureConditions_Measurement_MeasurementType"></div></td></tr>
-                <tr><td>time</td><td><div class="workup_temperature_measurement_time_value edittext shorttext floattext"></div>
-                  ± <div class="workup_temperature_measurement_time_precision edittext shorttext floattext"></div>
-                                           <div class="workup_temperature_measurement_time_units selector" data-proto="Time_TimeUnit"></div>
-                                           </td></tr>
-                <tr><td>temperature</td><td><div class="workup_temperature_measurement_temperature_value edittext shorttext floattext"></div>
-                  ± <div class="workup_temperature_measurement_temperature_precision edittext shorttext floattext"></div>
-                                                  <div class="workup_temperature_measurement_temperature_units selector" data-proto="Temperature_TemperatureUnit"></div>
-                                                  </td></tr>
-                <tr><td>details</td><td><div class="workup_temperature_measurement_details edittext"></div></td></tr>
-              </table>
-            </fieldset>
-          </div>
-
         </div>
         <button type="button" class="add button-lg" onclick="ord.workups.add();"><span class="fas fa-plus" aria-hidden="true"></span> add workup</button>
       </fieldset>
