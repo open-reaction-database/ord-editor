@@ -59,7 +59,8 @@ function load(stirring, target) {
  */
 function unload(target) {
   const stirring = new StirringConditions();
-  const methodType = utils.getSelectorText($('.stirring_method_type', target)[0]);
+  const methodType =
+      utils.getSelectorText($('.stirring_method_type', target)[0]);
   stirring.setType(StirringMethodType[methodType]);
   stirring.setDetails(
       asserts.assertString($('.stirring_method_details', target).text()));
@@ -67,7 +68,8 @@ function unload(target) {
   const rate = new StirringRate();
   const rateType = utils.getSelectorText($('.stirring_rate_type', target)[0]);
   rate.setType(StirringRateType[rateType]);
-  rate.setDetails(asserts.assertString($('.stirring_rate_details', target).text()));
+  rate.setDetails(
+      asserts.assertString($('.stirring_rate_details', target).text()));
   const rpm = parseFloat($('.stirring_rpm', target).text());
   if (!isNaN(rpm)) {
     rate.setRpm(rpm);

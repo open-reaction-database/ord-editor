@@ -56,6 +56,7 @@ function load(workups) {
 function loadWorkup(workup) {
   const node = add();
   utils.setSelector($('.workup_type', node), workup.getType());
+  $('.workup_type select', node).trigger('change');
   $('.workup_details', node).text(workup.getDetails());
   const duration = workup.getDuration();
   if (duration) {
@@ -213,6 +214,10 @@ function add() {
   const inputNode = $('.workup_input', workupNode);
   // The template for ReactionWorkup.input is taken from Reaction.inputs.
   const workupInputNode = inputs.add(inputNode, ['workup_input']);
+  $('.input_addition_order_row', workupInputNode).hide();
+  $('.input_addition_time_row', workupInputNode).hide();
+  $('.input_addition_duration_row', workupInputNode).hide();
+  $('.input_addition_temperature_row', workupInputNode).hide();
   // Adjust heading sizes. Start with the smallest so we don't adjust more than
   // once.
   // TODO(kearnes): This does not affect input components added later.
@@ -232,11 +237,162 @@ function add() {
   });
 
   // Show/hide fields based on the measurement type.
-  const workupTypeSelector =
-      $('.workup_type select', workupNode);
+  const workupTypeSelector = $('.workup_type select', workupNode);
   workupTypeSelector.on('change', function() {
-    // const workupType = this.options[this.selectedIndex].text;
-    // if (workupType === 'UNSPECIFIED')
+    const workupType = this.options[this.selectedIndex].text;
+    if (workupType === 'UNSPECIFIED') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).hide();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).hide();
+    } else if (workupType === 'CUSTOM') {
+      $('.workup_keep_phase_row', workupNode).show();
+      $('.workup_target_ph_row', workupNode).show();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).show();
+      $('.workup_input', workupNode).show();
+      $('.temperature_conditions', workupNode).show();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'ADDITION') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).show();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).show();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'ALIQUOT') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).hide();
+      $('.workup_amount', workupNode).show();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).hide();
+    } else if (workupType === 'TEMPERATURE') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).show();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'CONCENTRATION') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'EXTRACTION') {
+      $('.workup_keep_phase_row', workupNode).show();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'FILTRATION') {
+      $('.workup_keep_phase_row', workupNode).show();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'WASH') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).show();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'DRY_IN_VACUUM') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).show();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'DRY_WITH_MATERIAL') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).show();
+      $('.temperature_conditions', workupNode).show();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'FLASH_CHROMATOGRAPHY') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).hide();
+    } else if (workupType === 'OTHER_CHROMATOGRAPHY') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).hide();
+    } else if (workupType === 'SCAVENGING') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).show();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'WAIT') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'STIRRING') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).hide();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'PH_ADJUST') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).show();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).show();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'DISSOLUTION') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).show();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'DISTILLATION') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).show();
+      $('.stirring_conditions', workupNode).show();
+    }
   });
   workupTypeSelector.trigger('change');
 

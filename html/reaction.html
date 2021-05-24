@@ -147,7 +147,7 @@ limitations under the License.
                     <span class="h4">Addition information</span>
                   </legend>
                   <table class="message">
-                    <tr><td>addition order
+                    <tr class="input_addition_order_row"><td>addition order
                     <button class="help" data-toggle="tooltip" data-placement="right" title="Addition order should be an integer value, starting at 1.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
                     </button>
@@ -156,7 +156,7 @@ limitations under the License.
                                                                 details <div class="input_addition_speed_details edittext"></div></td></tr>
                     <tr><td>addition device</td><td><div class="input_addition_device_type selector" data-proto="ReactionInput_AdditionDevice_AdditionDeviceType"></div></td><td>
                                                                   details <div class="input_addition_device_details edittext"></div></td></tr>
-                    <tr><td>addition time
+                    <tr class="input_addition_time_row"><td>addition time
                     <button class="help" data-toggle="tooltip" data-placement="right" title="Addition time is relative to when the first input was added.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
                     </button>
@@ -164,7 +164,7 @@ limitations under the License.
                       <div class="input_addition_time_value edittext shorttext floattext"></div>
                       ± <div class="input_addition_time_precision edittext shorttext floattext"></div></td>
                       <td><div class="input_addition_time_units selector" data-proto="Time_TimeUnit"></div></td></tr>
-                    <tr><td>addition duration
+                    <tr class="input_addition_duration_row"><td>addition duration
                     <button class="help" data-toggle="tooltip" data-placement="right" title="Addition duration quantifies how long it took to add the input.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
                     </button>
@@ -173,7 +173,7 @@ limitations under the License.
                       ± <div class="input_addition_duration_precision edittext shorttext floattext"></div>
                       </td><td><div class="input_addition_duration_units selector" data-proto="Time_TimeUnit"></div>
                     </td></tr>
-                    <tr><td>addition temperature
+                    <tr class="input_addition_temperature_row"><td>addition temperature
                     <button class="help" data-toggle="tooltip" data-placement="right" title="Addition temperature specifies if the reaction input was heated or cooled prior to addition.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
                     </button>
@@ -475,7 +475,7 @@ limitations under the License.
           </div>
           <button type="button" class="add" onclick="ord.temperature.addMeasurement($(this).closest('.temperature_conditions'));"><span class="fas fa-plus" aria-hidden="true"></span> add measurement</button>
         </fieldset>
-        <fieldset id="section_conditions_stirring" class="s3">
+        <fieldset id="section_conditions_stirring" class="stirring_conditions s3">
           <legend>
             <span class="collapse show"></span>
             <span class="h3">Stirring</span>
@@ -707,9 +707,9 @@ limitations under the License.
             </legend>
             <table class="message">
               <tr><td>type</td><td><div class="workup_type selector" data-proto="ReactionWorkup_WorkupType"></div></td></tr>
-              <tr><td>keep phase</td><td><div class="workup_keep_phase edittext"></div></td></tr>
-              <tr><td>target ph</td><td><div class="workup_target_ph edittext veryshorttext floattext"></div></td></tr>
-              <tr><td>duration</td><td><div class="workup_duration_value edittext shorttext floattext"></div>
+              <tr class="workup_keep_phase_row"><td>keep phase</td><td><div class="workup_keep_phase edittext"></div></td></tr>
+              <tr class="workup_target_ph_row"><td>target ph</td><td><div class="workup_target_ph edittext veryshorttext floattext"></div></td></tr>
+              <tr class="workup_duration_row"><td>duration</td><td><div class="workup_duration_value edittext shorttext floattext"></div>
                 ± <div class="workup_duration_precision edittext shorttext floattext"></div>
                                                      <div class="workup_duration_units selector" data-proto="Time_TimeUnit"></div>
                                                      </td></tr>
@@ -744,7 +744,7 @@ limitations under the License.
               <div class="temperature_measurements"></div>
               <button type="button" class="add" onclick="ord.temperature.addMeasurement($(this).closest('.temperature_conditions'));"><span class="fas fa-plus" aria-hidden="true"></span> add measurement</button>
             </fieldset>
-            <fieldset class="s4">
+            <fieldset class="stirring_conditions s4">
               <legend>
                 <span class="collapse show"></span>
                 <span class="h4">Stirring</span>
