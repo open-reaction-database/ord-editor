@@ -36,37 +36,39 @@ exports = {
 /**
  * Adds and populates the stirring conditions section in the form.
  * @param {!StirringConditions} stirring
+ * @param {!jQuery} target
  */
-function load(stirring) {
-  utils.setSelector($('#stirring_method_type'), stirring.getType());
-  $('#stirring_method_details').text(stirring.getDetails());
+function load(stirring, target) {
+  utils.setSelector($('.stirring_method_type', target), stirring.getType());
+  $('.stirring_method_details', target).text(stirring.getDetails());
   const rate = stirring.getRate();
   if (rate) {
-    utils.setSelector($('#stirring_rate_type'), rate.getType());
-    $('#stirring_rate_details').text(rate.getDetails());
+    utils.setSelector($('.stirring_rate_type', target), rate.getType());
+    $('.stirring_rate_details', target).text(rate.getDetails());
     const rpm = rate.getRpm();
     if (rpm !== 0) {
-      $('#stirring_rpm').text(rpm);
+      $('.stirring_rpm', target).text(rpm);
     }
   }
 }
 
 /**
  * Fetches the stirring conditions from the form.
+ * @param {!jQuery} target
  * @return {!StirringConditions}
  */
-function unload() {
+function unload(target) {
   const stirring = new StirringConditions();
-  const methodType = utils.getSelectorText($('#stirring_method_type')[0]);
+  const methodType = utils.getSelectorText($('.stirring_method_type', target)[0]);
   stirring.setType(StirringMethodType[methodType]);
   stirring.setDetails(
-      asserts.assertString($('#stirring_method_details').text()));
+      asserts.assertString($('.stirring_method_details', target).text()));
 
   const rate = new StirringRate();
-  const rateType = utils.getSelectorText($('#stirring_rate_type')[0]);
+  const rateType = utils.getSelectorText($('.stirring_rate_type', target)[0]);
   rate.setType(StirringRateType[rateType]);
-  rate.setDetails(asserts.assertString($('#stirring_rate_details').text()));
-  const rpm = parseFloat($('#stirring_rpm').text());
+  rate.setDetails(asserts.assertString($('.stirring_rate_details', target).text()));
+  const rpm = parseFloat($('.stirring_rpm', target).text());
   if (!isNaN(rpm)) {
     rate.setRpm(rpm);
   }
@@ -82,6 +84,6 @@ function unload() {
  * @param {?jQuery=} validateNode The target div for validation results.
  */
 function validateStirring(node, validateNode = null) {
-  const stirring = unload();
+  const stirring = unload(node);
   utils.validate(stirring, 'StirringConditions', node, validateNode);
 }

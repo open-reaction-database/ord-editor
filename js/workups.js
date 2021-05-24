@@ -21,15 +21,12 @@ const asserts = goog.require('goog.asserts');
 
 const amounts = goog.require('ord.amounts');
 const inputs = goog.require('ord.inputs');
+const stirring = goog.require('ord.stirring');
 const temperature = goog.require('ord.temperature');
 const utils = goog.require('ord.utils');
 
 const ReactionWorkup = goog.require('proto.ord.ReactionWorkup');
 const WorkupType = goog.require('proto.ord.ReactionWorkup.WorkupType');
-const StirringConditions = goog.require('proto.ord.StirringConditions');
-const StirringMethodType = goog.require('proto.ord.StirringConditions.StirringMethodType');
-const StirringRate = goog.require('proto.ord.StirringConditions.StirringRate');
-const StirringRateType = goog.require('proto.ord.StirringConditions.StirringRate.StirringRateType');
 const Temperature = goog.require('proto.ord.Temperature');
 const TemperatureConditions = goog.require('proto.ord.TemperatureConditions');
 const Measurement = goog.require('proto.ord.TemperatureConditions.Measurement');
@@ -78,21 +75,11 @@ function loadWorkup(workup) {
 
   $('.workup_keep_phase', node).text(workup.getKeepPhase());
 
-  const stirring = workup.getStirring();
-  if (stirring) {
-    utils.setSelector(
-        $('.workup_stirring_method_type', node), stirring.getType());
-    $('.workup_stirring_method_details', node).text(stirring.getDetails());
-    const rate = stirring.getRate();
-    if (rate) {
-      utils.setSelector($('.workup_stirring_rate_type', node), rate.getType());
-      $('.workup_stirring_rate_details', node).text(rate.getDetails());
-      const rpm = rate.getRpm();
-      if (rpm !== 0) {
-        $('.workup_stirring_rate_rpm', node).text(rpm);
-      }
-    }
+  const stirringMessage = workup.getStirring();
+  if (stirringMessage) {
+    stirring.load(stirringMessage, node);
   }
+
   if (workup.hasTargetPh()) {
     $('.workup_target_ph', node).text(workup.getTargetPh());
   }
@@ -176,29 +163,9 @@ function unloadWorkup(node) {
   workup.setKeepPhase(
       asserts.assertString($('.workup_keep_phase', node).text()));
 
-  const stirring = new StirringConditions();
-  const stirringMethodType =
-      utils.getSelectorText($('.workup_stirring_method_type', node)[0]);
-  stirring.setType(StirringMethodType[stirringMethodType]);
-  stirring.setDetails(
-      asserts.assertString($('.workup_stirring_method_details').text()));
-
-  const rate = new StirringRate();
-  const stirringRateType =
-      utils.getSelectorText($('.workup_stirring_rate_type', node)[0]);
-  rate.setType(StirringRateType[stirringRateType]);
-  rate.setDetails(
-      asserts.assertString($('.workup_stirring_rate_details').text()));
-  const rpm = parseFloat($('.workup_stirring_rate_rpm', node).text());
-  if (!isNaN(rpm)) {
-    rate.setRpm(rpm);
-  }
-  if (!utils.isEmptyMessage(rate)) {
-    stirring.setRate(rate);
-  }
-
-  if (!utils.isEmptyMessage(stirring)) {
-    workup.setStirring(stirring);
+  const stirringMessage = stirring.unload(node);
+  if (!utils.isEmptyMessage(stirringMessage)) {
+    workup.setStirring(stirringMessage);
   }
 
   const targetPh = parseFloat($('.workup_target_ph', node).text());

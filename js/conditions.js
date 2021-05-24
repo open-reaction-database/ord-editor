@@ -39,10 +39,11 @@ const ReactionConditions = goog.require('proto.ord.ReactionConditions');
  * @param {!ReactionConditions} conditions
  */
 function load(conditions) {
+  const conditionsSection = $('#section_conditions');
   const temperatureMessage = conditions.getTemperature();
   if (temperatureMessage) {
     $('#show_section_conditions_temperature').trigger('click');
-    temperature.load(temperatureMessage, $('#section_conditions'));
+    temperature.load(temperatureMessage, conditionsSection);
   }
   const pressureMessage = conditions.getPressure();
   if (pressureMessage) {
@@ -52,7 +53,7 @@ function load(conditions) {
   const stirringMessage = conditions.getStirring();
   if (stirringMessage) {
     $('#show_section_conditions_stirring').trigger('click');
-    stirring.load(stirringMessage);
+    stirring.load(stirringMessage, conditionsSection);
   }
   const illuminationMessage = conditions.getIllumination();
   if (illuminationMessage) {
@@ -87,7 +88,8 @@ function load(conditions) {
  */
 function unload() {
   const conditions = new ReactionConditions();
-  const temperatureMessage = temperature.unload($('#section_conditions'));
+  const conditionsSection = $('#section_conditions');
+  const temperatureMessage = temperature.unload(conditionsSection);
   if (!utils.isEmptyMessage(temperatureMessage)) {
     conditions.setTemperature(temperatureMessage);
   }
@@ -95,7 +97,7 @@ function unload() {
   if (!utils.isEmptyMessage(pressureMessage)) {
     conditions.setPressure(pressureMessage);
   }
-  const stirringMessage = stirring.unload();
+  const stirringMessage = stirring.unload(conditionsSection);
   if (!utils.isEmptyMessage(stirringMessage)) {
     conditions.setStirring(stirringMessage);
   }
