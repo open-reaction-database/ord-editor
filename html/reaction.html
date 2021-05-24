@@ -436,21 +436,21 @@ limitations under the License.
             </button>
           </td><td><div id="condition_details" class="edittext paratext"></div></td></tr>
         </table>
-        <fieldset id="section_conditions_temperature" class="s3">
+        <fieldset id="section_conditions_temperature" class="temperature_conditions s3">
           <legend>
             <span class="collapse show"></span>
             <span class="h3">Temperature</span>
             <div class="validate"></div>
           </legend>
           <table class="message">
-            <tr><td>control</td><td><div id="temperature_control" class="selector" data-proto="TemperatureConditions_TemperatureControl_TemperatureControlType"></div>
-                                                  details <div id="temperature_control_details" class="edittext"></div></td></tr>
-            <tr><td>setpoint</td><td><div id="temperature_setpoint_value" class="edittext shorttext floattext"></div>
-                                                   ± <div id="temperature_setpoint_precision" class="edittext shorttext floattext"></div>
-                                                   <div id="temperature_setpoint_units" class="selector" data-proto="Temperature_TemperatureUnit"></div>
+            <tr><td>control</td><td><div class="temperature_control selector" data-proto="TemperatureConditions_TemperatureControl_TemperatureControlType"></div>
+                                                  details <div class="temperature_control_details edittext"></div></td></tr>
+            <tr><td>setpoint</td><td><div class="temperature_setpoint_value edittext shorttext floattext"></div>
+                                                   ± <div class="temperature_setpoint_precision edittext shorttext floattext"></div>
+                                                   <div class="temperature_setpoint_units selector" data-proto="Temperature_TemperatureUnit"></div>
                                                    </td></tr>
           </table>
-          <div id="temperature_measurements">
+          <div class="temperature_measurements">
             <div id="temperature_measurement_template" class="temperature_measurement" style="display: none;">
               <fieldset class="s4">
                 <legend>
@@ -473,7 +473,7 @@ limitations under the License.
               </fieldset>
             </div>
           </div>
-          <button type="button" class="add" onclick="ord.temperature.addMeasurement();"><span class="fas fa-plus" aria-hidden="true"></span> add measurement</button>
+          <button type="button" class="add" onclick="ord.temperature.addMeasurement($(this).closest('.temperature_conditions'));"><span class="fas fa-plus" aria-hidden="true"></span> add measurement</button>
         </fieldset>
         <fieldset id="section_conditions_stirring" class="s3">
           <legend>

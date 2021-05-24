@@ -639,7 +639,7 @@ function readMetric(prefix, proto, node = null) {
 }
 
 /**
- * Packs a (value, units, precision) tuple into form elements.
+ * Unpacks a (value, units, precision) tuple into form elements.
  * @param {string} prefix The prefix for element attributes.
  * @param {?UnitMessage|?Percentage} proto A protocol buffer with
  *    `value`, `precision`, and `units` fields. (Percentage is allowed

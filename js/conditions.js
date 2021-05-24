@@ -42,7 +42,7 @@ function load(conditions) {
   const temperatureMessage = conditions.getTemperature();
   if (temperatureMessage) {
     $('#show_section_conditions_temperature').trigger('click');
-    temperature.load(temperatureMessage);
+    temperature.load(temperatureMessage, $('#section_conditions'));
   }
   const pressureMessage = conditions.getPressure();
   if (pressureMessage) {
@@ -87,7 +87,7 @@ function load(conditions) {
  */
 function unload() {
   const conditions = new ReactionConditions();
-  const temperatureMessage = temperature.unload();
+  const temperatureMessage = temperature.unload($('#section_conditions'));
   if (!utils.isEmptyMessage(temperatureMessage)) {
     conditions.setTemperature(temperatureMessage);
   }

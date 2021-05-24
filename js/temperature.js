@@ -37,22 +37,23 @@ exports = {
 };
 
 /**
- * Adds and populates the temperature conditions section in the form.
+ * Populates a temperature conditions section in the form.
  * @param {!TemperatureConditions} temperature
+ * @param {!jQuery} target The target div.
  */
-function load(temperature) {
+function load(temperature, target) {
   const control = temperature.getControl();
   if (control) {
-    utils.setSelector($('#temperature_control'), control.getType());
-    $('#temperature_control_details').text(control.getDetails());
+    utils.setSelector($('.temperature_control', target), control.getType());
+    $('.temperature_control_details', target).text(control.getDetails());
   }
   const measurements = temperature.getMeasurementsList();
   measurements.forEach(function(measurement) {
-    const node = addMeasurement();
+    const node = addMeasurement(target);
     loadMeasurement(measurement, node);
   });
   const setpoint = temperature.getSetpoint();
-  utils.writeMetric('#temperature_setpoint', setpoint);
+  utils.writeMetric('.temperature_setpoint', setpoint, target);
 }
 
 /**
@@ -74,27 +75,28 @@ function loadMeasurement(measurement, node) {
 
 /**
  * Fetches temperature conditions from the form.
+ * @param {!jQuery} target
  * @return {!TemperatureConditions}
  */
-function unload() {
+function unload(target) {
   const temperature = new TemperatureConditions();
 
   const control = new TemperatureControl();
-  const controlType = utils.getSelectorText($('#temperature_control')[0]);
+  const controlType = utils.getSelectorText($('.temperature_control', target)[0]);
   control.setType(TemperatureControlType[controlType]);
   control.setDetails(
-      asserts.assertString($('#temperature_control_details').text()));
+      asserts.assertString($('.temperature_control_details', target).text()));
   if (!utils.isEmptyMessage(control)) {
     temperature.setControl(control);
   }
 
-  const setpoint = utils.readMetric('#temperature_setpoint', new Temperature());
+  const setpoint = utils.readMetric('.temperature_setpoint', new Temperature(), target);
   if (!utils.isEmptyMessage(setpoint)) {
     temperature.setSetpoint(setpoint);
   }
 
   const measurements = [];
-  $('.temperature_measurement').each(function(index, node) {
+  $('.temperature_measurement', target).each(function(index, node) {
     node = $(node);
     if (!utils.isTemplateOrUndoBuffer(node)) {
       const measurement = unloadMeasurement(node);
@@ -110,7 +112,7 @@ function unload() {
 /**
  * Fetches a temperature measurement from the form.
  * @param {!jQuery} node The div of the measurement to fetch.
- * @return {!TemperatureConditions.Measurement}
+ * @return {!Measurement}
  */
 function unloadMeasurement(node) {
   const measurement = new Measurement();
@@ -134,11 +136,12 @@ function unloadMeasurement(node) {
 
 /**
  * Adds a temperature measurement section to the form.
+ * @param {!jQuery} target
  * @return {!jQuery} The node of the new measurement div.
  */
-function addMeasurement() {
+function addMeasurement(target) {
   return utils.addSlowly(
-      '#temperature_measurement_template', $('#temperature_measurements'));
+      '#temperature_measurement_template', $('.temperature_measurements', target));
 }
 
 /**
@@ -147,6 +150,6 @@ function addMeasurement() {
  * @param {?jQuery=} validateNode The target div for validation results.
  */
 function validateTemperature(node, validateNode = null) {
-  const temperature = unload();
+  const temperature = unload(node);
   utils.validate(temperature, 'TemperatureConditions', node, validateNode);
 }

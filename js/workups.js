@@ -306,6 +306,15 @@ function add() {
     validateWorkup(workupNode);
   });
 
+  // Show/hide fields based on the measurement type.
+  const workupTypeSelector =
+      $('.workup_type select', workupNode);
+  workupTypeSelector.on('change', function() {
+    // const workupType = this.options[this.selectedIndex].text;
+    // if (workupType === 'UNSPECIFIED')
+  });
+  workupTypeSelector.trigger('change');
+
   return workupNode;
 }
 
