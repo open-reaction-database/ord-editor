@@ -395,8 +395,9 @@ def read_upload(token):
 
 def _adjust_error(error: str) -> str:
     """Strips the message name from errors to make them more readable."""
-    location, message = error.split(':')
-    location = '.'.join(location.strip().split('.')[1:])
+    fields = error.split(':')
+    location = '.'.join(fields[0].strip().split('.')[1:])
+    message = ':'.join(fields[1:])
     if location:
         return f'{location}: {message.strip()}'
     return message.strip()
