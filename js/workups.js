@@ -359,11 +359,11 @@ function add() {
       $('.workup_amount', workupNode).hide();
       $('.workup_input', workupNode).hide();
       $('.temperature_conditions', workupNode).hide();
-      $('.stirring_conditions', workupNode).show();
+      $('.stirring_conditions', workupNode).hide();
     } else if (workupType === 'STIRRING') {
       $('.workup_keep_phase_row', workupNode).hide();
       $('.workup_target_ph_row', workupNode).hide();
-      $('.workup_duration_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
       $('.workup_amount', workupNode).hide();
       $('.workup_input', workupNode).hide();
       $('.temperature_conditions', workupNode).hide();
