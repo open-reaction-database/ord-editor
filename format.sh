@@ -39,5 +39,5 @@ elif command -v clang-format &> /dev/null; then
 else
   echo "Please install clang-format:"
   echo "  Linux: apt install clang-format-10"
-  echo "  MacOS: brew install clang-format"
+  echo "  MacOS: <download from releases.llvm.org>"
 fi

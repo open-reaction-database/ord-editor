@@ -59,14 +59,12 @@ exports = {
   addChangeHandler,
   addSlowly,
   clean,
-  collapseToggle,  // Used by initCollapse.
   compareDataset,
   getDataset,
   getOptionalBool,
   getReactionById,
   getSelectorText,
   freeze,
-  initCollapse,
   initOptionalBool,
   initSelector,
   initValidateNode,
@@ -82,6 +80,7 @@ exports = {
   setOptionalBool,
   setSelector,
   setTextFromFile,
+  showOptionalSection,
   toggleAutosave,
   toggleValidateMessage,
   undoSlowly,
@@ -152,6 +151,8 @@ function clickSave() {
   if (saveButton.css('visibility') === 'visible' &&
       saveButton.text() === 'save') {
     saveButton.trigger('click');
+    // Validate on autosave.
+    $('#reaction_validate_button').trigger('click');
   }
 }
 
@@ -166,14 +167,12 @@ function toggleAutosave() {
     session.timers.short =
         setInterval(clickSave, 1000 * 15);  // Save after 15 seconds
     matcher.text('autosave: on');
-    matcher.css('backgroundColor', 'lightgreen');
   } else {
     // Stop the interval timer itself, then remove reference in order to
     // properly later detect that it's stopped.
     clearInterval(session.timers.short);
     session.timers.short = null;
     matcher.text('autosave: off');
-    matcher.css('backgroundColor', 'pink');
   }
 }
 
@@ -193,7 +192,7 @@ function addSlowly(template, root) {
   node.show('slow');
   dirty();
   listen(node);
-  $('[data-toggle=\'tooltip\']', node).tooltip();
+  $('[data-toggle="tooltip"]', node).tooltip();
   return node;
 }
 
@@ -250,40 +249,13 @@ function makeUndoable(node) {
 }
 
 /**
- * Toggles the visibility of all siblings of an element, or if a pattern is
- * provided, toggles the visibility of all siblings of the nearest ancestor
- * element matching the pattern.
- * @param {!jQuery} node The element to toggle or use as the search root.
- * @param {string} pattern The pattern to match for finding siblings to toggle.
+ * On button click, hides the button and displays an optional input section.
+ * @param {!jQuery} button The button that was clicked.
+ * @param {string} target ID of the target element.
  */
-function toggleSlowly(node, pattern) {
-  if (pattern) {
-    node = node.closest(pattern);
-  }
-  // 'collapsed' tag is used to hold previously collapsed siblings,
-  // and would be stored as node's next sibling;
-  // the following line checks whether a collapse has occured.
-  if (node.next('collapsed').length !== 0) {
-    // Need to uncollapse.
-    const collapsedNode = node.next('collapsed');
-    collapsedNode.toggle('slow', () => {
-      collapsedNode.children().unwrap();
-    });
-  } else {
-    // Need to collapse.
-    node.siblings().wrapAll('<collapsed>');
-    node.next('collapsed').toggle('slow');
-  }
-}
-
-/**
- * Toggles the collapse of a section in the form.
- * @param {string} button The element to toggle.
- */
-function collapseToggle(button) {
-  const node = $(button);
-  node.toggleClass('fa-chevron-down fa-chevron-right');
-  toggleSlowly(node, 'legend');
+function showOptionalSection(button, target) {
+  button.hide();
+  $('#' + target).toggle('slow');
 }
 
 /**
@@ -329,37 +301,12 @@ function initOptionalBool(node) {
 }
 
 /**
- * Sets up and initializes a collapse button by adding attributes into a div in
- * reaction.html.
- * @param {!jQuery} node Target node for the new button.
- */
-function initCollapse(node) {
-  node.addClass('fa');
-  node.addClass('fa-chevron-down');
-  node.attr('onclick', 'ord.utils.collapseToggle(this)');
-  if (node.hasClass('starts_collapsed')) {
-    node.trigger('click');
-  }
-}
-
-/**
  * Sets up a validator div (button, status indicator, error list, etc.) by
  * inserting contents into a div in reaction.html.
  * @param {!jQuery} oldNode Target node for the new validation elements.
- *
- * TODO(kearnes): .attr expects a function, not a string.
- * @suppress {checkTypes}
  */
 function initValidateNode(oldNode) {
-  let newNode = $('#validate_template').clone();
-  // Add attributes necessary for validation functions:
-  // Convert the placeholder onclick method into the button's onclick method.
-  $('.validate_button', newNode).attr('onclick', oldNode.attr('onclick'));
-  oldNode.removeAttr('onclick');
-  // Add an id to the button.
-  if (oldNode.attr('id')) {
-    $('.validate_button', newNode).attr('id', oldNode.attr('id') + '_button');
-  }
+  const newNode = $('#validate_template').clone();
   oldNode.append(newNode.children());
 }
 
@@ -478,6 +425,8 @@ function addChangeHandler(node, handler) {
   node.on('change', '.selector, .optional_bool, input', handler);
   // For add buttons
   node.on('click', '.add', handler);
+  // For validate divs.
+  node.on('click', '.validate', handler);
 }
 
 /**
@@ -498,7 +447,7 @@ function validate(message, messageTypeString, node, validateNode) {
   xhr.open('POST', '/dataset/proto/validate/' + messageTypeString);
   const binary = message.serializeBinary();
   if (!validateNode) {
-    validateNode = $('.validate', node).first()[0];
+    validateNode = $('.validate', node).first();
   }
   xhr.responseType = 'json';
   xhr.onload = function() {
@@ -512,14 +461,10 @@ function validate(message, messageTypeString, node, validateNode) {
     });
     const statusNode = $('.validate_status', validateNode);
     const messageNode = $('.validate_message', validateNode);
-    statusNode.removeClass('fa-check');
-    statusNode.removeClass('fa-exclamation-triangle');
-    statusNode.css('backgroundColor', undefined);
-    statusNode.text('');
     if (errors.length) {
-      statusNode.addClass('fa fa-exclamation-triangle');
-      statusNode.css('color', 'red');
+      statusNode.show();
       statusNode.text(' ' + errors.length);
+      messageNode.show();
       messageNode.html('<ul></ul>');
       for (let index = 0; index < errors.length; index++) {
         const error = errors[index];
@@ -527,13 +472,10 @@ function validate(message, messageTypeString, node, validateNode) {
         errorNode.text(error);
         $('ul', messageNode).append(errorNode);
       }
-      messageNode.css('backgroundColor', 'pink');
     } else {
-      statusNode.addClass('fa fa-check');
-      statusNode.css('color', 'green');
+      statusNode.hide();
       messageNode.html('');
-      messageNode.css('backgroundColor', '');
-      messageNode.css('visibility', 'hidden');
+      messageNode.hide();
     }
     const warningStatusNode = $('.validate_warning_status', validateNode);
     const warningMessageNode = $('.validate_warning_message', validateNode);
@@ -559,17 +501,15 @@ function validate(message, messageTypeString, node, validateNode) {
 
 /**
  * Toggles the visibility of the 'validate' button for a given node.
- * @param {!jQuery} node
- * @param {string} target Destination class for the validation message(s).
+ * @param {!jQuery} target
  */
-function toggleValidateMessage(node, target) {
-  let messageNode = $(target, node);
-  switch (messageNode.css('visibility')) {
+function toggleValidateMessage(target) {
+  switch (target.css('visibility')) {
     case 'visible':
-      messageNode.css('visibility', 'hidden');
+      target.css('visibility', 'hidden');
       break;
     case 'hidden':
-      messageNode.css('visibility', 'visible');
+      target.css('visibility', 'visible');
       break;
   }
 }
@@ -699,7 +639,7 @@ function readMetric(prefix, proto, node = null) {
 }
 
 /**
- * Packs a (value, units, precision) tuple into form elements.
+ * Unpacks a (value, units, precision) tuple into form elements.
  * @param {string} prefix The prefix for element attributes.
  * @param {?UnitMessage|?Percentage} proto A protocol buffer with
  *    `value`, `precision`, and `units` fields. (Percentage is allowed

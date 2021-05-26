@@ -21,20 +21,16 @@ const asserts = goog.require('goog.asserts');
 
 const amounts = goog.require('ord.amounts');
 const inputs = goog.require('ord.inputs');
+const stirring = goog.require('ord.stirring');
+const temperature = goog.require('ord.temperature');
 const utils = goog.require('ord.utils');
 
 const ReactionWorkup = goog.require('proto.ord.ReactionWorkup');
 const WorkupType = goog.require('proto.ord.ReactionWorkup.WorkupType');
-const StirringConditions = goog.require('proto.ord.StirringConditions');
-const StirringMethodType = goog.require('proto.ord.StirringConditions.StirringMethodType');
-const StirringRate = goog.require('proto.ord.StirringConditions.StirringRate');
-const StirringRateType = goog.require('proto.ord.StirringConditions.StirringRate.StirringRateType');
 const Temperature = goog.require('proto.ord.Temperature');
 const TemperatureConditions = goog.require('proto.ord.TemperatureConditions');
 const Measurement = goog.require('proto.ord.TemperatureConditions.Measurement');
 const MeasurementType = goog.require('proto.ord.TemperatureConditions.Measurement.MeasurementType');
-const TemperatureControl = goog.require('proto.ord.TemperatureConditions.TemperatureControl');
-const TemperatureControlType = goog.require('proto.ord.TemperatureConditions.TemperatureControl.TemperatureControlType');
 const Time = goog.require('proto.ord.Time');
 
 exports = {
@@ -60,6 +56,7 @@ function load(workups) {
 function loadWorkup(workup) {
   const node = add();
   utils.setSelector($('.workup_type', node), workup.getType());
+  $('.workup_type select', node).trigger('change');
   $('.workup_details', node).text(workup.getDetails());
   const duration = workup.getDuration();
   if (duration) {
@@ -72,40 +69,18 @@ function loadWorkup(workup) {
   const amount = workup.getAmount();
   amounts.load(node, amount);
 
-  const temperature = workup.getTemperature();
-  if (temperature) {
-    const control = temperature.getControl();
-    if (control) {
-      utils.setSelector(
-          $('.workup_temperature_control_type', node), control.getType());
-      $('.workup_temperature_details', node).text(control.getDetails());
-    }
-    const setpoint = temperature.getSetpoint();
-    if (setpoint) {
-      utils.writeMetric('.workup_temperature_setpoint', setpoint, node);
-    }
-
-    temperature.getMeasurementsList().forEach(
-        measurement => loadMeasurement(node, measurement));
+  const temperatureMessage = workup.getTemperature();
+  if (temperatureMessage) {
+    temperature.load(temperatureMessage, node);
   }
 
   $('.workup_keep_phase', node).text(workup.getKeepPhase());
 
-  const stirring = workup.getStirring();
-  if (stirring) {
-    utils.setSelector(
-        $('.workup_stirring_method_type', node), stirring.getType());
-    $('.workup_stirring_method_details', node).text(stirring.getDetails());
-    const rate = stirring.getRate();
-    if (rate) {
-      utils.setSelector($('.workup_stirring_rate_type', node), rate.getType());
-      $('.workup_stirring_rate_details', node).text(rate.getDetails());
-      const rpm = rate.getRpm();
-      if (rpm !== 0) {
-        $('.workup_stirring_rate_rpm', node).text(rpm);
-      }
-    }
+  const stirringMessage = workup.getStirring();
+  if (stirringMessage) {
+    stirring.load(stirringMessage, node);
   }
+
   if (workup.hasTargetPh()) {
     $('.workup_target_ph', node).text(workup.getTargetPh());
   }
@@ -181,66 +156,17 @@ function unloadWorkup(node) {
     workup.setAmount(amount);
   }
 
-  const control = new TemperatureControl();
-  const temperatureControlType =
-      utils.getSelectorText($('.workup_temperature_control_type', node)[0]);
-  control.setType(TemperatureControlType[temperatureControlType]);
-  control.setDetails(
-      asserts.assertString($('.workup_temperature_details', node).text()));
-
-  const temperature = new TemperatureConditions();
-  if (!utils.isEmptyMessage(control)) {
-    temperature.setControl(control);
+  const temperatureMessage = temperature.unload(node);
+  if (!utils.isEmptyMessage(temperatureMessage)) {
+    workup.setTemperature(temperatureMessage);
   }
 
-  const setpoint =
-      utils.readMetric('.workup_temperature_setpoint', new Temperature(), node);
-  if (!utils.isEmptyMessage(setpoint)) {
-    temperature.setSetpoint(setpoint);
-  }
-
-  const measurements = [];
-  const measurementNodes = $('.workup_temperature_measurement', node);
-  measurementNodes.each(function(index, measurementNode) {
-    measurementNode = $(measurementNode);
-    if (!measurementNode.attr('id')) {
-      // Not a template.
-      const measurement = unloadMeasurement(measurementNode);
-      if (!utils.isEmptyMessage(measurement)) {
-        measurements.push(measurement);
-      }
-    }
-  });
-  temperature.setMeasurementsList(measurements);
-  if (!utils.isEmptyMessage(temperature)) {
-    workup.setTemperature(temperature);
-  }
   workup.setKeepPhase(
       asserts.assertString($('.workup_keep_phase', node).text()));
 
-  const stirring = new StirringConditions();
-  const stirringMethodType =
-      utils.getSelectorText($('.workup_stirring_method_type', node)[0]);
-  stirring.setType(StirringMethodType[stirringMethodType]);
-  stirring.setDetails(
-      asserts.assertString($('.workup_stirring_method_details').text()));
-
-  const rate = new StirringRate();
-  const stirringRateType =
-      utils.getSelectorText($('.workup_stirring_rate_type', node)[0]);
-  rate.setType(StirringRateType[stirringRateType]);
-  rate.setDetails(
-      asserts.assertString($('.workup_stirring_rate_details').text()));
-  const rpm = parseFloat($('.workup_stirring_rate_rpm', node).text());
-  if (!isNaN(rpm)) {
-    rate.setRpm(rpm);
-  }
-  if (!utils.isEmptyMessage(rate)) {
-    stirring.setRate(rate);
-  }
-
-  if (!utils.isEmptyMessage(stirring)) {
-    workup.setStirring(stirring);
+  const stirringMessage = stirring.unload(node);
+  if (!utils.isEmptyMessage(stirringMessage)) {
+    workup.setStirring(stirringMessage);
   }
 
   const targetPh = parseFloat($('.workup_target_ph', node).text());
@@ -288,20 +214,17 @@ function add() {
   const inputNode = $('.workup_input', workupNode);
   // The template for ReactionWorkup.input is taken from Reaction.inputs.
   const workupInputNode = inputs.add(inputNode, ['workup_input']);
+  $('.input_addition_order_row', workupInputNode).hide();
+  $('.input_addition_time_row', workupInputNode).hide();
+  $('.input_addition_duration_row', workupInputNode).hide();
+  $('.input_addition_temperature_row', workupInputNode).hide();
   // Adjust heading sizes. Start with the smallest so we don't adjust more than
   // once.
   // TODO(kearnes): This does not affect input components added later.
   $('.h5', workupInputNode).addClass('h6').removeClass('h5');
   $('.h4', workupInputNode).addClass('h5').removeClass('h4');
   $('.h3', workupInputNode).addClass('h4').removeClass('h3');
-  // Workup inputs start collapsed by default.
-  workupInputNode.find('.collapse').trigger('click');
-  // Temperature conditions and stirring fields also start collapsed.
-  workupNode.find('.workup_temperature').trigger('click');
-  workupNode.find('.workup_temperature_measurements_wrap').trigger('click');
-  workupNode.find('.workup_stirring').trigger('click');
   // Unlike Reaction.inputs, this ReactionInput has no name.
-  $('.input_name_label', inputNode).hide();
   $('.input_name', inputNode).hide();
   // Unlike Reaction.inputs, this ReactionInput is not repeated.
   $('.remove', inputNode).hide();
@@ -312,6 +235,166 @@ function add() {
   utils.addChangeHandler(workupNode, () => {
     validateWorkup(workupNode);
   });
+
+  // Show/hide fields based on the measurement type.
+  const workupTypeSelector = $('.workup_type select', workupNode);
+  workupTypeSelector.on('change', function() {
+    const workupType = this.options[this.selectedIndex].text;
+    if (workupType === 'UNSPECIFIED') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).hide();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).hide();
+    } else if (workupType === 'CUSTOM') {
+      $('.workup_keep_phase_row', workupNode).show();
+      $('.workup_target_ph_row', workupNode).show();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).show();
+      $('.workup_input', workupNode).show();
+      $('.temperature_conditions', workupNode).show();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'ADDITION') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).show();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).show();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'ALIQUOT') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).hide();
+      $('.workup_amount', workupNode).show();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).hide();
+    } else if (workupType === 'TEMPERATURE') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).show();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'CONCENTRATION') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'EXTRACTION') {
+      $('.workup_keep_phase_row', workupNode).show();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'FILTRATION') {
+      $('.workup_keep_phase_row', workupNode).show();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'WASH') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).show();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'DRY_IN_VACUUM') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).show();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'DRY_WITH_MATERIAL') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).show();
+      $('.temperature_conditions', workupNode).show();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'FLASH_CHROMATOGRAPHY') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).hide();
+    } else if (workupType === 'OTHER_CHROMATOGRAPHY') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).hide();
+    } else if (workupType === 'SCAVENGING') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).show();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'WAIT') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).hide();
+    } else if (workupType === 'STIRRING') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'PH_ADJUST') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).show();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).show();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'DISSOLUTION') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).show();
+      $('.temperature_conditions', workupNode).hide();
+      $('.stirring_conditions', workupNode).show();
+    } else if (workupType === 'DISTILLATION') {
+      $('.workup_keep_phase_row', workupNode).hide();
+      $('.workup_target_ph_row', workupNode).hide();
+      $('.workup_duration_row', workupNode).show();
+      $('.workup_amount', workupNode).hide();
+      $('.workup_input', workupNode).hide();
+      $('.temperature_conditions', workupNode).show();
+      $('.stirring_conditions', workupNode).show();
+    }
+  });
+  workupTypeSelector.trigger('change');
 
   return workupNode;
 }
