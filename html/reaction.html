@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <!--
 Copyright 2020 Open Reaction Database Project Authors
 
@@ -14,27 +14,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<html>
-
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
-    <script src="/js/reaction.js"></script>
     <link rel="stylesheet" href="/css/reaction.css">
-    <link rel="stylesheet" href="/css/ketcher-bootstrap.css">
-    <title>
-    {% if reaction_id %}
-        {{ reaction_id }}
-    {% else %}
-        {{ name }}:{{ index }}
-    {% endif %}
-    </title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+    <script src="/js/reaction.js"></script>
+    <title>{{ reaction_id }}</title>
   </head>
-
   <body>
 
     <div id="header">
@@ -49,22 +40,33 @@ limitations under the License.
           </div>
         </div>
         <script>
-          $('#login').click(() => {
+          $('#login').on('click', () => {
             location.href = "https://github.com/login/oauth/authorize?client_id={{ client_id }}";
           });
         </script>
         {% endif %}
       </div>
-      <div id="dataset_context" style="font-weight: bold;"><a href="/dataset/{{ name }}">{{ name }}</a>: {{ index }}</div>
-      <div>Reaction ID <div id="reaction_id" class="edittext longtext"></div></div>
+      <nav id="breadcrumbs" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="/">Home</a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="/dataset/{{ name }}">{{ name }}</a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <span id="reaction_id"></span>
+          </li>
+        </ol>
+      </nav>
       <div id="header_buttons">
-        <div id="download" onclick="ord.reaction.commit(); ord.reaction.downloadReaction();">download</div>
-        <div class="add" onclick="location.href='/dataset/{{ name }}/clone/{{ index }}';">+ clone</div>
-        <div id="delete" class="remove" style="float: none;" onclick="location.href='/dataset/{{ name }}/delete/reaction/{{ index }}';">delete</div>
-        <span>|</span>
-        <div id="save" onclick="ord.reaction.commit();" style="visibility: hidden;">save</div>
-        <span id="reaction_validate" class="validate" onclick="ord.reaction.validateReaction()"></span>
-        <span id="toggle_autosave" onclick="ord.utils.toggleAutosave()"></span>
+        <button type="button" id="download" onclick="ord.reaction.commit(); ord.reaction.downloadReaction();">download</button>
+        <button type="button" class="add" onclick="location.href='/dataset/{{ name }}/clone/{{ index }}';">clone</button>
+        <button type="button" class="remove" id="delete" style="float: none;" onclick="location.href='/dataset/{{ name }}/delete/reaction/{{ index }}';"><i class="far fa-trash-alt"></i></button>
+        <button type="button" id="save" onclick="ord.reaction.commit();" style="visibility: hidden;">save</button>
+        <button type="button" id="toggle_autosave" onclick="ord.utils.toggleAutosave()"></button>
+        <button type="button" id="reaction_validate_button" onclick="ord.reaction.validateReaction()">validate</button>
+        <div class="validate" id="reaction_validate"></div>
       </div>
     </div>
 
@@ -82,6 +84,18 @@ limitations under the License.
       <div class="navSection" data-section="provenance">Provenance</div>
     </div>
 
+    <div id="pageLoad" class="modal show" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width: 70px;">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="sections">
 
       <div id="section_summary" class="section" style="text-align: center">
@@ -90,92 +104,98 @@ limitations under the License.
 
       <fieldset id="section_identifiers" class="section s2">
         <legend>
-          <span class="collapse"></span>
+          <span class="collapse show"></span>
           <span class="h2">Identifiers</span>
-          <span data-toggle="tooltip" data-placement="right" title="Reaction identifiers define descriptions of the overall reaction.">
+          <button class="help" data-toggle="tooltip" data-placement="right" title="Reaction identifiers define descriptions of the overall reaction.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
-          </span>
+          </button>
         </legend>
         <div id="identifiers"></div>
-        <div onclick="ord.identifiers.add();" class="add">+ add identifier</div>
+        <button type="button" class="add button-lg" onclick="ord.identifiers.add();"><span class="fas fa-plus" aria-hidden="true"></span> add identifier</button>
       </fieldset>
 
       <fieldset id="section_inputs" class="section s2">
         <legend>
-          <span class="collapse"></span>
+          <span class="collapse show"></span>
           <span class="h2">Inputs</span>
-          <span data-toggle="tooltip" data-placement="right" title="Reaction inputs include every chemical added to the reaction vessel.">
+          <button class="help" data-toggle="tooltip" data-placement="right" title="Reaction inputs include every chemical added to the reaction vessel.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
-          </span>
+          </button>
         </legend>
           <div id="inputs">
 
             <div id="input_template" class="section input" style="display: none;">
               <fieldset class="s3">
                 <legend>
-                  <span class="collapse"></span>
+                  <span class="collapse show"></span>
                   <span class="h3">Input</span>
-                  <div onclick="ord.utils.removeSlowly(this, '.input');" class="remove">remove</div>
-                  <span class="validate" onclick="ord.inputs.validateInput($(this).closest('.input'))"></span>
+                  <span class="input_name edittext"></span>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.input');"><i class="far fa-trash-alt"></i></button>
+                  <div class="validate"></div>
                </legend>
                 <div>
-                  <span class="input_name_label">name </span><span class="input_name edittext"></span>
-                </div>
-                <div>
                   <div class="components"></div>
-                  <div onclick="ord.compounds.add($(this).closest('.input'));" class="add">+ add component</div>
+                  <button type="button" class="add" onclick="ord.compounds.add($(this).closest('.input'));"><span class="fas fa-plus" aria-hidden="true"></span> add component</button>
                 </div>
                 <div>
                   <div class="crudes"></div>
-                  <div onclick="ord.crudes.add($(this).closest('.input'));" class="add">+ add crude component</div>
+                  <button type="button" class="add" onclick="ord.crudes.add($(this).closest('.input'));"><span class="fas fa-plus" aria-hidden="true"></span> add crude component</button>
                 </div>
                 <fieldset class="s4">
                   <legend>
-                    <span class="collapse"></span>
+                    <span class="collapse show"></span>
                     <span class="h4">Addition information</span>
                   </legend>
                   <table class="message">
-                    <tr><td>addition order
-                    <span data-toggle="tooltip" data-placement="right" title="Addition order should be an integer value, starting at 1.">
+                    <tr class="input_addition_order_row"><td>addition order
+                    <button class="help" data-toggle="tooltip" data-placement="right" title="Addition order should be an integer value, starting at 1.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
-                    </span>
+                    </button>
                     </td><td><div class="input_addition_order edittext veryshorttext integertext"></div></td></tr>
                     <tr><td>addition speed</td><td><div class="input_addition_speed_type selector" data-proto="ReactionInput_AdditionSpeed_AdditionSpeedType"></div></td><td>
                                                                 details <div class="input_addition_speed_details edittext"></div></td></tr>
                     <tr><td>addition device</td><td><div class="input_addition_device_type selector" data-proto="ReactionInput_AdditionDevice_AdditionDeviceType"></div></td><td>
                                                                   details <div class="input_addition_device_details edittext"></div></td></tr>
-                    <tr><td>addition time
-                    <span data-toggle="tooltip" data-placement="right" title="Addition time is relative to when the first input was added.">
+                    <tr class="input_addition_time_row"><td>addition time
+                    <button class="help" data-toggle="tooltip" data-placement="right" title="Addition time is relative to when the first input was added.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
-                    </span>
-                    </td><td><div class="input_addition_time_value edittext shorttext floattext"></div><div class="input_addition_time_units selector" data-proto="Time_TimeUnit"></div></td><td>
-                    ± <div class="input_addition_time_precision edittext shorttext floattext"></div></td></tr>
-                    <tr><td>addition duration
-                    <span data-toggle="tooltip" data-placement="right" title="Addition duration quantifies how long it took to add the input.">
+                    </button>
+                    </td><td>
+                      <div class="input_addition_time_value edittext shorttext floattext"></div>
+                      ± <div class="input_addition_time_precision edittext shorttext floattext"></div></td>
+                      <td><div class="input_addition_time_units selector" data-proto="Time_TimeUnit"></div></td></tr>
+                    <tr class="input_addition_duration_row"><td>addition duration
+                    <button class="help" data-toggle="tooltip" data-placement="right" title="Addition duration quantifies how long it took to add the input.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
-                    </span>
-                    </td><td><div class="input_addition_duration_value edittext shorttext floattext"></div><div class="input_addition_duration_units selector" data-proto="Time_TimeUnit"></div></td><td>
-                    ± <div class="input_addition_duration_precision edittext shorttext floattext"></div></td></tr>
-                    <tr><td>addition temperature
-                    <span data-toggle="tooltip" data-placement="right" title="Addition temperature specifies if the reaction input was heated or cooled prior to addition.">
+                    </button>
+                    </td><td>
+                      <div class="input_addition_duration_value edittext shorttext floattext"></div>
+                      ± <div class="input_addition_duration_precision edittext shorttext floattext"></div>
+                      </td><td><div class="input_addition_duration_units selector" data-proto="Time_TimeUnit"></div>
+                    </td></tr>
+                    <tr class="input_addition_temperature_row"><td>addition temperature
+                    <button class="help" data-toggle="tooltip" data-placement="right" title="Addition temperature specifies if the reaction input was heated or cooled prior to addition.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
-                    </span>
-                    </td><td><div class="input_addition_temperature_value edittext shorttext floattext"></div><div class="input_addition_temperature_units selector" data-proto="Temperature_TemperatureUnit"></div></td><td>
-                    ± <div class="input_addition_temperature_precision edittext shorttext floattext"></div></td></tr>
+                    </button>
+                    </td><td>
+                      <div class="input_addition_temperature_value edittext shorttext floattext"></div>
+                      ± <div class="input_addition_temperature_precision edittext shorttext floattext"></div>
+                      </td><td><div class="input_addition_temperature_units selector" data-proto="Temperature_TemperatureUnit"></div>
+                    </td></tr>
                   </table>
                 </fieldset>
                 <fieldset class="s4">
                   <legend>
-                    <span class="collapse starts_collapsed"></span>
+                    <span class="collapse show starts_collapsed"></span>
                     <span class="h4">Flow rate</span>
-                    <span data-toggle="tooltip" data-placement="right" title="Infusion rate when running reactions in continuous flow.">
+                    <button class="help" data-toggle="tooltip" data-placement="right" title="Infusion rate when running reactions in continuous flow.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
-                    </span>
+                    </button>
                   </legend>
                   <div>
                     value <div class="input_flow_rate_value edittext shorttext floattext"></div>
-                    <div class="input_flow_rate_units selector" data-proto="FlowRate_FlowRateUnit"></div>
                     ± <div class="input_flow_rate_precision edittext shorttext floattext"></div>
+                    <div class="input_flow_rate_units selector" data-proto="FlowRate_FlowRateUnit"></div>
                   </div>
                 </fieldset>
               </fieldset>
@@ -184,60 +204,53 @@ limitations under the License.
             <div id="component_template" class="component" style="display: none;">
               <fieldset class="s4">
                 <legend>
-                  <span class="collapse"></span>
+                  <span class="collapse show"></span>
                   <span class="h4">Component</span>
-                  <div onclick="ord.utils.removeSlowly(this, '.component');" class="remove">remove</div>
-                  <span class="validate" onclick="ord.compounds.validateCompound($(this).closest('.component'))"></span>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.component');"><i class="far fa-trash-alt"></i></button>
+                  <div class="validate"></div>
                 </legend>
                 <table class="component_role_limiting">
                   <tr><td>reaction role</td><td><div class="component_reaction_role selector" data-proto="ReactionRole_ReactionRoleType"></div></td></tr>
-                  <tr class="limiting_reactant"><td>limiting reactant?</td><td><div class="component_limiting optional_bool"></div></td></tr>
+                  <tr class="limiting_reactant"><td>limiting reactant</td><td><div class="component_limiting optional_bool"></div></td></tr>
+                  <tr class="amount">
+                    <td>amount</td>
+                    <td>
+                      <div class="amount_value edittext shorttext floattext"></div>
+                      ± <div class="amount_precision edittext shorttext floattext"></div>
+                      <select class="amount_units mass moles volume"></select>
+                    </td>
+                    <td class="amount_includes_solutes_label">includes solutes</td>
+                    <td><div class="amount_includes_solutes optional_bool"></div></td>
+                  </tr>
                 </table>
                 <fieldset class="s5">
                   <legend>
-                    <span class="collapse"></span>
+                    <span class="collapse show"></span>
                     <span class="h5">Identifiers</span>
-                    <span data-toggle="tooltip" data-placement="right" title="Compound identifiers should be structural (e.g., SMILES) whenever possible.">
+                    <button class="help" data-toggle="tooltip" data-placement="right" title="Compound identifiers should be structural (e.g., SMILES) whenever possible.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
-                    </span>
+                    </button>
                   </legend>
                   <!-- Compound rendering -->
                   <div class="component_rendering" style="text-align: center;"></div>
                   <div class="identifiers"></div>
                   <!-- Shortcuts for name resolving & drawing -->
-                  <div onclick="ord.compounds.drawIdentifier($(this).closest('.component'));" class="add"><span class="far fa-edit" aria-hidden="true"></span> draw compound</div>
-                  <div onclick="ord.compounds.addNameIdentifier($(this).closest('.component'));" class="add"><span class="fa fa-search" aria-hidden="true"></span> look up name</div>
+                  <button type="button" class="add" onclick="ord.compounds.drawIdentifier($(this).closest('.component'));"><span class="far fa-edit" aria-hidden="true"></span> draw compound</button>
+                  <button type="button" class="add" onclick="ord.compounds.addNameIdentifier($(this).closest('.component'));"><span class="fa fa-search" aria-hidden="true"></span> look up name</button>
                   <!-- End shortcuts -->
-                  <div onclick="ord.compounds.addIdentifier($(this).closest('.component'));" class="add">+ add identifier</div>
-                </fieldset>
-                <fieldset class="amount s5">
-                  <legend>
-                    <span class="collapse"></span>
-                    <span class="h5">Amount</span>
-                  </legend>
-                  <div>
-                    <input type="radio" class="amount_mass" value="mass" checked> mass
-                    <input type="radio" class="amount_moles" value="moles"> moles
-                    <input type="radio" class="amount_volume" value="volume"> volume
-                    <span class="includes_solutes">includes solutes?</span> <div class="includes_solutes optional_bool"></div>
-                    <span style="padding-left:25px">value</span> <div class="amount_value edittext shorttext floattext"></div>
-                    ± <div class="amount_precision edittext shorttext floattext"></div>
-                    <div class="amount_units_mass selector" data-proto="Mass_MassUnit"></div>
-                    <div class="amount_units_moles selector" data-proto="Moles_MolesUnit" style="display: none;"></div>
-                    <div class="amount_units_volume selector" data-proto="Volume_VolumeUnit" style="display: none;"></div>
-                  </div>
+                  <button type="button" class="add" onclick="ord.compounds.addIdentifier($(this).closest('.component'));"><span class="fas fa-plus" aria-hidden="true"></span> add identifier</button>
                 </fieldset>
                 <fieldset class="preparations_fieldset s5">
                   <legend>
-                    <span class="collapse"></span>
+                    <span class="collapse show"></span>
                     <span class="h5">Preparations</span>
                   </legend>
                   <div class="preparations"></div>
-                  <div onclick="ord.compounds.addPreparation($(this).closest('.component'));" class="add">+ add preparation</div>
+                  <button type="button" class="add" onclick="ord.compounds.addPreparation($(this).closest('.component'));"><span class="fas fa-plus" aria-hidden="true"></span> add preparation</button>
                 </fieldset>
                 <fieldset class="source s5">
                   <legend>
-                    <span class="collapse starts_collapsed"></span>
+                    <span class="collapse show starts_collapsed"></span>
                     <span class="h5">Source</span>
                   </legend>
                   <table class="message">
@@ -248,14 +261,14 @@ limitations under the License.
                 </fieldset>
                 <fieldset class="s5">
                   <legend>
-                    <span class="collapse"></span>
+                    <span class="collapse show"></span>
                     <span class="h5">Features</span>
-                    <span data-toggle="tooltip" data-placement="right" title="Additional chemical features (e.g., calculated descriptors) that are important to associate with this compound.">
+                    <button class="help" data-toggle="tooltip" data-placement="right" title="Additional chemical features (e.g., calculated descriptors) that are important to associate with this compound.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
-                    </span>
+                    </button>
                   </legend>
                   <div class="features"></div>
-                  <div onclick="ord.compounds.addFeature($(this).closest('.component'));" class="add">+ add feature</div>
+                  <button type="button" class="add" onclick="ord.compounds.addFeature($(this).closest('.component'));"><span class="fas fa-plus" aria-hidden="true"></span> add feature</button>
                 </fieldset>
               </fieldset>
             </div>
@@ -263,23 +276,25 @@ limitations under the License.
             <div id="feature_template" class="feature" style="display: none;">
               <fieldset class="s5">
                 <legend>
-                  <span class="collapse"></span>
+                  <span class="collapse show"></span>
                   <span class="h5">Feature</span>
-                  <div onclick="ord.utils.removeSlowly(this, '.feature');" class="remove">remove</div>
+                  <span class="feature_name edittext"></span>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.feature');"><i class="far fa-trash-alt"></i></button>
                 </legend>
-                <table class="message">
-                  <tr><td>name</td><td><div class="feature_name edittext"></div></td></tr>
-                </table>
               </fieldset>
             </div>
 
             <div id="component_identifier_template" class="component_identifier" style="display: none; padding-bottom:10px">
+              <span class="h6">Identifier</span>
+              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.component_identifier');"><i class="far fa-trash-alt"></i></button>
               <table class="message">
                 <tr>
                   <td>value</td>
                   <td>
                     <div class="component_identifier_value edittext longtext"></div>
-                    <span class="fa fa-upload text_upload" aria-hidden="true" style="cursor:pointer;" onclick="ord.utils.setTextFromFile($(this).closest('.component_identifier'), 'component_identifier_value');"></span>
+                  </td>
+                  <td>
+                    <button type="button" class="fa fa-upload text_upload" aria-hidden="true" style="cursor:pointer;" onclick="ord.utils.setTextFromFile($(this).closest('.component_identifier'), 'component_identifier_value');"></button>
                   </td>
                 </tr>
                 <tr>
@@ -290,7 +305,6 @@ limitations under the License.
                   <td>details</td>
                   <td>
                     <div class="component_identifier_details edittext longtext"></div>
-                    <div onclick="ord.utils.removeSlowly(this, '.component_identifier');" class="remove">remove</div>
                   </td>
                 </tr>
               </table>
@@ -301,53 +315,46 @@ limitations under the License.
               details <div class="component_compound_preparation_details edittext"></div>
               <span class="component_compound_preparation_reaction_id">reaction ID</span>
               <div class="component_compound_preparation_reaction component_compound_preparation_reaction_id edittext"></div>
-              <div onclick="ord.utils.removeSlowly(this, '.component_preparation');" class="remove">remove</div>
+              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.component_preparation');"><i class="far fa-trash-alt"></i></button>
             </div>
 
             <div id="crude_template" class="crude" style="display: none;">
               <fieldset class="s4">
                 <legend>
-                  <span class="collapse"></span>
+                  <span class="collapse show"></span>
                   <span class="h4">Crude Component</span>
-                  <div onclick="ord.utils.removeSlowly(this, '.crude');" class="remove">remove</div>
-                  <span data-toggle="tooltip" data-placement="right" title="Crude components use non-isolated material from another reaction as input. The reaction ID must correspond to another reaction in this same dataset.">
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.crude');"><i class="far fa-trash-alt"></i></button>
+                  <button class="help" data-toggle="tooltip" data-placement="right" title="Crude components use non-isolated material from another reaction as input. The reaction ID must correspond to another reaction in this same dataset.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
-                    </span>
+                    </button>
                 </legend>
                 <table class="message">
                   <tr><td>reaction ID</td><td><div class="crude_reaction edittext"></div></td></tr>
-                  <tr><td>includes workup?</td><td><div class="crude_includes_workup optional_bool"></div></td></tr>
-                  <tr><td>has derived amount?</td><td><div class="crude_has_derived optional_bool"></div></td></tr>
+                  <tr><td>includes workup</td><td><div class="crude_includes_workup optional_bool"></div></td></tr>
+                  <tr><td>has derived amount</td><td><div class="crude_has_derived optional_bool"></div></td></tr>
+                  <tr class="amount">
+                    <td>amount</td>
+                    <td>
+                      <div class="amount_value edittext shorttext floattext"></div>
+                      ± <div class="amount_precision edittext shorttext floattext"></div>
+                      <select class="amount_units mass volume"></select>
+                    </td>
+                  </tr>
                 </table>
-                <fieldset class="amount s5">
-                  <legend>
-                    <span class="collapse"></span>
-                    <span class="h5">Amount</span>
-                  </legend>
-                  <div>
-                    <input type="radio" class="amount_mass" value="mass" checked> mass
-                    <input type="radio" class="amount_volume" value="volume"> volume
-                    <span style="padding-left:25px">value</span> <div class="amount_value edittext shorttext floattext"></div>
-                    ± <div class="amount_precision edittext shorttext floattext"></div>
-                    <div class="amount_units_mass selector" data-proto="Mass_MassUnit"></div>
-                    <div class="amount_units_volume selector" data-proto="Volume_VolumeUnit" style="display: none;"></div>
-                  </div>
-                </fieldset>
               </fieldset>
             </div>
 
           </div>
-
-          <div onclick="ord.inputs.add($('#inputs'));" class="add">+ add input</div>
-          <div onclick="ord.inputs.addInputByString($('#inputs'));" class="add"><span class="fa fa-search" aria-hidden="true"></span> resolve text</div>
+              <button type="button" class="add button-lg" onclick="ord.inputs.add($('#inputs'));"><span class="fas fa-plus" aria-hidden="true"></span> add input</button>
+              <button type="button" class="add button-lg" onclick="ord.inputs.addInputByString($('#inputs'));"><span class="fa fa-search" aria-hidden="true"></span> resolve text</button>
       </fieldset>
 
       <fieldset id="section_setup" class="section s2">
 
         <legend>
-          <span class="collapse"></span>
+          <span class="collapse show"></span>
           <span class="h2">Setup</span>
-          <span class="validate" onclick="ord.setups.validateSetup($(this).closest('#section_setup'))"></span>
+          <div class="validate"></div>
         </legend>
         <table class="message">
           <tr><td>vessel</td><td><div id="setup_vessel_type" class="selector" data-proto="Vessel_VesselType"></div>
@@ -355,115 +362,149 @@ limitations under the License.
           <tr><td>material</td><td><div id="setup_vessel_material" class="selector" data-proto="VesselMaterial_VesselMaterialType"></div>
                                                  details <div id="setup_vessel_material_details" class="edittext"></div></td></tr>
           <tr><td>volume</td><td><div id="setup_vessel_volume_value" class="edittext shorttext floattext"></div>
+                                               ± <div id="setup_vessel_volume_precision" class="edittext shorttext floattext"></div>
                                                <div id="setup_vessel_volume_units" class="selector" data-proto="Volume_VolumeUnit"></div>
-                                               ± <div id="setup_vessel_volume_precision" class="edittext shorttext floattext"></div></td></tr>
+                                               </td></tr>
           <tr><td>automated</td><td><div id="setup_automated" class="optional_bool"></div></td></tr>
           <tr id="automation_platform"><td>platform</td><td><div id="setup_platform" class="edittext longtext"></div></td></tr>
           <tr><td>environment</td><td><div id="setup_environment_type" class="selector" data-proto="ReactionSetup_ReactionEnvironment_ReactionEnvironmentType"></div>
                                                     details <div id="setup_environment_details" class="edittext"></div></td></tr>
         </table>
-        <fieldset class="s3">
+        <div id="setup_codes">
+          <div id="setup_code_template" class="setup_code" style="display: none;">
+            <fieldset class="s4">
+              <legend>
+                <span class="collapse show"></span>
+                <span class="h4">Automation code</span>
+                <span class="setup_code_name edittext"></span>
+                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.setup_code');"><i class="far fa-trash-alt"></i></button>
+                <button class="help" data-toggle="tooltip" data-placement="right" title="Details of the exact automation procedure required to perform the reaction.">
+                  <span class="fa fa-question-circle" aria-hidden="true"></span>
+                </button>
+              </legend>
+            </fieldset>
+          </div>
+        </div>
+        <button type="button" class="add" onclick="ord.codes.addCode();"><span class="fas fa-plus" aria-hidden="true"></span> add automation code</button>
+        <fieldset class="s5">
           <legend>
-            <span class="collapse"></span>
-            <span class="h3">Vessel Preparation</span>
+            <span class="collapse show"></span>
+            <span class="h5">Vessel Preparations</span>
           </legend>
           <div id="setup_vessel_preparations">
             <div id="setup_vessel_preparation_template" class="setup_vessel_preparation" style="display: none;">
               preparation<div class="setup_vessel_preparation_type selector" data-proto="VesselPreparation_VesselPreparationType"></div>
               details <div class="setup_vessel_preparation_details edittext"></div>
-              <div onclick="ord.utils.removeSlowly(this, '.setup_vessel_preparation');" class="remove">remove</div>
+              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.setup_vessel_preparation');"><i class="far fa-trash-alt"></i></button>
             </div>
           </div>
-          <div onclick="ord.setups.addVesselPreparation();" class="add">+ add preparation</div>
+          <button type="button" class="add" onclick="ord.setups.addVesselPreparation();"><span class="fas fa-plus" aria-hidden="true"></span> add preparation</button>
         </fieldset>
-        <fieldset class="s3">
+        <fieldset class="s5">
           <legend>
-            <span class="collapse"></span>
-            <span class="h3">Vessel Attachments</span>
+            <span class="collapse show"></span>
+            <span class="h5">Vessel Attachments</span>
           </legend>
           <div id="setup_vessel_attachments">
             <div id="setup_vessel_attachment_template" class="setup_vessel_attachment" style="display: none;">
               attachment<div class="setup_vessel_attachment_type selector" data-proto="VesselAttachment_VesselAttachmentType"></div>
               details <div class="setup_vessel_attachment_details edittext"></div>
-              <div onclick="ord.utils.removeSlowly(this, '.setup_vessel_attachment');" class="remove">remove</div>
+              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.setup_vessel_attachment');"><i class="far fa-trash-alt"></i></button>
             </div>
           </div>
-          <div onclick="ord.setups.addVesselAttachment();" class="add">+ add attachment</div>
+          <button type="button" class="add" onclick="ord.setups.addVesselAttachment();"><span class="fas fa-plus" aria-hidden="true"></span> add attachment</button>
         </fieldset>
-        <div id="setup_codes">
-          <div id="setup_code_template" class="setup_code" style="display: none;">
-            <fieldset class="s3">
-              <legend>
-                <span class="collapse"></span>
-                <span class="h3">Automation code</span>
-                <div onclick="ord.utils.removeSlowly(this, '.setup_code');" class="remove">remove</div>
-                <span data-toggle="tooltip" data-placement="right" title="Details of the exact automation procedure required to perform the reaction.">
-                  <span class="fa fa-question-circle" aria-hidden="true"></span>
-                </span>
-              </legend>
-              <table class="message">
-                <tr><td>name</td><td><div class="setup_code_name edittext"></div></td></tr>
-              </table>
-            </fieldset>
-          </div>
-        </div>
-        <div onclick="ord.codes.addCode();" class="add">+ add automation code</div>
       </fieldset>
 
       <fieldset id="section_conditions" class="section s2">
         <legend>
-          <span class="collapse"></span>
+          <span class="collapse show"></span>
           <span class="h2">Conditions</span>
-          <span class="validate" onclick="ord.conditions.validateConditions($('#section_conditions'))"></span>
+          <div class="validate"></div>
         </legend>
-        <fieldset id="section_conditions_temperature" class="s3">
+        <table class="message">
+          <tr><td>reflux</td><td><div id="condition_reflux" class="optional_bool"></div></td></tr>
+          <tr><td>pH</td><td><div id="condition_ph" class="edittext veryshorttext floattext"></div></td></tr>
+          <tr><td>dynamic conditions
+            <button class="help" data-toggle="tooltip" data-placement="right" title="Whether the reaction conditions cannot be fully described by the fields in this schema/form.">
+              <span class="fa fa-question-circle" aria-hidden="true"></span>
+            </button>
+          </td><td><div id="condition_dynamic" class="optional_bool"></div></td></tr>
+          <tr><td>details
+            <button class="help" data-toggle="tooltip" data-placement="right" title="Elaboration on the aspects of the reaction conditions that cannot be captured by this schema in a structured format.">
+              <span class="fa fa-question-circle" aria-hidden="true"></span>
+            </button>
+          </td><td><div id="condition_details" class="edittext paratext"></div></td></tr>
+        </table>
+        <fieldset id="section_conditions_temperature" class="temperature_conditions s3">
           <legend>
-            <span class="collapse"></span>
+            <span class="collapse show"></span>
             <span class="h3">Temperature</span>
-            <span class="validate" onclick="ord.temperature.validateTemperature($(this).closest('#section_conditions_temperature'))"></span>
+            <div class="validate"></div>
           </legend>
           <table class="message">
-            <tr><td>control</td><td><div id="temperature_control" class="selector" data-proto="TemperatureConditions_TemperatureControl_TemperatureControlType"></div>
-                                                  details <div id="temperature_control_details" class="edittext"></div></td></tr>
-            <tr><td>setpoint</td><td><div id="temperature_setpoint_value" class="edittext shorttext floattext"></div>
-                                                   <div id="temperature_setpoint_units" class="selector" data-proto="Temperature_TemperatureUnit"></div>
-                                                   ± <div id="temperature_setpoint_precision" class="edittext shorttext floattext"></div></td></tr>
+            <tr><td>control</td><td><div class="temperature_control selector" data-proto="TemperatureConditions_TemperatureControl_TemperatureControlType"></div>
+                                                  details <div class="temperature_control_details edittext"></div></td></tr>
+            <tr><td>setpoint</td><td><div class="temperature_setpoint_value edittext shorttext floattext"></div>
+                                                   ± <div class="temperature_setpoint_precision edittext shorttext floattext"></div>
+                                                   <div class="temperature_setpoint_units selector" data-proto="Temperature_TemperatureUnit"></div>
+                                                   </td></tr>
           </table>
-          <div id="temperature_measurements">
+          <div class="temperature_measurements">
             <div id="temperature_measurement_template" class="temperature_measurement" style="display: none;">
               <fieldset class="s4">
                 <legend>
-                  <span class="collapse"></span>
+                  <span class="collapse show"></span>
                   <span class="h4">Measurement</span>
-                  <div onclick="ord.utils.removeSlowly(this, '.temperature_measurement');" class="remove">remove</div>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.temperature_measurement');"><i class="far fa-trash-alt"></i></button>
                 </legend>
                 <table class="message">
                   <tr><td>type</td><td><div class="temperature_measurement_type selector" data-proto="TemperatureConditions_Measurement_MeasurementType"></div></td></tr>
                   <tr><td>temperature</td><td><div class="temperature_measurement_temperature_value edittext shorttext floattext"></div>
+                    ± <div class="temperature_measurement_temperature_precision edittext shorttext floattext"></div>
                                                             <div class="temperature_measurement_temperature_units selector" data-proto="Temperature_TemperatureUnit"></div>
-                                                            ± <div class="temperature_measurement_temperature_precision edittext shorttext floattext"></div></td></tr>
+                                                            </td></tr>
                   <tr><td>time</td><td><div class="temperature_measurement_time_value edittext shorttext floattext"></div>
+                    ± <div class="temperature_measurement_time_precision edittext shorttext floattext"></div>
                                                      <div class="temperature_measurement_time_units selector" data-proto="Time_TimeUnit"></div>
-                                                     ± <div class="temperature_measurement_time_precision edittext shorttext floattext"></div></td></tr>
+                                                     </td></tr>
                   <tr><td>details</td><td colspan="2"><div class="temperature_measurement_details edittext"></div></td></tr>
                 </table>
               </fieldset>
             </div>
           </div>
-          <div onclick="ord.temperature.addMeasurement();" class="add">+ add measurement</div>
+          <button type="button" class="add" onclick="ord.temperature.addMeasurement($(this).closest('.temperature_conditions'));"><span class="fas fa-plus" aria-hidden="true"></span> add measurement</button>
         </fieldset>
-        <fieldset id="section_conditions_pressure" class="s3">
+        <fieldset id="section_conditions_stirring" class="stirring_conditions s3">
           <legend>
-            <span class="collapse"></span>
+            <span class="collapse show"></span>
+            <span class="h3">Stirring</span>
+            <div class="validate"></div>
+          </legend>
+          <table class="message">
+            <tr><td>method</td><td><div class="stirring_method_type selector" data-proto="StirringConditions_StirringMethodType"></div>
+                                                 details <div class="stirring_method_details edittext"></div></td></tr>
+            <tr><td>rate</td><td><div class="stirring_rate_type selector" data-proto="StirringConditions_StirringRate_StirringRateType"></div>
+                                                 details <div class="stirring_rate_details edittext"></div></td></tr>
+            <tr><td>rpm</td><td><div class="stirring_rpm edittext shorttext integertext"></div></td></tr>
+          </table>
+        </fieldset>
+        <button type="button" id="show_section_conditions_pressure" class="optional" onclick="ord.utils.showOptionalSection($(this), 'section_conditions_pressure')">
+          <span class="fas fa-plus" aria-hidden="true"></span> add pressure conditions
+        </button>
+        <fieldset id="section_conditions_pressure" class="s3" style="display: none;">
+          <legend>
+            <span class="collapse show"></span>
             <span class="h3">Pressure</span>
-            <span class="validate" onclick="ord.pressure.validatePressure($(this).closest('#section_conditions_pressure'))"></span>
+            <div class="validate"></div>
           </legend>
             <table class="message">
               <tr><td>control</td><td><div id="pressure_control_type" class="selector" data-proto="PressureConditions_PressureControl_PressureControlType"></div>
                                                     details <div id="pressure_control_details" class="edittext"></div></td></tr>
               <tr><td>setpoint</td><td><div id="pressure_setpoint_value" class="edittext shorttext floattext"></div>
+                ± <div id="pressure_setpoint_precision" class="edittext shorttext floattext"></div>
                                                      <div id="pressure_setpoint_units" class="selector" data-proto="Pressure_PressureUnit"></div>
-                                                     ± <div id="pressure_setpoint_precision" class="edittext shorttext floattext"></div></td></tr>
+                                                     </td></tr>
               <tr><td>atmosphere</td><td><div id="pressure_atmosphere_type" class="selector" data-proto="PressureConditions_Atmosphere_AtmosphereType"></div>
                                                        details <div id="pressure_atmosphere_details" class="edittext"></div></td></tr>
             </table>
@@ -471,77 +512,76 @@ limitations under the License.
             <div id="pressure_measurement_template" class="pressure_measurement" style="display: none;">
               <fieldset class="s4">
                 <legend>
-                  <span class="collapse"></span>
+                  <span class="collapse show"></span>
                   <span class="h4">Measurement</span>
-                  <div onclick="ord.utils.removeSlowly(this, '.pressure_measurement');" class="remove">remove</div>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.pressure_measurement');"><i class="far fa-trash-alt"></i></button>
                 </legend>
                 <table class="message">
                   <tr><td>type</td><td><div class="pressure_measurement_type selector" data-proto="PressureConditions_Measurement_MeasurementType"></div></td></tr>
                   <tr><td>pressure</td><td><div class="pressure_measurement_pressure_value edittext shorttext floattext"></div>
+                    ± <div class="pressure_measurement_pressure_precision edittext shorttext floattext"></div>
                                                          <div class="pressure_measurement_pressure_units selector" data-proto="Pressure_PressureUnit"></div>
-                                                         ± <div class="pressure_measurement_pressure_precision edittext shorttext floattext"></div></td></tr>
+                                                         </td></tr>
                   <tr><td>time</td><td><div class="pressure_measurement_time_value edittext shorttext floattext"></div>
+                    ± <div class="pressure_measurement_time_precision edittext shorttext floattext"></div>
                                                      <div class="pressure_measurement_time_units selector" data-proto="Time_TimeUnit"></div>
-                                                     ± <div class="pressure_measurement_time_precision edittext shorttext floattext"></div></td></tr>
+                                                     </td></tr>
                   <tr><td>details</td><td colspan="2"><div class="pressure_measurement_details edittext"></div></td></tr>
                 </table>
               </fieldset>
             </div>
           </div>
-          <div onclick="ord.pressure.addMeasurement();" class="add">+ add measurement</div>
+          <button type="button" class="add" onclick="ord.pressure.addMeasurement();"><span class="fas fa-plus" aria-hidden="true"></span> add measurement</button>
         </fieldset>
-        <fieldset id="section_conditions_stirring" class="s3">
+        <button type="button" id="show_section_conditions_illumination" class="optional" onclick="ord.utils.showOptionalSection($(this), 'section_conditions_illumination')">
+          <span class="fas fa-plus" aria-hidden="true"></span> add illumination conditions
+        </button>
+        <fieldset id="section_conditions_illumination" class="s3" style="display: none;">
           <legend>
-            <span class="collapse"></span>
-            <span class="h3">Stirring</span>
-            <span class="validate" onclick="ord.stirring.validateStirring($(this).closest('#section_conditions_stirring'))"></span>
-          </legend>
-          <table class="message">
-            <tr><td>method</td><td><div id="stirring_method_type" class="selector" data-proto="StirringConditions_StirringMethodType"></div>
-                                                 details <div id="stirring_method_details" class="edittext"></div></td></tr>
-            <tr><td>rate</td><td><div id="stirring_rate_type" class="selector" data-proto="StirringConditions_StirringRate_StirringRateType"></div>
-                                                 details <div id="stirring_rate_details" class="edittext"></div></td></tr>
-            <tr><td>rpm</td><td><div id="stirring_rpm" class="edittext shorttext integertext"></div></td></tr>
-          </table>
-        </fieldset>
-        <fieldset id="section_conditions_illumination" class="s3">
-          <legend>
-            <span class="collapse starts_collapsed"></span>
+            <span class="collapse show starts_collapsed"></span>
             <span class="h3">Illumination</span>
-            <span class="validate" onclick="ord.illumination.validateIllumination($(this).closest('#section_conditions_illumination'))"></span>
+            <div class="validate"></div>
           </legend>
           <table class="message">
             <tr><td>type</td><td><div id="illumination_type" class="selector" data-proto="IlluminationConditions_IlluminationType"></div>
                                                 details<div id="illumination_details" class="edittext"></div></td></tr>
             <tr><td>wavelength</td><td><div id="illumination_wavelength_value" class="edittext shorttext floattext"></div>
+              ± <div id="illumination_wavelength_precision" class="edittext shorttext floattext"></div>
                                                      <div id="illumination_wavelength_units" class="selector" data-proto="Wavelength_WavelengthUnit"></div>
-                                                     ± <div id="illumination_wavelength_precision" class="edittext shorttext floattext"></div></td></tr>
+                                                     </td></tr>
             <tr><td>distance</td><td><div id="illumination_distance_value" class="edittext shorttext floattext"></div>
+              ± <div id="illumination_distance_precision" class="edittext shorttext floattext"></div>
                                                    <div id="illumination_distance_units" class="selector" data-proto="Length_LengthUnit"></div>
-                                                   ± <div id="illumination_distance_precision" class="edittext shorttext floattext"></div></td></tr>
+                                                   </td></tr>
             <tr><td>color</td><td><div id="illumination_color" class="edittext"></div></td></tr>
           </table>
         </fieldset>
-        <fieldset id="section_conditions_electro" class="s3">
+        <button type="button" id="show_section_conditions_electro" class="optional" onclick="ord.utils.showOptionalSection($(this), 'section_conditions_electro')">
+          <span class="fas fa-plus" aria-hidden="true"></span> add electrochemistry conditions
+        </button>
+        <fieldset id="section_conditions_electro" class="s3" style="display: none;">
           <legend>
-            <span class="collapse starts_collapsed"></span>
+            <span class="collapse show starts_collapsed"></span>
             <span class="h3">Electrochemistry</span>
-            <span class="validate" onclick="ord.electro.validateElectro($(this).closest('#section_conditions_electro'))"></span>
+            <div class="validate"></div>
           </legend>
           <table class="message">
             <tr><td>type</td><td><div id="electro_type" class="selector" data-proto="ElectrochemistryConditions_ElectrochemistryType"></div>
                                                details <div id="electro_details" class="edittext"></div></td></tr>
             <tr><td>current</td><td><div id="electro_current_value" class="edittext shorttext floattext"></div>
+              ± <div id="electro_current_precision" class="edittext shorttext floattext"></div>
                                                   <div id="electro_current_units" class="selector" data-proto="Current_CurrentUnit"></div>
-                                                  ± <div id="electro_current_precision" class="edittext shorttext floattext"></div></td></tr>
+                                                  </td></tr>
             <tr><td>voltage</td><td><div id="electro_voltage_value" class="edittext shorttext floattext"></div>
+              ± <div id="electro_voltage_precision" class="edittext shorttext floattext"></div>
                                                   <div id="electro_voltage_units" class="selector" data-proto="Voltage_VoltageUnit"></div>
-                                                  ± <div id="electro_voltage_precision" class="edittext shorttext floattext"></div></td></tr>
+                                                  </td></tr>
             <tr><td>anode</td><td><div id="electro_anode" class="edittext"></div></td></tr>
             <tr><td>cathode</td><td><div id="electro_cathode" class="edittext"></div></td></tr>
             <tr><td>separation</td><td><div id="electro_separation_value" class="edittext shorttext floattext"></div>
+              ± <div id="electro_separation_precision" class="edittext shorttext floattext"></div>
                                                      <div id="electro_separation_units" class="selector" data-proto="Length_LengthUnit"></div>
-                                                     ± <div id="electro_separation_precision" class="edittext shorttext floattext"></div></td></tr>
+                                                     </td></tr>
             <tr><td>cell</td><td><div id="electro_cell_type" class="selector" data-proto="ElectrochemistryConditions_ElectrochemistryCell_ElectrochemistryCellType"></div>
                                                details <div id="electro_cell_details" class="edittext"></div></td></tr>
           </table>
@@ -549,35 +589,41 @@ limitations under the License.
             <div id="electro_measurement_template" class="electro_measurement" style="display: none;">
               <fieldset class="s4">
                 <legend>
-                  <span class="collapse"></span>
+                  <span class="collapse show"></span>
                   <span class="h4">Measurement</span>
-                  <div onclick="ord.utils.removeSlowly(this, '.electro_measurement');" class="remove">remove</div>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.electro_measurement');"><i class="far fa-trash-alt"></i></button>
                 </legend>
                 <input type="radio" class="electro_measurement_current" value="current" checked> current
                 <input type="radio" class="electro_measurement_voltage" value="voltage"> voltage
                 <table class="message">
                   <tr><td>time</td><td><div class="electro_measurement_time_value edittext shorttext floattext"></div>
+                    ± <div class="electro_measurement_time_precision edittext shorttext"></div>
                                                      <div class="electro_measurement_time_units selector" data-proto="Time_TimeUnit"></div>
-                                                     ± <div class="electro_measurement_time_precision edittext shorttext"></div></td></tr>
+                                                     </td></tr>
                   <tr class="electro_measurement_current_fields">
                     <td>current</td><td><div class="electro_measurement_current_value edittext shorttext floattext"></div>
+                    ± <div class="electro_measurement_current_precision edittext shorttext floattext"></div>
                                                       <div class="electro_measurement_current_units selector" data-proto="Current_CurrentUnit"></div>
-                                                      ± <div class="electro_measurement_current_precision edittext shorttext floattext"></div></td></tr>
+                                                      </td></tr>
                   <tr class="electro_measurement_voltage_fields" style="display: none;">
                     <td>voltage</td><td><div class="electro_measurement_voltage_value edittext shorttext floattext"></div>
+                    ± <div class="electro_measurement_voltage_precision edittext shorttext floattext"></div>
                                                       <div class="electro_measurement_voltage_units selector" data-proto="Voltage_VoltageUnit"></div>
-                                                      ± <div class="electro_measurement_voltage_precision edittext shorttext floattext"></div></td></tr>
+                                                      </td></tr>
                 </table>
               </fieldset>
             </div>
           </div>
-          <div onclick="ord.electro.addMeasurement();" class="add">+ add measurement</div>
+          <button type="button" class="add" onclick="ord.electro.addMeasurement();"><span class="fas fa-plus" aria-hidden="true"></span> add measurement</button>
         </fieldset>
-        <fieldset id="section_conditions_flow" class="s3">
+        <button type="button" id="show_section_conditions_flow" class="optional" onclick="ord.utils.showOptionalSection($(this), 'section_conditions_flow')">
+          <span class="fas fa-plus" aria-hidden="true"></span> add flow conditions
+        </button>
+        <fieldset id="section_conditions_flow" class="s3" style="display: none;">
           <legend>
-            <span class="collapse starts_collapsed"></span>
+            <span class="collapse show starts_collapsed"></span>
             <span class="h3">Flow</span>
-            <span class="validate" onclick="ord.flows.validateFlow($(this).closest('#section_conditions_flow'))"></span>
+            <div class="validate"></div>
           </legend>
           <table class="message">
             <tr><td>type</td><td><div id="flow_type" class="selector" data-proto="FlowConditions_FlowType"></div>
@@ -586,31 +632,18 @@ limitations under the License.
             <tr><td>tubing</td><td><div id="flow_tubing_type" class="selector" data-proto="FlowConditions_Tubing_TubingType"></div>
                                                  details <div id="flow_tubing_details" class="edittext"></div></td></tr>
             <tr><td>diameter</td><td><div id="flow_tubing_value" class="edittext shorttext floattext"></div>
+              ± <div id="flow_tubing_precision" class="edittext shorttext floattext"></div>
                                                 <div id="flow_tubing_units" class="selector" data-proto="Length_LengthUnit"></div>
-                                                ± <div id="flow_tubing_precision" class="edittext shorttext floattext"></div></td></tr>
+                                                </td></tr>
           </table>
         </fieldset>
-        <table class="message">
-          <tr><td>reflux</td><td><div id="condition_reflux" class="optional_bool"></div></td></tr>
-          <tr><td>pH</td><td><div id="condition_ph" class="edittext veryshorttext floattext"></div></td></tr>
-          <tr><td>dynamic conditions
-            <span data-toggle="tooltip" data-placement="right" title="Whether the reaction conditions cannot be fully described by the fields in this schema/form.">
-              <span class="fa fa-question-circle" aria-hidden="true"></span>
-            </span>
-          </td><td><div id="condition_dynamic" class="optional_bool"></div></td></tr>
-          <tr><td>details
-            <span data-toggle="tooltip" data-placement="right" title="Elaboration on the aspects of the reaction conditions that cannot be captured by this schema in a structured format.">
-              <span class="fa fa-question-circle" aria-hidden="true"></span>
-            </span>
-          </td><td><div id="condition_details" class="edittext paratext"></div></td></tr>
-        </table>
       </fieldset>
 
       <fieldset id="section_notes" class="section s2">
         <legend>
-          <span class="collapse"></span>
+          <span class="collapse show"></span>
           <span class="h2">Notes</span>
-          <span class="validate" onclick="ord.notes.validateNotes($('#section_notes'))"></span>
+          <div class="validate"></div>
         </legend>
         <table class="message">
           <tr><td>is heterogeneous</td><td><div id="notes_heterogeneous" class="optional_bool"></div></td></tr>
@@ -627,149 +660,117 @@ limitations under the License.
 
       <fieldset id="section_observations" class="section s2">
         <legend>
-          <span class="collapse"></span>
+          <span class="collapse show"></span>
           <span class="h2">Observations</span>
-          <span data-toggle="tooltip" data-placement="right" title="Observations are time-stamped comments, images, etc. that are recorded during the reaction.">
+          <button class="help" data-toggle="tooltip" data-placement="right" title="Observations are time-stamped comments, images, etc. that are recorded during the reaction.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
-          </span>
+          </button>
         </legend>
         <div id="observations">
           <div id="observation_template" class="observation" style="display: none;">
             <fieldset class="s3">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h3">Observation</span>
-                <div onclick="ord.utils.removeSlowly(this, '.observation');" class="remove">remove</div>
-                <span class="validate" onclick="ord.observations.validateObservation($(this).closest('.observation'))"></span>
+                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.observation');"><i class="far fa-trash-alt"></i></button>
+                <div class="validate"></div>
               </legend>
               <table class="message">
                 <tr><td>time</td><td><div class="observation_time_value edittext shorttext floattext"></div>
+                  ± <div class="observation_time_precision edittext shorttext floattext"></div>
                                                    <div class="observation_time_units selector" data-proto="Time_TimeUnit"></div>
-                                                   ± <div class="observation_time_precision edittext shorttext floattext"></div></td></tr>
+                                                   </td></tr>
                 <tr><td>comment</td><td><div class="observation_comment edittext"></div></td></tr>
               </table>
             </fieldset>
           </div>
         </div>
-        <div onclick="ord.observations.add();" class="add">+ add observation</div>
+        <button type="button" class="add button-lg" onclick="ord.observations.add();"><span class="fas fa-plus" aria-hidden="true"></span> add observation</button>
       </fieldset>
 
       <fieldset id="section_workups" class="section s2">
         <legend>
-          <span class="collapse"></span>
+          <span class="collapse show"></span>
           <span class="h2">Workups</span>
-          <span data-toggle="tooltip" data-placement="right" title="Workup steps refer to any additions, purifications, or other operations after the 'reaction' stage prior to analysis.">
+          <button class="help" data-toggle="tooltip" data-placement="right" title="Workup steps refer to any additions, purifications, or other operations after the 'reaction' stage prior to analysis.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
-          </span>
+          </button>
         </legend>
         <div id="workups">
           <div id="workup_template" class="workup" style="display: none;">
           <fieldset class="s3">
             <legend>
-              <span class="collapse"></span>
+              <span class="collapse show"></span>
               <span class="h3">Workup</span>
-              <div onclick="ord.utils.removeSlowly(this, '.workup');" class="remove">remove</div>
-              <span class="validate" onclick="ord.workups.validateWorkup($(this).closest('.workup'))"></span>
+              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.workup');"><i class="far fa-trash-alt"></i></button>
+              <div class="validate"></div>
             </legend>
             <table class="message">
               <tr><td>type</td><td><div class="workup_type selector" data-proto="ReactionWorkup_WorkupType"></div></td></tr>
-              <tr><td>keep phase</td><td><div class="workup_keep_phase edittext"></div></td></tr>
-              <tr><td>target ph</td><td><div class="workup_target_ph edittext veryshorttext floattext"></div></td></tr>
-              <tr><td>duration</td><td><div class="workup_duration_value edittext shorttext floattext"></div>
+              <tr class="workup_keep_phase_row"><td>keep phase</td><td><div class="workup_keep_phase edittext"></div></td></tr>
+              <tr class="workup_target_ph_row"><td>target ph</td><td><div class="workup_target_ph edittext veryshorttext floattext"></div></td></tr>
+              <tr class="workup_duration_row"><td>duration</td><td><div class="workup_duration_value edittext shorttext floattext"></div>
+                ± <div class="workup_duration_precision edittext shorttext floattext"></div>
                                                      <div class="workup_duration_units selector" data-proto="Time_TimeUnit"></div>
-                                                     ± <div class="workup_duration_precision edittext shorttext floattext"></div></td></tr>
+                                                     </td></tr>
               <tr><td>automated</td><td><div class="workup_automated optional_bool"></div></td></tr>
-              <tr><td>details</td><td><div class="workup_details edittext"></div></td></tr>
+              <tr><td>details</td><td><div class="workup_details edittext paratext"></div></td></tr>
+              <tr class="workup_amount">
+                <td>aliquot amount</td>
+                <td class="amount">
+                  <div class="amount_value edittext shorttext floattext"></div>
+                  ± <div class="amount_precision edittext shorttext floattext"></div>
+                  <select class="amount_units mass volume"></select>
+                </td>
+              </tr>
             </table>
             <div class="workup_input">
               <!-- Shares ".input_template" with "#inputs" above. -->
             </div>
-            <fieldset class="workup_amount s4">
+            <fieldset class="temperature_conditions s4">
               <legend>
-                <span class="collapse"></span>
-                <span class="h4">Aliquot amount</span>
-                <span data-toggle="tooltip" data-placement="right" title="The portion sampled from a reaction or mixture when the workup type is ALIQUOT. For ADDITION workup types, amounts should be described in each input component's amount field.">
-                  <span class="fa fa-question-circle" aria-hidden="true"></span>
-                </span>
-                    </legend>
-              <div class="amount">
-                <input type="radio" class="amount_mass" value="mass"> mass
-                <input type="radio" class="amount_volume" value="volume" checked> volume
-                <span style="padding-left:25px">value</span> <div class="amount_value edittext shorttext floattext"></div>
-                ± <div class="amount_precision edittext shorttext floattext"></div>
-                <div class="amount_units_mass selector" data-proto="Mass_MassUnit" style="display: none;"></div>
-                <div class="amount_units_volume selector" data-proto="Volume_VolumeUnit"></div>
-              </div>
-            </fieldset>
-            <fieldset class="s4">
-              <legend>
-                <span class="workup_temperature collapse"></span>
-                <span class="h4">Temperature conditions</span>
+                <span class="collapse show"></span>
+                <span class="h4">Temperature</span>
+                <div class="validate"></div>
               </legend>
               <table class="message">
-                <tr><td>control</td><td><div class="workup_temperature_control_type selector" data-proto="TemperatureConditions_TemperatureControl_TemperatureControlType"></div></td></tr>
-                <tr><td>setpoint</td><td><div class="workup_temperature_setpoint_value edittext shorttext floattext"></div>
-                                                       <div class="workup_temperature_setpoint_units selector" data-proto="Temperature_TemperatureUnit"></div>
-                                                       ± <div class="workup_temperature_setpoint_precision edittext shorttext floattext"></div></td></tr>
-                <tr><td>details</td><td><div class="workup_temperature_details edittext"></div></td></tr>
+                <tr><td>control</td><td><div class="temperature_control selector" data-proto="TemperatureConditions_TemperatureControl_TemperatureControlType"></div>
+                                                      details <div class="temperature_control_details edittext"></div></td></tr>
+                <tr><td>setpoint</td><td><div class="temperature_setpoint_value edittext shorttext floattext"></div>
+                                                       ± <div class="temperature_setpoint_precision edittext shorttext floattext"></div>
+                                                       <div class="temperature_setpoint_units selector" data-proto="Temperature_TemperatureUnit"></div>
+                                                       </td></tr>
               </table>
+              <div class="temperature_measurements"></div>
+              <button type="button" class="add" onclick="ord.temperature.addMeasurement($(this).closest('.temperature_conditions'));"><span class="fas fa-plus" aria-hidden="true"></span> add measurement</button>
             </fieldset>
-            <fieldset class="s4">
+            <fieldset class="stirring_conditions s4">
               <legend>
-                <span class="workup_temperature_measurements_wrap collapse"></span>
-                <span class="h4">Temperature measurements</span>
-              </legend>
-              <div class="workup_temperature_measurements">
-              </div>
-              <div onclick="ord.workups.addMeasurement($(this).closest('.workup'));" class="add">+ add measurement</div>
-            </fieldset>
-            <fieldset class="s4">
-              <legend>
-                <span class="workup_stirring collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h4">Stirring</span>
+                <div class="validate"></div>
               </legend>
               <table class="message">
-                <tr><td>method</td><td><div class="workup_stirring_method_type selector" data-proto="StirringConditions_StirringMethodType"></div>
-                                                     details <div class="workup_stirring_method_details edittext"></div></td></tr>
-                <tr><td>rate</td><td><div class="workup_stirring_rate_type selector" data-proto="StirringConditions_StirringRate_StirringRateType"></div>
-                                                   details <div class="workup_stirring_rate_details edittext"></div></td></tr>
-                <tr><td>rpm</td><td><div class="workup_stirring_rate_rpm edittext shorttext floattext"></div></td></tr>
+                <tr><td>method</td><td><div class="stirring_method_type selector" data-proto="StirringConditions_StirringMethodType"></div>
+                                                     details <div class="stirring_method_details edittext"></div></td></tr>
+                <tr><td>rate</td><td><div class="stirring_rate_type selector" data-proto="StirringConditions_StirringRate_StirringRateType"></div>
+                                                     details <div class="stirring_rate_details edittext"></div></td></tr>
+                <tr><td>rpm</td><td><div class="stirring_rpm edittext shorttext integertext"></div></td></tr>
               </table>
             </fieldset>
           </fieldset>
           </div>
-
-          <div id="workup_temperature_measurement_template" class="workup_temperature_measurement" style="display: none;">
-            <fieldset class="s5">
-              <legend>
-                <span class="collapse"></span>
-                <span class="h5">Temperature measurement</span>
-                <div onclick="ord.utils.removeSlowly(this, '.workup_temperature_measurement');" class="remove">remove</div>
-              </legend>
-              <table class="message">
-                <tr><td>type</td><td><div class="workup_temperature_measurement_type selector" data-proto="TemperatureConditions_Measurement_MeasurementType"></div></td></tr>
-                <tr><td>time</td><td><div class="workup_temperature_measurement_time_value edittext shorttext floattext"></div>
-                                           <div class="workup_temperature_measurement_time_units selector" data-proto="Time_TimeUnit"></div>
-                                           ± <div class="workup_temperature_measurement_time_precision edittext shorttext floattext"></div></td></tr>
-                <tr><td>temperature</td><td><div class="workup_temperature_measurement_temperature_value edittext shorttext floattext"></div>
-                                                  <div class="workup_temperature_measurement_temperature_units selector" data-proto="Temperature_TemperatureUnit"></div>
-                                                  ± <div class="workup_temperature_measurement_temperature_precision edittext shorttext floattext"></div></td></tr>
-                <tr><td>details</td><td><div class="workup_temperature_measurement_details edittext"></div></td></tr>
-              </table>
-            </fieldset>
-          </div>
-
         </div>
-        <div onclick="ord.workups.add();" class="add">+ add workup</div>
+        <button type="button" class="add button-lg" onclick="ord.workups.add();"><span class="fas fa-plus" aria-hidden="true"></span> add workup</button>
       </fieldset>
 
       <fieldset id="section_outcomes" class="section s2">
         <legend>
-          <span class="collapse"></span>
+          <span class="collapse show"></span>
           <span class="h2">Outcomes</span>
-          <span data-toggle="tooltip" data-placement="right" title="Outcomes record time-stamped analyses and, optionally, product characterization.">
+          <button class="help" data-toggle="tooltip" data-placement="right" title="Outcomes record time-stamped analyses and, optionally, product characterization.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
-          </span>
+          </button>
         </legend>
 
         <div id="outcomes">
@@ -777,32 +778,33 @@ limitations under the License.
           <div id="outcome_template" class="outcome" style="display: none;">
             <fieldset class="s3">
             <legend>
-              <span class="collapse"></span>
+              <span class="collapse show"></span>
               <span class="h3">Outcome</span>
-              <div onclick="ord.utils.removeSlowly(this, '.outcome');" class="remove">remove</div>
-              <span class="validate" onclick="ord.outcomes.validateOutcome($(this).closest('.outcome'))"></span>
+              <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome');"><i class="far fa-trash-alt"></i></button>
+              <div class="validate"></div>
             </legend>
             <table class="message">
               <tr><td>time
-                <span data-toggle="tooltip" data-placement="right" title="The reaction time at which this analysis/characterization was performed.">
+                <button class="help" data-toggle="tooltip" data-placement="right" title="The reaction time at which this analysis/characterization was performed.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
-                </span>
+                </button>
               </td><td><div class="outcome_time_value edittext shorttext floattext"></div>
+                ± <div class="outcome_time_precision edittext shorttext floattext"></div>
                                                  <div class="outcome_time_units selector" data-proto="Time_TimeUnit"></div>
-                                                 ± <div class="outcome_time_precision edittext shorttext floattext"></div></td></tr>
+                                                 </td></tr>
               <tr><td>limiting reactant conversion
-                <span data-toggle="tooltip" data-placement="right" title="Reaction conversion with respect to the limiting reactant. Yields should be associated with specific product structures, defined below.">
+                <button class="help" data-toggle="tooltip" data-placement="right" title="Reaction conversion with respect to the limiting reactant. Yields should be associated with specific product structures, defined below.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
-                </span>
+                </button>
               </td><td><div class="outcome_conversion_value edittext shorttext floattext"></div>
                                                        ± <div class="outcome_conversion_precision edittext shorttext floattext"></div></td></tr>
             </table>
 
               <div class="outcome_analyses"></div>
-              <div onclick="ord.outcomes.addAnalysis($(this).closest('.outcome'));" class="add">+ add analysis</div>
+              <button type="button" class="add" onclick="ord.outcomes.addAnalysis($(this).closest('.outcome'));"><span class="fas fa-plus" aria-hidden="true"></span> add analysis</button>
 
               <div class="outcome_products"></div>
-              <div onclick="ord.products.add($(this).closest('.outcome'));" class="add">+ add product</div>
+              <button type="button" class="add" onclick="ord.products.add($(this).closest('.outcome'));"><span class="fas fa-plus" aria-hidden="true"></span> add product</button>
 
           </fieldset>
           </div>
@@ -810,18 +812,18 @@ limitations under the License.
           <div id="outcome_product_template" class="outcome_product" style="display: none;">
             <fieldset class="s4">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h4">Product</span>
-                <div onclick="ord.utils.removeSlowly(this, '.outcome_product');" class="remove">remove</div>
-                <span class="validate" onclick="ord.products.validateProduct($(this).closest('.outcome_product'))"></span>
+                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome_product');"><i class="far fa-trash-alt"></i></button>
+                <div class="validate"></div>
               </legend>
               <table class="message">
               <tr><td>reaction role</td><td><div class="component_reaction_role selector" data-proto="ReactionRole_ReactionRoleType"></div></td></tr>
               <tr class="is_desired_product">
-                <td>desired product?
-                  <span data-toggle="tooltip" data-placement="right" title="Whether this is the desired product.">
+                <td>desired product
+                  <button class="help" data-toggle="tooltip" data-placement="right" title="Whether this is the desired product.">
                     <span class="fa fa-question-circle" aria-hidden="true"></span>
-                  </span>
+                  </button>
                 </td>
                 <td><div class="outcome_product_desired optional_bool"></div></td>
               </tr>
@@ -829,35 +831,35 @@ limitations under the License.
 
             <fieldset class="s5">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h5">Identifiers</span>
-                <span data-toggle="tooltip" data-placement="right" title="Compound identifiers should be structural (e.g., SMILES) whenever possible.">
+                <button class="help" data-toggle="tooltip" data-placement="right" title="Compound identifiers should be structural (e.g., SMILES) whenever possible.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
-                </span>
+                </button>
               </legend>
               <!-- Compound rendering -->
               <div class="component_rendering" style="text-align: center;"></div>
               <div class="identifiers product_compound_identifiers"></div>
               <!-- Shortcuts for name resolving & drawing -->
-              <div onclick="ord.compounds.drawIdentifier($(this).closest('.outcome_product'));" class="add"><span class="far fa-edit" aria-hidden="true"></span> draw compound</div>
-              <div onclick="ord.compounds.addNameIdentifier($(this).closest('.outcome_product'));" class="add"><span class="fa fa-search" aria-hidden="true"></span> look up name</div>
+              <button type="button" class="add" onclick="ord.compounds.drawIdentifier($(this).closest('.outcome_product'));"><span class="far fa-edit" aria-hidden="true"></span> draw compound</button>
+              <button type="button" class="add" onclick="ord.compounds.addNameIdentifier($(this).closest('.outcome_product'));"><span class="fa fa-search" aria-hidden="true"></span> look up name</button>
               <!-- End shortcuts -->
-              <div onclick="ord.compounds.addIdentifier($(this).closest('.outcome_product'));" class="add">+ add identifier</div>
+              <button type="button" class="add" onclick="ord.compounds.addIdentifier($(this).closest('.outcome_product'));"><span class="fas fa-plus" aria-hidden="true"></span> add identifier</button>
             </fieldset>
 
             <div id="product_measurement_template" class="product_measurement" style="display: none;">
               <fieldset class="s6">
                 <legend>
-                  <span class="collapse"></span>
+                  <span class="collapse show"></span>
                   <span class="h6">Product Measurement</span>
-                  <div onclick="ord.utils.removeSlowly(this, '.product_measurement');" class="remove">remove</div>
-                  <span class="validate" onclick="ord.products.validateMeasurement($(this).closest('.product_measurement'))"></span>
+                  <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.product_measurement');"><i class="far fa-trash-alt"></i></button>
+                  <div class="validate"></div>
                 </legend>
                 <table class="message product_measurement_value_type">
                   <tr>
                     <td>based on</td>
                     <td>
-                      <div class="product_measurement_analysis_key">
+                      <div class="product_measurement_analysis_key selector_style">
                         <select class="analysis_key_selector">
                           <option disabled selected value="">-- select an analysis label --</option>
                         </select>
@@ -873,7 +875,7 @@ limitations under the License.
                       <div class="product_measurement_value amount_value edittext shorttext"></div>
                       <div class="product_measurement_pm" style="display: inline-block;">±</div>
                       <div class="product_measurement_precision amount_precision edittext shorttext floattext"></div>
-                      <div class="amount_units_mass selector" data-proto="Mass_MassUnit" style="display: none;"></div>
+                      <select class="amount_units mass" style="display: none;"></select>
                     </td>
                   </tr>
                   <tr>
@@ -887,15 +889,15 @@ limitations under the License.
                   </tr>
                   </tbody>
                   <tr>
-                    <td class="product_measurement_section">uses internal standard?</td>
+                    <td class="product_measurement_section">uses internal standard</td>
                     <td class="product_measurement_section"><div class="product_measurement_uses_internal_standard optional_bool"></div></td>
                   </tr>
-                  <tr><td>is normalized?
-                    <span data-toggle="tooltip" data-placement="right" title="Whether the reported measurement has already been normalized to the internal standard, if an internal standard was used.">
+                  <tr><td>is normalized
+                    <button class="help" data-toggle="tooltip" data-placement="right" title="Whether the reported measurement has already been normalized to the internal standard, if an internal standard was used.">
                       <span class="fa fa-question-circle" aria-hidden="true"></span>
-                    </span>
+                    </button>
                   </td><td><div class="product_measurement_is_normalized optional_bool"></div></td></tr>
-                  <tr><td>uses authentic standard?</td><td><div class="product_measurement_uses_authentic_standard optional_bool"></div></td></tr>
+                  <tr><td>uses authentic standard</td><td><div class="product_measurement_uses_authentic_standard optional_bool"></div></td></tr>
                   <tr class="retention_time">
                     <td class="product_measurement_section">retention time</td>
                     <td class="product_measurement_section">
@@ -923,9 +925,9 @@ limitations under the License.
                   <tr>
                     <td>
                       EIC masses
-                      <span data-toggle="tooltip" data-placement="right" title="Comma-separated list of m/z ratios that were used to calculate the peak area or intensity.">
+                      <button class="help" data-toggle="tooltip" data-placement="right" title="Comma-separated list of m/z ratios that were used to calculate the peak area or intensity.">
                         <span class="fa fa-question-circle" aria-hidden="true"></span>
-                      </span>
+                      </button>
                     </td>
                     <td><div class="product_measurement_mass_spec_eic_masses edittext shorttext"></div></td>
                   </tr>
@@ -946,21 +948,21 @@ limitations under the License.
 
             <fieldset class="s5">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h5">Measurements</span>
-                <span data-toggle="tooltip" data-placement="right" title="Each ProductMeasurement describes a connection between this product and an Analysis. This includes information about how the identity of the product was confirmed. It also contains quantitative standardized performance metrics like quantitative yield as well as unstandardized (and unnormalized) metrics like an integrated UV peak area.">
+                <button class="help" data-toggle="tooltip" data-placement="right" title="Each ProductMeasurement describes a connection between this product and an Analysis. This includes information about how the identity of the product was confirmed. It also contains quantitative standardized performance metrics like quantitative yield as well as unstandardized (and unnormalized) metrics like an integrated UV peak area.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
-                </span>
+                </button>
               </legend>
               <div>
                 <div class="product_measurement_repeated"></div>
-                <div onclick="ord.products.addMeasurement($(this).closest('.outcome_product'));" class="add">+ add measurement</div>
+                <button type="button" class="add" onclick="ord.products.addMeasurement($(this).closest('.outcome_product'));"><span class="fas fa-plus" aria-hidden="true"></span> add measurement</button>
               </div>
             </fieldset>
 
             <fieldset class="s5">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h5">Isolated product characteristics</span>
               </legend>
               <div class="outcome_product_isolated_characteristics">
@@ -974,14 +976,14 @@ limitations under the License.
 
             <fieldset class="s5">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h5">Features</span>
-                <span data-toggle="tooltip" data-placement="right" title="Additional chemical features (e.g., calculated descriptors) that are important to associate with this compound.">
+                <button class="help" data-toggle="tooltip" data-placement="right" title="Additional chemical features (e.g., calculated descriptors) that are important to associate with this compound.">
                   <span class="fa fa-question-circle" aria-hidden="true"></span>
-                </span>
+                </button>
               </legend>
               <div class="features"></div>
-              <div onclick="ord.compounds.addFeature($(this).closest('.outcome_product'));" class="add">+ add feature</div>
+              <button type="button" class="add" onclick="ord.compounds.addFeature($(this).closest('.outcome_product'));"><span class="fas fa-plus" aria-hidden="true"></span> add feature</button>
             </fieldset>
             </fieldset>
           </div>
@@ -989,29 +991,29 @@ limitations under the License.
           <div id="outcome_analysis_template" class="outcome_analysis" style="display: none;">
             <fieldset class="s4">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h4">Analysis</span>
-                <div onclick="ord.utils.removeSlowly(this, '.outcome_analysis');" class="remove">remove</div>
-                <span class="validate" onclick="ord.outcomes.validateAnalysis($(this).closest('.outcome_analysis'))" ></span>
+                <span class="outcome_analysis_name edittext"></span>
+                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome_analysis');"><i class="far fa-trash-alt"></i></button>
+                <div class="validate"></div>
               </legend>
               <table class="message">
-                <tr><td>name</td><td><div class="outcome_analysis_name edittext"></div></td></tr>
                 <tr><td>type</td><td><div class="outcome_analysis_type selector" data-proto="Analysis_AnalysisType"></div></td></tr>
                 <tr><td>details</td><td><div class="outcome_analysis_details edittext"></div></td></tr>
                 <tr><td>chmo_id</td><td><div class="outcome_analysis_chmo_id edittext"></div></td></tr>
                 <tr><td>instrument manufacturer</td><td><div class="outcome_analysis_manufacturer edittext"></div></td></tr>
                 <tr><td>instrument calibration date</td><td><div class="outcome_analysis_calibrated edittext"></div></td></tr>
-                <tr><td>is of isolated species?
-                  <span data-toggle="tooltip" data-placement="right" title="Whether this analysis is intended to be of an isolated species. If false or unspecified, the assumption is that it is of a crude product mixture (or a partially worked-up product mixture).">
+                <tr><td>is of isolated species
+                  <button class="help" data-toggle="tooltip" data-placement="right" title="Whether this analysis is intended to be of an isolated species. If false or unspecified, the assumption is that it is of a crude product mixture (or a partially worked-up product mixture).">
                     <span class="fa fa-question-circle" aria-hidden="true"></span>
-                  </span>
+                  </button>
                 </td><td><div class="outcome_analysis_is_of_isolated_species optional_bool"></div></td></tr>
               </table>
 
               <div>
                 <div class="outcome_data_repeated">
                 </div>
-                <div onclick="ord.outcomes.addData($(this).closest('.outcome_analysis'));" class="add">+ add data</div>
+                <button type="button" class="add" onclick="ord.outcomes.addData($(this).closest('.outcome_analysis'));"><span class="fas fa-plus" aria-hidden="true"></span> add data</button>
               </div>
 
             </fieldset>
@@ -1021,28 +1023,26 @@ limitations under the License.
           <div id="outcome_data_template" class="outcome_data" style="display: none;">
             <fieldset class="s5">
               <legend>
-                <span class="collapse"></span>
+                <span class="collapse show"></span>
                 <span class="h5">Analytical data</span>
-                <div onclick="ord.utils.removeSlowly(this, '.outcome_data');" class="remove">remove</div>
+                <span class="outcome_data_name edittext"></span>
+                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.outcome_data');"><i class="far fa-trash-alt"></i></button>
               </legend>
-              <table class="message">
-                <tr><td>name</td><td><div class="outcome_data_name edittext"></div></td></tr>
-              </table>
             </fieldset>
           </div>
 
         </div>
-        <div onclick="ord.outcomes.add();" class="add">+ add outcome</div>
+        <button type="button" class="add button-lg" onclick="ord.outcomes.add();"><span class="fas fa-plus" aria-hidden="true"></span> add outcome</button>
       </fieldset>
 
       <fieldset id="section_provenance" class="section s2">
         <legend>
-          <span class="collapse"></span>
+          <span class="collapse show"></span>
           <span class="h2">Provenance</span>
-          <span data-toggle="tooltip" data-placement="right" title="Additional metadata about how this reaction was performed and originally reported.">
+          <button class="help" data-toggle="tooltip" data-placement="right" title="Additional metadata about how this reaction was performed and originally reported.">
             <span class="fa fa-question-circle" aria-hidden="true"></span>
-          </span>
-          <span class="validate" onclick="ord.provenance.validateProvenance($('#section_provenance'))"></span>
+          </button>
+          <div class="validate"></div>
         </legend>
         <div id="provenance_experimenter">
           <table class="message">
@@ -1059,13 +1059,13 @@ limitations under the License.
           </table>
         </div>
         <div id="provenance_created">
-          <fieldset class="s3">
+          <fieldset class="s4">
             <legend>
-              <span class="collapse"></span>
-              <span class="h3">Record creation</span>
-              <span data-toggle="tooltip" data-placement="right" title="Details about the original creation of this reaction record.">
+              <span class="collapse show"></span>
+              <span class="h4">Record creation</span>
+              <button class="help" data-toggle="tooltip" data-placement="right" title="Details about the original creation of this reaction record.">
                 <span class="fa fa-question-circle" aria-hidden="true"></span>
-              </span>
+              </button>
             </legend>
             <table class="message">
               <tr><td>time</td><td>
@@ -1083,14 +1083,14 @@ limitations under the License.
         </div>
         <div id="provenance_modifieds">
           <div id="provenance_modified_template" class="provenance_modified" style="display: none;">
-            <fieldset class="s3">
+            <fieldset class="s4">
               <legend>
-                <span class="collapse"></span>
-                <span class="h3">Record modification</span>
-                <div onclick="ord.utils.removeSlowly(this, '.provenance_modified');" class="remove">remove</div>
-                <span data-toggle="tooltip" data-placement="right" title="Details about subsequent modifications to this reaction record.">
+                <span class="collapse show"></span>
+                <span class="h4">Record modification</span>
+                <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.provenance_modified');"><i class="far fa-trash-alt"></i></button>
+                <button class="help" data-toggle="tooltip" data-placement="right" title="Details about subsequent modifications to this reaction record.">
                 <span class="fa fa-question-circle" aria-hidden="true"></span>
-              </span>
+              </button>
               </legend>
               <table class="message">
                 <tr><td>time</td><td>
@@ -1107,45 +1107,43 @@ limitations under the License.
             </fieldset>
           </div>
         </div>
-        <div onclick="ord.provenance.addModification();" class="add">+ add modification</div>
+        <button type="button" class="add" onclick="ord.provenance.addModification();"><span class="fas fa-plus" aria-hidden="true"></span> add modification</button>
       </fieldset>
     </div>
 
     <!-- Ketcher div in a modal, js and css, and some initialization to make it work. -->
-    <div class="modal fade" id="ketcher_modal">
-      <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal fade" id="ketcher_modal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
           <div class="modal-content" style="width: auto;">
               <div class="modal-body">
-                <iframe id="ketcher-iframe" src="/ketcher/iframe" width="800" height="432" style="border-width: 0"></iframe>
+                  <iframe id="ketcher-iframe" src="/ketcher/iframe"></iframe>
                   <div id="ketcher-spinner" class="spinner-border" role="status">
                       <span class="sr-only">Loading...</span>
                   </div>
               </div>
               <div class="modal-footer">
-                  <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
-                  <button type="button" class="btn btn-success" data-dismiss="modal" onclick="document.getElementById('ketcher-iframe').contentWindow.ketcher.successCallback();">Done drawing</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="document.getElementById('ketcher-iframe').contentWindow.ketcher.successCallback();">Save</button>
               </div>
           </div>
       </div>
     </div>
 
-    <span id="validate_template" style="display: none">
-      <span class="validate_button" aria-hidden="true">validate</span>
-      <span class="validate_status-message">
-        <span onmouseenter="ord.utils.toggleValidateMessage($(this).closest('.validate'), '.validate_message')" onmouseleave="ord.utils.toggleValidateMessage($(this).closest('.validate'), '.validate_message')" class="validate_status">unvalidated</span>
-        <span onmouseenter="ord.utils.toggleValidateMessage($(this).closest('.validate'), '.validate_warning_message')" onmouseleave="ord.utils.toggleValidateMessage($(this).closest('.validate'), '.validate_warning_message')" class="validate_warning_status fa fa-bell"></span>
-        <span class="validate_message"></span>
-        <span class="validate_warning_message"></span>
-      </span>
-    </span>
+    <div id="validate_template" class="validate_details" style="display: none;">
+      <span onmouseenter="ord.utils.toggleValidateMessage($(this).siblings('.validate_message'))" onmouseleave="ord.utils.toggleValidateMessage($(this).siblings('.validate_message'))" class="validate_status fas fa-exclamation-triangle">unvalidated</span>
+      <span onmouseenter="ord.utils.toggleValidateMessage($(this).siblings('.validate_warning_message'))" onmouseleave="ord.utils.toggleValidateMessage($(this).siblings('.validate_warning_message'))" class="validate_warning_status fas fa-bell"></span>
+      <span class="validate_message"></span>
+      <span class="validate_warning_message"></span>
+    </div>
 
     <div id="reaction_identifier_template" class="reaction_identifier" style="display: none;">
+      <span class="h6">Identifier</span>
+      <button type="button" class="remove" onclick="ord.utils.removeSlowly(this, '.reaction_identifier');"><i class="far fa-trash-alt"></i></button>
       <table class="message">
         <tr>
           <td>value</td>
           <td>
             <div class="reaction_identifier_value edittext longtext"></div>
-            <span class="fa fa-upload text_upload" aria-hidden="true" style="cursor:pointer;" onclick="ord.utils.setTextFromFile($(this).closest('.reaction_identifier'), 'reaction_identifier_value');"></span>
           </td>
         </tr>
         <tr>
@@ -1156,7 +1154,6 @@ limitations under the License.
           <td>details</td>
           <td>
             <div class="reaction_identifier_details edittext"></div>
-            <div class="remove" onclick="ord.utils.removeSlowly(this, '.reaction_identifier');">remove</div>
           </td>
         </tr>
       </table>
@@ -1170,9 +1167,9 @@ limitations under the License.
           <div class="data_text edittext"></div>
           <div class="data_uploader" data-token="" style="display: none;">
             <input class="data_uploader_chooser_file data_uploader_text" type="file">
-            <div class="data_uploader_chooser_button data_uploader_text">Choose...</div>
+            <button type="button" class="data_uploader_chooser_button data_uploader_text">Choose...</button>
             <div class="data_uploader_file_name data_uploader_text"></div>
-            <div class="data_uploader_file_retrieve data_uploader_text" onclick="ord.uploads.retrieve($(this).closest('.data_uploader'));" style="display: none;">retrieve</div>
+            <button type="button" class="data_uploader_file_retrieve data_uploader_text" onclick="ord.uploads.retrieve($(this).closest('.data_uploader'));" style="display: none;">retrieve</button>
           </div>
         </td>
       </tr>
@@ -1190,16 +1187,18 @@ limitations under the License.
       </table>
     </div>
 
-    <div id="undo_template" class="undo" style="display: none;" onclick="ord.utils.undoSlowly();">undo</div>
+    <button type="button" id="undo_template" class="undo" style="display: none;" onclick="ord.utils.undoSlowly();">undo</button>
 
     <script>
         document.body.onload = async function () {
+          const pageLoad = $('#pageLoad');
+          pageLoad.modal('show');
           {% if reaction_id %}
           await ord.reaction.initFromReactionId('{{ reaction_id }}');
           {% else %}
           await ord.reaction.initFromDataset('{{ name }}', {{ index }});
           {% endif %}
-          $('.navSection').click(event => {
+          $('.navSection').on('click', event => {
             const section = $(event.target).attr('data-section');
             $('#section_' + section)[0].scrollIntoView({behavior: 'smooth'});
           });
@@ -1207,12 +1206,12 @@ limitations under the License.
           {% if freeze %}
             ord.utils.freeze();
           {% endif %}
+          pageLoad.modal('hide');
           if (location.hash) {
             const section = location.hash.replace('#', '');
             $('#section_' + section)[0].scrollIntoView({behavior: 'smooth'});
           }
         };
     </script>
-
   </body>
 </html>

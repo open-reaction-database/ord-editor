@@ -44,7 +44,7 @@ from ord_schema.proto import reaction_pb2
 from ord_schema.visualization import generate_text
 from ord_schema.visualization import drawing
 
-# pylint: disable=invalid-name,no-member,inconsistent-return-statements
+# pylint: disable=invalid-name,no-member,inconsistent-return-statements,assigning-non-slot
 app = flask.Flask(__name__, template_folder='../html')
 
 # For dataset merges operations like byte-value uploads and enumeration.
@@ -250,19 +250,6 @@ def show_reaction_id(reaction_id):
                                  freeze=True)
 
 
-# @app.route('/reaction/id/<reaction_id>/proto')
-# def fetch_reaction_id(reaction_id):
-#     """Returns a serialized Reaction with the given ID."""
-#     client = ord_client.OrdClient()
-#     try:
-#         reaction = client.fetch_reaction(reaction_id)
-#         response = flask.make_response(reaction.SerializeToString())
-#         response.headers.set('Content-Type', 'application/protobuf')
-#         return response
-#     except AssertionError as error:
-#         flask.abort(flask.make_response(str(error), 404))
-
-
 @app.route('/reaction/download', methods=['POST'])
 def download_reaction():
     """Returns a pbtxt file parsed from POST data as an attachment."""
@@ -279,7 +266,8 @@ def download_reaction():
 def new_reaction(name):
     """Adds a new Reaction to the named Dataset and redirects to it."""
     dataset = get_dataset(name)
-    dataset.reactions.add()
+    reaction = dataset.reactions.add()
+    reaction.reaction_id = f'ord-{uuid.uuid4().hex}'
     put_dataset(name, dataset)
     return flask.redirect('/dataset/%s' % name)
 
@@ -405,16 +393,31 @@ def read_upload(token):
                            attachment_filename=token)
 
 
+def _adjust_error(error: str) -> str:
+    """Strips the message name from errors to make them more readable."""
+    fields = error.split(':')
+    location = '.'.join(fields[0].strip().split('.')[1:])
+    message = ':'.join(fields[1:])
+    if location:
+        return f'{location}: {message.strip()}'
+    return message.strip()
+
+
 @app.route('/dataset/proto/validate/<message_name>', methods=['POST'])
 def validate_reaction(message_name):
     """Receives a serialized Reaction protobuf and runs validations."""
     message = message_helpers.create_message(message_name)
     message.ParseFromString(flask.request.get_data())
+    if message == type(message)():
+        # Do not try to validate empty messages.
+        return json.dumps({'errors': [], 'warnings': []})
     options = validations.ValidationOptions(require_provenance=True)
     output = validations.validate_message(message,
                                           raise_on_error=False,
                                           options=options)
-    return json.dumps({'errors': output.errors, 'warnings': output.warnings})
+    errors = list(map(_adjust_error, output.errors))
+    warnings = list(map(_adjust_error, output.warnings))
+    return json.dumps({'errors': errors, 'warnings': warnings})
 
 
 @app.route('/resolve/input', methods=['POST'])
@@ -427,7 +430,7 @@ def resolve_input():
         response = flask.make_response(bites)
         response.headers.set('Content-Type', 'application/protobuf')
     except (ValueError, KeyError) as error:
-        flask.abort(flask.make_response(str(error), 409))
+        return flask.abort(flask.make_response(str(error), 409))
     return response
 
 

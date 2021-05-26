@@ -13,21 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+:root {
+    --body-width: 968px;
+}
+
 body {
   padding: 100px 20px 20px;
-  font-family: Roboto;
+  width: var(--body-width);
+  margin: auto;
+}
+#pageLoad {
+  text-align: center;
 }
 #sections {
   margin-left: 168px;
+  width: 800px;
 }
-#top_buttons {
-  text-align: center;
-}
-.edittext, .selector, .optional_bool, .analysis_key_selector {
-  padding: 2px;
+.edittext, .selector, .optional_bool, .selector_style {
   margin: 2px;
   display: inline-block;
-  height: 20px;
+}
+.edittext {
+  padding: 0 2px;
+}
+button {
+  font-size: small;
+  border: 1px solid black;
+  vertical-align: middle;
+}
+.button-lg {
+  font-size: medium;
 }
 .edittext {
   width: 200px;
@@ -59,36 +75,23 @@ body {
 .invalid {
   border: 2px solid red;
 }
-.add, #save, #download, .remove, .undo, #delete, .collapse, .validate_button, .validate_status, .validate_message, .validate_warning_status, .validate_warning_message, #toggle_autosave, .tooltip > .tooltip-inner {
+.validate_status, .validate_message, .validate_warning_status, .validate_warning_message {
   padding: 2px 4px;
   margin: 2px;
   display: inline-block;
-  border-radius: 8px;
 }
-.add, #save, #download, .remove, .undo, #delete, .collapse, .validate_button {
-  cursor: pointer;
-}
-.add {
-  background-color: lightgreen;
-  margin-top: 12px;
-}
-#save, #download {
-  background-color: lightgray;
-}
-.remove, .undo, #delete {
-  background-color: pink;
-}
-.validate, .validate_status-message {
+.validate {
   display: inline-block;
+  font-size: medium;
+  vertical-align: middle;
 }
-.validate_status-message {
-  padding-left: 4px;
+.validate_status {
+  color: #ff4444;
+  display: none;
 }
-.validate_button {
-  background-color: lightblue;
-}
-.validate_status, .validate_warning_status {
-  background-color: lightgray;
+.validate_warning_status {
+  color: #ffbb33;
+  display: none;
 }
 .validate_message, .validate_warning_message {
   position: absolute;
@@ -96,9 +99,8 @@ body {
   visibility: hidden;
   max-width: 500px;
 }
-.validate_warning_status {
-  color: yellow;
-  display: none;
+.validate_message {
+  background-color: pink;
 }
 .validate_warning_message {
   background-color: #FAFAD2;
@@ -106,11 +108,16 @@ body {
 .spacer {
   height: 24px;
 }
-.tooltip > .tooltip-inner {
-  background-color: lightgray;
-}
 fieldset {
   margin-top: 24px;
+  margin-inline-start: 2px;
+  margin-inline-end: 2px;
+  padding-block-start: 0.35em;
+  padding-inline-start: 0.75em;
+  padding-inline-end: 0.75em;
+  padding-block-end: 0.625em;
+  min-inline-size: min-content;
+  border-width: 2px;
 }
 #header {
   background: white;
@@ -119,11 +126,12 @@ fieldset {
   padding: 10px 0;
   position: fixed;
   top: 0;
-  width: 100%;
+  width: var(--body-width);
   z-index: 1;
 }
 .section {
   scroll-margin-top: 120px;
+  margin-top: 48px;
 }
 #nav {
   margin-top: 10px;
@@ -157,24 +165,13 @@ fieldset {
 }
 .data_uploader_text {
   display: inline-block;
-  border: solid;
-  border-width: 1px;
-  border-color: #c0c0c0;
+  border: 1px solid #c0c0c0;
   height: 21px;
 }
 .data_uploader_chooser_file {
   opacity: 0;
   position: absolute;
   width: 100px;
-}
-.data_uploader_chooser_button {
-  width: 99px;
-}
-.data_uploader_chooser_file, .data_uploader_chooser_button {
-  cursor: pointer;
-}
-.data_uploader_chooser_button, .data_uploader_file_retrieve {
-  text-align: center;
 }
 .data_uploader_file_name {
   min-width: 99px;
@@ -192,10 +189,25 @@ fieldset {
   padding-right: 4px;
 }
 /* Default hidden fields */
-.includes_solutes, #automation_platform, .limiting_reactant,
+.amount_includes_solutes,
+.amount_includes_solutes_label,
+#automation_platform,
+.limiting_reactant,
 .component_compound_preparation_reaction_id {
   display: none;
 }
+
+.amount_includes_solutes_label {
+  padding-left: 4px;
+  padding-top: 4px;
+}
+
+#ketcher-iframe {
+  width: 800px;
+  height: 432px;
+  border-width: 0;
+}
+
 /* Extra custom stylings for Ketcher. */
 #ketcher-spinner {
   position: absolute;
@@ -214,7 +226,6 @@ fieldset {
 }
 #identity {
   float: right;
-  width: 400px;
   align-items: center;
 }
 #identity img {
@@ -235,36 +246,43 @@ fieldset {
 #login:hover {
   border-color: black;
 }
-table.message td:first-child {
-  text-align: right;
-}
-.h2 {
-  font-size: 1.9em;
-}
-.h3 {
-  font-size: 1.6em;
-}
-.h4 {
-  font-size: 1.3em;
-}
-.h5 {
-  font-size: 1.1em;
-}
 .s2 {
   border: none;
 }
 .s3 {
   border-style: none none none solid;
-  border-color: lightgray;
+  border-color: #e6e6e6;
 }
 .s4 {
   border-style: none none none solid;
-  border-color: gray;
+  border-color: #d6d6d6;
 }
 .s5 {
-  border-style: solid none none solid;
-  border-color: black;
+  border-style: none none none solid;
+  border-color: #c6c6c6;
 }
 .product_measurement_section {
   padding-top: 20px;
+}
+#reaction_id {
+  display: inline-block;
+  font-family: monospace;
+  font-size: large;
+}
+.spacer {
+  width: 10px;
+}
+.remove, .text_upload, .help {
+  border: none;
+  background-color: unset;
+  font-size: medium;
+}
+.reaction_identifier_value {
+  width: auto;
+  min-width: 200px;
+  max-width: 800px;
+}
+.optional {
+  display: block;
+  margin: 8px 0;
 }

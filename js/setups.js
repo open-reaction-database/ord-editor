@@ -57,7 +57,7 @@ function load(setup) {
   }
 
   setupAutomated.on('change', function() {
-    if (utils.getSelectorText(this) === 'TRUE') {
+    if (utils.getOptionalBool(setupAutomated)) {
       $('#automation_platform').show();
     } else {
       $('#automation_platform').hide();

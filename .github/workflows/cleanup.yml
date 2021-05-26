@@ -77,4 +77,3 @@ jobs:
           sudo apt update && sudo apt install clang-format-10 --yes
           # NOTE(kearnes): Run clang-format before installing anything with npm.
           find . -name '*.js' -exec clang-format-10 -n -Werror --style=file {} +
-

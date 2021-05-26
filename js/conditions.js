@@ -39,28 +39,35 @@ const ReactionConditions = goog.require('proto.ord.ReactionConditions');
  * @param {!ReactionConditions} conditions
  */
 function load(conditions) {
+  const conditionsSection = $('#section_conditions');
   const temperatureMessage = conditions.getTemperature();
   if (temperatureMessage) {
-    temperature.load(temperatureMessage);
+    $('#show_section_conditions_temperature').trigger('click');
+    temperature.load(temperatureMessage, conditionsSection);
   }
   const pressureMessage = conditions.getPressure();
   if (pressureMessage) {
+    $('#show_section_conditions_pressure').trigger('click');
     pressure.load(pressureMessage);
   }
   const stirringMessage = conditions.getStirring();
   if (stirringMessage) {
-    stirring.load(stirringMessage);
+    $('#show_section_conditions_stirring').trigger('click');
+    stirring.load(stirringMessage, conditionsSection);
   }
   const illuminationMessage = conditions.getIllumination();
   if (illuminationMessage) {
+    $('#show_section_conditions_illumination').trigger('click');
     illumination.load(illuminationMessage);
   }
   const electroMessage = conditions.getElectrochemistry();
   if (electroMessage) {
+    $('#show_section_conditions_electro').trigger('click');
     electro.load(electroMessage);
   }
   const flowMessage = conditions.getFlow();
   if (flowMessage) {
+    $('#show_section_conditions_flow').trigger('click');
     flows.load(flowMessage);
   }
   const reflux = conditions.hasReflux() ? conditions.getReflux() : null;
@@ -81,7 +88,8 @@ function load(conditions) {
  */
 function unload() {
   const conditions = new ReactionConditions();
-  const temperatureMessage = temperature.unload();
+  const conditionsSection = $('#section_conditions');
+  const temperatureMessage = temperature.unload(conditionsSection);
   if (!utils.isEmptyMessage(temperatureMessage)) {
     conditions.setTemperature(temperatureMessage);
   }
@@ -89,7 +97,7 @@ function unload() {
   if (!utils.isEmptyMessage(pressureMessage)) {
     conditions.setPressure(pressureMessage);
   }
-  const stirringMessage = stirring.unload();
+  const stirringMessage = stirring.unload(conditionsSection);
   if (!utils.isEmptyMessage(stirringMessage)) {
     conditions.setStirring(stirringMessage);
   }

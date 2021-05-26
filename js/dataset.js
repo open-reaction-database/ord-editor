@@ -43,10 +43,10 @@ const session = {
  * Initializes the dataset landing page.
  * @param {string} fileName The filename of the dataset to load.
  */
-function init(fileName) {
+async function init(fileName) {
   session.fileName = fileName;
   $('.edittext').attr('contentEditable', 'true');
-  getDataset(fileName, loadDataset);
+  await getDataset(fileName);
   listenDirty($('#text_fields'));
 }
 
@@ -100,41 +100,34 @@ function commit() {
  * @param {string} kind Serialization format; one of 'pb' or 'pbtxt'.
  */
 function download(kind) {
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', '/dataset/' + session.fileName + '/download/' + kind);
-  xhr.onload = () => {
-    // Make the browser write the file.
-    const url = URL.createObjectURL(new Blob([xhr.response]));
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', session.fileName + '.' + kind);
-    document.body.appendChild(link);
-    link.click();
-  };
-  xhr.send();
+  const url = '/dataset/' + session.fileName + '/download/' + kind;
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  document.body.appendChild(link);
+  link.click();
 }
 
 /**
  * Fetches a dataset from the server.
  * @param {string} fileName The filename of the dataset to fetch.
- * @param {?Function} listener Function used to load the dataset into the
- *     editor.
+ * @return {!Promise}
  */
-function getDataset(fileName, listener) {
-  if (!listener) {
-    return;
-  }
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', '/dataset/proto/read/' + session.fileName, true /* async */);
-  xhr.responseType = 'arraybuffer';
-  xhr.onload = () => {
-    asserts.assertInstanceof(xhr.response, ArrayBuffer);  // Type hint.
-    const bytes = new Uint8Array(xhr.response);
-    const dataset = Dataset.deserializeBinary(bytes);
-    session.dataset = dataset;
-    listener(dataset);
-  };
-  xhr.send();
+function getDataset(fileName) {
+  return new Promise(resolve => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(
+        'GET', '/dataset/proto/read/' + session.fileName, true /* async */);
+    xhr.responseType = 'arraybuffer';
+    xhr.onload = () => {
+      asserts.assertInstanceof(xhr.response, ArrayBuffer);  // Type hint.
+      const bytes = new Uint8Array(xhr.response);
+      const dataset = Dataset.deserializeBinary(bytes);
+      session.dataset = dataset;
+      loadDataset(dataset);
+      resolve();
+    };
+    xhr.send();
+  });
 }
 
 /**
@@ -162,19 +155,9 @@ function loadDataset(dataset) {
 function loadReactions(reactions) {
   for (let i = 0; i < reactions.length; i++) {
     const reaction = reactions[i];
-    loadReaction(i, reaction);
+    const id = reaction.getReactionId();
+    addReaction(i, id);
   }
-}
-
-/**
- * Loads a single reaction into the editor.
- * @param {number} index The index of the new reaction.
- * @param {!Reaction} reaction
- */
-function loadReaction(index, reaction) {
-  const node = addReaction(index);
-  const id = reaction.getReactionId();
-  $('.reaction_id', node).text(id);
 }
 
 /**
@@ -219,13 +202,18 @@ function unloadDataset() {
 /**
  * Adds a new reaction to the current dataset.
  * @param {number} index The index of the new reaction.
+ * @param {string} reactionId The reaction ID. If empty, use the index.
  * @return {!jQuery} The newly added root node for the reaction.
  */
-function addReaction(index) {
+function addReaction(index, reactionId) {
   const node = $('#reaction_template').clone();
   node.removeAttr('id');
   const anchor = $('.reaction_index', node);
-  anchor.text(index);
+  if (reactionId) {
+    anchor.text(reactionId);
+  } else {
+    anchor.text('Reaction ' + index);
+  }
   anchor.attr('href', '/dataset/' + session.fileName + '/reaction/' + index);
   const root = $('#reactions');
   root.append(node);

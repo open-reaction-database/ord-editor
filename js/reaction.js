@@ -58,7 +58,7 @@ const session = utils.session;
  * TODO(kearnes): Many undefined properties here.
  * @suppress {missingProperties}
  */
-function init(reaction) {
+async function init(reaction) {
   // Initialize all the template popup menus.
   $('.selector').each((index, node) => utils.initSelector($(node)));
   $('.optional_bool').each((index, node) => utils.initOptionalBool($(node)));
@@ -68,23 +68,22 @@ function init(reaction) {
   $('.validate').each((index, node) => utils.initValidateNode($(node)));
   // Initialize validation handlers that don't go in "add" methods.
   initValidateHandlers();
-  // Initailize tooltips.
-  $('[data-toggle=\'tooltip\']').tooltip();
-  // Prevent tooltip pop-ups from blurring.
-  // (see github.com/twbs/bootstrap/issues/22610)
-  /** @suppress {undefinedVars} */
-  Popper.Defaults.modifiers.computeStyle.gpuAcceleration = false;
+  // Initialize tooltips.
+  $('[data-toggle="tooltip"]').tooltip();
   // Show "save" on modifications.
   utils.listen($('body'));
   // Load Ketcher content into an element with attribute role="application".
   document.getElementById('ketcher-iframe').contentWindow.ketcher.initKetcher();
   // Initialize the UI with the Reaction.
   loadReaction(reaction);
+  let reactionId = reaction.getReactionId();
+  if (!reactionId) {
+    reactionId = 'Reaction ' + session.index;
+  }
+  $('#reaction_id').text(reactionId);
   utils.clean();
-  // Initialize the collaped/uncollapsed state of the fieldset groups.
-  $('.collapse').each((index, node) => utils.initCollapse($(node)));
   // Trigger reaction-level validation.
-  validateReaction();
+  await validateReaction();
   // Initialize autosave being on.
   utils.toggleAutosave();
   // Signal to tests that the DOM is initialized.
@@ -103,7 +102,7 @@ async function initFromDataset(fileName, index) {
   session.dataset = await utils.getDataset(fileName);
   asserts.assertInstanceof(session.dataset, Dataset);  // Type hint.
   const reaction = session.dataset.getReactionsList()[index];
-  init(reaction);
+  await init(reaction);
 }
 
 /**
@@ -116,39 +115,43 @@ async function initFromReactionId(reactionId) {
   // NOTE(kearnes): Without this next line, `reaction` will be
   // partial/incomplete, and I have no idea why.
   console.log(reaction.toObject());
-  init(reaction);
+  await init(reaction);
   $('#dataset_context').hide();
 }
 
 /**
  * Updates the visual summary of the current reaction.
  * @param {!Reaction} reaction
+ * @return {!Promise}
  */
 function renderReaction(reaction) {
-  const xhr = new XMLHttpRequest();
-  xhr.open('POST', '/render/reaction');
-  const binary = reaction.serializeBinary();
-  xhr.responseType = 'json';
-  xhr.onload = function() {
-    if (xhr.response !== null) {
-      $('#reaction_render').html(asserts.assertString(xhr.response));
-    }
-  };
-  xhr.send(binary);
+  return new Promise(resolve => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/render/reaction');
+    const binary = reaction.serializeBinary();
+    xhr.responseType = 'json';
+    xhr.onload = function() {
+      if (xhr.response !== null) {
+        $('#reaction_render').html(asserts.assertString(xhr.response));
+      }
+      resolve();
+    };
+    xhr.send(binary);
+  });
 }
 
 /**
  * Validates the current reaction.
  */
-function validateReaction() {
+async function validateReaction() {
   const node = $('#sections');
   const validateNode = $('#reaction_validate');
   const reaction = unloadReaction();
   utils.validate(reaction, 'Reaction', node, validateNode);
   // Trigger all submessages to validate.
-  $('.validate_button:visible:not(#reaction_validate_button)').trigger('click');
+  $('.validate:visible:not(#reaction_validate)').trigger('click');
   // Render reaction as an HTML block.
-  renderReaction(reaction);
+  await renderReaction(reaction);
 }
 
 /**
