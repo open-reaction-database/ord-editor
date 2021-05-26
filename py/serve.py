@@ -532,6 +532,14 @@ def css(sheet):
     return flask.send_file(get_file(path), attachment_filename=sheet)
 
 
+@app.route('/img/<image>')
+def img(image):
+    """For static images, currently used only by the template editor."""
+    path = flask.safe_join(os.path.join(os.path.dirname(__file__), '../img'),
+                           image)
+    return flask.send_file(get_file(path), attachment_filename=image)
+
+
 @app.route('/ketcher/iframe')
 def ketcher_iframe():
     """Accesses a website serving Ketcher."""

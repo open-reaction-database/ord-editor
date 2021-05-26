@@ -16,8 +16,26 @@ limitations under the License.
 -->
 <html>
   <head>
+    <title>ORD Template Editor</title>
   </head>
-  <body>
+  <body style="padding: 16px;">
+    <div>
+      Create a template for a large factorial dataset. Read about templates here:
+      <img style="float: right;" src="file:///Users/akast/Desktop/ord-editor/img/template-editor-how.png">
+      <a href="https://docs.open-reaction-database.org/en/latest/guides/templates.html">
+        https://docs.open-reaction-database.org/en/latest/guides/templates.html
+      </a>
+      <p>
+      1) Define one reaction in the Editor and export it using the "download" button.
+      <p>
+      2) Import the reaction here using the "Choose File" button.
+      <p>
+      3) Click on the fields that vary. You can give a name to each one if you like.
+      <p>
+      4) Download your template using the "download" button on this page.
+      <p>
+      If you make a mistake, click the field's label (left of the name) to revert it.
+    </div>
     <input id="input" type="file"/>
     <a id="output" download="reaction.pbtxt" style="display: none;"></a>
     <button id="download" type="button">download</button>
