@@ -20,13 +20,13 @@ limitations under the License.
   </head>
   <body style="padding: 16px;">
     <div>
-      Create a template for a large factorial dataset. Read about templates here:
-      <img style="float: right;" src="file:///Users/akast/Desktop/ord-editor/img/template-editor-how.png">
+      Create a template for a large factorial dataset. Read about templates at
+      <img style="float: right;" src="/img/template-editor-how.png">
       <a href="https://docs.open-reaction-database.org/en/latest/guides/templates.html">
         https://docs.open-reaction-database.org/en/latest/guides/templates.html
       </a>
       <p>
-      1) Define one reaction in the Editor and export it using the "download" button.
+      1) Define a reaction in the Editor and export it using the "download" button.
       <p>
       2) Import the reaction here using the "Choose File" button.
       <p>
@@ -44,8 +44,8 @@ limitations under the License.
     </div>
     <script>
 
-      /* When an edited name fails validation, revert the name to this. */
-      let backupName;
+      /* Variable names must be unique. See validate(). */
+      const names = new Set();
 
       /* A location in pbtxt specified by a text node and a character position. */
       function Position(node, offset) {
@@ -155,32 +155,51 @@ limitations under the License.
         return tags.reverse();
       }
 
-      /* Variable names must have bounding dollar signs and maybe quotes. */
-      function validate(name) {
-        let innerName = name;
-        if (backupName.startsWith('"') && backupName.endsWith('"')) {
-          if (!name.startsWith('"') || !name.endsWith('"')) {
-            return "\"" + name + "\" must be surrounded by quotation marks.";
-          }
-          innerName = name.slice(1, -1);
+      /* To make names unique, we sometimes append a number. */
+      function increment(name) {
+        const match = name.match(/_(?<number>[0-9]+)$/);
+        if (match == null) {
+          return name + "_2";
         }
-        if (!innerName.startsWith("$") || !innerName.endsWith("$")) {
-          return "\"" + innerName + "\" requires dollar signs around the name.";
+        const n = parseInt(match.groups.number);
+        return name.replace(/_[0-9]+$/, "_" + (n + 1));
+      }
+
+      /* Get the string in the middle that needs to remain unique. */
+      function strip(name) {
+        return name.replace(/["$]/g, "");
+      }
+
+      /* Macros must be unique, bounded by "$", and also sometimes by '"'. */
+      function normalize(newName, oldName) {
+        newName = strip(newName);
+        while (names.has(newName)) {
+          newName = increment(newName);
         }
-        return null;
+        names.add(newName);
+        newName = "$" + newName + "$";
+        if (oldName.indexOf('"') >= 0) {
+          newName = '"' + newName + '"';
+        }
+        names.delete(strip(oldName));
+        return newName;
       }
 
       /* Split up the text at this position and insert a span around the value. */
       function macrotize(position) {
         const interval = position.line();
         const path = getPath(interval);
-        let macro = "$" + path.join("_") + "$";
 
-        // const value = interval.value();
-        value = interval.value();
+        const name = path.join("_");
+
+        let macro = "$" + name + "$";
+
+        const value = interval.value();
         if (value == null) {
           return;
         }
+        names.add(name);
+
         if (value.text().search('"') >= 0) {
           macro = '"' + macro + '"';
         }
@@ -190,21 +209,24 @@ limitations under the License.
         const middle = document.createElement("span");
         middle.innerText = macro;
         middle.dataset.value = value.text();
+        middle.setAttribute("name", macro);
         middle.contentEditable = "true";
         middle.style.color = "red";
 
-        middle.addEventListener("focusin", () => {
-          backupName = middle.innerText;
-        });
-        middle.addEventListener("focusout", () => {
-          const name = middle.innerText;
-          const message = validate(name);
-          if (message != null) {
-            middle.innerText = backupName;
-            alert(message);
+        // Allow the enter key to blur the text field.
+        middle.addEventListener("keydown", (event) => {
+          if (event.keyCode == 13) {
+            event.preventDefault();
+            middle.blur();
           }
         });
-
+        // When the text field loses focus, normalize the given variable name.
+        middle.addEventListener("focusout", () => {
+          const oldName = middle.getAttribute("name");
+          const newName = normalize(middle.innerText, oldName);
+          middle.setAttribute("name", newName);
+          middle.innerText = newName;
+        });
         const after = position.content.slice(value.end, position.content.length);
         const right = document.createTextNode(after);
 
@@ -218,6 +240,8 @@ limitations under the License.
 
       /* Reverse the effects of macrotize(). */
       function unmacrotize(position) {
+        const name = strip(position.node.textContent);
+        names.delete(name);
         const span = position.node.parentNode;
         const content = span.dataset.value;
         span.replaceWith(content);
