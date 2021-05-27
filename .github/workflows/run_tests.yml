@@ -19,7 +19,7 @@ on: [pull_request, push]
 env:
   # See https://dev.to/dtinth/caching-docker-builds-in-github-actions-which-approach-is-the-fastest-a-research-18ei.
   CACHE_TARGET: "docker.pkg.github.com/open-reaction-database/ord-editor/editor-cache"
-  ORD_SCHEMA_TAG: v0.3.0
+  ORD_SCHEMA_TAG: v0.3.9
 
 jobs:
   test_editor:
