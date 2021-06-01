@@ -80,6 +80,7 @@ COPY Makefile schema.sql ./
 COPY css/ css/
 COPY db/ db/
 COPY html/ html/
+COPY img/ img/
 COPY js/ js/
 COPY py/ py/
 
