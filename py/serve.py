@@ -58,7 +58,7 @@ except FileExistsError:
 POSTGRES_HOST = os.getenv('POSTGRES_HOST', 'localhost')
 POSTGRES_PORT = os.getenv('POSTGRES_PORT', '5432')
 POSTGRES_USER = os.getenv('POSTGRES_USER', 'postgres')
-POSTGRES_PASS = os.getenv('POSTGRES_PASSWORD', '')
+POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD', '')
 # Information for GitHub OAuth authentication.
 GH_CLIENT_ID = os.getenv('GH_CLIENT_ID')
 GH_CLIENT_SECRET = os.getenv('GH_CLIENT_SECRET')
@@ -929,7 +929,7 @@ def init_user():
     """Connects to the DB and authenticates the user."""
     flask.g.db = psycopg2.connect(dbname='editor',
                                   user=POSTGRES_USER,
-                                  password=POSTGRES_PASS,
+                                  password=POSTGRES_PASSWORD,
                                   host=POSTGRES_HOST,
                                   port=int(POSTGRES_PORT))
     if (flask.request.path in ('/login', '/authenticate', '/github-callback',

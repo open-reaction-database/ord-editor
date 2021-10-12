@@ -24,21 +24,25 @@
 # To push the built image to Docker Hub:
 # docker push openreactiondatabase/ord-editor
 
-FROM continuumio/miniconda3
+FROM python:3.8
 
 # default-jre is required for running the closure compiler linter.
 # https://github.com/geerlingguy/ansible-role-java/issues/64#issuecomment-597132394
-RUN mkdir /usr/share/man/man1/
 RUN apt-get update \
- && apt-get install -y build-essential default-jre npm procps unzip \
- && apt-get clean
+ && apt-get install -y \
+    build-essential  \
+    default-jre  \
+    libpq-dev \
+    nodejs \
+    npm \
+    procps \
+    python3-dev \
+    unzip \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
-RUN conda install -c rdkit \
-    flask \
-    gunicorn \
-    python=3.7 \
-    rdkit \
- && conda clean -afy
+RUN pip install --upgrade pip \
+ && pip install gunicorn
 
 # Fetch and build editor dependencies.
 # NOTE(kearnes): Do this before COPYing the local state so it can be cached.
@@ -47,6 +51,7 @@ WORKDIR /usr/src/app/ord-editor
 ADD "https://api.github.com/repos/Open-Reaction-Database/ketcher/git/refs/heads/main" ketcher-version.json
 RUN git clone https://github.com/Open-Reaction-Database/ketcher.git
 RUN cd ketcher \
+ && rm package-lock.json \
  && npm install \
  && npm run build \
  && rm -rf node_modules
@@ -65,7 +70,7 @@ RUN npm install google-closure-compiler
 WORKDIR ..
 RUN git clone https://github.com/Open-Reaction-Database/ord-schema.git
 WORKDIR ord-schema
-ARG ORD_SCHEMA_TAG=v0.3.9
+ARG ORD_SCHEMA_TAG=v0.3.13
 RUN git fetch --tags && git checkout "${ORD_SCHEMA_TAG}"
 RUN pip install -r requirements.txt
 RUN python setup.py install
@@ -76,13 +81,17 @@ COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
 # COPY the local state.
-COPY Makefile schema.sql ./
+COPY Makefile ./
 COPY css/ css/
 COPY db/ db/
 COPY html/ html/
 COPY img/ img/
 COPY js/ js/
 COPY py/ py/
+
+# Fix some missing deps in ord-schema.
+# TODO(skearnes): Move into ord-schema requirements.txt.
+RUN pip install pillow rdkit-pypi
 
 # Build and launch the editor.
 RUN make
