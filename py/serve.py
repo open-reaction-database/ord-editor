@@ -269,7 +269,7 @@ def new_reaction(name):
     reaction = dataset.reactions.add()
     reaction.reaction_id = f'ord-{uuid.uuid4().hex}'
     put_dataset(name, dataset)
-    return flask.redirect('/dataset/%s' % name)
+    return flask.redirect(f'/dataset/{name}')
 
 
 @app.route('/dataset/<name>/clone/<index>')
@@ -285,7 +285,7 @@ def clone_reaction(name, index):
     dataset.reactions.add().CopyFrom(dataset.reactions[index])
     index = len(dataset.reactions) - 1
     put_dataset(name, dataset)
-    return flask.redirect('/dataset/%s/reaction/%s' % (name, index))
+    return flask.redirect(f'/dataset/{name}/reaction/{index}')
 
 
 @app.route('/dataset/<name>/delete/reaction/<index>')
@@ -300,7 +300,7 @@ def delete_reaction(name, index):
         flask.abort(404)
     del dataset.reactions[index]
     put_dataset(name, dataset)
-    return flask.redirect('/dataset/%s' % name)
+    return flask.redirect(f'/dataset/{name}')
 
 
 @app.route('/dataset/<name>/delete/reaction_id/<reaction_id>')
@@ -310,7 +310,7 @@ def delete_reaction_id(name, reaction_id):
     if reaction_id in dataset.reaction_ids:
         dataset.reaction_ids.remove(reaction_id)
         put_dataset(name, dataset)
-        return flask.redirect('/dataset/%s' % name)
+        return flask.redirect(f'/dataset/{name}')
     flask.abort(404)
 
 
@@ -630,8 +630,8 @@ def sync_reviews():
                     dataset = dataset_pb2.Dataset.FromString(response.content)
                 else:
                     continue
-                name = 'PR_%d ___%s___ %s' % (pr.number, pr.title,
-                                              remote.filename[:-6])
+                prefix = remote.filename[:-6]
+                name = f'PR_{pr.number} ___{pr.title}___ {prefix}'
                 query = psycopg2.sql.SQL(
                     'INSERT INTO datasets VALUES (%s, %s, %s)')
                 cursor.execute(
@@ -694,7 +694,7 @@ def lock(file_name):
         The locked file descriptor.
     """
     path = get_path(file_name, suffix='.lock')
-    with open(path, 'w') as lock_file:
+    with open(path, 'wt') as lock_file:
         fcntl.lockf(lock_file, fcntl.LOCK_EX)
         try:
             yield lock_file
