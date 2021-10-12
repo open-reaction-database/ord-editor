@@ -264,7 +264,9 @@ function add(root, classes = null) {
   }
   utils.updateSidebar();
   // Add live validation handling.
-  utils.addChangeHandler(node, () => { validateInput(node); });
+  utils.addChangeHandler(node, () => {
+    validateInput(node);
+  });
   // Update the sidebar when the input name is changed.
   const nameNode = node.find('.input_name').first();
   nameNode.on('blur', utils.updateSidebar);

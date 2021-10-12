@@ -232,7 +232,9 @@ function add() {
   amounts.init(workupNode);
 
   // Add live validation handling.
-  utils.addChangeHandler(workupNode, () => { validateWorkup(workupNode); });
+  utils.addChangeHandler(workupNode, () => {
+    validateWorkup(workupNode);
+  });
 
   // Show/hide fields based on the measurement type.
   const workupTypeSelector = $('.workup_type select', workupNode);

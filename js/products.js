@@ -71,8 +71,9 @@ function loadProduct(outcomeNode, product) {
   utils.setSelector($('.component_reaction_role', node), reactionRole);
 
   const identifiers = product.getIdentifiersList();
-  identifiers.forEach(
-      identifier => { compounds.loadIdentifier(node, identifier); });
+  identifiers.forEach(identifier => {
+    compounds.loadIdentifier(node, identifier);
+  });
 
   utils.setOptionalBool(
       $('.outcome_product_desired', node),
@@ -218,7 +219,9 @@ function add(node) {
   roleSelector.trigger('change');
 
   // Add live validation handling.
-  utils.addChangeHandler(productNode, () => { validateProduct(productNode); });
+  utils.addChangeHandler(productNode, () => {
+    validateProduct(productNode);
+  });
   return productNode;
 }
 
@@ -292,8 +295,9 @@ function addMeasurement(node) {
   usesAuthenticStandard.trigger('change');
 
   // Add live validation handling.
-  utils.addChangeHandler(
-      measurementNode, () => { validateMeasurement(measurementNode); });
+  utils.addChangeHandler(measurementNode, () => {
+    validateMeasurement(measurementNode);
+  });
 
   // Show/hide fields based on the measurement type.
   const measurementTypeSelector =

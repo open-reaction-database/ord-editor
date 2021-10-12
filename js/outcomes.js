@@ -249,7 +249,9 @@ function unloadData(node, dataMap) {
 function add() {
   const node = utils.addSlowly('#outcome_template', $('#outcomes'));
   // Add live validation handling.
-  utils.addChangeHandler(node, () => { validateOutcome(node); });
+  utils.addChangeHandler(node, () => {
+    validateOutcome(node);
+  });
   return node;
 }
 
@@ -292,8 +294,9 @@ function addAnalysis(node) {
   });
 
   // Add live validation handling.
-  utils.addChangeHandler(
-      analysisNode, () => { validateAnalysis(analysisNode); });
+  utils.addChangeHandler(analysisNode, () => {
+    validateAnalysis(analysisNode);
+  });
   return analysisNode;
 }
 
