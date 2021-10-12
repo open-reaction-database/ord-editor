@@ -27,7 +27,7 @@ jobs:
     - uses: actions/setup-go@v2
     - name: Install dependencies
       run: |
-        go get -v -u github.com/google/addlicense
+        go get -v -u github.com/google/addlicense@latest
     - name: addlicense
       run: |
         cd "${GITHUB_WORKSPACE}"
