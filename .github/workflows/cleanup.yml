@@ -25,13 +25,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-go@v2
-    - name: Install dependencies
-      run: |
-        go get -v -u github.com/google/addlicense@latest
     - name: addlicense
       run: |
         cd "${GITHUB_WORKSPACE}"
-        "${HOME}/go/bin/addlicense" -check -c "Open Reaction Database Project Authors" -l apache .
+        go run github.com/google/addlicense@latest -check -c "Open Reaction Database Project Authors" -l apache .
 
   check_python:
     runs-on: ubuntu-latest
