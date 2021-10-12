@@ -75,6 +75,12 @@ def show_root():
     return flask.redirect('/datasets')
 
 
+@app.route('/healthcheck')
+def health_check():
+    """Signals that the app is alive."""
+    return flask.make_response('', 200)
+
+
 @app.route('/datasets')
 def show_datasets():
     """Lists all the user's datasets in the datasets table."""
@@ -932,8 +938,9 @@ def init_user():
                                   password=POSTGRES_PASSWORD,
                                   host=POSTGRES_HOST,
                                   port=int(POSTGRES_PORT))
-    if (flask.request.path in ('/login', '/authenticate', '/github-callback',
-                               '/render/reaction', '/render/compound') or
+    if (flask.request.path
+            in ('/login', '/authenticate', '/github-callback',
+                '/render/reaction', '/render/compound', '/healthcheck') or
             flask.request.path.startswith(
                 ('/reaction/id/', '/css/', '/js/', '/ketcher/',
                  '/dataset/proto/validate/'))):
