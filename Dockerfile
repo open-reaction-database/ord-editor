@@ -27,21 +27,21 @@
 FROM continuumio/miniconda3
 
 # default-jre is required for running the closure compiler linter.
+# For this next line, see:
 # https://github.com/geerlingguy/ansible-role-java/issues/64#issuecomment-597132394
+RUN mkdir /usr/share/man/man1/
 RUN apt-get update \
  && apt-get install -y \
-    build-essential  \
-    default-jre  \
-    libpq-dev \
-    nodejs \
+    build-essential \
+    default-jre \
     npm \
     procps \
-    python3-dev \
     unzip \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
 RUN conda install -c rdkit \
+    psycopg2 \
     python=3.7 \
     rdkit \
  && conda clean -afy
@@ -75,7 +75,6 @@ WORKDIR ord-schema
 ARG ORD_SCHEMA_TAG=v0.3.13
 RUN git fetch --tags && git checkout "${ORD_SCHEMA_TAG}"
 RUN pip install -r requirements.txt
-RUN pip install pillow
 RUN python setup.py install
 
 # Install editor dependencies.
