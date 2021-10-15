@@ -24,7 +24,7 @@
 # To push the built image to Docker Hub:
 # docker push openreactiondatabase/ord-editor
 
-FROM python:3.8
+FROM continuumio/miniconda3
 
 # default-jre is required for running the closure compiler linter.
 # https://github.com/geerlingguy/ansible-role-java/issues/64#issuecomment-597132394
@@ -41,8 +41,10 @@ RUN apt-get update \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip \
- && pip install gunicorn
+RUN conda install -c rdkit \
+    python=3.7 \
+    rdkit \
+ && conda clean -afy
 
 # Fetch and build editor dependencies.
 # NOTE(kearnes): Do this before COPYing the local state so it can be cached.
@@ -73,6 +75,7 @@ WORKDIR ord-schema
 ARG ORD_SCHEMA_TAG=v0.3.13
 RUN git fetch --tags && git checkout "${ORD_SCHEMA_TAG}"
 RUN pip install -r requirements.txt
+RUN pip install pillow
 RUN python setup.py install
 
 # Install editor dependencies.
@@ -89,11 +92,8 @@ COPY img/ img/
 COPY js/ js/
 COPY py/ py/
 
-# Fix some missing deps in ord-schema.
-# TODO(skearnes): Move into ord-schema requirements.txt.
-RUN pip install pillow rdkit-pypi
-
 # Build and launch the editor.
+RUN pip install gunicorn
 RUN make
 EXPOSE 5000
 CMD gunicorn py.serve:app \
