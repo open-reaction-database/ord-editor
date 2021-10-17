@@ -73,8 +73,8 @@ class ServeTest(parameterized.TestCase, absltest.TestCase):
     def _get_dataset(self):
         """Returns a Dataset for testing."""
         dataset = dataset_pb2.Dataset()
-        with open(os.path.join(self.testdata,
-                               'nielsen_fig1_dataset.pbtxt')) as f:
+        with open(os.path.join(self.testdata, 'nielsen_fig1_dataset.pbtxt'),
+                  'rt') as f:
             text_format.Parse(f.read(), dataset)
         # Add some unicode to check for encoding/decoding robustness.
         # From https://en.wikipedia.org/wiki/Atlantis.
@@ -193,8 +193,8 @@ class ServeTest(parameterized.TestCase, absltest.TestCase):
         with open(os.path.join(self.testdata, 'nielsen_fig1.csv'), 'rb') as f:
             data['spreadsheet_data'] = (prefix +
                                         base64.b64encode(f.read())).decode()
-        with open(os.path.join(self.testdata,
-                               'nielsen_fig1_template.pbtxt')) as f:
+        with open(os.path.join(self.testdata, 'nielsen_fig1_template.pbtxt'),
+                  'rt') as f:
             data['template_string'] = f.read()
         response = self.client.post('/dataset/enumerate',
                                     json=data,

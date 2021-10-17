@@ -58,7 +58,7 @@ except FileExistsError:
 POSTGRES_HOST = os.getenv('POSTGRES_HOST', 'localhost')
 POSTGRES_PORT = os.getenv('POSTGRES_PORT', '5432')
 POSTGRES_USER = os.getenv('POSTGRES_USER', 'postgres')
-POSTGRES_PASS = os.getenv('POSTGRES_PASSWORD', '')
+POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD', '')
 # Information for GitHub OAuth authentication.
 GH_CLIENT_ID = os.getenv('GH_CLIENT_ID')
 GH_CLIENT_SECRET = os.getenv('GH_CLIENT_SECRET')
@@ -73,6 +73,12 @@ TESTER = '680b0d9fe649417cb092d790907bd5a5'
 def show_root():
     """The root path redirects to the "datasets" view."""
     return flask.redirect('/datasets')
+
+
+@app.route('/healthcheck')
+def health_check():
+    """Signals that the app is alive."""
+    return flask.make_response('', 200)
 
 
 @app.route('/datasets')
@@ -269,7 +275,7 @@ def new_reaction(name):
     reaction = dataset.reactions.add()
     reaction.reaction_id = f'ord-{uuid.uuid4().hex}'
     put_dataset(name, dataset)
-    return flask.redirect('/dataset/%s' % name)
+    return flask.redirect(f'/dataset/{name}')
 
 
 @app.route('/dataset/<name>/clone/<index>')
@@ -285,7 +291,7 @@ def clone_reaction(name, index):
     dataset.reactions.add().CopyFrom(dataset.reactions[index])
     index = len(dataset.reactions) - 1
     put_dataset(name, dataset)
-    return flask.redirect('/dataset/%s/reaction/%s' % (name, index))
+    return flask.redirect(f'/dataset/{name}/reaction/{index}')
 
 
 @app.route('/dataset/<name>/delete/reaction/<index>')
@@ -300,7 +306,7 @@ def delete_reaction(name, index):
         flask.abort(404)
     del dataset.reactions[index]
     put_dataset(name, dataset)
-    return flask.redirect('/dataset/%s' % name)
+    return flask.redirect(f'/dataset/{name}')
 
 
 @app.route('/dataset/<name>/delete/reaction_id/<reaction_id>')
@@ -310,7 +316,7 @@ def delete_reaction_id(name, reaction_id):
     if reaction_id in dataset.reaction_ids:
         dataset.reaction_ids.remove(reaction_id)
         put_dataset(name, dataset)
-        return flask.redirect('/dataset/%s' % name)
+        return flask.redirect(f'/dataset/{name}')
     flask.abort(404)
 
 
@@ -630,8 +636,8 @@ def sync_reviews():
                     dataset = dataset_pb2.Dataset.FromString(response.content)
                 else:
                     continue
-                name = 'PR_%d ___%s___ %s' % (pr.number, pr.title,
-                                              remote.filename[:-6])
+                prefix = remote.filename[:-6]
+                name = f'PR_{pr.number} ___{pr.title}___ {prefix}'
                 query = psycopg2.sql.SQL(
                     'INSERT INTO datasets VALUES (%s, %s, %s)')
                 cursor.execute(
@@ -694,7 +700,7 @@ def lock(file_name):
         The locked file descriptor.
     """
     path = get_path(file_name, suffix='.lock')
-    with open(path, 'w') as lock_file:
+    with open(path, 'wt') as lock_file:
         fcntl.lockf(lock_file, fcntl.LOCK_EX)
         try:
             yield lock_file
@@ -929,11 +935,12 @@ def init_user():
     """Connects to the DB and authenticates the user."""
     flask.g.db = psycopg2.connect(dbname='editor',
                                   user=POSTGRES_USER,
-                                  password=POSTGRES_PASS,
+                                  password=POSTGRES_PASSWORD,
                                   host=POSTGRES_HOST,
                                   port=int(POSTGRES_PORT))
-    if (flask.request.path in ('/login', '/authenticate', '/github-callback',
-                               '/render/reaction', '/render/compound') or
+    if (flask.request.path
+            in ('/login', '/authenticate', '/github-callback',
+                '/render/reaction', '/render/compound', '/healthcheck') or
             flask.request.path.startswith(
                 ('/reaction/id/', '/css/', '/js/', '/ketcher/',
                  '/dataset/proto/validate/'))):
